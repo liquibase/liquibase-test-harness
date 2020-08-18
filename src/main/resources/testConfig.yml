@@ -10,7 +10,7 @@ databasesUnderTest:
 #      - createIndex
 #      - addUniqueConstraint
 #      - addPrimaryKey
-#      - addNotNullConstraint
+      - addNotNullConstraint
       - addForeignKey
     versions:
       - version: 9

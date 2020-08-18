@@ -14,9 +14,9 @@ import liquibase.sqlgenerator.SqlGeneratorFactory
 
 class TestUtils {
 
-    static Liquibase createLiquibase(String changeObject, Database database) {
-        database.resetInternalState();
-        return new Liquibase(FileUtils.buildPathToChangeLogFile(changeObject), new HarnessResourceAccessor(), database);
+    static Liquibase createLiquibase(String pathToFile, Database database) {
+        database.resetInternalState()
+        return new Liquibase(pathToFile, new HarnessResourceAccessor(), database)
     }
 
     static List<String> toSqlFromLiquibaseChangeSets(Liquibase liquibase) {
@@ -77,14 +77,19 @@ class TestUtils {
     }
 
     static List<TestInput> buildTestInput(TestConfig config) {
-        List<TestInput> inputList = new ArrayList<>();
+        List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : config.databasesUnderTest) {
             for (DatabaseVersion databaseVersion : databaseUnderTest.versions) {
                 Map<String, String> versionSpecificChangeObjectsChangeFileMap =
                         FileUtils.getVersionSpecificChangeObjects(databaseUnderTest.name, databaseVersion.version)
-                List<String> defaultChangeObjects = databaseUnderTest.changeObjects ?: FileUtils.getAllChangeTypes()
-                Map<String, String> finalChangeObjects = mergeChangeObjects(versionSpecificChangeObjectsChangeFileMap, defaultChangeObjects)
-                for (Map.Entry<String, String> entry : finalChangeObjects.entrySet()) {
+
+                Map<String, String> defaultChangeObjects = databaseUnderTest.changeObjects ?
+                        FileUtils.mapChangeObjectsToFilePaths(databaseUnderTest.changeObjects)
+                        : FileUtils.getAllChangeObjects()
+
+                    defaultChangeObjects.putAll(versionSpecificChangeObjectsChangeFileMap)
+
+                for (Map.Entry<String, String> entry : defaultChangeObjects.entrySet()) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseVersion.url)
@@ -100,12 +105,11 @@ class TestUtils {
                 }
             }
         }
-        return inputList;
+        return inputList
     }
 
-    static Map<String, String> mergeChangeObjects(Map<String, String> versionSpecificChangeObjects, List<String> ChangeObjects) {
-        return versionSpecificChangeObjects
-        //return null
-
+    static Map<String, String> mergeChangeObjects(Map<String, String> versionSpecificChangeObjects, Map<String, String> changeObjects) {
+        changeObjects.putAll(versionSpecificChangeObjects)
+        return changeObjects
     }
 }

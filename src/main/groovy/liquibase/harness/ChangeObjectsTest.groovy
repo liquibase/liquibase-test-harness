@@ -28,7 +28,7 @@ class ChangeObjectsTest extends Specification {
 
         given:
         Database database = DatabaseConnectionUtil.initializeDatabase(testInput)
-        Liquibase liquibase = TestUtils.createLiquibase(testInput.changeObject, database)
+        Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, database)
         //TODO need to provide ability to override default expected file paths
         String expectedSql = FileUtils.getExpectedSqlFileContent(testInput)
         String expectedSnapshot = FileUtils.getExpectedSnapshotFileContent(testInput)
