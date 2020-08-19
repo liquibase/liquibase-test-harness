@@ -9,8 +9,8 @@ databasesUnderTest:
 #      - createView
 #      - createIndex
 #      - addUniqueConstraint
-#      - addPrimaryKey
-#      - addNotNullConstraint
+      - addPrimaryKey
+      - addNotNullConstraint
       - addForeignKey
     versions:
       - version: 9

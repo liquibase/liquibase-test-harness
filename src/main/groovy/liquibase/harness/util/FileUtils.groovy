@@ -33,33 +33,13 @@ class FileUtils {
         return configFileYml.loadAs(new File(resourceBaseDir, fileName).newInputStream(), TestConfig.class)
     }
 
-    static String buildPathToChangeLogFile(String changeObject){
-        return "changelogs/" + changeObject + ".xml"
-        //TODO search files from directory based on name with any extension
-        //TODO discuss to extend and include version to changeLog path
-    }
-
-//    static List<String> getAllChangeTypes(){
-//        //TODO make DB specific implementation
-//        List<String> changeTypes = new ArrayList<>()
-//        def dir = new File(resourceBaseDir+"/changelogs/")
-//        File [] files = dir.listFiles(new FileFilter() {
-//            @Override
-//            boolean accept(File file) {
-//                return file.isFile()&&!file.isHidden()
-//            }
-//        } )
-//        files.each {changeTypes<<it.getName().substring(0, it.getName().lastIndexOf('.'))}
-//        return changeTypes
-//    }
-
-    static List<String> getAllChangeTypes() {
-        List<String> changeTypes = new ArrayList<>()
-        def dir = new File(resourceBaseDir + "/changelogs/")
+    static Map<String, String> getAllChangeObjects() {
+        Map<String, String> changeObjects = new HashMap<>()
+        def dir = new File(resourceBaseDir + "changelogs/")
         dir.eachFileRecurse(FileType.FILES) { file ->
-            changeTypes << file.getName()
+            changeObjects.put(file.getName(), file.getPath())
         }
-        return changeTypes;
+        return changeObjects;
     }
 
     static Map<String, String> getVersionSpecificChangeObjects(String dbName, String dbVersion) {
@@ -74,5 +54,13 @@ class FileUtils {
             changeTypes.put(file.getName().substring(0, file.getName().lastIndexOf('.')),file.getPath())
         }
         return changeTypes;
+    }
+
+    static Map<String, String> mapChangeObjectsToFilePaths(List<String> strings) {
+        Map <String, String> changeTypeToFilePathMap = new HashMap<>();
+        strings.each {
+            changeTypeToFilePathMap.put(it, resourceBaseDir + "changelogs/" + it + ".xml")
+        }
+        return changeTypeToFilePathMap
     }
 }
