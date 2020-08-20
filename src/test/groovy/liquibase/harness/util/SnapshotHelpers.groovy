@@ -52,7 +52,7 @@ class SnapshotHelpers {
                     result.passed()
                 }
                 else if (!StringUtil.equalsIgnoreCaseAndEmpty(expectedValue, actualValue)) {
-                    result.fail(prefix, expectedValue, actualValue);
+                    result.fail(prefix, expectedValue, actualValue)
                 }
             } else {
                 super.compareValues(prefix, expectedValue, actualValue, result)
