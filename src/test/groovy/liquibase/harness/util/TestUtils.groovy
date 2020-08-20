@@ -108,8 +108,4 @@ class TestUtils {
         return inputList
     }
 
-    static Map<String, String> mergeChangeObjects(Map<String, String> versionSpecificChangeObjects, Map<String, String> changeObjects) {
-        changeObjects.putAll(versionSpecificChangeObjects)
-        return changeObjects
-    }
 }

@@ -67,8 +67,7 @@ public class DatabaseTestContext {
         if (!tempDir.endsWith(System.getProperty("file.separator")))
             tempDir += System.getProperty("file.separator");
 
-        String tempUrl = givenUrl.replace("***TEMPDIR***/", tempDir);
-        final String url = tempUrl;
+        final String url = givenUrl.replace("***TEMPDIR***/", tempDir);
 
         if (connectionsAttempted.containsKey(url)) {
             JdbcConnection connection = (JdbcConnection) connectionsByUrl.get(url);
@@ -85,7 +84,7 @@ public class DatabaseTestContext {
             boolean shouldTest = false;
             String[] databasesToTest = System.getProperty(TEST_DATABASES_PROPERTY).split("\\s*,\\s*");
             for (String database : databasesToTest) {
-                if (url.indexOf(database) >= 0) {
+                if (url.contains(database)) {
                     shouldTest = true;
                 }
             }
@@ -144,13 +143,7 @@ public class DatabaseTestContext {
 
         connectionsByUrl.put(url, databaseConnection);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                shutdownConnection((JdbcConnection) databaseConnection);
-            }
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownConnection((JdbcConnection) databaseConnection)));
 
         return databaseConnection;
     }

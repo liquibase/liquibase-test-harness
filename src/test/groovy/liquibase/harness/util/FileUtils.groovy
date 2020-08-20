@@ -39,7 +39,7 @@ class FileUtils {
         dir.eachFileRecurse(FileType.FILES) { file ->
             changeObjects.put(file.getName(), file.getPath())
         }
-        return changeObjects;
+        return changeObjects
     }
 
     static Map<String, String> getVersionSpecificChangeObjects(String dbName, String dbVersion) {
@@ -53,11 +53,11 @@ class FileUtils {
         dir.eachFileRecurse(FileType.FILES) { file ->
             changeTypes.put(file.getName().substring(0, file.getName().lastIndexOf('.')),file.getPath())
         }
-        return changeTypes;
+        return changeTypes
     }
 
     static Map<String, String> mapChangeObjectsToFilePaths(List<String> strings) {
-        Map <String, String> changeTypeToFilePathMap = new HashMap<>();
+        Map <String, String> changeTypeToFilePathMap = new HashMap<>()
         strings.each {
             changeTypeToFilePathMap.put(it, resourceBaseDir + "changelogs/" + it + ".xml")
         }
