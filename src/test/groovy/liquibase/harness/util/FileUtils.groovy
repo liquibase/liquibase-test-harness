@@ -6,7 +6,7 @@ import liquibase.harness.config.TestInput
 import org.yaml.snakeyaml.Yaml
 
 class FileUtils {
-    static final String resourceBaseDir = "src/main/resources/"
+    static final String resourceBaseDir = "src/test/resources/"
 
     static String getFileContent (TestInput testInput, String expectedFolder, String fileExtension){
         return new File(new StringBuilder(resourceBaseDir)
