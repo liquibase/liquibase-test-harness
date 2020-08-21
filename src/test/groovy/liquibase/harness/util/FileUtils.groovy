@@ -57,9 +57,15 @@ class FileUtils {
     }
 
     static Map<String, String> mapChangeObjectsToFilePaths(List<String> strings) {
-        Map <String, String> changeTypeToFilePathMap = new HashMap<>()
-        strings.each {
-            changeTypeToFilePathMap.put(it, resourceBaseDir + "changelogs/" + it + ".xml")
+        Map<String, String> changeTypeToFilePathMap = new HashMap<>()
+
+        def dir = new File(resourceBaseDir + "changelogs/")
+        for (String changeObject : strings) {
+            dir.eachFileRecurse(FileType.FILES) { file ->
+                if (file.name.matches(changeObject + ".*")) {
+                    changeTypeToFilePathMap.put(changeObject, file.getPath())
+                }
+            }
         }
         return changeTypeToFilePathMap
     }

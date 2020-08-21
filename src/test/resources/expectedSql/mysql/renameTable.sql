@@ -1,0 +1,1 @@
+ALTER  TABLE  lbcat.authors  RENAME creators
