@@ -80,14 +80,14 @@ class TestUtils {
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : config.databasesUnderTest) {
             for (DatabaseVersion databaseVersion : databaseUnderTest.versions) {
-                Map<String, String> versionSpecificChangeObjectsChangeFileMap =
-                        FileUtils.getVersionSpecificChangeObjects(databaseUnderTest.name, databaseVersion.version)
-
-                Map<String, String> defaultChangeObjects = databaseUnderTest.changeObjects ?
-                        FileUtils.mapChangeObjectsToFilePaths(databaseUnderTest.changeObjects)
+//                Map<String, String> versionSpecificChangeObjectsChangeFileMap =
+//                        FileUtils.getVersionSpecificChangeObjects(databaseUnderTest.name, databaseVersion.version)
+                //TODO fix not to load all changeObjects when databaseUnderTest.databaseVersion.versionSpecificChangeObjects is empty
+                Map<String, String> defaultChangeObjects = databaseUnderTest.databaseSpecificChangeObjects ?
+                        FileUtils.mapChangeObjectsToFilePaths(databaseUnderTest.databaseSpecificChangeObjects)
                         : FileUtils.getAllChangeObjects()
 
-                    defaultChangeObjects.putAll(versionSpecificChangeObjectsChangeFileMap)
+                 //   defaultChangeObjects.putAll(versionSpecificChangeObjectsChangeFileMap)
 
                 for (Map.Entry<String, String> entry : defaultChangeObjects.entrySet()) {
                     inputList.add(TestInput.builder()

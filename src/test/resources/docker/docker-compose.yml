@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
 
-  mysql-5:
+  mysql-5.7:
     image: library/mysql:5.7.31
     ports:
       - "33062:3306"
