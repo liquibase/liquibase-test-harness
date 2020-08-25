@@ -73,23 +73,30 @@ class TestUtils {
             }
             return str?.split(regex)*.trim()
         }
-        return new ArrayList<String>()
+        return returnList
     }
 
     static List<TestInput> buildTestInput(TestConfig config) {
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : config.databasesUnderTest) {
             for (DatabaseVersion databaseVersion : databaseUnderTest.versions) {
+                Map<String, String> changeObjectsToChangeFileMap = mergeChangeObjects(
+                        databaseUnderTest.name,
+                        databaseVersion.version,
+                        config.defaultChangeObjects,
+                        databaseUnderTest.databaseSpecificChangeObjects,
+                        databaseVersion.versionSpecificChangeObjects)
 //                Map<String, String> versionSpecificChangeObjectsChangeFileMap =
 //                        FileUtils.getVersionSpecificChangeObjects(databaseUnderTest.name, databaseVersion.version)
+
                 //TODO fix not to load all changeObjects when databaseUnderTest.databaseVersion.versionSpecificChangeObjects is empty
-                Map<String, String> defaultChangeObjects = databaseUnderTest.databaseSpecificChangeObjects ?
-                        FileUtils.mapChangeObjectsToFilePaths(databaseUnderTest.databaseSpecificChangeObjects)
-                        : FileUtils.getAllChangeObjects()
+//                Map<String, String> defaultChangeObjects = databaseUnderTest.databaseSpecificChangeObjects ?
+//                        FileUtils.mapChangeObjectsToFilePaths(databaseUnderTest.databaseSpecificChangeObjects)
+//                        : FileUtils.getDefaultChangeObjects()
 
                  //   defaultChangeObjects.putAll(versionSpecificChangeObjectsChangeFileMap)
 
-                for (Map.Entry<String, String> entry : defaultChangeObjects.entrySet()) {
+                for (Map.Entry<String, String> entry : changeObjectsToChangeFileMap.entrySet()) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseVersion.url)
@@ -108,4 +115,13 @@ class TestUtils {
         return inputList
     }
 
+    static Map<String, String> mergeChangeObjects(String databaseName, String databaseVersion, List<String> defaultChangeObjects,
+                                           List<String> databaseSpecificChangeObjects,
+                                           List<String> versionSpecificChangeObjects){
+        Map<String, String> resultMap = new HashMap<>()
+        resultMap.putAll(FileUtils.getDefaultChangeObjects(defaultChangeObjects))
+        resultMap.putAll(FileUtils.getDatabaseSpecificChangeObjects(databaseSpecificChangeObjects, databaseName))
+        resultMap.putAll(FileUtils.getVersionSpecificChangeObjects(versionSpecificChangeObjects, databaseName, databaseVersion))
+        return resultMap
+    }
 }
