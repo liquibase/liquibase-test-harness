@@ -36,13 +36,13 @@ class ChangeObjectsTest extends Specification {
         ArrayList<String> expectedSqlList = TestUtils.parseValuesToList(expectedSql, "\n")
 
         when:
-        List<String> generatedSql = TestUtils.toSqlFromLiquibaseChangeSets(liquibase);
+        List<String> generatedSql = TestUtils.toSqlFromLiquibaseChangeSets(liquibase)
 
         then:
-        expectedSqlList == generatedSql;
+        expectedSqlList == generatedSql
 
         when:
-        liquibase.update(testInput.context);
+        liquibase.update(testInput.context)
 
         String jsonSnapshot = SnapshotHelpers.getJsonSnapshot(database, catalogAndSchemaList)
         liquibase.rollback(liquibase.databaseChangeLog.changeSets.size(), testInput.context)
@@ -54,8 +54,8 @@ class ChangeObjectsTest extends Specification {
         testInput << TestUtils.buildTestInput(config)
     }
 
-    void snapshotMatchesSpecifiedStructure(String expected, String actual) {
-        JSONAssert.assertEquals(expected, actual, new SnapshotHelpers.GeneralSnapshotComparator());
+    static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
+        JSONAssert.assertEquals(expected, actual, new SnapshotHelpers.GeneralSnapshotComparator())
     }
 
 }
