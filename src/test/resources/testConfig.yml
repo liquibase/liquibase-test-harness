@@ -1,4 +1,7 @@
 context: testContext
+defaultChangeObjects:
+  - createView
+  - createTable
 databasesUnderTest:
 #  - name: postgresql
 #    username: lbuser
@@ -31,7 +34,7 @@ databasesUnderTest:
   - name: mysql
     username: lbuser
     password: LiquibasePass1
-    changeObjects:
+    databaseSpecificChangeObjects:
 #      - createTable
 #      - createView
 #      - createIndex
@@ -44,6 +47,11 @@ databasesUnderTest:
     versions:
       - version: 5.7
         url: 'jdbc:mysql://localhost:33062/lbcat'
+        versionSpecificChangeObjects:
+          - createTable
+          - renameColumn
+          - createView
+          - createIndex
 #      - version: 8
 #        url: 'jdbc:mysql://localhost:33061/lbcat'
     dbSchema:
