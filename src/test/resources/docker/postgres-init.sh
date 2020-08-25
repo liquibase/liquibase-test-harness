@@ -53,6 +53,4 @@ INSERT INTO posts VALUES ('1','1','temporibus','voluptatum','Fugit non et dolori
 ('5','5','ad','similique','Rerum tempore quis ut nesciunt qui excepturi est.','2006-10-09');
 
 
-
-
 EOSQL
