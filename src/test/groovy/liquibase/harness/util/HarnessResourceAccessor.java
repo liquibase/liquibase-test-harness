@@ -1,6 +1,10 @@
-package liquibase.harness.util
+package liquibase.harness.util;
 
-import liquibase.resource.ClassLoaderResourceAccessor
+import liquibase.resource.ClassLoaderResourceAccessor;
+
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 class HarnessResourceAccessor extends ClassLoaderResourceAccessor {
 
@@ -9,6 +13,6 @@ class HarnessResourceAccessor extends ClassLoaderResourceAccessor {
                 new File(System.getProperty("user.dir")).toURI().toURL(),
                 new File("src/test/resources/").toURI().toURL(),
                 new File(System.getProperty("java.io.tmpdir")).toURI().toURL(),
-        }))
+        }));
     }
 }

@@ -40,8 +40,6 @@ and run the test class `ChangeObjectsTest.groovy`
 When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
 gracefully and to allow the tests to start from a clean slate on the next run.
 
-P.S. - Please note that the Maven surefire plugin isn't configured to run the harness tests yet. This is in the works.
-
 
 
 #### Stay tuned, is more to come!

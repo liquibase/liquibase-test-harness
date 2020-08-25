@@ -2,6 +2,8 @@ target/
 .gitignore
 .idea/
 *.iml
+/.apt_generated/
+/.apt_generated_tests/
 bin/
 .project
 .DS_Store
