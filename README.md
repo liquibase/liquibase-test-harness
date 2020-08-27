@@ -23,6 +23,7 @@ input changelogs from the `resources/changelogs` folder
 1) Go to `src/test/resources/changelogs` and add the xml changeset for the change type you want to test.
 2) Go to `src/test/resources/expectedSQL` and add the expected generated SQL. 
 You will need to add this under the database specific folder. Currently we only have Postgresql & MySQL folders. 
+NOTE: If your changeset will generate multiple SQL statements, you should add each SQL statement as a seperate line. See renameTable.sql in the postgres folder for an example.
 If you would like to test another DB type, please add the requisite folder.
 3) Go to `src/test/resources/expectedSnapshot` and add the expected DB Snapshot results. 
 You will need to add this under the database specific folder. Currently we only have Postgresql & MySQL folders. 
