@@ -3,6 +3,7 @@ context: testContext
 defaultChangeObjects:
   - createView
   - createTable
+  - renameTable
 databasesUnderTest:
   - name: postgresql
     username: lbuser
