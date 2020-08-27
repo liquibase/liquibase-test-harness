@@ -1,7 +1,6 @@
 --liquibase formatted sql
 --changeset oleh:1
 -- Database: postgresql
--- Change Parameter: newTableName=creators
--- Change Parameter: oldTableName=authors
-ALTER TABLE authors RENAME TO creators;
---rollback ALTER TABLE creators RENAME TO authors;
+CREATE TABLE public.oldnametable (test_id INTEGER NOT NULL, test_column VARCHAR(50) NOT NULL, CONSTRAINT OLDNAMETABLE_PKEY PRIMARY KEY (test_id));
+ALTER TABLE public.oldnametable RENAME TO newnametable
+--rollback DROP TABLE public.newnametable;
