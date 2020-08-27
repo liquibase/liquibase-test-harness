@@ -126,6 +126,6 @@ class TestUtils {
             throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
         }
         testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
-        logger.info("Only {} input files are taking into account", testConfig.inputFormat)
+        logger.info("Only {} input files are taken into account for this test run", testConfig.inputFormat)
     }
 }
