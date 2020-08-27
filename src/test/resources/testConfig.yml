@@ -13,6 +13,7 @@ databasesUnderTest:
       - addNotNullConstraint
       - addForeignKey
       - renameTable
+      - smallInt
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'
