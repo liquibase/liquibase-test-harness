@@ -8,7 +8,7 @@ import org.yaml.snakeyaml.Yaml
 class FileUtils {
     static final String resourceBaseDir = "src/test/resources/"
 
-    static String getFileContent (TestInput testInput, String expectedFolder, String fileExtension){
+    static String getFileContent(TestInput testInput, String expectedFolder, String fileExtension) {
         try {
             return new File(new StringBuilder(resourceBaseDir)
                     .append(expectedFolder)
@@ -19,17 +19,17 @@ class FileUtils {
                     .append(fileExtension)
                     .toString()
             ).getText("UTF-8")
-        } catch (IOException e){
+        } catch (IOException e) {
             return null
         }
     }
 
     static String getExpectedSqlFileContent(TestInput testInput) {
-        return getFileContent(testInput,"expectedSql",".sql")
+        return getFileContent(testInput, "expectedSql", ".sql")
     }
 
     static String getExpectedSnapshotFileContent(TestInput testInput) {
-        return getFileContent(testInput,"expectedSnapshot",".json")
+        return getFileContent(testInput, "expectedSnapshot", ".json")
     }
 
     static TestConfig readYamlConfig(String fileName) {
@@ -37,21 +37,30 @@ class FileUtils {
         return configFileYml.loadAs(new File(resourceBaseDir, fileName).newInputStream(), TestConfig.class)
     }
 
-    static Map<String, String> getDefaultChangeObjects(List<String> changeObjects) {
-        return getChangeObjects(changeObjects, "changelogs/");
+    static Map<String, String> getDefaultChangeObjects(List<String> changeObjects, String inputFormat) {
+        return getChangeObjects(changeObjects, "changelogs/", inputFormat)
     }
 
 
-    static Map<String, String> getDatabaseSpecificChangeObjects(List<String> changeObjects, String databaseName) {
-        return getChangeObjects(changeObjects, "changelogs/" + databaseName);
+    static Map<String, String> getDatabaseSpecificChangeObjects(List<String> changeObjects, String databaseName, inputFormat) {
+        return getChangeObjects(changeObjects, "changelogs/" + databaseName, inputFormat)
     }
 
-    static Map<String, String> getChangeObjects(List<String> changeObjects, String pathToDir) {
+    static Map<String, String> getVersionSpecificChangeObjects(List<String> changeObjects, String databaseName, String dbVersion, String inputFormat) {
+        return getChangeObjects(changeObjects, new StringBuilder("changelogs/")
+                .append(databaseName)
+                .append("/")
+                .append(dbVersion)
+                .toString(),
+                inputFormat)
+    }
+
+    static Map<String, String> getChangeObjects(List<String> changeObjects, String pathToDir, String inputFormat) {
         Map<String, String> changeObjectsMap = new HashMap<>()
         def dir = new File(resourceBaseDir + pathToDir)
         for (String changeObject : changeObjects) {
             dir.eachFile(FileType.FILES) { file ->
-                if (file.name.matches(changeObject + ".*")) {
+                if (file.name.matches(changeObject + "." + inputFormat)) {
                     changeObjectsMap.put(changeObject, file.getPath())
                 }
             }
@@ -59,37 +68,4 @@ class FileUtils {
         return changeObjectsMap
     }
 
-    static Map<String, String> getVersionSpecificChangeObjects(List<String> changeObjects, String databaseName, String dbVersion) {
-        return getChangeObjects(changeObjects, new StringBuilder("changelogs/")
-                .append(databaseName)
-                .append("/")
-                .append(dbVersion)
-                .toString()
-        )
-//        Map<String, String> changeTypes = new HashMap<>()
-//        def dir = new File(new StringBuilder(resourceBaseDir)
-//                .append("changelogs/")
-//                .append(databaseName)
-//                .append("/")
-//                .append(dbVersion)
-//                .toString())
-//        dir.eachFileRecurse(FileType.FILES) { file ->
-//            changeTypes.put(file.getName().substring(0, file.getName().lastIndexOf('.')),file.getPath())
-//        }
-//        return changeTypes
-    }
-
-    static Map<String, String> mapChangeObjectsToFilePaths(List<String> strings) {
-        Map<String, String> changeTypeToFilePathMap = new HashMap<>()
-
-        def dir = new File(resourceBaseDir + "changelogs/")
-        for (String changeObject : strings) {
-            dir.eachFileRecurse(FileType.FILES) { file ->
-                if (file.name.matches(changeObject + ".*")) {
-                    changeTypeToFilePathMap.put(changeObject, file.getPath())
-                }
-            }
-        }
-        return changeTypeToFilePathMap
-    }
 }

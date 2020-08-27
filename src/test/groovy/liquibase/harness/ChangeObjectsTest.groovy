@@ -9,23 +9,25 @@ import liquibase.harness.util.FileUtils
 import liquibase.harness.util.SnapshotHelpers
 import liquibase.harness.util.TestUtils
 import org.skyscreamer.jsonassert.JSONAssert
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 
 class ChangeObjectsTest extends Specification {
-
+    @Shared Logger logger = LoggerFactory.getLogger(getClass())
     @Shared
     TestConfig config
 
     def setupSpec() {
         config = FileUtils.readYamlConfig("testConfig.yml")
+        TestUtils.validateAndSetInputFileFormat(config)
     }
 
     @Unroll
     def "apply #testInput.changeObject for #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
-
         given:
         Database database = DatabaseConnectionUtil.initializeDatabase(testInput)
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, database)
