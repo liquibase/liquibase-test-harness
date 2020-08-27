@@ -12,6 +12,7 @@ databasesUnderTest:
       - addPrimaryKey
       - addNotNullConstraint
       - addForeignKey
+      - renameTable
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'
