@@ -11,8 +11,12 @@ import liquibase.harness.config.TestConfig
 import liquibase.harness.config.TestInput
 import liquibase.sql.Sql
 import liquibase.sqlgenerator.SqlGeneratorFactory
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class TestUtils {
+    final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
+    static Logger logger = LoggerFactory.getLogger(TestUtils.class)
 
     static Liquibase createLiquibase(String pathToFile, Database database) {
         database.resetInternalState()
@@ -73,23 +77,21 @@ class TestUtils {
             }
             return str?.split(regex)*.trim()
         }
-        return new ArrayList<String>()
+        return returnList
     }
 
     static List<TestInput> buildTestInput(TestConfig config) {
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : config.databasesUnderTest) {
             for (DatabaseVersion databaseVersion : databaseUnderTest.versions) {
-                Map<String, String> versionSpecificChangeObjectsChangeFileMap =
-                        FileUtils.getVersionSpecificChangeObjects(databaseUnderTest.name, databaseVersion.version)
-
-                Map<String, String> defaultChangeObjects = databaseUnderTest.changeObjects ?
-                        FileUtils.mapChangeObjectsToFilePaths(databaseUnderTest.changeObjects)
-                        : FileUtils.getAllChangeObjects()
-
-                    defaultChangeObjects.putAll(versionSpecificChangeObjectsChangeFileMap)
-
-                for (Map.Entry<String, String> entry : defaultChangeObjects.entrySet()) {
+                Map<String, String> changeObjectsToChangeFileMap = mergeChangeObjects(
+                        databaseUnderTest.name,
+                        databaseVersion.version,
+                        config.defaultChangeObjects,
+                        databaseUnderTest.databaseSpecificChangeObjects,
+                        databaseVersion.versionSpecificChangeObjects,
+                        config.inputFormat)
+                for (Map.Entry<String, String> entry : changeObjectsToChangeFileMap.entrySet()) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseVersion.url)
@@ -108,4 +110,22 @@ class TestUtils {
         return inputList
     }
 
+    static Map<String, String> mergeChangeObjects(String databaseName, String databaseVersion, List<String> defaultChangeObjects,
+                                                  List<String> databaseSpecificChangeObjects,
+                                                  List<String> versionSpecificChangeObjects, String inputFormat) {
+        Map<String, String> resultMap = new HashMap<>()
+        resultMap.putAll(FileUtils.getDefaultChangeObjects(defaultChangeObjects, inputFormat))
+        resultMap.putAll(FileUtils.getDatabaseSpecificChangeObjects(databaseSpecificChangeObjects, databaseName, inputFormat))
+        resultMap.putAll(FileUtils.getVersionSpecificChangeObjects(versionSpecificChangeObjects, databaseName, databaseVersion, inputFormat))
+        return resultMap
+    }
+
+    static void validateAndSetInputFileFormat(TestConfig testConfig) {
+        String inputFormat = System.getProperty("inputFormat")
+        if (inputFormat && (!supportedChangeLogFormats.contains(inputFormat))) {
+            throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
+        }
+        testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
+        logger.info("Only {} input files are taking into account", testConfig.inputFormat)
+    }
 }
