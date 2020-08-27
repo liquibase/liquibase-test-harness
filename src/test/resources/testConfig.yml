@@ -1,39 +1,12 @@
 context: testContext
 defaultChangeObjects:
-  - createView
-  - createTable
+#  - createView
+#  - createTable
 databasesUnderTest:
-#  - name: postgresql
-#    username: lbuser
-#    password: LiquibasePass1
-## Missing or empty changeObjects means run all changeObjects from base dir
-#    changeObjects:
-##      - createTable
-##      - createView
-##      - createIndex
-##      - addUniqueConstraint
-##      - addPrimaryKey
-##      - addNotNullConstraint
-##      - addForeignKey
-#      - renameColumn
-#      - renameTable
-#    versions:
-#      - version: 9
-#        url: 'jdbc:postgresql://localhost:5433/lbcat'
-#        versionSpecificChangeObjects:
-##          - addUniqueConstraint
-##          - addPrimaryKey
-##      - version: 12
-##        url: 'jdbc:postgresql://localhost:5434/lbcat'
-##        versionSpecificChangeObjects:
-##        - createTable
-##        - createView
-##        - createIndex
-#    dbSchema: public
-
-  - name: mysql
+  - name: postgresql
     username: lbuser
     password: LiquibasePass1
+# Missing or empty changeObjects means run all changeObjects from base dir
     databaseSpecificChangeObjects:
 #      - createTable
 #      - createView
@@ -45,13 +18,31 @@ databasesUnderTest:
       - renameColumn
       - renameTable
     versions:
-      - version: 5.7
-        url: 'jdbc:mysql://localhost:33062/lbcat'
-        versionSpecificChangeObjects:
-          - createTable
-          - renameColumn
-          - createView
-          - createIndex
+      - version: 9
+        url: 'jdbc:postgresql://localhost:5433/lbcat'
+#        versionSpecificChangeObjects:
+#          - addUniqueConstraint
+#          - addPrimaryKey
+      - version: 12
+        url: 'jdbc:postgresql://localhost:5434/lbcat'
+#        versionSpecificChangeObjects:
+#        - createTable
+#        - createView
+#        - createIndex
+    dbSchema: public
+
+#  - name: mysql
+#    username: lbuser
+#    password: LiquibasePass1
+#    databaseSpecificChangeObjects:
+#      - renameTable
+#    versions:
+#      - version: 5.7
+#        url: 'jdbc:mysql://localhost:33062/lbcat'
+#        versionSpecificChangeObjects:
+#          - renameColumn
 #      - version: 8
 #        url: 'jdbc:mysql://localhost:33061/lbcat'
-    dbSchema:
+#        versionSpecificChangeObjects:
+#          - renameColumn
+#    dbSchema:

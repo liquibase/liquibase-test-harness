@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset oleh:1
--- Database: postgresql
+-- Database: mysql
 -- Change Parameter: newColumnName=first_name_renameColumn_test
 -- Change Parameter: oldColumnName=first_name
 -- Change Parameter: tableName=authors
