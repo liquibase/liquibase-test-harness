@@ -5,6 +5,6 @@ class DatabaseUnderTest {
     String username
     String password
     List<DatabaseVersion> versions
-    List<String> changeObjects
+    List<String> databaseSpecificChangeObjects
     String dbSchema
 }
