@@ -1,0 +1,1 @@
+ALTER TABLE authors CHANGE first_name name

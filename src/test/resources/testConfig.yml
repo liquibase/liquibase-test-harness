@@ -1,19 +1,26 @@
+inputFormat: xml
 context: testContext
+defaultChangeObjects:
+  - createView
+  - createTable
+  - renameTable
 databasesUnderTest:
   - name: postgresql
     username: lbuser
     password: LiquibasePass1
 # Missing or empty changeObjects means run all changeObjects from base dir
-    changeObjects:
-#      - createTable
-#      - createView
-#      - createIndex
-#      - addUniqueConstraint
+    databaseSpecificChangeObjects:
+      - createTable
+      - createView
+      - createIndex
+      - addUniqueConstraint
       - addPrimaryKey
       - addNotNullConstraint
       - addForeignKey
       - renameTable
       - smallInt
+      - renameColumn
+      - renameTable
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'
@@ -28,21 +35,18 @@ databasesUnderTest:
         - createIndex
     dbSchema: public
 
-#  - name: mysql
-#    username: lbuser
-#    password: LiquibasePass1
-#    changeObjects:
-##      - createTable
-##      - createView
-##      - createIndex
-##      - addUniqueConstraint
-##      - addPrimaryKey
-##      - addNotNullConstraint
-#      - addForeignKey
-#    versions:
-#      - version: 5.7
-#        url: 'jdbc:mysql://localhost:33062/lbcat'
-#      - version: 8
-#        url: 'jdbc:mysql://localhost:33061/lbcat'
-#    dbSchema:
-#  oracle:
+  - name: mysql
+    username: lbuser
+    password: LiquibasePass1
+    databaseSpecificChangeObjects:
+      - renameTable
+    versions:
+      - version: 5.7
+        url: 'jdbc:mysql://localhost:33062/lbcat'
+        versionSpecificChangeObjects:
+          - renameColumn
+      - version: 8
+        url: 'jdbc:mysql://localhost:33061/lbcat'
+        versionSpecificChangeObjects:
+          - renameColumn
+    dbSchema:
