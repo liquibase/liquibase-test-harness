@@ -6,10 +6,14 @@ import liquibase.database.Database
 import liquibase.util.StringUtil
 import org.json.JSONArray
 import org.json.JSONException
+import org.json.JSONObject
 import org.skyscreamer.jsonassert.JSONCompareMode
 import org.skyscreamer.jsonassert.JSONCompareResult
 import org.skyscreamer.jsonassert.comparator.DefaultComparator
 import org.skyscreamer.jsonassert.comparator.JSONCompareUtil
+
+import static org.skyscreamer.jsonassert.comparator.JSONCompareUtil.getKeys
+import static org.skyscreamer.jsonassert.comparator.JSONCompareUtil.qualify
 
 class SnapshotHelpers {
 
@@ -56,6 +60,24 @@ class SnapshotHelpers {
                 }
             } else {
                 super.compareValues(prefix, expectedValue, actualValue, result)
+            }
+        }
+
+        @Override
+        protected void checkJsonObjectKeysExpectedInActual(String prefix, JSONObject expected, JSONObject actual, JSONCompareResult result) throws JSONException {
+            if(expected.get("_noMatch")){
+                expected.remove("_noMatch")
+                result.passed()
+            }
+            Set<String> expectedKeys = getKeys(expected);
+            for (String key : expectedKeys) {
+                Object expectedValue = expected.get(key);
+                if (actual.has(key)) {
+                    Object actualValue = actual.get(key);
+                    compareValues(qualify(prefix, key), expectedValue, actualValue, result);
+                } else {
+                    result.missing(prefix, key);
+                }
             }
         }
     }

@@ -1,0 +1,8 @@
+{
+  "_noMatch": true,
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Sequence": []
+    }
+  }
+}

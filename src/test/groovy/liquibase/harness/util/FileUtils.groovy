@@ -37,16 +37,16 @@ class FileUtils {
         return configFileYml.loadAs(new File(resourceBaseDir, fileName).newInputStream(), TestConfig.class)
     }
 
-    static Map<String, String> getDefaultChangeObjects(List<String> changeObjects, String inputFormat) {
+    static Map<String, String> getDefaultChangeObjects(Set<String> changeObjects, String inputFormat) {
         return getChangeObjects(changeObjects, "changelogs/", inputFormat)
     }
 
 
-    static Map<String, String> getDatabaseSpecificChangeObjects(List<String> changeObjects, String databaseName, inputFormat) {
+    static Map<String, String> getDatabaseSpecificChangeObjects(Set<String> changeObjects, String databaseName, inputFormat) {
         return getChangeObjects(changeObjects, "changelogs/" + databaseName, inputFormat)
     }
 
-    static Map<String, String> getVersionSpecificChangeObjects(List<String> changeObjects, String databaseName, String dbVersion, String inputFormat) {
+    static Map<String, String> getVersionSpecificChangeObjects(Set<String> changeObjects, String databaseName, String dbVersion, String inputFormat) {
         return getChangeObjects(changeObjects, new StringBuilder("changelogs/")
                 .append(databaseName)
                 .append("/")
@@ -55,7 +55,7 @@ class FileUtils {
                 inputFormat)
     }
 
-    static Map<String, String> getChangeObjects(List<String> changeObjects, String pathToDir, String inputFormat) {
+    static Map<String, String> getChangeObjects(Set<String> changeObjects, String pathToDir, String inputFormat) {
         Map<String, String> changeObjectsMap = new HashMap<>()
         def dir = new File(resourceBaseDir + pathToDir)
         for (String changeObject : changeObjects) {
