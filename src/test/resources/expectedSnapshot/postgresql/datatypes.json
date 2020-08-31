@@ -10,7 +10,7 @@
       ],
       "liquibase.structure.core.Column": [
         {
-          "column": {
+        "column": {
             "name": "smallint",
             "type": {
               "typeName": "int2"
@@ -34,20 +34,20 @@
           }
         },
         {
-			"column": {
-  				"name": "decimal1",
-  				"type": {
-    				"columnSize": "1!{java.lang.Integer}",
-    				"typeName": "decimal"
-  				}
+		"column": {
+				"name": "decimal1",
+				"type": {
+					"columnSize": "1\\!\\{java.lang.Integer\\}",
+					"typeName": "numeric"
+				}
 			}
 		},
         {
 			"column": {
   				"name": "decimal10",
   				"type": {
-    				"columnSize": "10!{java.lang.Integer}",
-    				"typeName": "decimal"
+    				"columnSize": "10\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
   				}
 			}
 		},
@@ -55,8 +55,8 @@
 			"column": {
   				"name": "decimal100",
   				"type": {
-    				"columnSize": "100!{java.lang.Integer}",
-    				"typeName": "decimal"
+    				"columnSize": "100\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
   				}
 			}
 		},
@@ -64,8 +64,8 @@
 			"column": {
   				"name": "decimal1000",
   				"type": {
-    				"columnSize": "1000!{java.lang.Integer}",
-    				"typeName": "decimal"
+    				"columnSize": "1000\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
   				}
 			}
 		},
@@ -73,7 +73,7 @@
 			"column": {
   				"name": "numeric1",
   				"type": {
-    				"columnSize": "1!{java.lang.Integer}",
+    				"columnSize": "1\\!\\{java.lang.Integer\\}",
     				"typeName": "numeric"
   				}
 			}
@@ -82,7 +82,7 @@
 			"column": {
   				"name": "numeric10",
   				"type": {
-    				"columnSize": "10!{java.lang.Integer}",
+    				"columnSize": "10\\!\\{java.lang.Integer\\}",
     				"typeName": "numeric"
   				}
 			}
@@ -91,7 +91,7 @@
 			"column": {
   				"name": "numeric100",
   				"type": {
-    				"columnSize": "100!{java.lang.Integer}",
+    				"columnSize": "100\\!\\{java.lang.Integer\\}",
     				"typeName": "numeric"
   				}
 			}
@@ -100,7 +100,7 @@
 			"column": {
   				"name": "numeric1000",
   				"type": {
-    				"columnSize": "1000!{java.lang.Integer}",
+    				"columnSize": "1000\\!\\{java.lang.Integer\\}",
     				"typeName": "numeric"
   				}
 			}
@@ -109,7 +109,7 @@
 			"column": {
   				"name": "real",
   				"type": {
-    				"typeName": "real"
+    				"typeName": "float4"
   				}
 			}
 		},
@@ -117,7 +117,7 @@
 			"column": {
   				"name": "double_precision",
   				"type": {
-    				"typeName": "double precision"
+    				"typeName": "float8"
   				}
 			}
 		},
