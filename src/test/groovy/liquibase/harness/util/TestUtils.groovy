@@ -113,10 +113,14 @@ class TestUtils {
     static Map<String, String> mergeChangeObjects(String databaseName, String databaseVersion, List<String> defaultChangeObjects,
                                                   List<String> databaseSpecificChangeObjects,
                                                   List<String> versionSpecificChangeObjects, String inputFormat) {
+        Set<String> allChangeObjects = new HashSet<>()
+        if(defaultChangeObjects)allChangeObjects.addAll(defaultChangeObjects)
+        if(databaseSpecificChangeObjects) allChangeObjects.addAll(databaseSpecificChangeObjects)
+        if(versionSpecificChangeObjects) allChangeObjects.addAll(versionSpecificChangeObjects)
         Map<String, String> resultMap = new HashMap<>()
-        resultMap.putAll(FileUtils.getDefaultChangeObjects(defaultChangeObjects, inputFormat))
-        resultMap.putAll(FileUtils.getDatabaseSpecificChangeObjects(databaseSpecificChangeObjects, databaseName, inputFormat))
-        resultMap.putAll(FileUtils.getVersionSpecificChangeObjects(versionSpecificChangeObjects, databaseName, databaseVersion, inputFormat))
+        resultMap.putAll(FileUtils.getDefaultChangeObjects(allChangeObjects, inputFormat))
+        resultMap.putAll(FileUtils.getDatabaseSpecificChangeObjects(allChangeObjects, databaseName, inputFormat))
+        resultMap.putAll(FileUtils.getVersionSpecificChangeObjects(allChangeObjects, databaseName, databaseVersion, inputFormat))
         return resultMap
     }
 
