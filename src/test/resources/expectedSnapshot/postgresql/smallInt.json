@@ -11,7 +11,10 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "test_id"
+            "name": "test_id",
+            "type": {
+              "dataTypeId": "5\\!\\{java.lang.Integer\\}"
+            }
           }
         }
       ]
