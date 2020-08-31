@@ -21,6 +21,7 @@ databasesUnderTest:
       - smallInt
       - renameColumn
       - renameTable
+      - datatypes
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'

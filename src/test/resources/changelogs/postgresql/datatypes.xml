@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="oleh">
+        <createTable tableName="datatypes_test_table">
+        
+        
+        <!-- https://www.postgresql.org/docs/12/datatype.html -->
+        
+        <!-- NUMERIC -->
+        
+        <!-- https://www.postgresql.org/docs/12/datatype-numeric.html  -->
+        
+            <column name="smallint" type="smallint"/>
+            <column name="integer" type="integer"/>
+            <column name="bigint" type="bigint"/>
+
+            <!-- variable -->
+            <column name="decimal1" type="decimal(1)"/>
+            <column name="decimal10" type="decimal(10)"/>
+            <column name="decimal100" type="decimal(100)"/>
+            <column name="decimal1000" type="decimal(1000)"/>
+            <!-- variable -->
+            <column name="numeric1" type="numeric(1)"/>
+            <column name="numeric10" type="numeric(10)"/>
+            <column name="numeric100" type="numeric(100)"/>
+            <column name="numeric1000" type="numeric(1000)"/>
+            
+            <column name="real" type="real"/>
+            <column name="double_precision" type="double precision"/>
+            <column name="serial" type="serial"/>
+            <column name="bigserial" type="bigserial"/>
+
+		<!-- MONETARY -->
+		
+<!-- 
+Name	Storage Size	Description	Range
+money	8 bytes	currency amount	-92233720368547758.08 to +92233720368547758.07
+ -->
+		<!-- CHARACTER TYPES -->
+		
+		
+		<!-- 
+Name	Description
+character varying(n), varchar(n)	variable-length with limit
+character(n), char(n)	fixed-length, blank padded
+text	variable unlimited length
+ -->
+
+		<!-- BINARY -->
+		
+<!-- 
+Name	Storage Size	Description
+bytea	1 or 4 bytes plus the actual binary string	variable-length binary string
+ -->
+		<!-- DATE/TIME -->
+		
+<!-- 						
+Name	Storage Size	Description	Low Value	High Value	Resolution
+timestamp [ (p) ] [ without time zone ]	8 bytes	both date and time (no time zone)	4713 BC	294276 AD	1 microsecond
+timestamp [ (p) ] with time zone	8 bytes	both date and time, with time zone	4713 BC	294276 AD	1 microsecond
+date	4 bytes	date (no time of day)	4713 BC	5874897 AD	1 day
+time [ (p) ] [ without time zone ]	8 bytes	time of day (no date)	00:00:00	24:00:00	1 microsecond
+time [ (p) ] with time zone	12 bytes	time of day (no date), with time zone	00:00:00+1559	24:00:00-1559	1 microsecond
+interval [ fields ] [ (p) ]	16 bytes	time interval	-178000000 years	178000000 years	1 microsecond
+ -->
+		<!-- BOOLEAN -->
+		
+<!-- 
+Name	Storage Size	Description
+boolean	1 byte	state of true or false
+ -->
+
+		<!-- ENUMERATED TYPES -->
+		<!--
+		
+		we don't support types yet, same with domain
+		 
+CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
+
+ -->
+
+		<!-- GEOMETRIC TYPES -->
+		
+		<!-- 				
+Name	Storage Size	Description	Representation
+point	16 bytes	Point on a plane	(x,y)
+line	32 bytes	Infinite line	{A,B,C}
+lseg	32 bytes	Finite line segment	((x1,y1),(x2,y2))
+box	32 bytes	Rectangular box	((x1,y1),(x2,y2))
+path	16+16n bytes	Closed path (similar to polygon)	((x1,y1),...)
+path	16+16n bytes	Open path	[(x1,y1),...]
+polygon	40+16n bytes	Polygon (similar to closed path)	((x1,y1),...)
+circle	24 bytes	Circle	<(x,y),r> (center point and radius)
+ -->
+		<!-- NETWORK TYPES -->
+		
+<!-- 
+Name	Storage Size	Description
+cidr	7 or 19 bytes	IPv4 and IPv6 networks
+inet	7 or 19 bytes	IPv4 and IPv6 hosts and networks
+macaddr	6 bytes	MAC addresses
+macaddr8	8 bytes	MAC addresses (EUI-64 format)
+ -->
+		<!-- BIT STRING -->
+		<!-- 
+CREATE TABLE test (a BIT(3), b BIT VARYING(5));
+INSERT INTO test VALUES (B'101', B'00');
+INSERT INTO test VALUES (B'10', B'101');
+
+ERROR:  bit string length 2 does not match type bit(3)
+
+INSERT INTO test VALUES (B'10'::bit(3), B'101');
+SELECT * FROM test;
+
+  -->
+ 		<!-- TEXT SEARCH -->
+ 		<!-- 
+https://www.postgresql.org/docs/12/datatype-textsearch.html 						
+8.11.1. tsvector
+8.11.2. tsquery
+ -->
+
+		<!-- UUID -->
+	<!-- 	
+https://www.postgresql.org/docs/12/datatype-uuid.html
+ -->
+		<!-- XML -->
+		
+		<!-- JSON -->
+		
+		<!-- ARRAYS -->
+	<!-- 	
+CREATE TABLE sal_emp (
+    name            text,
+    pay_by_quarter  integer[],
+    schedule        text[][]
+);
+ -->
+		<!-- COMPOSITION TYPES -->
+	
+	<!-- 	
+CREATE TYPE complex AS (
+    r       double precision,
+    i       double precision
+);
+
+CREATE TYPE inventory_item AS (
+    name            text,
+    supplier_id     integer,
+    price           numeric
+);
+ -->
+	<!-- RANGE TYPES -->
+	
+	<!-- for select purposes, skipping for this test -->
+	<!-- https://www.postgresql.org/docs/12/rangetypes.html -->					
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
