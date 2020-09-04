@@ -20,7 +20,7 @@ input changelogs from the `resources/changelogs` folder
   * rollback changes
   * Finally, the actual DB snapshot is compared to the expected DB snapshot (provided in `resources/expectedSnapshot`)
 
-##Types of input files
+## Types of input files
 Test framework expect 4 types of input files that are supported by liquibase itself - xml, yaml, json, sql.
 Files with extensions 'xml', 'sql', 'json', 'yml', 'yaml' are taking into account, but not all together.
 Default is xml format, so by default only changelogs with xml file extension are ran.
@@ -37,7 +37,7 @@ NOTE: If your changeset will generate multiple SQL statements, you should add ea
 If you would like to test another DB type, please add the requisite folder.
 3) Go to `src/test/resources/expectedSnapshot` and add the expected DB Snapshot results.
   - to verify absence of an object in snapshot (for drop* commands) add `"_noMatch": true,` to that tree level where missing object should be verified.
-  See [dropSequence.json](../src/test/resources/expectedSnapshot/postgresql/dropSequence.json) as an example.
+  See [dropSequence.json](src/test/resources/expectedSnapshot/postgresql/dropSequence.json) as an example.
   - You will need to add this under the database specific folder. Currently we only have Postgresql & MySQL folders. 
   - If you would like to test another DB type, please add the requisite folder.
 4) Go to your IDE and run the test class `ChangeObjectsTest.groovy`
