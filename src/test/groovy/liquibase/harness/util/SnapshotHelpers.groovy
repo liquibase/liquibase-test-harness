@@ -74,7 +74,6 @@ class SnapshotHelpers {
                         return
                     }
                 }
-
             }
             for (String key : expectedKeys) {
                 Object expectedValue = expected.get(key)
