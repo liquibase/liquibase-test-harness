@@ -39,7 +39,7 @@ class FileUtils {
 
     static Map<String, String> collectChangeObjects(List<String> changeObjects, List<String> dbSpecificChangeObjects, String databaseName, String dbVersion, String inputFormat) {
         Map<String, String> map = getDatabaseSpecificChangeObjects(dbSpecificChangeObjects, databaseName, dbVersion, inputFormat)
-        if (changeObjects && !dbSpecificChangeObjects) {
+        if (!changeObjects && dbSpecificChangeObjects) {
             return map
             //if someone want to run just a few specific tests don't add all default, return only dbSpecific ones
         }
