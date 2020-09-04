@@ -16,12 +16,13 @@ databasesUnderTest:
     databaseSpecificChangeObjects:
       - addForeignKey
       - addPrimaryKey
-      - smallInt
       - addUniqueConstraint
       - createSequence
       - dropSequence
+      - datatypes
       - renameColumn
       - renameTable
+      - smallInt
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'
