@@ -45,17 +45,15 @@ class SnapshotHelpers {
                 } else {
                     this.recursivelyCompareJSONArray(prefix, exp, act, result)
                 }
-
             }
         }
 
         @Override
         void compareValues(String prefix, Object expectedValue, Object actualValue, JSONCompareResult result) throws JSONException {
             if (expectedValue instanceof String && actualValue instanceof String) {
-                if(actualValue.matches(expectedValue)){
+                if (actualValue.matches(expectedValue)) {
                     result.passed()
-                }
-                else if (!StringUtil.equalsIgnoreCaseAndEmpty(expectedValue, actualValue)) {
+                } else if (!StringUtil.equalsIgnoreCaseAndEmpty(expectedValue, actualValue)) {
                     result.fail(prefix, expectedValue, actualValue)
                 }
             } else {
@@ -65,18 +63,26 @@ class SnapshotHelpers {
 
         @Override
         protected void checkJsonObjectKeysExpectedInActual(String prefix, JSONObject expected, JSONObject actual, JSONCompareResult result) throws JSONException {
-            if(expected.get("_noMatch")){
-                expected.remove("_noMatch")
-                result.passed()
+            Set<String> expectedKeys = getKeys(expected)
+            if (expected.has("_noMatch")) {
+                expectedKeys.remove("_noMatch")
+                for (String key : expectedKeys) {
+                    if (actual.has(key)) {
+                        result.fail(prefix, expected, actual)
+                    } else {
+                        result.passed()
+                        return
+                    }
+                }
+
             }
-            Set<String> expectedKeys = getKeys(expected);
             for (String key : expectedKeys) {
-                Object expectedValue = expected.get(key);
+                Object expectedValue = expected.get(key)
                 if (actual.has(key)) {
-                    Object actualValue = actual.get(key);
-                    compareValues(qualify(prefix, key), expectedValue, actualValue, result);
+                    Object actualValue = actual.get(key)
+                    compareValues(qualify(prefix, key), expectedValue, actualValue, result)
                 } else {
-                    result.missing(prefix, key);
+                    result.missing(prefix, key)
                 }
             }
         }
