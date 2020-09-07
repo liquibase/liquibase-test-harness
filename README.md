@@ -17,26 +17,26 @@ input changelogs from the `resources/changelogs` folder
   * If the SQL generation is correct, the test then runs `liquibase update` to deploy the
   changeset to the DB
   * The test takes a snapshot of the database after deployment
-  * rollback changes
+  * The deployed changes are then rolled back 
   * Finally, the actual DB snapshot is compared to the expected DB snapshot (provided in `resources/expectedSnapshot`)
 
 ## Types of input files
-Test framework expect 4 types of input files that are supported by liquibase itself - xml, yaml, json, sql.
-Files with extensions 'xml', 'sql', 'json', 'yml', 'yaml' are taking into account, but not all together.
-Default is xml format, so by default only changelogs with xml file extension are ran.
-To change it to sql add `-DinputFormat=sql` as command line argument for Maven or as VM option to your JUnit run config.
+The tests work with the 4 types of input files that are supported by liquibase itself - xml, yaml, json, sql.
+Thus files with extensions 'xml', 'sql', 'json', 'yml', 'yaml' are taken into account, but not all together.
+The default format is xml, so by default only changelogs with xml file extension are executed.
+To change it to another format, like 'sql' for instance, specify `-DinputFormat=sql` as the command line argument for Maven or as VM option to your JUnit test run. config.
 
 
 #### Adding a change object test
 1) Go to `src/test/resources/changelogs` and add the xml changeset for the change type you want to test.
-  - framework tries to rollback changes after deploying them to DB. If liquibase know how to do rollback for that change, it will do that.
-If not, you have to provide rollback by yourself. To learn more about rollbacks read [Rolling back changesets](https://docs.liquibase.com/workflows/liquibase-community/using-rollback.html) article.
+  - the framework tries to rollback changes after deploying them to DB. If liquibase know how to do a rollback for that particular change, it will automatically do that.
+If not, you have to provide the rollback by yourself. To learn more about rollbacks read [Rolling back changesets](https://docs.liquibase.com/workflows/liquibase-community/using-rollback.html) article.
 2) Go to `src/test/resources/expectedSQL` and add the expected generated SQL. 
 You will need to add this under the database specific folder. Currently we only have Postgresql & MySQL folders. 
-NOTE: If your changeset will generate multiple SQL statements, you should add each SQL statement as a seperate line. See renameTable.sql in the postgres folder for an example.
+NOTE: If your changeset will generate multiple SQL statements, you should add each SQL statement as a separate line. See renameTable.sql in the postgres folder for an example.
 If you would like to test another DB type, please add the requisite folder.
 3) Go to `src/test/resources/expectedSnapshot` and add the expected DB Snapshot results.
-  - to verify absence of an object in snapshot (for drop* commands) add `"_noMatch": true,` to that tree level where missing object should be verified.
+  - to verify absence of an object in snapshot (such as drop* commands) add `"_noMatch": true,` to that tree level where missing object should be verified.
   See [dropSequence.json](src/test/resources/expectedSnapshot/postgresql/dropSequence.json) as an example.
   - You will need to add this under the database specific folder. Currently we only have Postgresql & MySQL folders. 
   - If you would like to test another DB type, please add the requisite folder.
@@ -54,6 +54,6 @@ When you are done with test execution, run `docker-compose down --volumes` to st
 gracefully and to allow the tests to start from a clean slate on the next run.
 
 ## Running from cmd
-`mvn integration-test -DinputFormat=xml` or other inputFormat among listed in [Types of input files](#types-of-input-files)
+Execute `mvn integration-test -DinputFormat=xml` or other inputFormat among listed in [Types of input files](#types-of-input-files)
 
 #### Stay tuned, is more to come!
