@@ -20,14 +20,14 @@ input changelogs from the `resources/changelogs` folder
   * The deployed changes are then rolled back 
   * Finally, the actual DB snapshot is compared to the expected DB snapshot (provided in `resources/expectedSnapshot`)
 
-## Types of input files
-The tests work with the 4 types of input files that are supported by liquibase itself - xml, yaml, json, sql.
+#### Types of input files
+* The tests work with the 4 types of input files that are supported by liquibase itself - xml, yaml, json, sql.
 Thus files with extensions 'xml', 'sql', 'json', 'yml', 'yaml' are taken into account, but not all together.
-The default format is xml, so by default only changelogs with xml file extension are executed.
+* The default format is xml, so by default only changelogs with xml file extension are executed.
 To change it to another format, like 'sql' for instance, specify `-DinputFormat=sql` as the command line argument for Maven or as VM option to your JUnit test run. config.
 
 
-#### Adding a change object test
+### Adding a change object test
 1) Go to `src/test/resources/changelogs` and add the xml changeset for the change type you want to test.
   - the framework tries to rollback changes after deploying them to DB. If liquibase know how to do a rollback for that particular change, it will automatically do that.
 If not, you have to provide the rollback by yourself. To learn more about rollbacks read [Rolling back changesets](https://docs.liquibase.com/workflows/liquibase-community/using-rollback.html) article.
