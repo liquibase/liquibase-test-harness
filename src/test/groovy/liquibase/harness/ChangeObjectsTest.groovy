@@ -61,5 +61,4 @@ class ChangeObjectsTest extends Specification {
     static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
         JSONAssert.assertEquals(expected, actual, new SnapshotHelpers.GeneralSnapshotComparator())
     }
-
 }
