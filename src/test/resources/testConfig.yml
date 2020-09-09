@@ -1,36 +1,42 @@
 inputFormat: xml
 context: testContext
 defaultChangeObjects:
-  - createView
+  - addForeignKey
+  - addNotNullConstraint
+  - addPrimaryKey
+  - addUniqueConstraint
+  - createIndex
   - createTable
+  - createView
   - renameTable
 databasesUnderTest:
   - name: postgresql
     username: lbuser
     password: LiquibasePass1
-# Missing or empty changeObjects means run all changeObjects from base dir
     databaseSpecificChangeObjects:
-      - createTable
-      - createView
-      - createIndex
-      - addUniqueConstraint
-      - addPrimaryKey
-      - addNotNullConstraint
       - addForeignKey
+      - addPrimaryKey
+      - addUniqueConstraint
+      - createSequence
+      - dropSequence
+      - datatypes
       - renameColumn
       - renameTable
+      - smallInt
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'
         versionSpecificChangeObjects:
           - addUniqueConstraint
           - addPrimaryKey
+          - datatypes9
       - version: 12
         url: 'jdbc:postgresql://localhost:5434/lbcat'
         versionSpecificChangeObjects:
         - createTable
         - createView
         - createIndex
+        - datatypes12
     dbSchema: public
 
   - name: mysql
@@ -38,13 +44,10 @@ databasesUnderTest:
     password: LiquibasePass1
     databaseSpecificChangeObjects:
       - renameTable
+      - renameColumn
     versions:
       - version: 5.7
         url: 'jdbc:mysql://localhost:33062/lbcat'
-        versionSpecificChangeObjects:
-          - renameColumn
       - version: 8
         url: 'jdbc:mysql://localhost:33061/lbcat'
-        versionSpecificChangeObjects:
-          - renameColumn
     dbSchema:

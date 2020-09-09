@@ -1,0 +1,23 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "smallint_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "test_id",
+            "type": {
+              "columnSize": "5\\!\\{java.lang.Integer\\}"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
