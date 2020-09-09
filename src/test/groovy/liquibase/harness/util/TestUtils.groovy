@@ -84,12 +84,11 @@ class TestUtils {
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : config.databasesUnderTest) {
             for (DatabaseVersion databaseVersion : databaseUnderTest.versions) {
-                Map<String, String> changeObjectsToChangeFileMap = mergeChangeObjects(
-                        databaseUnderTest.name,
-                        databaseVersion.version,
+                Map<String, String> changeObjectsToChangeFileMap = FileUtils.collectChangeObjects(
                         config.defaultChangeObjects,
                         databaseUnderTest.databaseSpecificChangeObjects,
-                        databaseVersion.versionSpecificChangeObjects,
+                        databaseUnderTest.name,
+                        databaseVersion.version,
                         config.inputFormat)
                 for (Map.Entry<String, String> entry : changeObjectsToChangeFileMap.entrySet()) {
                     inputList.add(TestInput.builder()
@@ -110,22 +109,12 @@ class TestUtils {
         return inputList
     }
 
-    static Map<String, String> mergeChangeObjects(String databaseName, String databaseVersion, List<String> defaultChangeObjects,
-                                                  List<String> databaseSpecificChangeObjects,
-                                                  List<String> versionSpecificChangeObjects, String inputFormat) {
-        Map<String, String> resultMap = new HashMap<>()
-        resultMap.putAll(FileUtils.getDefaultChangeObjects(defaultChangeObjects, inputFormat))
-        resultMap.putAll(FileUtils.getDatabaseSpecificChangeObjects(databaseSpecificChangeObjects, databaseName, inputFormat))
-        resultMap.putAll(FileUtils.getVersionSpecificChangeObjects(versionSpecificChangeObjects, databaseName, databaseVersion, inputFormat))
-        return resultMap
-    }
-
     static void validateAndSetInputFileFormat(TestConfig testConfig) {
         String inputFormat = System.getProperty("inputFormat")
         if (inputFormat && (!supportedChangeLogFormats.contains(inputFormat))) {
             throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
         }
         testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
-        logger.info("Only {} input files are taken into account for this test run", testConfig.inputFormat)
+        logger.warn("Only {} input files are taken into account for this test run", testConfig.inputFormat)
     }
 }

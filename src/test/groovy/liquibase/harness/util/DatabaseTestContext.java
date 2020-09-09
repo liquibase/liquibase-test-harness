@@ -18,8 +18,8 @@ public class DatabaseTestContext {
     public static final String ALT_SCHEMA = "LIQUIBASEB";
     private static final String TEST_DATABASES_PROPERTY = "test.databases";
     private static DatabaseTestContext instance = new DatabaseTestContext();
-    private Map<String, DatabaseConnection> connectionsByUrl = new HashMap<String, DatabaseConnection>();
-    private Map<String, Boolean> connectionsAttempted = new HashMap<String, Boolean>();
+    private Map<String, DatabaseConnection> connectionsByUrl = new HashMap<>();
+    private Map<String, Boolean> connectionsAttempted = new HashMap<>();
 
 
     public static DatabaseTestContext getInstance() {
