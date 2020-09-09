@@ -37,17 +37,28 @@ class FileUtils {
         return configFileYml.loadAs(new File(resourceBaseDir, fileName).newInputStream(), TestConfig.class)
     }
 
-    static Map<String, String> getDefaultChangeObjects(List<String> changeObjects, String inputFormat) {
-        return getChangeObjects(changeObjects, "changelogs/", inputFormat)
+    static Map<String, String> collectChangeObjects(List<String> changeObjects, List<String> dbSpecificChangeObjects, String databaseName, String dbVersion, String inputFormat) {
+        Map<String, String> map = getDatabaseSpecificChangeObjects(dbSpecificChangeObjects, databaseName, dbVersion, inputFormat)
+        if (!changeObjects && dbSpecificChangeObjects) {
+            return map
+            //if someone want to run just a few specific tests don't add all default, return only dbSpecific ones
+        }
+        map.putAll(getDefaultChangeObjects(changeObjects, inputFormat))
+        return map
     }
 
+    static Map<String, String> getDefaultChangeObjects(List<String> changeObjects, String inputFormat) {
+        return getChangeObjectsFromDir(changeObjects, "changelogs/", inputFormat)
+    }
 
-    static Map<String, String> getDatabaseSpecificChangeObjects(List<String> changeObjects, String databaseName, inputFormat) {
-        return getChangeObjects(changeObjects, "changelogs/" + databaseName, inputFormat)
+    static Map<String, String> getDatabaseSpecificChangeObjects(List<String> changeObjects, String databaseName, String dbVersion, String inputFormat) {
+        Map<String, String> mergedMap = getChangeObjectsFromDir(changeObjects, "changelogs/" + databaseName, inputFormat)
+        mergedMap.putAll(getVersionSpecificChangeObjects(changeObjects, databaseName, dbVersion, inputFormat) as Map)
+        return mergedMap
     }
 
     static Map<String, String> getVersionSpecificChangeObjects(List<String> changeObjects, String databaseName, String dbVersion, String inputFormat) {
-        return getChangeObjects(changeObjects, new StringBuilder("changelogs/")
+        return getChangeObjectsFromDir(changeObjects, new StringBuilder("changelogs/")
                 .append(databaseName)
                 .append("/")
                 .append(dbVersion)
@@ -55,17 +66,16 @@ class FileUtils {
                 inputFormat)
     }
 
-    static Map<String, String> getChangeObjects(List<String> changeObjects, String pathToDir, String inputFormat) {
-        Map<String, String> changeObjectsMap = new HashMap<>()
-        def dir = new File(resourceBaseDir + pathToDir)
-        for (String changeObject : changeObjects) {
+    static Map<String, String> getChangeObjectsFromDir(List<String> changeObjects, String pathToDir, String inputFormat) {
+        File dir = new File(resourceBaseDir + pathToDir)
+        Map<String, String> resultMap = new HashMap<>()
+        for(String changeObject : changeObjects){
             dir.eachFile(FileType.FILES) { file ->
-                if (file.name.matches(changeObject + "." + inputFormat)) {
-                    changeObjectsMap.put(changeObject, file.getPath())
+                if (file.name.endsWith((changeObject ?: "") + "." + inputFormat)) {
+                    resultMap.put(file.getName().substring(0, file.getName().lastIndexOf(".")), file.getPath())
                 }
             }
         }
-        return changeObjectsMap
+        return resultMap
     }
-
 }
