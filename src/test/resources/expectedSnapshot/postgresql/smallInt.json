@@ -13,7 +13,7 @@
           "column": {
             "name": "test_id",
             "type": {
-              "dataTypeId": "5\\!\\{java.lang.Integer\\}"
+              "columnSize": "5\\!\\{java.lang.Integer\\}"
             }
           }
         }
