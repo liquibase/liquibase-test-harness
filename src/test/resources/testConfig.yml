@@ -19,24 +19,19 @@ databasesUnderTest:
       - addUniqueConstraint
       - createSequence
       - dropSequence
-      - datatypes
+      - createTable
+      - createView
+      - createIndex
+      - datatypes9
+      - datatypes12
       - renameColumn
       - renameTable
       - smallInt
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'
-        versionSpecificChangeObjects:
-          - addUniqueConstraint
-          - addPrimaryKey
-          - datatypes9
       - version: 12
         url: 'jdbc:postgresql://localhost:5434/lbcat'
-        versionSpecificChangeObjects:
-        - createTable
-        - createView
-        - createIndex
-        - datatypes12
     dbSchema: public
 
   - name: mysql
