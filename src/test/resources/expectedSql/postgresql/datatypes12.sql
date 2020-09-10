@@ -1,0 +1,1 @@
+CREATE TABLE public.datatypes12_test_table (serial INTEGER, bigserial BIGINT)
