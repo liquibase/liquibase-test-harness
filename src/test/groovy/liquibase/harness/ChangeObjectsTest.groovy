@@ -42,7 +42,7 @@ class ChangeObjectsTest extends Specification {
 
         then:
         if(!testInput.pathToChangeLogFile.endsWith(".sql")){
-            expectedSqlList == generatedSql
+            assert expectedSqlList == generatedSql
         }
 
         when:
