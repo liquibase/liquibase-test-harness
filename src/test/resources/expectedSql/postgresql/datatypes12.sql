@@ -1,1 +1,1 @@
-CREATE TABLE public.datatypes12_test_table (serial INTEGER, bigserial BIGINT)
+CREATE TABLE public.datatypes12_test_table (serial SERIAL, bigserial BIGSERIAL)
