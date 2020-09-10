@@ -31,11 +31,6 @@
             
             <column name="real" type="real"/>
             <column name="double_precision" type="double precision"/>
-            <!--  moved to version specific files -->
-            <!-- column name="serial" type="serial"/-->
-            <!-- column name="bigserial" type="bigserial"/-->
-            <column name="serial" type="serial"/>
-            <column name="bigserial" type="bigserial"/>
 		<!-- MONETARY -->
 		
 <!-- 
