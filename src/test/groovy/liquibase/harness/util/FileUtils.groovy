@@ -54,32 +54,28 @@ class FileUtils {
         if(changeObjects){
             map.putAll(getDefaultChangeObjects(changeObjects, inputFormat))
         } else {
-            map.putAll(getAllChangeObjectsFromDir("changelogs/", inputFormat))
+            map.putAll(getAllChangeObjectsFromDir(Paths.get(resourceBaseDir, "changelogs"), inputFormat))
         }
         return map
     }
 
     static Map<String, String> getDefaultChangeObjects(List<String> changeObjects, String inputFormat) {
-        return getChangeObjectsFromDir(changeObjects, "changelogs/", inputFormat)
+        return getChangeObjectsFromDir(changeObjects, Paths.get(resourceBaseDir, "changelogs"), inputFormat)
     }
 
     static Map<String, String> getDatabaseSpecificChangeObjects(List<String> changeObjects, String databaseName, String dbVersion, String inputFormat) {
-        Map<String, String> mergedMap = getChangeObjectsFromDir(changeObjects, "changelogs/" + databaseName, inputFormat)
+        Map<String, String> mergedMap = getChangeObjectsFromDir(changeObjects, Paths.get(resourceBaseDir, "changelogs", databaseName), inputFormat)
         mergedMap.putAll(getVersionSpecificChangeObjects(changeObjects, databaseName, dbVersion, inputFormat) as Map)
         return mergedMap
     }
 
     static Map<String, String> getVersionSpecificChangeObjects(List<String> changeObjects, String databaseName, String dbVersion, String inputFormat) {
-        return getChangeObjectsFromDir(changeObjects, new StringBuilder("changelogs/")
-                .append(databaseName)
-                .append("/")
-                .append(dbVersion)
-                .toString(),
-                inputFormat)
+        return getChangeObjectsFromDir(changeObjects,
+                Paths.get(resourceBaseDir, "changelogs", databaseName, dbVersion), inputFormat)
     }
 
-    static Map<String, String> getAllChangeObjectsFromDir(String pathToDir, String inputFormat) {
-        File dir = new File(resourceBaseDir + pathToDir)
+    static Map<String, String> getAllChangeObjectsFromDir(Path pathToDir, String inputFormat) {
+        File dir = new File(pathToDir.toString()) //TODO fix this
         Map<String, String> resultMap = new HashMap<>()
             dir.eachFile(FileType.FILES) { file ->
                 if (file.name.endsWith("." + inputFormat)) {
@@ -89,8 +85,8 @@ class FileUtils {
         return resultMap
     }
 
-    static Map<String, String> getChangeObjectsFromDir(List<String> changeObjects, String pathToDir, String inputFormat) {
-        File dir = new File(resourceBaseDir + pathToDir)
+    static Map<String, String> getChangeObjectsFromDir(List<String> changeObjects, Path pathToDir, String inputFormat) {
+        File dir = new File(pathToDir.toString()) //TODO fix this
         Map<String, String> resultMap = new HashMap<>()
         for(String changeObject : changeObjects){
             dir.eachFile(FileType.FILES) { file ->
