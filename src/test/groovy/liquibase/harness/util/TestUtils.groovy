@@ -117,4 +117,20 @@ class TestUtils {
         testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
         logger.warn("Only {} input files are taken into account for this test run", testConfig.inputFormat)
     }
+
+    static void validateAndSetPropertiesFromCommandLine(TestConfig testConfig) {
+        String inputFormat = System.getProperty("inputFormat")
+        if (inputFormat && (!supportedChangeLogFormats.contains(inputFormat))) {
+            throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
+        }
+        testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
+        logger.warn("Only {} input files are taken into account for this test run", testConfig.inputFormat)
+
+        String changeObjects = System.getProperty("changeObjects")
+        if(changeObjects){
+            testConfig.defaultChangeObjects = Arrays.asList(changeObjects.split(","))
+            logger.info("running for next changeObject :{}", testConfig.defaultChangeObjects)
+        }
+
+    }
 }

@@ -3,23 +3,31 @@ package liquibase.harness.util
 import groovy.io.FileType
 import liquibase.harness.config.TestConfig
 import liquibase.harness.config.TestInput
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.yaml.snakeyaml.Yaml
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 class FileUtils {
+    static Logger logger = LoggerFactory.getLogger(FileUtils.class)
     static final String resourceBaseDir = "src/test/resources/"
 
     static String getFileContent(TestInput testInput, String expectedFolder, String fileExtension) {
+        Path databaseSpecificPath = Paths.get(resourceBaseDir, expectedFolder, testInput.databaseName,
+                testInput.changeObject+fileExtension)
+        Path versionSpecificPath = Paths.get(resourceBaseDir, expectedFolder, testInput.databaseName, testInput.version,
+                testInput.changeObject+fileExtension)
         try {
-            return new File(new StringBuilder(resourceBaseDir)
-                    .append(expectedFolder)
-                    .append("/")
-                    .append(testInput.databaseName)
-                    .append("/")
-                    .append(testInput.changeObject)
-                    .append(fileExtension)
-                    .toString()
-            ).getText("UTF-8")
+            if(Files.exists(versionSpecificPath)){
+                return Files.readString(versionSpecificPath)
+            } else {
+                return Files.readString(databaseSpecificPath)
+            }
         } catch (IOException e) {
+            logger.warn(e.getMessage())
             return null
         }
     }
@@ -43,7 +51,11 @@ class FileUtils {
             return map
             //if someone want to run just a few specific tests don't add all default, return only dbSpecific ones
         }
-        map.putAll(getDefaultChangeObjects(changeObjects, inputFormat))
+        if(changeObjects){
+            map.putAll(getDefaultChangeObjects(changeObjects, inputFormat))
+        } else {
+            map.putAll(getAllChangeObjectsFromDir("changelogs/", inputFormat))
+        }
         return map
     }
 
@@ -64,6 +76,17 @@ class FileUtils {
                 .append(dbVersion)
                 .toString(),
                 inputFormat)
+    }
+
+    static Map<String, String> getAllChangeObjectsFromDir(String pathToDir, String inputFormat) {
+        File dir = new File(resourceBaseDir + pathToDir)
+        Map<String, String> resultMap = new HashMap<>()
+            dir.eachFile(FileType.FILES) { file ->
+                if (file.name.endsWith("." + inputFormat)) {
+                    resultMap.put(file.getName().substring(0, file.getName().lastIndexOf(".")), file.getPath())
+                }
+            }
+        return resultMap
     }
 
     static Map<String, String> getChangeObjectsFromDir(List<String> changeObjects, String pathToDir, String inputFormat) {
