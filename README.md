@@ -54,6 +54,10 @@ When you are done with test execution, run `docker-compose down --volumes` to st
 gracefully and to allow the tests to start from a clean slate on the next run.
 
 ## Running from cmd
-Execute `mvn integration-test -DinputFormat=xml` or other inputFormat among listed in [Types of input files](#types-of-input-files)
-
+Execute `mvn integration-test` with next flags 
+* `-DinputFormat=xml` or other inputFormat among listed in [Types of input files](#types-of-input-files)
+* `-DchangeObjects=createTable,dropTable` flag allows to override changeObjects configured in testConfig.yml. Comma
+ separated list is expected.
+* `-DdbName=mysql` overrides database to be used in this run. Single value property as for now.
+* `-DdbVersion` overrides database version to be used in this run, works only in conjunction with `dbName` flag
 #### Stay tuned, is more to come!

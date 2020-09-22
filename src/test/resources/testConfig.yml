@@ -11,24 +11,26 @@ defaultChangeObjects:
   - renameTable
   - renameView
   - renameColumn
+  - dropTable
 databasesUnderTest:
   - name: postgresql
     username: lbuser
     password: LiquibasePass1
     databaseSpecificChangeObjects:
-#      - addForeignKey
-#      - addPrimaryKey
-#      - addUniqueConstraint
-#      - createSequence
-#      - dropSequence
-#      - renameSequence
-#      - createTable
-#      - createView
-#      - createIndex
-#      - datatypes9
-#      - datatypes12
-#      - renameTable
-#      - smallInt
+      - addForeignKey
+      - addPrimaryKey
+      - addUniqueConstraint
+      - createSequence
+      - dropSequence
+      - renameSequence
+      - createTable
+      - createView
+      - createIndex
+      - datatypes
+      - datatypes9
+      - datatypes12
+      - renameTable
+      - smallInt
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'
@@ -40,8 +42,8 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
     databaseSpecificChangeObjects:
-#      - renameTable
-#      - renameColumn
+      - renameTable
+      - renameColumn
     versions:
       - version: 5.7
         url: 'jdbc:mysql://localhost:33062/lbcat'

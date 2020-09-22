@@ -14,6 +14,8 @@ import liquibase.sqlgenerator.SqlGeneratorFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.util.stream.Collectors
+
 class TestUtils {
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
     static Logger logger = LoggerFactory.getLogger(TestUtils.class)
@@ -109,28 +111,35 @@ class TestUtils {
         return inputList
     }
 
-    static void validateAndSetInputFileFormat(TestConfig testConfig) {
-        String inputFormat = System.getProperty("inputFormat")
-        if (inputFormat && (!supportedChangeLogFormats.contains(inputFormat))) {
-            throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
-        }
-        testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
-        logger.warn("Only {} input files are taken into account for this test run", testConfig.inputFormat)
-    }
-
     static void validateAndSetPropertiesFromCommandLine(TestConfig testConfig) {
         String inputFormat = System.getProperty("inputFormat")
+        String changeObjects = System.getProperty("changeObjects")
+        String dbName = System.getProperty("dbName")
+        String dbVersion = System.getProperty("dbVersion")
         if (inputFormat && (!supportedChangeLogFormats.contains(inputFormat))) {
             throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
         }
         testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
         logger.warn("Only {} input files are taken into account for this test run", testConfig.inputFormat)
 
-        String changeObjects = System.getProperty("changeObjects")
-        if(changeObjects){
+        if (changeObjects) {
             testConfig.defaultChangeObjects = Arrays.asList(changeObjects.split(","))
-            logger.info("running for next changeObject :{}", testConfig.defaultChangeObjects)
+            //in case user provided changeObjects in cmd run only them regardless of config file
+            testConfig.databasesUnderTest.forEach(db -> db.databaseSpecificChangeObjects = null)
+            logger.info("running for next changeObjects :{}", testConfig.defaultChangeObjects)
         }
-
+        if (dbName) {
+            testConfig.databasesUnderTest = testConfig.databasesUnderTest.stream()
+                    .filter(database -> database.name.equalsIgnoreCase(dbName))
+                    .collect(Collectors.toList())
+            //TODO try improve this
+            if (dbVersion)
+                for (DatabaseUnderTest databaseUnderTest : testConfig.databasesUnderTest) {
+                    databaseUnderTest.versions = databaseUnderTest.versions.stream()
+                            .filter(version -> version.version.equalsIgnoreCase(dbVersion))
+                            .collect(Collectors.toList())
+                }
+        }
+        logger.info(testConfig.toString())
     }
 }
