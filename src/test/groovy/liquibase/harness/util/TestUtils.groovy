@@ -14,6 +14,7 @@ import liquibase.sqlgenerator.SqlGeneratorFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.util.function.Function
 import java.util.stream.Collectors
 
 class TestUtils {
@@ -129,15 +130,20 @@ class TestUtils {
             logger.info("running for next changeObjects :{}", testConfig.defaultChangeObjects)
         }
         if (dbName) {
+            //TODO try improve this, add logging
             testConfig.databasesUnderTest = testConfig.databasesUnderTest.stream()
                     .filter(database -> database.name.equalsIgnoreCase(dbName))
-                    .collect(Collectors.toList())
-            //TODO try improve this
+            .findAny()
+            .map(database -> Collections.singletonList(database))
+            .orElse(testConfig.databasesUnderTest)
+
             if (dbVersion)
                 for (DatabaseUnderTest databaseUnderTest : testConfig.databasesUnderTest) {
                     databaseUnderTest.versions = databaseUnderTest.versions.stream()
                             .filter(version -> version.version.equalsIgnoreCase(dbVersion))
-                            .collect(Collectors.toList())
+                    .findAny()
+                    .map(version -> Collections.singletonList(version))
+                            .orElse(databaseUnderTest.versions)
                 }
         }
         logger.info(testConfig.toString())
