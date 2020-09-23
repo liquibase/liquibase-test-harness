@@ -10,11 +10,9 @@
                 dataType="int"
                 incrementBy="1"
                 minValue="1"
-                schemaName="public"
                 sequenceName="test_sequence"
                 startValue="1"/>
-        <dropSequence schemaName="public"
-                      sequenceName="test_sequence"/>
+        <dropSequence sequenceName="test_sequence"/>
         <rollback/>
     </changeSet>
 </databaseChangeLog>

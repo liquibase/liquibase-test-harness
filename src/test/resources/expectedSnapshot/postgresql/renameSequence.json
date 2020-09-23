@@ -1,0 +1,19 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Sequence": [
+        {
+          "sequence": {
+            "dataType": "integer",
+            "incrementBy": "1.*",
+            "maxValue": "2147483647.*",
+            "minValue": "1.*",
+            "name": "test_sequence_rename_test",
+            "startValue": "1.*",
+            "willCycle": false
+          }
+        }
+      ]
+    }
+  }
+}

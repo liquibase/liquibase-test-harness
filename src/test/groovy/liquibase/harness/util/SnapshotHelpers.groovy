@@ -62,27 +62,57 @@ class SnapshotHelpers {
         }
 
         @Override
-        protected void checkJsonObjectKeysExpectedInActual(String prefix, JSONObject expected, JSONObject actual, JSONCompareResult result) throws JSONException {
+        protected void checkJsonObjectKeysExpectedInActual(String prefix, JSONObject expected, JSONObject actual,
+                                                           JSONCompareResult result) throws JSONException {
             Set<String> expectedKeys = getKeys(expected)
             if (expected.has("_noMatch")) {
                 expectedKeys.remove("_noMatch")
+                expected.remove("_noMatch")
                 for (String key : expectedKeys) {
                     if (actual.has(key)) {
-                        result.fail(prefix, expected, actual)
+                        if (actual instanceof JSONObject) {
+                            checkArrayContainsObject(expected.getJSONArray(key), actual.getJSONArray
+                                    (key)) ? result.fail(prefix, expected, actual) : result.passed()
+                        } else {
+                            result.fail(prefix, expected, actual)
+                        }
                     } else {
                         result.passed()
                         return
                     }
                 }
-            }
-            for (String key : expectedKeys) {
-                Object expectedValue = expected.get(key)
-                if (actual.has(key)) {
-                    Object actualValue = actual.get(key)
-                    compareValues(qualify(prefix, key), expectedValue, actualValue, result)
-                } else {
-                    result.missing(prefix, key)
+            } else {
+                for (String key : expectedKeys) {
+                    Object expectedValue = expected.get(key)
+                    if (actual.has(key)) {
+                        Object actualValue = actual.get(key)
+                        compareValues(qualify(prefix, key), expectedValue, actualValue, result)
+                    } else {
+                        result.missing(prefix, key)
+                    }
                 }
+            }
+        }
+        private static boolean checkArrayContainsObject(JSONArray expected, JSONArray actual){
+            JSONObject expectedOuter = expected.get(0)
+
+            Iterator iterator = expectedOuter.keys()
+            while(iterator.hasNext()){
+               String expectedArrayName = iterator.next()
+                JSONObject innerOne = expectedOuter.get(expectedArrayName)
+                String expectedPropertyName = innerOne.names().get(0)
+                String expectedPropertyValue = innerOne.get(innerOne.names().get(0))
+                boolean found = false
+                for(int i=0;i<actual.length();i++){
+                    JSONObject actualObjectOuter = actual.get(i)
+                    JSONObject actualArray = actualObjectOuter.get(expectedArrayName)
+                    String actualPropertyValue = actualArray.get(expectedPropertyName)
+                    if(actualPropertyValue.equals(expectedPropertyValue)){
+                        found=true
+                        break
+                    }
+                }
+            return found
             }
         }
     }

@@ -1,5 +1,7 @@
-package liquibase.harness.config;
+package liquibase.harness.config
 
+import groovy.transform.ToString;
+@ToString
 class TestConfig {
     String inputFormat
     String context

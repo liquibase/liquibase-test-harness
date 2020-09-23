@@ -14,6 +14,9 @@ import liquibase.sqlgenerator.SqlGeneratorFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.util.function.Function
+import java.util.stream.Collectors
+
 class TestUtils {
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
     static Logger logger = LoggerFactory.getLogger(TestUtils.class)
@@ -109,12 +112,40 @@ class TestUtils {
         return inputList
     }
 
-    static void validateAndSetInputFileFormat(TestConfig testConfig) {
+    static void validateAndSetPropertiesFromCommandLine(TestConfig testConfig) {
         String inputFormat = System.getProperty("inputFormat")
+        String changeObjects = System.getProperty("changeObjects")
+        String dbName = System.getProperty("dbName")
+        String dbVersion = System.getProperty("dbVersion")
         if (inputFormat && (!supportedChangeLogFormats.contains(inputFormat))) {
             throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
         }
         testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
         logger.warn("Only {} input files are taken into account for this test run", testConfig.inputFormat)
+
+        if (changeObjects) {
+            testConfig.defaultChangeObjects = Arrays.asList(changeObjects.split(","))
+            //in case user provided changeObjects in cmd run only them regardless of config file
+            testConfig.databasesUnderTest.forEach(db -> db.databaseSpecificChangeObjects = null)
+            logger.info("running for next changeObjects :{}", testConfig.defaultChangeObjects)
+        }
+        if (dbName) {
+            //TODO try improve this, add logging
+            testConfig.databasesUnderTest = testConfig.databasesUnderTest.stream()
+                    .filter(database -> database.name.equalsIgnoreCase(dbName))
+            .findAny()
+            .map(database -> Collections.singletonList(database))
+            .orElse(testConfig.databasesUnderTest)
+
+            if (dbVersion)
+                for (DatabaseUnderTest databaseUnderTest : testConfig.databasesUnderTest) {
+                    databaseUnderTest.versions = databaseUnderTest.versions.stream()
+                            .filter(version -> version.version.equalsIgnoreCase(dbVersion))
+                    .findAny()
+                    .map(version -> Collections.singletonList(version))
+                            .orElse(databaseUnderTest.versions)
+                }
+        }
+        logger.info(testConfig.toString())
     }
 }

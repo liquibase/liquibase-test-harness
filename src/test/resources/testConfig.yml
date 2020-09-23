@@ -9,6 +9,9 @@ defaultChangeObjects:
   - createTable
   - createView
   - renameTable
+  - renameView
+  - renameColumn
+  - dropTable
 databasesUnderTest:
   - name: postgresql
     username: lbuser
@@ -19,12 +22,13 @@ databasesUnderTest:
       - addUniqueConstraint
       - createSequence
       - dropSequence
+      - renameSequence
       - createTable
       - createView
       - createIndex
+      - datatypes
       - datatypes9
       - datatypes12
-      - renameColumn
       - renameTable
       - smallInt
     versions:
