@@ -12,5 +12,11 @@
                         schemaName="public"
                         sequenceName="test_sequence"
                         startValue="1"/>
+        <renameSequence  newSequenceName="test_sequence_rename_test"
+                         oldSequenceName="test_sequence"
+                         schemaName="public"/>
+        <rollback>
+            <dropSequence sequenceName="test_sequence_rename_test"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

@@ -23,7 +23,7 @@ class ChangeObjectsTest extends Specification {
 
     def setupSpec() {
         config = FileUtils.readYamlConfig("testConfig.yml")
-        TestUtils.validateAndSetInputFileFormat(config)
+        TestUtils.validateAndSetPropertiesFromCommandLine(config)
     }
 
     @Unroll
