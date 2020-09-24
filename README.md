@@ -49,10 +49,6 @@ Wait until the databases start up.
 3) Open `src/test/groovy/liquibase/harness/ChangeObjectsTest.groovy` in your IDE of choice 
 and run the test class `ChangeObjectsTest.groovy`
 
-## Cleanup
-When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
-gracefully and to allow the tests to start from a clean slate on the next run.
-
 ## Running from the cmd line with Maven
 Execute `mvn integration-test` with the flags outlined below:
 * `-DinputFormat=xml` or select from the other inputFormats listed in [Types of input files](#types-of-input-files)
@@ -60,4 +56,9 @@ Execute `mvn integration-test` with the flags outlined below:
  separated lists.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
 * `-DdbVersion` overrides the database version. This works only in conjunction with `DdbName` flag
+
+## Cleanup
+When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
+gracefully and to allow the tests to start from a clean slate on the next run.
+
 #### Stay tuned, is more to come!
