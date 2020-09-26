@@ -12,6 +12,11 @@ defaultChangeObjects:
   - renameView
   - renameColumn
   - dropTable
+  - dropView
+  - dropIndex
+  - addDefaultValue
+  - addDefaultValueComputed
+#  - dropDefaultValue not working for mysql yet
 databasesUnderTest:
   - name: postgresql
     username: lbuser
@@ -31,6 +36,7 @@ databasesUnderTest:
       - datatypes12
       - renameTable
       - smallInt
+      - dropDefaultValue
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'

@@ -93,26 +93,27 @@ class SnapshotHelpers {
                 }
             }
         }
-        private static boolean checkArrayContainsObject(JSONArray expected, JSONArray actual){
+
+        private static boolean checkArrayContainsObject(JSONArray expected, JSONArray actual) {
             JSONObject expectedOuter = expected.get(0)
 
             Iterator iterator = expectedOuter.keys()
-            while(iterator.hasNext()){
-               String expectedArrayName = iterator.next()
+            while (iterator.hasNext()) {
+                String expectedArrayName = iterator.next()
                 JSONObject innerOne = expectedOuter.get(expectedArrayName)
                 String expectedPropertyName = innerOne.names().get(0)
                 String expectedPropertyValue = innerOne.get(innerOne.names().get(0))
                 boolean found = false
-                for(int i=0;i<actual.length();i++){
+                for (int i = 0; i < actual.length(); i++) {
                     JSONObject actualObjectOuter = actual.get(i)
                     JSONObject actualArray = actualObjectOuter.get(expectedArrayName)
                     String actualPropertyValue = actualArray.get(expectedPropertyName)
-                    if(actualPropertyValue.equals(expectedPropertyValue)){
-                        found=true
+                    if (actualPropertyValue.equals(expectedPropertyValue)) {
+                        found = true
                         break
                     }
                 }
-            return found
+                return found
             }
         }
     }
