@@ -16,6 +16,7 @@ defaultChangeObjects:
   - dropIndex
   - addDefaultValue
   - addDefaultValueComputed
+  - addColumn
 #  - dropDefaultValue not working for mysql yet
 databasesUnderTest:
   - name: postgresql
