@@ -1,0 +1,1 @@
+CREATE TABLE public."createTableDataTypeText" ("textCol" TEXT)
