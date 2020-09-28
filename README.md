@@ -50,7 +50,7 @@ Wait until the databases start up.
 and run the test class `ChangeObjectsTest.groovy`
 
 ## Running from the cmd line with Maven
-Execute `mvn integration-test` with the flags outlined below:
+Execute `mvn failsafe:integration-test` with the flags outlined below:
 * `-DinputFormat=xml` or select from the other inputFormats listed in [Types of input files](#types-of-input-files)
 * `-DchangeObjects=createTable,dropTable` flag allows you to override changeObjects configured in testConfig.yml. Use comma
  separated lists.

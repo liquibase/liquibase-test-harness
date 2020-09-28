@@ -17,6 +17,8 @@ defaultChangeObjects:
   - addDefaultValue
   - addDefaultValueComputed
   - addColumn
+  - sql
+  - createTableDataTypeText
 #  - dropDefaultValue not working for mysql yet
 databasesUnderTest:
   - name: postgresql
