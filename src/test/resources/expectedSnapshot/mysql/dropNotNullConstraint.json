@@ -4,8 +4,11 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "title",
-            "defaultValue": "title_test"
+            "name": "inserted_date",
+            "nullable": true,
+            "type": {
+              "typeName": "date"
+            }
           }
         }
       ]
