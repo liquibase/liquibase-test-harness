@@ -5,39 +5,35 @@ defaultChangeObjects:
   - addNotNullConstraint
   - addPrimaryKey
   - addUniqueConstraint
+  - addDefaultValue
+  - addDefaultValueComputed
+  - addColumn
   - createIndex
   - createTable
   - createView
+  - createTableDataTypeText
   - renameTable
   - renameView
   - renameColumn
   - dropTable
   - dropView
   - dropIndex
-  - addDefaultValue
-  - addDefaultValueComputed
-  - addColumn
+  - dropForeignKey
+  - dropNotNullConstraint
+  - dropPrimaryKey
+  - dropUniqueConstraint
   - sql
-  - createTableDataTypeText
-#  - dropDefaultValue not working for mysql yet
 databasesUnderTest:
   - name: postgresql
     username: lbuser
     password: LiquibasePass1
     databaseSpecificChangeObjects:
-      - addForeignKey
-      - addPrimaryKey
-      - addUniqueConstraint
       - createSequence
       - dropSequence
       - renameSequence
-      - createTable
-      - createView
-      - createIndex
       - datatypes
       - datatypes9
       - datatypes12
-      - renameTable
       - smallInt
       - dropDefaultValue
     versions:

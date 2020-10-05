@@ -8,7 +8,7 @@
     <changeSet author="oleh" id="1">
         <addForeignKeyConstraint  baseColumnNames="author_id"
                                   baseTableName="posts"
-                                  constraintName="fk_posts_authors"
+                                  constraintName="fk_posts_authors_test"
                                   onDelete="CASCADE"
                                   onUpdate="RESTRICT"
                                   referencedColumnNames="id"
