@@ -1,1 +1,1 @@
-CREATE TABLE public.datatypes_test_table (smallint SMALLINT, integer INTEGER, bigint BIGINT, decimal1 DECIMAL(1), decimal10 DECIMAL(10), decimal100 DECIMAL(100), decimal1000 DECIMAL(1000), numeric1 numeric(1), numeric10 numeric(10), numeric100 numeric(100), numeric1000 numeric(1000), real REAL, double_precision DOUBLE PRECISION)
+CREATE TABLE public."datatypes.bitstring_test_table" (bit1 BIT(1), bit_varying1 BIT VARYING(1), bit10 BIT(10), bit_varying10 BIT VARYING(10), bit100 BIT(100), bit_varying100 BIT VARYING(100), bit1000 BIT(1000), bit_varying1000 BIT VARYING(1000))

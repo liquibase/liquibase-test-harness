@@ -12,7 +12,9 @@
             <column name="cidr" type="cidr" />
             <column name="inet" type="inet" />
             <column name="macaddr" type="macaddr" />
+            <!-- moved to datatypes12
             <column name="macaddr8" type="macaddr8" />
+            -->
 
         </createTable>
     </changeSet>
