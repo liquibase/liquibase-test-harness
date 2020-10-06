@@ -32,9 +32,9 @@ To change it to another format, like 'sql' for instance, specify `-DinputFormat=
   - The framework tries to rollback changes after deploying them to DB. If liquibase knows how to do a rollback for that particular changeset, it will automatically do that.
 If not, you will need to provide the rollback by yourself. To learn more about rollbacks read [Rolling back changesets](https://docs.liquibase.com/workflows/liquibase-community/using-rollback.html) article.
 2) Go to `src/test/resources/expectedSQL` and add the expected generated SQL. 
-You will need to add this under the database specific folder. Currently, we only have Postgresql & MySQL folders. 
-NOTE: If your changeset will generate multiple SQL statements, you should add each SQL statement as a separate line. (See `renameTable.sql` in the postgres folder for an example.)
-If you would like to test another DB type, please add the requisite folder.
+ - You will need to add this under the database specific folder. Currently, we only have Postgresql & MySQL folders. 
+ - NOTE: If your changeset will generate multiple SQL statements, you should add each SQL statement as a separate line. (See `renameTable.sql` in the postgres folder for an example.)
+ - If you would like to test another DB type, please add the requisite folder.
 3) Go to `src/test/resources/expectedSnapshot` and add the expected DB Snapshot results.
   - To verify the absence of an object in a snapshot (such as with drop* commands) add `"_noMatch": true,` to that tree level where the missing object should be verified.
   See [dropSequence.json](src/test/resources/expectedSnapshot/postgresql/dropSequence.json) as an example.
