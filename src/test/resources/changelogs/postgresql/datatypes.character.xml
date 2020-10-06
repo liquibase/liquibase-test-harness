@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="r2">
+        <createTable tableName="datatypes_test_table">
+            <!-- https://www.postgresql.org/docs/12/datatype.html -->
+        
+            <!-- NUMERIC -->
+            <!-- https://www.postgresql.org/docs/12/datatype-numeric.html  -->
+            <column name="smallint" type="smallint"/>
+            <column name="integer" type="integer"/>
+            <column name="bigint" type="bigint"/>
+
+            <!-- variable -->
+            <column name="decimal1" type="decimal(1)"/>
+            <column name="decimal10" type="decimal(10)"/>
+            <column name="decimal100" type="decimal(100)"/>
+            <column name="decimal1000" type="decimal(1000)"/>
+            <!-- variable -->
+            <column name="numeric1" type="numeric(1)"/>
+            <column name="numeric10" type="numeric(10)"/>
+            <column name="numeric100" type="numeric(100)"/>
+            <column name="numeric1000" type="numeric(1000)"/>
+            
+            <column name="real" type="real"/>
+            <column name="double_precision" type="double precision"/>
+
+		    <!-- CHARACTER TYPES -->
+		    <!-- https://www.postgresql.org/docs/12/datatype-character.html -->
+
+            <!-- variable -->
+            <column name="character_varying1" type="character varying(1)"/>
+            <column name="character_varying10" type="character varying(10)"/>
+            <column name="character_varying100" type="character varying(100)"/>
+            <column name="character_varying1000" type="character varying(1000)"/>
+            <!-- variable -->
+            <column name="varchar1" type="varchar(1)"/>
+            <column name="varchar10" type="varchar(10)"/>
+            <column name="varchar100" type="varchar(100)"/>
+            <column name="varchar1000" type="varchar(1000)"/>
+            <!-- variable -->
+            <column name="character1" type="character(1)"/>
+            <column name="character10" type="character(10)"/>
+            <column name="character100" type="character(100)"/>
+            <column name="character1000" type="character(1000)"/>
+            <!-- variable -->
+            <column name="char1" type="char(1)"/>
+            <column name="char10" type="char(10)"/>
+            <column name="char100" type="char(100)"/>
+            <column name="char1000" type="char(1000)"/>
+
+            <column name="text" type="text"/>
+
+    		<!-- BINARY -->
+            <!-- https://www.postgresql.org/docs/12/datatype-binary.html -->
+            <column name="bytea" type="bytea"/>
+
+            <!-- DATE/TIME -->
+            <!-- https://www.postgresql.org/docs/12/datatype-datetime.html -->
+
+            <!-- VARIABLE -->
+            <column name="timestamp" type="timestamp "/>
+            <column name="timestampewtz" type="timestamp with time zone"/>
+            <column name="timestamp0" type="timestamp [ 0 ]"/>
+            <column name="timestampe0wtz" type="timestamp [ 0 ] with time zone"/>
+            <column name="timestamp1" type="timestamp [ 1 ]"/>
+            <column name="timestamp1wtz" type="timestamp [ 1 ] with time zone"/>
+            <column name="timestamp2" type="timestamp [ 2 ]"/>
+            <column name="timestamp2wtz" type="timestamp [ 2 ] with time zone"/>
+            <column name="timestamp3" type="timestamp [ 3 ]"/>
+            <column name="timestamp3wtz" type="timestamp [ 3 ] with time zone"/>
+            <column name="timestamp4" type="timestamp [ 4 ]"/>
+            <column name="timestamp4wtz" type="timestamp [ 4 ] with time zone"/>
+            <column name="timestamp5" type="timestamp [ 5 ]"/>
+            <column name="timestamp5wtz" type="timestamp [ 5 ] with time zone"/>
+            <column name="timestamp6" type="timestamp [ 6 ]"/>
+            <column name="timestamp6wtz" type="timestamp [ 6 ] with time zone"/>
+            
+            <column name="date" type="date"/>
+
+            <!-- VARIABLE -->
+            <column name="time" type="time"/>
+            <column name="timeewtz" type="time with time zone"/>
+            <column name="time0" type="time [ 0 ]"/>
+            <column name="timee0wtz" type="time [ 0 ] with time zone"/>
+            <column name="time1" type="time [ 1 ]"/>
+            <column name="time1wtz" type="time [ 1 ] with time zone"/>
+            <column name="time2" type="time [ 2 ]"/>
+            <column name="time2wtz" type="time [ 2 ] with time zone"/>
+            <column name="time3" type="time [ 3 ]"/>
+            <column name="time3wtz" type="time [ 3 ] with time zone"/>
+            <column name="time4" type="time [ 4 ]"/>
+            <column name="time4wtz" type="time [ 4 ] with time zone"/>
+            <column name="time5" type="time [ 5 ]"/>
+            <column name="time5wtz" type="time [ 5 ] with time zone"/>
+            <column name="time6" type="time [ 6 ]"/>
+            <column name="time6wtz" type="time [ 6 ] with time zone"/>
+
+            <!-- VARIABLE WITH FIELD AND P -->
+            <column name="interval_year" type="interval [ YEAR ]" />
+            <column name="interval_month" type="interval [ MONTH ]" />
+            <column name="interval_day" type="interval [ DAY ]" />
+            <column name="interval_hour" type="interval [ HOUR ]" />
+            <column name="interval_minute" type="interval [ MINUTE ]" />
+            <column name="interval_second" type="interval [ SECOND ]" />
+            <column name="interval_y2m" type="interval [ YEAR TO MONTH ]" />
+            <column name="interval_d2h" type="interval [ DAY TO HOUR ]" />
+            <column name="interval_d2m" type="interval [ DAY TO MINUTE ]" />
+            <column name="interval_d2s" type="interval [ DAY TO SECOND ]" />
+            <column name="interval_h2m" type="interval [ HOUR TO MINUTE ]" />
+            <column name="interval_h2s" type="interval [ HOUR TO SECOND ]" />
+            <column name="interval_m2s" type="interval [ MINUTE TO SECOND ]" />
+
+            <column name="interval_year0" type="interval [ YEAR ] [ 0 ]" />
+            <column name="interval_month0" type="interval [ MONTH ] [ 0 ]" />
+            <column name="interval_day0" type="interval [ DAY ] [ 0 ]" />
+            <column name="interval_hour0" type="interval [ HOUR ] [ 0 ]" />
+            <column name="interval_minute0" type="interval [ MINUTE ] [ 0 ]" />
+            <column name="interval_second0" type="interval [ SECOND ] [ 0 ]" />
+            <column name="interval_y2m0" type="interval [ YEAR TO MONTH ] [ 0 ]" />
+            <column name="interval_d2h0" type="interval [ DAY TO HOUR ] [ 0 ]" />
+            <column name="interval_d2m0" type="interval [ DAY TO MINUTE ] [ 0 ]" />
+            <column name="interval_d2s0" type="interval [ DAY TO SECOND ] [ 0 ]" />
+            <column name="interval_h2m0" type="interval [ HOUR TO MINUTE ] [ 0 ]" />
+            <column name="interval_h2s0" type="interval [ HOUR TO SECOND ] [ 0 ]" />
+            <column name="interval_m2s0" type="interval [ MINUTE TO SECOND ] [ 0 ]" />
+
+            <column name="interval_year1" type="interval [ YEAR ] [ 1 ]" />
+            <column name="interval_month1" type="interval [ MONTH ] [ 1 ]" />
+            <column name="interval_day1" type="interval [ DAY ] [ 1 ]" />
+            <column name="interval_hour1" type="interval [ HOUR ] [ 1 ]" />
+            <column name="interval_minute1" type="interval [ MINUTE ] [ 1 ]" />
+            <column name="interval_second1" type="interval [ SECOND ] [ 1 ]" />
+            <column name="interval_y2m1" type="interval [ YEAR TO MONTH ] [ 1 ]" />
+            <column name="interval_d2h1" type="interval [ DAY TO HOUR ] [ 1 ]" />
+            <column name="interval_d2m1" type="interval [ DAY TO MINUTE ] [ 1 ]" />
+            <column name="interval_d2s1" type="interval [ DAY TO SECOND ] [ 1 ]" />
+            <column name="interval_h2m1" type="interval [ HOUR TO MINUTE ] [ 1 ]" />
+            <column name="interval_h2s1" type="interval [ HOUR TO SECOND ] [ 1 ]" />
+            <column name="interval_m2s1" type="interval [ MINUTE TO SECOND ] [ 1 ]" />
+
+            <column name="interval_year2" type="interval [ YEAR ] [ 2 ]" />
+            <column name="interval_month2" type="interval [ MONTH ] [ 2 ]" />
+            <column name="interval_day2" type="interval [ DAY ] [ 2 ]" />
+            <column name="interval_hour2" type="interval [ HOUR ] [ 2 ]" />
+            <column name="interval_minute2" type="interval [ MINUTE ] [ 2 ]" />
+            <column name="interval_second2" type="interval [ SECOND ] [ 2 ]" />
+            <column name="interval_y2m2" type="interval [ YEAR TO MONTH ] [ 2 ]" />
+            <column name="interval_d2h2" type="interval [ DAY TO HOUR ] [ 2 ]" />
+            <column name="interval_d2m2" type="interval [ DAY TO MINUTE ] [ 2 ]" />
+            <column name="interval_d2s2" type="interval [ DAY TO SECOND ] [ 2 ]" />
+            <column name="interval_h2m2" type="interval [ HOUR TO MINUTE ] [ 2 ]" />
+            <column name="interval_h2s2" type="interval [ HOUR TO SECOND ] [ 2 ]" />
+            <column name="interval_m2s2" type="interval [ MINUTE TO SECOND ] [ 2 ]" />
+
+            <column name="interval_year3" type="interval [ YEAR ] [ 3 ]" />
+            <column name="interval_month3" type="interval [ MONTH ] [ 3 ]" />
+            <column name="interval_day3" type="interval [ DAY ] [ 3 ]" />
+            <column name="interval_hour3" type="interval [ HOUR ] [ 3 ]" />
+            <column name="interval_minute3" type="interval [ MINUTE ] [ 3 ]" />
+            <column name="interval_second3" type="interval [ SECOND ] [ 3 ]" />
+            <column name="interval_y2m3" type="interval [ YEAR TO MONTH ] [ 3 ]" />
+            <column name="interval_d2h3" type="interval [ DAY TO HOUR ] [ 3 ]" />
+            <column name="interval_d2m3" type="interval [ DAY TO MINUTE ] [ 3 ]" />
+            <column name="interval_d2s3" type="interval [ DAY TO SECOND ] [ 3 ]" />
+            <column name="interval_h2m3" type="interval [ HOUR TO MINUTE ] [ 3 ]" />
+            <column name="interval_h2s3" type="interval [ HOUR TO SECOND ] [ 3 ]" />
+            <column name="interval_m2s3" type="interval [ MINUTE TO SECOND ] [ 3 ]" />
+
+            <column name="interval_year4" type="interval [ YEAR ] [ 4 ]" />
+            <column name="interval_month4" type="interval [ MONTH ] [ 4 ]" />
+            <column name="interval_day4" type="interval [ DAY ] [ 4 ]" />
+            <column name="interval_hour4" type="interval [ HOUR ] [ 4 ]" />
+            <column name="interval_minute4" type="interval [ MINUTE ] [ 4 ]" />
+            <column name="interval_second4" type="interval [ SECOND ] [ 4 ]" />
+            <column name="interval_y2m4" type="interval [ YEAR TO MONTH ] [ 4 ]" />
+            <column name="interval_d2h4" type="interval [ DAY TO HOUR ] [ 4 ]" />
+            <column name="interval_d2m4" type="interval [ DAY TO MINUTE ] [ 4 ]" />
+            <column name="interval_d2s4" type="interval [ DAY TO SECOND ] [ 4 ]" />
+            <column name="interval_h2m4" type="interval [ HOUR TO MINUTE ] [ 4 ]" />
+            <column name="interval_h2s4" type="interval [ HOUR TO SECOND ] [ 4 ]" />
+            <column name="interval_m2s4" type="interval [ MINUTE TO SECOND ] [ 4 ]" />
+
+            <column name="interval_year5" type="interval [ YEAR ] [ 5 ]" />
+            <column name="interval_month5" type="interval [ MONTH ] [ 5 ]" />
+            <column name="interval_day5" type="interval [ DAY ] [ 5 ]" />
+            <column name="interval_hour5" type="interval [ HOUR ] [ 5 ]" />
+            <column name="interval_minute5" type="interval [ MINUTE ] [ 5 ]" />
+            <column name="interval_second5" type="interval [ SECOND ] [ 5 ]" />
+            <column name="interval_y2m5" type="interval [ YEAR TO MONTH ] [ 5 ]" />
+            <column name="interval_d2h5" type="interval [ DAY TO HOUR ] [ 5 ]" />
+            <column name="interval_d2m5" type="interval [ DAY TO MINUTE ] [ 5 ]" />
+            <column name="interval_d2s5" type="interval [ DAY TO SECOND ] [ 5 ]" />
+            <column name="interval_h2m5" type="interval [ HOUR TO MINUTE ] [ 5 ]" />
+            <column name="interval_h2s5" type="interval [ HOUR TO SECOND ] [ 5 ]" />
+            <column name="interval_m2s5" type="interval [ MINUTE TO SECOND ] [ 5 ]" />
+
+            <column name="interval_year6" type="interval [ YEAR ] [ 6 ]" />
+            <column name="interval_month6" type="interval [ MONTH ] [ 6 ]" />
+            <column name="interval_day6" type="interval [ DAY ] [ 6 ]" />
+            <column name="interval_hour6" type="interval [ HOUR ] [ 6 ]" />
+            <column name="interval_minute6" type="interval [ MINUTE ] [ 6 ]" />
+            <column name="interval_second6" type="interval [ SECOND ] [ 6 ]" />
+            <column name="interval_y2m6" type="interval [ YEAR TO MONTH ] [ 6 ]" />
+            <column name="interval_d2h6" type="interval [ DAY TO HOUR ] [ 6 ]" />
+            <column name="interval_d2m6" type="interval [ DAY TO MINUTE ] [ 6 ]" />
+            <column name="interval_d2s6" type="interval [ DAY TO SECOND ] [ 6 ]" />
+            <column name="interval_h2m6" type="interval [ HOUR TO MINUTE ] [ 6 ]" />
+            <column name="interval_h2s6" type="interval [ HOUR TO SECOND ] [ 6 ]" />
+            <column name="interval_m2s6" type="interval [ MINUTE TO SECOND ] [ 6 ]" />
+
+            <!-- BOOLEAN -->
+		    <!-- https://www.postgresql.org/docs/12/datatype-boolean.html -->
+            <column name="boolean" type="boolean" />
+
+    		<!-- ENUMERATED TYPES -->
+            <!-- https://www.postgresql.org/docs/12/datatype-enum.html -->
+	    	<!-- TODO: need to figure out how we're going to handle ENUM. We support this in pro, right? -->
+
+    		<!-- GEOMETRIC TYPES -->
+            <!-- https://www.postgresql.org/docs/12/datatype-geometric.html -->
+            <column name="point" type="point" />
+            <column name="line" type="line" />
+            <column name="lseg" type="lseq" />
+            <column name="box" type="box" />
+            <column name="path" type="path" />
+            <column name="polygon" type="polygon" />
+            <column name="circle" type="circle" />
+
+		    <!-- NETWORK TYPES -->
+            <!-- https://www.postgresql.org/docs/12/datatype-net-types.html -->
+            <column name="cidr" type="cidr" />
+            <column name="inet" type="inet" />
+            <column name="macaddr" type="macaddr" />
+            <column name="macaddr8" type="macaddr8" />
+
+		    <!-- BIT STRING -->
+            <!-- https://www.postgresql.org/docs/12/datatype-bit.html -->
+
+            <!-- EXACT and VARYING -->
+            <column name="bit1" type="bit(1)" />
+            <column name="bit_varying1" type="bit varying(1)" />
+            <column name="bit10" type="bit(10)" />
+            <column name="bit_varying10" type="bit varying(10)" />
+            <column name="bit100" type="bit(100)" />
+            <column name="bit_varying100" type="bit varying(100)" />
+            <column name="bit1000" type="bit(1000)" />
+            <column name="bit_varying1000" type="bit varying(1000)" />
+
+     		<!-- TEXT SEARCH -->
+ 	    	<!-- https://www.postgresql.org/docs/12/datatype-textsearch.html -->
+            <!-- though this is kept in the datatype section of the docs, it's only applicable on select -->
+            <!-- for transparency and completeness, notating it here  -->
+
+    		<!-- UUID -->
+            <!-- https://www.postgresql.org/docs/12/datatype-uuid.html -->
+            <column name="uuid" type="uuid" />
+
+            <!-- XML -->
+            <!-- https://www.postgresql.org/docs/12/datatype-xml.html -->
+            <column name="xml" type="xml" />
+
+    		<!-- JSON -->
+            <!-- https://www.postgresql.org/docs/12/datatype-json.html -->
+            <column name="json" type="json" />
+		
+		    <!-- ARRAYS -->
+            <!-- https://www.postgresql.org/docs/12/arrays.html -->
+            <column name="single_int_array" type="integer[]" />
+            <column name="double_int_array" type="integer[][]" />
+            <column name="single_text_array" type="text[]" />
+            <column name="double_text_array" type="text[][]" />
+            <column name="exact1_single_text_array" type="text[1]" />
+            <column name="exact1_double_text_array" type="text[1][1]" />
+            <column name="exact10_single_text_array" type="text[10]" />
+            <column name="exact10_double_text_array" type="text[10][10]" />
+
+		    <!-- COMPOSITION TYPES -->
+            <!-- https://www.postgresql.org/docs/12/rowtypes.html -->
+            <!-- TYPE is not supported yet -->
+            <!-- https://github.com/liquibase/liquibase/issues/1126 -->
+	
+        	<!-- RANGE TYPES -->
+            <!-- https://www.postgresql.org/docs/12/rangetypes.html -->
+	        <!-- skipping for this test -->
+
+            <!-- DOMAIN TYPES -->
+            <!-- https://www.postgresql.org/docs/12/domains.html -->
+            <!-- DOMAIN is not supported yet -->
+            <!-- https://github.com/liquibase/liquibase/issues/1125 -->
+
+            <!-- OID TYPES -->
+            <!-- https://www.postgresql.org/docs/12/datatype-oid.html -->
+            <!-- skipping for this test -->
+
+            <!-- pg_lsn TYPES -->
+            <!-- https://www.postgresql.org/docs/12/datatype-pg-lsn.html -->
+            <!-- skipping for this test -->
+
+            <!-- PSUEDO TYPES -->
+            <!-- https://www.postgresql.org/docs/12/datatype-pseudo.html -->
+            <!-- skipping for this test -->
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

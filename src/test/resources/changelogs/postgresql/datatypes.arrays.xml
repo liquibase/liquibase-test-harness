@@ -28,10 +28,6 @@
             <column name="real" type="real"/>
             <column name="double_precision" type="double precision"/>
 
-    		<!-- MONETARY -->
-            <!-- https://www.postgresql.org/docs/12/datatype-money.html -->
-            <column name="money" type="money"/>
-
 		    <!-- CHARACTER TYPES -->
 		    <!-- https://www.postgresql.org/docs/12/datatype-character.html -->
 
