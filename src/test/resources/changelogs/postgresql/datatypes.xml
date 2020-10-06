@@ -103,7 +103,6 @@
             <column name="time6" type="time [ 6 ]"/>
             <column name="time6wtz" type="time [ 6 ] with time zone"/>
 
-
             <!-- VARIABLE WITH FIELD AND P -->
             <column name="interval_year" type="interval [ YEAR ]" />
             <column name="interval_month" type="interval [ MONTH ]" />
@@ -255,59 +254,59 @@
             <column name="bit1000" type="bit(1000)" />
             <column name="bit_varying1000" type="bit varying(1000)" />
 
+     		<!-- TEXT SEARCH -->
+ 	    	<!-- https://www.postgresql.org/docs/12/datatype-textsearch.html -->
+            <!-- though this is kept in the datatype section of the docs, it's only applicable on select -->
+            <!-- for transparency and completeness, notating it here  -->
 
-            <!--
-    CREATE TABLE test (a BIT(3), b BIT VARYING(5));
-    INSERT INTO test VALUES (B'101', B'00');
-    INSERT INTO test VALUES (B'10', B'101');
+    		<!-- UUID -->
+            <!-- https://www.postgresql.org/docs/12/datatype-uuid.html -->
+            <column name="uuid" type="uuid" />
 
-    ERROR:  bit string length 2 does not match type bit(3)
+            <!-- XML -->
+            <!-- https://www.postgresql.org/docs/12/datatype-xml.html -->
+            <column name="xml" type="xml" />
 
-    INSERT INTO test VALUES (B'10'::bit(3), B'101');
-    SELECT * FROM test;
-
-      -->
- 		<!-- TEXT SEARCH -->
- 		<!-- 
-https://www.postgresql.org/docs/12/datatype-textsearch.html 						
-8.11.1. tsvector
-8.11.2. tsquery
- -->
-
-		<!-- UUID -->
-	<!-- 	
-https://www.postgresql.org/docs/12/datatype-uuid.html
- -->
-		<!-- XML -->
+    		<!-- JSON -->
+            <!-- https://www.postgresql.org/docs/12/datatype-json.html -->
+            <column name="json" type="json" />
 		
-		<!-- JSON -->
-		
-		<!-- ARRAYS -->
-	<!-- 	
-CREATE TABLE sal_emp (
-    name            text,
-    pay_by_quarter  integer[],
-    schedule        text[][]
-);
- -->
-		<!-- COMPOSITION TYPES -->
-	
-	<!-- 	
-CREATE TYPE complex AS (
-    r       double precision,
-    i       double precision
-);
+		    <!-- ARRAYS -->
+            <!-- https://www.postgresql.org/docs/12/arrays.html -->
+            <column name="single_int_array" type="integer[]" />
+            <column name="double_int_array" type="integer[][]" />
+            <column name="single_text_array" type="text[]" />
+            <column name="double_text_array" type="text[][]" />
+            <column name="exact1_single_text_array" type="text[1]" />
+            <column name="exact1_double_text_array" type="text[1][1]" />
+            <column name="exact10_single_text_array" type="text[10]" />
+            <column name="exact10_double_text_array" type="text[10][10]" />
 
-CREATE TYPE inventory_item AS (
-    name            text,
-    supplier_id     integer,
-    price           numeric
-);
- -->
-	<!-- RANGE TYPES -->
+		    <!-- COMPOSITION TYPES -->
+            <!-- https://www.postgresql.org/docs/12/rowtypes.html -->
+            <!-- TYPE is not supported yet -->
+            <!-- https://github.com/liquibase/liquibase/issues/1126 -->
 	
-	<!-- for select purposes, skipping for this test -->
-	<!-- https://www.postgresql.org/docs/12/rangetypes.html -->					
+        	<!-- RANGE TYPES -->
+            <!-- https://www.postgresql.org/docs/12/rangetypes.html -->
+	        <!-- skipping for this test -->
+
+            <!-- DOMAIN TYPES -->
+            <!-- https://www.postgresql.org/docs/12/domains.html -->
+            <!-- DOMAIN is not supported yet -->
+            <!-- https://github.com/liquibase/liquibase/issues/1125 -->
+
+            <!-- OID TYPES -->
+            <!-- https://www.postgresql.org/docs/12/datatype-oid.html -->
+            <!-- skipping for this test -->
+
+            <!-- pg_lsn TYPES -->
+            <!-- https://www.postgresql.org/docs/12/datatype-pg-lsn.html -->
+            <!-- skipping for this test -->
+
+            <!-- PSUEDO TYPES -->
+            <!-- https://www.postgresql.org/docs/12/datatype-pseudo.html -->
+            <!-- skipping for this test -->
 
         </createTable>
     </changeSet>
