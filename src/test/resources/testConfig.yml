@@ -31,9 +31,21 @@ databasesUnderTest:
       - createSequence
       - dropSequence
       - renameSequence
-      - datatypes
       - datatypes9
       - datatypes12
+      - datatypes.arrays
+      - datatypes.binary
+      - datatypes.bitstring
+      - datatypes.boolean
+      - datatypes.character
+      - datatypes.datatime
+      - datatypes.geometric
+      - datatypes.json
+      - datatypes.monetary
+      - datatypes.network
+      - datatypes.numeric
+      - datatypes.uuid
+      - datatypes.xml
       - smallInt
       - dropDefaultValue
     versions:
@@ -43,15 +55,15 @@ databasesUnderTest:
         url: 'jdbc:postgresql://localhost:5434/lbcat'
     dbSchema: public
 
-  - name: mysql
-    username: lbuser
-    password: LiquibasePass1
-    databaseSpecificChangeObjects:
-      - renameTable
-      - renameColumn
-    versions:
-      - version: 5.7
-        url: 'jdbc:mysql://localhost:33062/lbcat'
-      - version: 8
-        url: 'jdbc:mysql://localhost:33061/lbcat'
-    dbSchema:
+#  - name: mysql
+#    username: lbuser
+#    password: LiquibasePass1
+#    databaseSpecificChangeObjects:
+#      - renameTable
+#      - renameColumn
+#    versions:
+#      - version: 5.7
+#        url: 'jdbc:mysql://localhost:33062/lbcat'
+#      - version: 8
+#        url: 'jdbc:mysql://localhost:33061/lbcat'
+#    dbSchema:
