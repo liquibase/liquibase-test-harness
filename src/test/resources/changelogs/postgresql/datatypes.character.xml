@@ -30,6 +30,11 @@
             <column name="char10" type="char(10)"/>
             <column name="char100" type="char(100)"/>
             <column name="char1000" type="char(1000)"/>
+            <!-- variable -->
+            <column name="bpchar1" type="bpchar(1)"/>
+            <column name="bpchar10" type="bpchar(10)"/>
+            <column name="bpchar100" type="bpchar(100)"/>
+            <column name="bpchar1000" type="bpchar(1000)"/>
 
             <column name="text" type="text"/>
 
