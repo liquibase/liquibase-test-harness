@@ -1,36 +1,36 @@
 inputFormat: xml
 context: testContext
 defaultChangeObjects:
-#  - addForeignKey
-#  - addNotNullConstraint
-#  - addPrimaryKey
-#  - addUniqueConstraint
-#  - addDefaultValue
-#  - addDefaultValueComputed
-#  - addColumn
-#  - createIndex
-#  - createTable
-#  - createView
-#  - createTableDataTypeText
-#  - renameTable
-#  - renameView
-#  - renameColumn
-#  - dropTable
-#  - dropView
-#  - dropIndex
-#  - dropForeignKey
-#  - dropNotNullConstraint
-#  - dropPrimaryKey
-#  - dropUniqueConstraint
-#  - sql
+  - addForeignKey
+  - addNotNullConstraint
+  - addPrimaryKey
+  - addUniqueConstraint
+  - addDefaultValue
+  - addDefaultValueComputed
+  - addColumn
+  - createIndex
+  - createTable
+  - createView
+  - createTableDataTypeText
+  - renameTable
+  - renameView
+  - renameColumn
+  - dropTable
+  - dropView
+  - dropIndex
+  - dropForeignKey
+  - dropNotNullConstraint
+  - dropPrimaryKey
+  - dropUniqueConstraint
+  - sql
 databasesUnderTest:
   - name: postgresql
     username: lbuser
     password: LiquibasePass1
     databaseSpecificChangeObjects:
-#      - createSequence
-#      - dropSequence
-#      - renameSequence
+      - createSequence
+      - dropSequence
+      - renameSequence
       - datatypes9
       - datatypes12
       - datatypes.arrays
@@ -47,7 +47,7 @@ databasesUnderTest:
       - datatypes.uuid
       - datatypes.xml
       - datatypes.smallint
-#      - dropDefaultValue
+      - dropDefaultValue
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'
@@ -55,15 +55,15 @@ databasesUnderTest:
         url: 'jdbc:postgresql://localhost:5434/lbcat'
     dbSchema: public
 
-#  - name: mysql
-#    username: lbuser
-#    password: LiquibasePass1
-#    databaseSpecificChangeObjects:
-#      - renameTable
-#      - renameColumn
-#    versions:
-#      - version: 5.7
-#        url: 'jdbc:mysql://localhost:33062/lbcat'
-#      - version: 8
-#        url: 'jdbc:mysql://localhost:33061/lbcat'
-#    dbSchema:
+  - name: mysql
+    username: lbuser
+    password: LiquibasePass1
+    databaseSpecificChangeObjects:
+      - renameTable
+      - renameColumn
+    versions:
+      - version: 5.7
+        url: 'jdbc:mysql://localhost:33062/lbcat'
+      - version: 8
+        url: 'jdbc:mysql://localhost:33061/lbcat'
+    dbSchema:
