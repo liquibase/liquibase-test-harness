@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="r2">
+        <createTable tableName="datatypes.character_test_table">
+
+		    <!-- CHARACTER TYPES -->
+		    <!-- https://www.postgresql.org/docs/12/datatype-character.html -->
+
+            <!-- variable -->
+            <column name="character_varying1" type="character varying(1)"/>
+            <column name="character_varying10" type="character varying(10)"/>
+            <column name="character_varying100" type="character varying(100)"/>
+            <column name="character_varying1000" type="character varying(1000)"/>
+            <!-- variable -->
+            <column name="varchar1" type="varchar(1)"/>
+            <column name="varchar10" type="varchar(10)"/>
+            <column name="varchar100" type="varchar(100)"/>
+            <column name="varchar1000" type="varchar(1000)"/>
+            <!-- variable -->
+            <column name="character1" type="character(1)"/>
+            <column name="character10" type="character(10)"/>
+            <column name="character100" type="character(100)"/>
+            <column name="character1000" type="character(1000)"/>
+            <!-- variable -->
+            <column name="char1" type="char(1)"/>
+            <column name="char10" type="char(10)"/>
+            <column name="char100" type="char(100)"/>
+            <column name="char1000" type="char(1000)"/>
+            <!-- variable -->
+            <column name="bpchar1" type="bpchar(1)"/>
+            <column name="bpchar10" type="bpchar(10)"/>
+            <column name="bpchar100" type="bpchar(100)"/>
+            <column name="bpchar1000" type="bpchar(1000)"/>
+
+            <column name="text" type="text"/>
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
