@@ -1,0 +1,63 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.geometric_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+        "column": {
+            "name": "point",
+            "type": {
+              "typeName": "point"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "line",
+            "type": {
+              "typeName": "line"
+            }
+          }
+        },
+		  {
+			  "column": {
+				  "name": "box",
+				  "type": {
+					  "typeName": "box"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "path",
+				  "type": {
+					  "typeName": "path"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "polygon",
+				  "type": {
+					  "typeName": "polygon"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "circle",
+				  "type": {
+					  "typeName": "circle"
+				  }
+			  }
+		  }
+      ]
+    }
+  }
+}
