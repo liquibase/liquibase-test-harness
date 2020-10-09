@@ -31,10 +31,22 @@ databasesUnderTest:
       - createSequence
       - dropSequence
       - renameSequence
-      - datatypes
       - datatypes9
       - datatypes12
-      - smallInt
+      - datatypes.arrays
+      - datatypes.binary
+      - datatypes.bitstring
+      - datatypes.boolean
+      - datatypes.character
+      - datatypes.datatime
+      - datatypes.geometric
+      - datatypes.json
+      - datatypes.monetary
+      - datatypes.network
+      - datatypes.numeric
+      - datatypes.uuid
+      - datatypes.xml
+      - datatypes.smallint
       - dropDefaultValue
     versions:
       - version: 9

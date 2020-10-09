@@ -5,11 +5,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="1" author="r2">
-        <createTable tableName="datatypes12_test_table">
-            <column name="serial" type="serial"/>
-            <column name="bigserial" type="bigserial"/>
-            <column name="lseq" type="lseq" />
-            <column name="macaddr8" type="macaddr8" />
+        <createTable tableName="datatypes.xml_test_table">
+
+            <!-- XML -->
+            <!-- https://www.postgresql.org/docs/12/datatype-xml.html -->
+            <column name="xml" type="xml" />
+
         </createTable>
     </changeSet>
 </databaseChangeLog>

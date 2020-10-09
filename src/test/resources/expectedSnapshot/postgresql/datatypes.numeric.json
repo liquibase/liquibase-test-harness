@@ -1,0 +1,127 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.numeric_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+        "column": {
+            "name": "smallint",
+            "type": {
+              "typeName": "int2"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "integer",
+            "type": {
+              "typeName": "int4"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "bigint",
+            "type": {
+              "typeName": "int8"
+            }
+          }
+        },
+        {
+		"column": {
+				"name": "decimal1",
+				"type": {
+					"columnSize": "1\\!\\{java.lang.Integer\\}",
+					"typeName": "numeric"
+				}
+			}
+		},
+        {
+			"column": {
+  				"name": "decimal10",
+  				"type": {
+    				"columnSize": "10\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
+  				}
+			}
+		},
+        {
+			"column": {
+  				"name": "decimal100",
+  				"type": {
+    				"columnSize": "100\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
+  				}
+			}
+		},
+        {
+			"column": {
+  				"name": "decimal1000",
+  				"type": {
+    				"columnSize": "1000\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
+  				}
+			}
+		},
+        {
+			"column": {
+  				"name": "numeric1",
+  				"type": {
+    				"columnSize": "1\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
+  				}
+			}
+		},
+        {
+			"column": {
+  				"name": "numeric10",
+  				"type": {
+    				"columnSize": "10\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
+  				}
+			}
+		},
+        {
+			"column": {
+  				"name": "numeric100",
+  				"type": {
+    				"columnSize": "100\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
+  				}
+			}
+		},
+        {
+			"column": {
+  				"name": "numeric1000",
+  				"type": {
+    				"columnSize": "1000\\!\\{java.lang.Integer\\}",
+    				"typeName": "numeric"
+  				}
+			}
+		},
+        {
+			"column": {
+  				"name": "real",
+  				"type": {
+    				"typeName": "float4"
+  				}
+			}
+		},
+        {
+			"column": {
+  				"name": "double_precision",
+  				"type": {
+    				"typeName": "float8"
+  				}
+			}
+		}
+      ]
+    }
+  }
+}

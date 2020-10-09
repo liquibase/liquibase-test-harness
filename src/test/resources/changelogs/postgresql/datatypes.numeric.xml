@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="r2">
+        <createTable tableName="datatypes.numeric_test_table">
+            <!-- https://www.postgresql.org/docs/12/datatype.html -->
+        
+            <!-- NUMERIC -->
+            <!-- https://www.postgresql.org/docs/12/datatype-numeric.html  -->
+            <column name="smallint" type="smallint"/>
+            <column name="integer" type="integer"/>
+            <column name="bigint" type="bigint"/>
+
+            <!-- variable -->
+            <column name="decimal1" type="decimal(1)"/>
+            <column name="decimal10" type="decimal(10)"/>
+            <column name="decimal100" type="decimal(100)"/>
+            <column name="decimal1000" type="decimal(1000)"/>
+            <!-- variable -->
+            <column name="numeric1" type="numeric(1)"/>
+            <column name="numeric10" type="numeric(10)"/>
+            <column name="numeric100" type="numeric(100)"/>
+            <column name="numeric1000" type="numeric(1000)"/>
+            
+            <column name="real" type="real"/>
+            <column name="double_precision" type="double precision"/>
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

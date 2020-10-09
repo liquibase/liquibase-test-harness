@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="r2">
+        <createTable tableName="datatypes.bitstring_test_table">
+
+		    <!-- BIT STRING -->
+            <!-- https://www.postgresql.org/docs/12/datatype-bit.html -->
+
+            <!-- EXACT and VARYING -->
+            <column name="bit1" type="bit(1)" />
+            <column name="bit_varying1" type="bit varying(1)" />
+            <column name="bit10" type="bit(10)" />
+            <column name="bit_varying10" type="bit varying(10)" />
+            <column name="bit100" type="bit(100)" />
+            <column name="bit_varying100" type="bit varying(100)" />
+            <column name="bit1000" type="bit(1000)" />
+            <column name="bit_varying1000" type="bit varying(1000)" />
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

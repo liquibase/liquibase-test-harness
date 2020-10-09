@@ -1,0 +1,87 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.bitstring_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+		  {
+			  "column": {
+				  "name": "bit1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "bit"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "bit_varying1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "varbit"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "bit10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "bit"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "bit_varying10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "varbit"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "bit100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "bit"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "bit_varying100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "varbit"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "bit1000",
+				  "type": {
+					  "columnSize": "1000\\!\\{java.lang.Integer\\}",
+					  "typeName": "bit"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "bit_varying1000",
+				  "type": {
+					  "columnSize": "1000\\!\\{java.lang.Integer\\}",
+					  "typeName": "varbit"
+				  }
+			  }
+		  }
+	  ]
+    }
+  }
+}
