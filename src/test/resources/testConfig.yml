@@ -62,10 +62,11 @@ databasesUnderTest:
       - datatypes.character
       - datatypes.datetime
       - datatypes.json
+      - datatypes.numeric
       - datatypes.spatial
       - datatypes.string
-      - renameTable
-      - renameColumn
+#      - renameTable
+#      - renameColumn
     versions:
       - version: 5.7
         url: 'jdbc:mysql://localhost:33062/lbcat'
