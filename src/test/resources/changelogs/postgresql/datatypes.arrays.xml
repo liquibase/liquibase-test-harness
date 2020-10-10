@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="r2">
+        <createTable tableName="datatypes.arrays_test_table">
+
+		    <!-- ARRAYS -->
+            <!-- https://www.postgresql.org/docs/12/arrays.html -->
+            <column name="single_int_array" type="integer[]" />
+            <column name="double_int_array" type="integer[][]" />
+            <column name="single_text_array" type="text[]" />
+            <column name="double_text_array" type="text[][]" />
+            <column name="exact1_single_text_array" type="text[1]" />
+            <column name="exact1_double_text_array" type="text[1][1]" />
+            <column name="exact10_single_text_array" type="text[10]" />
+            <column name="exact10_double_text_array" type="text[10][10]" />
+
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
