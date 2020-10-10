@@ -1,0 +1,79 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.arrays_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+		  {
+			  "column": {
+				  "name": "single_int_array",
+				  "type": {
+					  "typeName": "int4\\[\\]"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "double_int_array",
+				  "type": {
+					  "typeName": "int4\\[\\]"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "single_text_array",
+				  "type": {
+					  "typeName": "text\\[\\]"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "double_text_array",
+				  "type": {
+					  "typeName": "text\\[\\]"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "exact1_single_text_array",
+				  "type": {
+					  "typeName": "text\\[\\]"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "exact1_double_text_array",
+				  "type": {
+					  "typeName": "text\\[\\]"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "exact10_single_text_array",
+				  "type": {
+					  "typeName": "text\\[\\]"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "exact10_double_text_array",
+				  "type": {
+					  "typeName": "text\\[\\]"
+				  }
+			  }
+		  }
+      ]
+    }
+  }
+}
