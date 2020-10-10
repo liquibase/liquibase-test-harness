@@ -1,4 +1,4 @@
-inputFormat: sql
+inputFormat: xml
 context: testContext
 defaultChangeObjects:
   - addForeignKey
