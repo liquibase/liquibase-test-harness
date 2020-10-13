@@ -6,10 +6,10 @@ import liquibase.sdk.test.config.TestConfig
 import liquibase.sdk.test.util.FileUtils
 import liquibase.sdk.test.util.SnapshotHelpers
 import liquibase.sdk.test.util.TestUtils
+import org.junit.Assume
 import org.skyscreamer.jsonassert.JSONAssert
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import spock.lang.IgnoreIf
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -24,9 +24,10 @@ class ChangeObjectTests extends Specification {
         TestUtils.validateAndSetPropertiesFromCommandLine(config)
     }
 
-//    @IgnoreIf({ testInput.database == null})
     @Unroll
     def "apply #testInput.changeObject for #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
+        Assume.assumeTrue(testInput.database != null)
+
         given:
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, testInput.database)
         //TODO need to provide ability to override default expected file paths
