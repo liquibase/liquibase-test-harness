@@ -1,4 +1,4 @@
-package liquibase.harness.util;
+package liquibase.sdk.test.util;
 
 import liquibase.Scope;
 import liquibase.database.Database;
@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class DatabaseTestContext {
+    private static Set<String> skipUrls = new HashSet<>();
+
     public static final String ALT_SCHEMA = "LIQUIBASEB";
     private static final String TEST_DATABASES_PROPERTY = "test.databases";
     private static DatabaseTestContext instance = new DatabaseTestContext();
@@ -143,18 +145,27 @@ public class DatabaseTestContext {
 
         connectionsByUrl.put(url, databaseConnection);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownConnection((JdbcConnection) databaseConnection)));
-
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            void run() {
+                shutdownConnection((JdbcConnection) databaseConnection)
+            }
+        }))
         return databaseConnection;
     }
 
     public DatabaseConnection openDatabaseConnection(String url,
                                                      String username, String password) throws Exception {
+        if (skipUrls.contains(url)) {
+            return null;
+        }
+
         final Driver driver;
         try {
             driver = (Driver) Class.forName(DatabaseFactory.getInstance().findDefaultDriver(url), true, Scope.getCurrentScope().getClassLoader()).getConstructor().newInstance();
         } catch (Exception e) {
             System.out.println("Could not connect to " + url + ": Will not test against.  " + e.getMessage());
+            skipUrls.add(url);
             return null; //could not connect
         }
 
@@ -171,6 +182,8 @@ public class DatabaseTestContext {
             connection = driver.connect(url, info);
         } catch (SQLException e) {
             System.out.println("Could not connect to " + url + ": Will not test against.  " + e.getMessage());
+            skipUrls.add(url);
+
             return null; //could not connect
         }
         if (connection == null) {
