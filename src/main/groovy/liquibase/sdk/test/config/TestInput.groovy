@@ -1,6 +1,7 @@
-package liquibase.harness.config
+package liquibase.sdk.test.config
 
-import groovy.transform.builder.Builder;
+import groovy.transform.builder.Builder
+import liquibase.database.Database;
 
 @Builder
 class TestInput {
@@ -13,4 +14,6 @@ class TestInput {
      String context
      String changeObject
      String pathToChangeLogFile
+
+     Database database
 }

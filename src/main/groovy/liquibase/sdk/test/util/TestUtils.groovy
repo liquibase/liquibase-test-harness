@@ -1,29 +1,31 @@
-package liquibase.harness.util
+package liquibase.sdk.test.util
 
 import liquibase.CatalogAndSchema
 import liquibase.Liquibase
 import liquibase.change.Change
 import liquibase.changelog.ChangeSet
 import liquibase.database.Database
-import liquibase.harness.config.DatabaseUnderTest
-import liquibase.harness.config.DatabaseVersion
-import liquibase.harness.config.TestConfig
-import liquibase.harness.config.TestInput
+import liquibase.resource.ClassLoaderResourceAccessor
+import liquibase.resource.ResourceAccessor
+import liquibase.sdk.test.config.DatabaseUnderTest
+import liquibase.sdk.test.config.DatabaseVersion
+import liquibase.sdk.test.config.TestConfig
+import liquibase.sdk.test.config.TestInput
 import liquibase.sql.Sql
 import liquibase.sqlgenerator.SqlGeneratorFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import java.util.function.Function
-import java.util.stream.Collectors
+import java.util.regex.Pattern
 
 class TestUtils {
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
     static Logger logger = LoggerFactory.getLogger(TestUtils.class)
+    static ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
 
     static Liquibase createLiquibase(String pathToFile, Database database) {
         database.resetInternalState()
-        return new Liquibase(pathToFile, new HarnessResourceAccessor(), database)
+        return new Liquibase(pathToFile, resourceAccessor, database)
     }
 
     static List<String> toSqlFromLiquibaseChangeSets(Liquibase liquibase) {
@@ -85,16 +87,34 @@ class TestUtils {
 
     static List<TestInput> buildTestInput(TestConfig config) {
         List<TestInput> inputList = new ArrayList<>()
+        def changelogPaths = resourceAccessor.list(null, "liquibase/sdk/test/changelogs", true, true, false)
+
         for (DatabaseUnderTest databaseUnderTest : config.databasesUnderTest) {
             for (DatabaseVersion databaseVersion : databaseUnderTest.versions) {
-                Map<String, String> changeObjectsToChangeFileMap = FileUtils.collectChangeObjects(
-                        config.defaultChangeObjects,
-                        databaseUnderTest.databaseSpecificChangeObjects,
-                        databaseUnderTest.name,
-                        databaseVersion.version,
-                        config.inputFormat)
-                for (Map.Entry<String, String> entry : changeObjectsToChangeFileMap.entrySet()) {
-                    inputList.add(TestInput.builder()
+                for (def changeLogPath : changelogPaths) {
+                    def validChangeLog = false
+
+                    //is it a common changelog?
+                    if (changeLogPath =~ /liquibase\/sdk\/test\/changelogs\/\w+\.\w+$/) {
+                        validChangeLog = true
+                    } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseUnderTest.name}/\\w+\\.\\w+\$")) {
+                        //is it a database-specific changelog?
+                        validChangeLog = true
+                    } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseUnderTest.name}/${databaseVersion}/\\w+\\.\\w+\$")) {
+                        //is it a database-version specific changelog?
+                        validChangeLog = true
+                    }
+
+                    if (!validChangeLog) {
+                        continue
+                    }
+
+                    def fileNameMatch = changeLogPath =~ /.*?(\w+)\.\w+$/
+                    if (!fileNameMatch.matches()) {
+                        throw new RuntimeException("Cannot find changeObject in " + changeLogPath)
+                    }
+
+                    def testInput = TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseVersion.url)
                             .dbSchema(databaseUnderTest.dbSchema)
@@ -102,10 +122,12 @@ class TestUtils {
                             .password(databaseUnderTest.password)
                             .version(databaseVersion.version)
                             .context(config.context)
-                            .changeObject(entry.key)
-                            .pathToChangeLogFile(entry.value)
+                            .changeObject(fileNameMatch.group(1))
+                            .pathToChangeLogFile(changeLogPath)
                             .build()
-                    )
+                    testInput.database = DatabaseConnectionUtil.initializeDatabase(testInput)
+
+                    inputList.add(testInput)
                 }
             }
         }
@@ -126,23 +148,25 @@ class TestUtils {
         if (changeObjects) {
             testConfig.defaultChangeObjects = Arrays.asList(changeObjects.split(","))
             //in case user provided changeObjects in cmd run only them regardless of config file
-            testConfig.databasesUnderTest.forEach(db -> db.databaseSpecificChangeObjects = null)
+            for (def db : testConfig.databasesUnderTest) {
+                db.databaseSpecificChangeObjects = null
+            }
             logger.info("running for next changeObjects :{}", testConfig.defaultChangeObjects)
         }
         if (dbName) {
             //TODO try improve this, add logging
             testConfig.databasesUnderTest = testConfig.databasesUnderTest.stream()
-                    .filter(database -> database.name.equalsIgnoreCase(dbName))
-            .findAny()
-            .map(database -> Collections.singletonList(database))
-            .orElse(testConfig.databasesUnderTest)
+                    .filter({ it.name.equalsIgnoreCase(dbName) })
+                    .findAny()
+                    .map({ Collections.singletonList(it) })
+                    .orElse(testConfig.databasesUnderTest)
 
             if (dbVersion)
                 for (DatabaseUnderTest databaseUnderTest : testConfig.databasesUnderTest) {
                     databaseUnderTest.versions = databaseUnderTest.versions.stream()
-                            .filter(version -> version.version.equalsIgnoreCase(dbVersion))
-                    .findAny()
-                    .map(version -> Collections.singletonList(version))
+                            .filter({ it.version.equalsIgnoreCase(dbVersion) })
+                            .findAny()
+                            .map({ Collections.singletonList(it) })
                             .orElse(databaseUnderTest.versions)
                 }
         }

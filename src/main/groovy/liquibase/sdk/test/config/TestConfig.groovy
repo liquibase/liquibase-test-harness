@@ -1,4 +1,4 @@
-package liquibase.harness.config
+package liquibase.sdk.test.config
 
 import groovy.transform.ToString;
 @ToString

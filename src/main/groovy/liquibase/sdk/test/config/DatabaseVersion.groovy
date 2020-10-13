@@ -1,4 +1,4 @@
-package liquibase.harness.config;
+package liquibase.sdk.test.config;
 
 class DatabaseVersion {
     String version
