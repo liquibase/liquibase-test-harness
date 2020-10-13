@@ -13,14 +13,13 @@ import liquibase.sdk.test.config.TestConfig
 import liquibase.sdk.test.config.TestInput
 import liquibase.sql.Sql
 import liquibase.sqlgenerator.SqlGeneratorFactory
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
+import java.util.logging.Logger
 import java.util.regex.Pattern
 
 class TestUtils {
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
-    static Logger logger = LoggerFactory.getLogger(TestUtils.class)
+
     static ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
 
     static Liquibase createLiquibase(String pathToFile, Database database) {
@@ -135,6 +134,8 @@ class TestUtils {
     }
 
     static void validateAndSetPropertiesFromCommandLine(TestConfig testConfig) {
+        def log = Logger.getLogger(this.class.name)
+
         String inputFormat = System.getProperty("inputFormat")
         String changeObjects = System.getProperty("changeObjects")
         String dbName = System.getProperty("dbName")
@@ -143,7 +144,7 @@ class TestUtils {
             throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
         }
         testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
-        logger.warn("Only {} input files are taken into account for this test run", testConfig.inputFormat)
+        log.warning("Only " + testConfig.inputFormat + " input files are taken into account for this test run")
 
         if (changeObjects) {
             testConfig.defaultChangeObjects = Arrays.asList(changeObjects.split(","))
@@ -151,7 +152,7 @@ class TestUtils {
             for (def db : testConfig.databasesUnderTest) {
                 db.databaseSpecificChangeObjects = null
             }
-            logger.info("running for next changeObjects :{}", testConfig.defaultChangeObjects)
+            log.info("running for next changeObjects : " + testConfig.defaultChangeObjects)
         }
         if (dbName) {
             //TODO try improve this, add logging
@@ -170,6 +171,6 @@ class TestUtils {
                             .orElse(databaseUnderTest.versions)
                 }
         }
-        logger.info(testConfig.toString())
+        log.info(testConfig.toString())
     }
 }

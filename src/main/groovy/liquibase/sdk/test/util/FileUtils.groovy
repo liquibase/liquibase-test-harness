@@ -4,15 +4,12 @@ import groovy.io.FileType
 import liquibase.sdk.test.config.TestConfig
 import liquibase.sdk.test.config.TestInput
 import liquibase.util.StreamUtil
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.yaml.snakeyaml.Yaml
 
 import java.nio.file.Path
 import java.nio.file.Paths
 
 class FileUtils {
-    static Logger logger = LoggerFactory.getLogger(FileUtils.class)
 
     static String getFileContent(TestInput testInput, String expectedFolder, String fileExtension) {
         def content = TestUtils.resourceAccessor.openStream(null, expectedFolder + "/" + testInput.databaseName + "/" + testInput.version + "/" + testInput.changeObject + fileExtension)

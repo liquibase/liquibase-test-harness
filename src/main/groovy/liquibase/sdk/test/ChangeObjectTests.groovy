@@ -8,14 +8,12 @@ import liquibase.sdk.test.util.SnapshotHelpers
 import liquibase.sdk.test.util.TestUtils
 import org.junit.Assume
 import org.skyscreamer.jsonassert.JSONAssert
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class ChangeObjectTests extends Specification {
-    @Shared Logger logger = LoggerFactory.getLogger(getClass())
+
     @Shared
     TestConfig config
 
