@@ -1,0 +1,2 @@
+ALTER TABLE lbcat.posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES lbcat.authors (id) ON UPDATE RESTRICT ON DELETE CASCADE
+ALTER TABLE lbcat.posts DROP FOREIGN KEY fk_posts_authors_test
