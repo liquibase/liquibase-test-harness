@@ -1,53 +1,11 @@
 inputFormat: xml
 context: testContext
-defaultChangeObjects:
-  - addForeignKey
-  - addNotNullConstraint
-  - addPrimaryKey
-  - addUniqueConstraint
-  - addDefaultValue
-  - addDefaultValueComputed
-  - addColumn
-  - createIndex
-  - createTable
-  - createView
-  - createTableDataTypeText
-  - renameTable
-  - renameView
-  - renameColumn
-  - dropTable
-  - dropView
-  - dropIndex
-  - dropForeignKey
-  - dropNotNullConstraint
-  - dropPrimaryKey
-  - dropUniqueConstraint
-  - sql
+
 databasesUnderTest:
   - name: postgresql
     username: lbuser
     password: LiquibasePass1
-    databaseSpecificChangeObjects:
-      - createSequence
-      - dropSequence
-      - renameSequence
-      - datatypes9
-      - datatypes12
-      - datatypes.arrays
-      - datatypes.binary
-      - datatypes.bitstring
-      - datatypes.boolean
-      - datatypes.character
-      - datatypes.datatime
-      - datatypes.geometric
-      - datatypes.json
-      - datatypes.monetary
-      - datatypes.network
-      - datatypes.numeric
-      - datatypes.uuid
-      - datatypes.xml
-      - datatypes.smallint
-      - dropDefaultValue
+
     versions:
       - version: 9
         url: 'jdbc:postgresql://localhost:5433/lbcat'
@@ -58,9 +16,6 @@ databasesUnderTest:
   - name: mysql
     username: lbuser
     password: LiquibasePass1
-    databaseSpecificChangeObjects:
-      - renameTable
-      - renameColumn
     versions:
       - version: 5.7
         url: 'jdbc:mysql://localhost:33062/lbcat'
@@ -71,9 +26,6 @@ databasesUnderTest:
   - name: mariadb
     username: lbuser
     password: LiquibasePass1
-    databaseSpecificChangeObjects:
-      - renameTable
-      - renameColumn
     versions:
       - version: 10.3
         url: 'jdbc:mysql://localhost:33063/lbcat'

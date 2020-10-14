@@ -86,33 +86,9 @@ class TestUtils {
 
     static List<TestInput> buildTestInput(TestConfig config) {
         List<TestInput> inputList = new ArrayList<>()
-        def changelogPaths = resourceAccessor.list(null, "liquibase/sdk/test/changelogs", true, true, false)
-
         for (DatabaseUnderTest databaseUnderTest : config.databasesUnderTest) {
             for (DatabaseVersion databaseVersion : databaseUnderTest.versions) {
-                for (def changeLogPath : changelogPaths) {
-                    def validChangeLog = false
-
-                    //is it a common changelog?
-                    if (changeLogPath =~ /liquibase\/sdk\/test\/changelogs\/\w+\.\w+$/) {
-                        validChangeLog = true
-                    } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseUnderTest.name}/\\w+\\.\\w+\$")) {
-                        //is it a database-specific changelog?
-                        validChangeLog = true
-                    } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseUnderTest.name}/${databaseVersion}/\\w+\\.\\w+\$")) {
-                        //is it a database-version specific changelog?
-                        validChangeLog = true
-                    }
-
-                    if (!validChangeLog) {
-                        continue
-                    }
-
-                    def fileNameMatch = changeLogPath =~ /.*?(\w+)\.\w+$/
-                    if (!fileNameMatch.matches()) {
-                        throw new RuntimeException("Cannot find changeObject in " + changeLogPath)
-                    }
-
+                for (def changeLogEntry : getChangeLogPaths(databaseUnderTest, databaseVersion).entrySet()) {
                     def testInput = TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseVersion.url)
@@ -121,8 +97,8 @@ class TestUtils {
                             .password(databaseUnderTest.password)
                             .version(databaseVersion.version)
                             .context(config.context)
-                            .changeObject(fileNameMatch.group(1))
-                            .pathToChangeLogFile(changeLogPath)
+                            .changeObject(changeLogEntry.key)
+                            .pathToChangeLogFile(changeLogEntry.value)
                             .build()
                     testInput.database = DatabaseConnectionUtil.initializeDatabase(testInput)
 
@@ -131,6 +107,37 @@ class TestUtils {
             }
         }
         return inputList
+    }
+
+    protected static SortedMap<String, String> getChangeLogPaths(DatabaseUnderTest databaseUnderTest, DatabaseVersion databaseVersion) {
+        def returnPaths = new TreeMap<String, String>()
+        for (String changeLogPath : resourceAccessor.list(null, "liquibase/sdk/test/changelogs", true, true, false)) {
+            def validChangeLog = false
+
+            //is it a common changelog?
+            if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/[\\w.]+\$")) {
+                validChangeLog = true
+            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseUnderTest.name}/[\\w.]+\$")) {
+                //is it a database-specific changelog?
+                validChangeLog = true
+            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseUnderTest.name}/${databaseVersion.version}/[\\w.]+\$")) {
+                //is it a database-version specific changelog?
+                validChangeLog = true
+            }
+
+            if (validChangeLog) {
+                def fileName = changeLogPath.replaceFirst(".*/", "").replaceFirst("\\..*?\$", "")
+                if (!returnPaths.containsKey(fileName) || returnPaths.get(fileName).length() < changeLogPath.length()) {
+                    returnPaths.put(fileName, changeLogPath)
+                }
+            }
+        }
+
+        Logger.getLogger(this.class.name).info("Found "+returnPaths.size()+" changeLogs for "+databaseUnderTest.name+"/"+databaseVersion.version+" in liquibase/sdk/test/changelogs")
+
+
+
+        return returnPaths
     }
 
     static void validateAndSetPropertiesFromCommandLine(TestConfig testConfig) {
@@ -146,14 +153,14 @@ class TestUtils {
         testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
         log.warning("Only " + testConfig.inputFormat + " input files are taken into account for this test run")
 
-        if (changeObjects) {
-            testConfig.defaultChangeObjects = Arrays.asList(changeObjects.split(","))
-            //in case user provided changeObjects in cmd run only them regardless of config file
-            for (def db : testConfig.databasesUnderTest) {
-                db.databaseSpecificChangeObjects = null
-            }
-            log.info("running for next changeObjects : " + testConfig.defaultChangeObjects)
-        }
+//        if (changeObjects) {
+//            testConfig.defaultChangeObjects = Arrays.asList(changeObjects.split(","))
+//            //in case user provided changeObjects in cmd run only them regardless of config file
+//            for (def db : testConfig.databasesUnderTest) {
+//                db.databaseSpecificChangeObjects = null
+//            }
+//            log.info("running for next changeObjects : " + testConfig.defaultChangeObjects)
+//        }
         if (dbName) {
             //TODO try improve this, add logging
             testConfig.databasesUnderTest = testConfig.databasesUnderTest.stream()

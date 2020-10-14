@@ -32,14 +32,17 @@ class ChangeObjectTests extends Specification {
         String expectedSql = FileUtils.getExpectedSqlFileContent(testInput)
         String expectedSnapshot = FileUtils.getExpectedSnapshotFileContent(testInput)
         List<CatalogAndSchema> catalogAndSchemaList = TestUtils.getCatalogAndSchema(testInput.database, testInput.dbSchema)
-        ArrayList<String> expectedSqlList = TestUtils.parseValuesToList(expectedSql, "\n")
 
         when:
         List<String> generatedSql = TestUtils.toSqlFromLiquibaseChangeSets(liquibase)
 
         then:
-        if(!testInput.pathToChangeLogFile.endsWith(".sql")){
-            assert expectedSqlList == generatedSql
+        if (!testInput.pathToChangeLogFile.endsWith(".sql")) {
+            assert expectedSql.replace("\r", "")
+                    .replaceAll(/^\s+/, "") //remove beginning whitepace per line
+                    .trim() == generatedSql.join("\n")
+                            .replaceAll(/^\s+/, "")
+                            .trim()
         }
 
         when:
