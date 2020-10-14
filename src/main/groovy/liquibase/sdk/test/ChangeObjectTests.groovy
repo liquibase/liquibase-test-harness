@@ -4,9 +4,11 @@ import liquibase.CatalogAndSchema
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.sdk.test.config.TestConfig
+import liquibase.sdk.test.config.TestInput
 import liquibase.sdk.test.util.FileUtils
 import liquibase.sdk.test.util.SnapshotHelpers
 import liquibase.sdk.test.util.TestUtils
+import liquibase.util.StringUtil
 import org.junit.Assume
 import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Shared
@@ -25,25 +27,25 @@ class ChangeObjectTests extends Specification {
 
     @Unroll
     def "apply #testInput.changeObject for #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
-        Assume.assumeTrue(testInput.database.getConnection() instanceof JdbcConnection)
+        Assume.assumeTrue("Database is offline", testInput.database.getConnection() instanceof JdbcConnection)
+        Assume.assumeTrue("TODO: should we have sql changesets?", !testInput.pathToChangeLogFile.endsWith(".sql"))
 
         given:
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, testInput.database)
-        //TODO need to provide ability to override default expected file paths
-        String expectedSql = FileUtils.getExpectedSqlFileContent(testInput)
+
+        String expectedSql = cleanSql(FileUtils.getExpectedSqlFileContent(testInput))
         String expectedSnapshot = FileUtils.getExpectedSnapshotFileContent(testInput)
         List<CatalogAndSchema> catalogAndSchemaList = TestUtils.getCatalogAndSchema(testInput.database, testInput.dbSchema)
 
         when:
-        List<String> generatedSql = TestUtils.toSqlFromLiquibaseChangeSets(liquibase)
+        def generatedSql = cleanSql(TestUtils.toSqlFromLiquibaseChangeSets(liquibase))
 
         then:
-        if (!testInput.pathToChangeLogFile.endsWith(".sql")) {
-            assert expectedSql.replace("\r", "")
-                    .replaceAll(/^\s+/, "") //remove beginning whitepace per line
-                    .trim() == generatedSql.join("\n")
-                            .replaceAll(/^\s+/, "")
-                            .trim()
+        assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.changeObject} on ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
+
+        if (expectedSql != null) {
+            assert generatedSql == expectedSql
+            return //sql is right. Nothing more to test
         }
 
         when:
@@ -55,11 +57,37 @@ class ChangeObjectTests extends Specification {
         then:
         snapshotMatchesSpecifiedStructure(expectedSnapshot, jsonSnapshot)
 
+        if (expectedSql == null) {
+            //save generated sql as expected sql for future runs
+            saveAsExpectedSql(generatedSql, testInput)
+        }
+
         where:
         testInput << TestUtils.buildTestInput(config)
     }
 
+    /**
+     * Standardizes sql content. Removes line ending differences, and unnessisary leading/trailing whitespace
+     * @param sql
+     * @return
+     */
+    protected String cleanSql(String sql) {
+        if (sql == null) {
+            return null
+        }
+        return StringUtil.trimToNull(sql.replace("\r", "")
+                .replaceAll(/^\s+/, "") //remove beginning whitepace per line
+                .replaceAll(/\s+$/, "")) //remove trailing whitepace per line
+    }
+
     static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
         JSONAssert.assertEquals(expected, actual, new SnapshotHelpers.GeneralSnapshotComparator())
+    }
+
+    void saveAsExpectedSql(String generatedSql, TestInput testInput) {
+        File outputFile = "src/test/resources/liquibase/sdk/test/expectedSql/${testInput.changeObject}.sql" as File
+        outputFile.parentFile.mkdirs()
+
+        outputFile.write(generatedSql)
     }
 }
