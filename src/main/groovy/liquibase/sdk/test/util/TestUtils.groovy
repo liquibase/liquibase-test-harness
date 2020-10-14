@@ -5,10 +5,10 @@ import liquibase.Liquibase
 import liquibase.change.Change
 import liquibase.changelog.ChangeSet
 import liquibase.database.Database
+import liquibase.database.DatabaseFactory
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.ResourceAccessor
 import liquibase.sdk.test.config.DatabaseUnderTest
-import liquibase.sdk.test.config.DatabaseVersion
 import liquibase.sdk.test.config.TestConfig
 import liquibase.sdk.test.config.TestInput
 import liquibase.sql.Sql
@@ -87,29 +87,50 @@ class TestUtils {
     static List<TestInput> buildTestInput(TestConfig config) {
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : config.databasesUnderTest) {
-            for (DatabaseVersion databaseVersion : databaseUnderTest.versions) {
-                for (def changeLogEntry : getChangeLogPaths(databaseUnderTest, databaseVersion).entrySet()) {
-                    def testInput = TestInput.builder()
-                            .databaseName(databaseUnderTest.name)
-                            .url(databaseVersion.url)
-                            .dbSchema(databaseUnderTest.dbSchema)
-                            .username(databaseUnderTest.username)
-                            .password(databaseUnderTest.password)
-                            .version(databaseVersion.version)
-                            .context(config.context)
-                            .changeObject(changeLogEntry.key)
-                            .pathToChangeLogFile(changeLogEntry.value)
-                            .build()
-                    testInput.database = DatabaseConnectionUtil.initializeDatabase(testInput)
+            def database = DatabaseConnectionUtil.initializeDatabase(databaseUnderTest.url, databaseUnderTest.username, databaseUnderTest.password)
+            if (database == null) {
+                Logger.getLogger(TestUtils.name).info("Cannot connect to $databaseUnderTest.url. Using offline connection")
 
-                    inputList.add(testInput)
+                for (def possibleDatabase : DatabaseFactory.getInstance().getImplementedDatabases()) {
+                    if (possibleDatabase.getDefaultDriver(databaseUnderTest.url) != null) {
+                        println "Database ${possibleDatabase.shortName} accepts $databaseUnderTest.url"
+
+                        database = DatabaseConnectionUtil.initializeDatabase("offline:${possibleDatabase.shortName}", databaseUnderTest.username, null)
+                        break
+                    }
                 }
+            }
+
+            for (def changeLogEntry : getChangeLogPaths(database).entrySet()) {
+                def databaseName = databaseUnderTest.name
+                if (databaseName == null) {
+                    databaseName = database.getShortName()
+                }
+
+                def testInput = TestInput.builder()
+                        .databaseName(databaseName)
+                        .url(databaseUnderTest.url)
+                        .dbSchema(databaseUnderTest.dbSchema)
+                        .username(databaseUnderTest.username)
+                        .password(databaseUnderTest.password)
+                        .version(database.getDatabaseProductVersion())
+                        .context(config.context)
+                        .changeObject(changeLogEntry.key)
+                        .pathToChangeLogFile(changeLogEntry.value)
+                        .database(database)
+                        .build()
+
+                inputList.add(testInput)
             }
         }
         return inputList
     }
 
-    protected static SortedMap<String, String> getChangeLogPaths(DatabaseUnderTest databaseUnderTest, DatabaseVersion databaseVersion) {
+    protected static SortedMap<String, String> getChangeLogPaths(Database database) {
+        def databaseShortName = database.getShortName()
+        def majorVersion = database.getConnection().getDatabaseMajorVersion()
+        def minorVersion = database.getConnection().getDatabaseMinorVersion()
+
         def returnPaths = new TreeMap<String, String>()
         for (String changeLogPath : resourceAccessor.list(null, "liquibase/sdk/test/changelogs", true, true, false)) {
             def validChangeLog = false
@@ -117,11 +138,14 @@ class TestUtils {
             //is it a common changelog?
             if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/[\\w.]+\$")) {
                 validChangeLog = true
-            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseUnderTest.name}/[\\w.]+\$")) {
+            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseShortName}/[\\w.]+\$")) {
                 //is it a database-specific changelog?
                 validChangeLog = true
-            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseUnderTest.name}/${databaseVersion.version}/[\\w.]+\$")) {
-                //is it a database-version specific changelog?
+            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseShortName}/${majorVersion}/[\\w.]+\$")) {
+                //is it a database-major-version specific changelog?
+                validChangeLog = true
+            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseShortName}/${majorVersion}/${minorVersion}/[\\w.]+\$")) {
+                //is it a database-minor-version specific changelog?
                 validChangeLog = true
             }
 
@@ -133,8 +157,7 @@ class TestUtils {
             }
         }
 
-        Logger.getLogger(this.class.name).info("Found "+returnPaths.size()+" changeLogs for "+databaseUnderTest.name+"/"+databaseVersion.version+" in liquibase/sdk/test/changelogs")
-
+        Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.getShortName() + "/" + database.getDatabaseProductVersion() + " in liquibase/sdk/test/changelogs")
 
 
         return returnPaths

@@ -2,6 +2,7 @@ package liquibase.sdk.test
 
 import liquibase.CatalogAndSchema
 import liquibase.Liquibase
+import liquibase.database.jvm.JdbcConnection
 import liquibase.sdk.test.config.TestConfig
 import liquibase.sdk.test.util.FileUtils
 import liquibase.sdk.test.util.SnapshotHelpers
@@ -24,7 +25,7 @@ class ChangeObjectTests extends Specification {
 
     @Unroll
     def "apply #testInput.changeObject for #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
-        Assume.assumeTrue(testInput.database != null)
+        Assume.assumeTrue(testInput.database.getConnection() instanceof JdbcConnection)
 
         given:
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, testInput.database)

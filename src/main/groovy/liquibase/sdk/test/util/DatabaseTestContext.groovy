@@ -1,22 +1,18 @@
-package liquibase.sdk.test.util;
+package liquibase.sdk.test.util
 
-import liquibase.Scope;
-import liquibase.database.Database;
-import liquibase.database.DatabaseConnection;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.core.AbstractDb2Database;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.DatabaseException;
-import liquibase.listener.SqlListener;
+import liquibase.Scope
+import liquibase.database.Database
+import liquibase.database.DatabaseConnection
+import liquibase.database.DatabaseFactory
+import liquibase.database.core.AbstractDb2Database
+import liquibase.database.jvm.JdbcConnection
+import liquibase.exception.DatabaseException
+import liquibase.listener.SqlListener
+import liquibase.resource.ClassLoaderResourceAccessor
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.SQLException;
-import java.util.*;
+import java.sql.SQLException
 
 public class DatabaseTestContext {
-    private static Set<String> skipUrls = new HashSet<>();
-
     public static final String ALT_SCHEMA = "LIQUIBASEB";
     private static final String TEST_DATABASES_PROPERTY = "test.databases";
     private static DatabaseTestContext instance = new DatabaseTestContext();
@@ -72,14 +68,17 @@ public class DatabaseTestContext {
         final String url = givenUrl.replace("***TEMPDIR***/", tempDir);
 
         if (connectionsAttempted.containsKey(url)) {
-            JdbcConnection connection = (JdbcConnection) connectionsByUrl.get(url);
+            def connection = connectionsByUrl.get(url)
             if (connection == null) {
                 return null;
-            } else if (connection.getUnderlyingConnection().isClosed()) {
-                connectionsByUrl.put(url, openDatabaseConnection(url, username, password));
             }
-            return connectionsByUrl.get(url);
+
+            if (connection instanceof JdbcConnection && connection.getUnderlyingConnection().isClosed()) {
+                connectionsByUrl.put(url, DatabaseFactory.getInstance().openConnection(url, username, password, null, new ClassLoaderResourceAccessor()));
+            }
+            return connection;
         }
+
         connectionsAttempted.put(url, Boolean.TRUE);
 
         if (System.getProperty(TEST_DATABASES_PROPERTY) != null) {
@@ -98,7 +97,7 @@ public class DatabaseTestContext {
             }
         }
 
-        DatabaseConnection connection = openDatabaseConnection(url, username, password);
+        DatabaseConnection connection = DatabaseFactory.getInstance().openConnection(url, username, password, null, new ClassLoaderResourceAccessor());
         if (connection == null) {
             return null;
         }
@@ -152,45 +151,6 @@ public class DatabaseTestContext {
             }
         }))
         return databaseConnection;
-    }
-
-    public DatabaseConnection openDatabaseConnection(String url,
-                                                     String username, String password) throws Exception {
-        if (skipUrls.contains(url)) {
-            return null;
-        }
-
-        final Driver driver;
-        try {
-            driver = (Driver) Class.forName(DatabaseFactory.getInstance().findDefaultDriver(url), true, Scope.getCurrentScope().getClassLoader()).getConstructor().newInstance();
-        } catch (Exception e) {
-            System.out.println("Could not connect to " + url + ": Will not test against.  " + e.getMessage());
-            skipUrls.add(url);
-            return null; //could not connect
-        }
-
-        Properties info = new Properties();
-        info.put("user", username);
-        if (password != null) {
-            info.put("password", password);
-        }
-        info.put("retrieveMessagesFromServerOnGetMessage", "true"); //for db2
-
-
-        Connection connection;
-        try {
-            connection = driver.connect(url, info);
-        } catch (SQLException e) {
-            System.out.println("Could not connect to " + url + ": Will not test against.  " + e.getMessage());
-            skipUrls.add(url);
-
-            return null; //could not connect
-        }
-        if (connection == null) {
-            throw new DatabaseException("Connection could not be created to " + url + " with driver " + driver.getClass().getName() + ".  Possibly the wrong driver for the given database URL");
-        }
-
-        return new JdbcConnection(connection);
     }
 
     public DatabaseConnection getConnection(String url, String username, String password) throws Exception {

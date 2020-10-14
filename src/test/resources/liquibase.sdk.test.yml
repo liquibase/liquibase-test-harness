@@ -2,32 +2,22 @@ inputFormat: xml
 context: testContext
 
 databasesUnderTest:
-  - name: postgresql
+  - url: jdbc:postgresql://localhost:5433/lbcat
     username: lbuser
     password: LiquibasePass1
 
-    versions:
-      - version: 9
-        url: 'jdbc:postgresql://localhost:5433/lbcat'
-      - version: 12
-        url: 'jdbc:postgresql://localhost:5434/lbcat'
-    dbSchema: public
-
-  - name: mysql
+  - url: jdbc:postgresql://localhost:5434/lbcat
     username: lbuser
     password: LiquibasePass1
-    versions:
-      - version: 5.7
-        url: 'jdbc:mysql://localhost:33062/lbcat'
-      - version: 8
-        url: 'jdbc:mysql://localhost:33061/lbcat'
-    dbSchema:
 
-  - name: mariadb
+  - url: jdbc:mysql://localhost:33062/lbcat
     username: lbuser
     password: LiquibasePass1
-    versions:
-      - version: 10.3
-        url: 'jdbc:mysql://localhost:33063/lbcat'
-    dbSchema:
 
+  - url: jdbc:mysql://localhost:33061/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - url: jdbc:mariadb://localhost:33063/lbcat
+    username: lbuser
+    password: LiquibasePass1
