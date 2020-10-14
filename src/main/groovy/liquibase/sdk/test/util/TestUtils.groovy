@@ -27,12 +27,13 @@ class TestUtils {
         return new Liquibase(pathToFile, resourceAccessor, database)
     }
 
-    static List<String> toSqlFromLiquibaseChangeSets(Liquibase liquibase) {
+    static String toSqlFromLiquibaseChangeSets(Liquibase liquibase) {
         Database db = liquibase.database
         List<ChangeSet> changeSets = liquibase.databaseChangeLog.changeSets
         List<String> stringList = new ArrayList<>()
         changeSets.each { stringList.addAll(toSql(it, db)) }
-        return stringList
+
+        return stringList.join("\n")
     }
 
     private static List<String> toSql(ChangeSet changeSet, Database db) {
