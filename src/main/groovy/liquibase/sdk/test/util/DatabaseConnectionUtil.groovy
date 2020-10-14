@@ -8,6 +8,7 @@ import liquibase.database.DatabaseFactory
 import liquibase.exception.DatabaseException
 import liquibase.lockservice.LockServiceFactory
 import liquibase.logging.Logger
+import liquibase.sdk.test.config.DatabaseUnderTest
 import liquibase.sdk.test.config.TestInput
 import liquibase.snapshot.SnapshotGeneratorFactory
 
@@ -16,9 +17,9 @@ import static org.junit.Assume.assumeNotNull
 class DatabaseConnectionUtil {
     private static Logger logger = Scope.getCurrentScope().getLog(getClass())
 
-    static Database initializeDatabase(TestInput testInput) {
+    static Database initializeDatabase(String url, String username, String password) {
         try {
-            Database database = openConnection(testInput.url, testInput.username, testInput.password)
+            Database database = openConnection(url, username, password)
             if (database == null) {
                 return null
             }

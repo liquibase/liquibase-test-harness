@@ -1,14 +1,17 @@
 package liquibase.sdk.test.util
 
-import liquibase.sdk.test.config.DatabaseUnderTest
-import liquibase.sdk.test.config.DatabaseVersion
+import liquibase.database.OfflineConnection
+import liquibase.database.core.MySQLDatabase
+import liquibase.resource.ClassLoaderResourceAccessor
 import spock.lang.Specification
 
 class TestUtilsTest extends Specification {
 
     def "getChangeLogPaths"() {
         when:
-        def paths = TestUtils.getChangeLogPaths(new DatabaseUnderTest(name: "mysql"), new DatabaseVersion(version: 8))
+        def database = new MySQLDatabase()
+        database.setConnection(new OfflineConnection("offline:mysql?version=8.1", new ClassLoaderResourceAccessor()))
+        def paths = TestUtils.getChangeLogPaths(database)
 
         then:
         paths["addColumn"] == "liquibase/sdk/test/changelogs/addColumn.xml"

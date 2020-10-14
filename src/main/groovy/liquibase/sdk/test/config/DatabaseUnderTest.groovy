@@ -4,6 +4,6 @@ class DatabaseUnderTest {
     String name
     String username
     String password
-    List<DatabaseVersion> versions
+    String url
     String dbSchema
 }
