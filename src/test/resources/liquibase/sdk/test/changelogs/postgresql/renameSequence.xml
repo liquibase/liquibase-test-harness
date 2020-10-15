@@ -9,12 +9,10 @@
         <createSequence dataType="int"
                         incrementBy="1"
                         minValue="1"
-                        schemaName="public"
                         sequenceName="test_sequence"
                         startValue="1"/>
         <renameSequence  newSequenceName="test_sequence_rename_test"
-                         oldSequenceName="test_sequence"
-                         schemaName="public"/>
+                         oldSequenceName="test_sequence"/>
         <rollback>
             <dropSequence sequenceName="test_sequence_rename_test"/>
         </rollback>

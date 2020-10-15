@@ -9,7 +9,7 @@ import org.yaml.snakeyaml.Yaml
 class FileUtils {
 
     static String getFileContent(TestInput testInput, String expectedFolder, String fileExtension) {
-        def content = TestUtils.resourceAccessor.openStream(null, expectedFolder + "/" + testInput.databaseName + "/" + testInput.version + "/" + testInput.changeObject + fileExtension)
+        def content = TestUtils.resourceAccessor.openStream(null, expectedFolder + "/" + testInput.databaseName + "/" + testInput.database.databaseMajorVersion + "/" + testInput.changeObject + fileExtension)
         if (content != null) {
             return StreamUtil.readStreamAsString(content)
         }

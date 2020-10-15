@@ -1,1 +1,1 @@
-CREATE TABLE public."datatypes.xml_test_table" (xml XML)
+CREATE TABLE "datatypes.xml_test_table" (xml XML)

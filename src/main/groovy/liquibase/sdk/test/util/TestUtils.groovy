@@ -21,6 +21,7 @@ class TestUtils {
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
 
     static ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
+    static Boolean revalidateSql
 
     static Liquibase createLiquibase(String pathToFile, Database database) {
         database.resetInternalState()
@@ -102,6 +103,9 @@ class TestUtils {
                 }
             }
 
+            database.outputDefaultCatalog = false
+            database.outputDefaultSchema = false
+
             for (def changeLogEntry : getChangeLogPaths(database).entrySet()) {
                 def databaseName = databaseUnderTest.name
                 if (databaseName == null) {
@@ -151,7 +155,7 @@ class TestUtils {
             }
 
             if (validChangeLog) {
-                def fileName = changeLogPath.replaceFirst(".*/", "").replaceFirst("\\..*?\$", "")
+                def fileName = changeLogPath.replaceFirst(".*/", "").replaceFirst("\\.[^.]+\$", "")
                 if (!returnPaths.containsKey(fileName) || returnPaths.get(fileName).length() < changeLogPath.length()) {
                     returnPaths.put(fileName, changeLogPath)
                 }
@@ -166,6 +170,13 @@ class TestUtils {
 
     static void validateAndSetPropertiesFromCommandLine(TestConfig testConfig) {
         def log = Logger.getLogger(this.class.name)
+
+        if (System.getProperty("revalidateSql") == null) {
+            revalidateSql = true
+        } else {
+            revalidateSql = Boolean.valueOf(System.getProperty("revalidateSql"))
+        }
+        log.info("Revalidate SQL: ${revalidateSql}")
 
         String inputFormat = System.getProperty("inputFormat")
         String changeObjects = System.getProperty("changeObjects")

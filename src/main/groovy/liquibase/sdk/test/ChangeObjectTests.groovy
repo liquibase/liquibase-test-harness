@@ -27,9 +27,6 @@ class ChangeObjectTests extends Specification {
 
     @Unroll
     def "apply #testInput.changeObject for #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
-        Assume.assumeTrue("Database is offline", testInput.database.getConnection() instanceof JdbcConnection)
-        Assume.assumeTrue("TODO: should we have sql changesets?", !testInput.pathToChangeLogFile.endsWith(".sql"))
-
         given:
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, testInput.database)
 
@@ -43,10 +40,14 @@ class ChangeObjectTests extends Specification {
         then:
         assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.changeObject} on ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
 
-        if (expectedSql != null) {
-            assert generatedSql == expectedSql
-            return //sql is right. Nothing more to test
+        if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
+            assert generatedSql == expectedSql : "Expected SQL does not match actual sql. Deleting the existing expectedSql file will test that the new SQL works correctly and will auto-generate a new version if it passes"
+            if (!TestUtils.revalidateSql) {
+                return //sql is right. Nothing more to test
+            }
         }
+
+        assert testInput.database.getConnection() instanceof JdbcConnection : "SQL changed, but we cannot verify if it still works because the database is offline"
 
         when:
         liquibase.update(testInput.context)
@@ -57,7 +58,7 @@ class ChangeObjectTests extends Specification {
         then:
         snapshotMatchesSpecifiedStructure(expectedSnapshot, jsonSnapshot)
 
-        if (expectedSql == null) {
+        if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             //save generated sql as expected sql for future runs
             saveAsExpectedSql(generatedSql, testInput)
         }
