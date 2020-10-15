@@ -1,1 +1,1 @@
-CREATE TABLE public.datatypes9_test_table (serial SERIAL, bigserial BIGSERIAL)
+CREATE TABLE datatypes9_test_table (serial SERIAL, bigserial BIGSERIAL)

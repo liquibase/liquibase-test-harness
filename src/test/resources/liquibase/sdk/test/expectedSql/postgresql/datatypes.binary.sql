@@ -1,1 +1,1 @@
-CREATE TABLE public."datatypes.binary_test_table" (bytea BYTEA)
+CREATE TABLE "datatypes.binary_test_table" (bytea BYTEA)

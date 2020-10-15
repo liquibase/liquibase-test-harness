@@ -1,1 +1,1 @@
-CREATE TABLE public."createTableDataTypeText" ("textCol" TEXT)
+CREATE TABLE "createTableDataTypeText" ("textCol" TEXT)
