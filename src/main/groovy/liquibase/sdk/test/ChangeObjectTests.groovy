@@ -9,7 +9,6 @@ import liquibase.sdk.test.util.FileUtils
 import liquibase.sdk.test.util.SnapshotHelpers
 import liquibase.sdk.test.util.TestUtils
 import liquibase.util.StringUtil
-import org.junit.Assume
 import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Shared
 import spock.lang.Specification
@@ -19,6 +18,8 @@ class ChangeObjectTests extends Specification {
 
     @Shared
     TestConfig config
+
+    public static String outputResourcesBase = "src/main/resources"
 
     def setupSpec() {
         config = FileUtils.readYamlConfig("/liquibase.sdk.test.yml")
@@ -86,7 +87,7 @@ class ChangeObjectTests extends Specification {
     }
 
     void saveAsExpectedSql(String generatedSql, TestInput testInput) {
-        File outputFile = "src/test/resources/liquibase/sdk/test/expectedSql/${testInput.database.shortName}/${testInput.changeObject}.sql" as File
+        File outputFile = "${outputResourcesBase}/liquibase/sdk/test/expectedSql/${testInput.database.shortName}/${testInput.changeObject}.sql" as File
         outputFile.parentFile.mkdirs()
 
         outputFile.write(generatedSql)
