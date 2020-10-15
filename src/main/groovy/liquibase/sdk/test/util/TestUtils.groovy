@@ -34,7 +34,7 @@ class TestUtils {
         List<String> stringList = new ArrayList<>()
         changeSets.each { stringList.addAll(toSql(it, db)) }
 
-        return stringList.join("\n")
+        return stringList.join(System.lineSeparator())
     }
 
     private static List<String> toSql(ChangeSet changeSet, Database db) {
