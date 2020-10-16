@@ -19,7 +19,7 @@ class ChangeObjectTests extends Specification {
     @Shared
     TestConfig config
 
-    public static String outputResourcesBase = "src/main/resources"
+    public static String outputResourcesBase = "src/test/resources"
 
     def setupSpec() {
         config = FileUtils.readYamlConfig("/liquibase.sdk.test.yml")
