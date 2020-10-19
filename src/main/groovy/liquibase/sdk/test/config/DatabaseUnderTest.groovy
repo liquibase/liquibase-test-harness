@@ -1,6 +1,11 @@
-package liquibase.sdk.test.config;
+package liquibase.sdk.test.config
+
+import liquibase.database.Database;
 
 class DatabaseUnderTest {
+
+    Database database
+
     String name
     String username
     String password
