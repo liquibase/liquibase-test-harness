@@ -5,38 +5,48 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="1" author="r2">
-        <createTable tableName="datatypes.character_test_table">
+        <createTable tableName="datatypes.string_test_table">
 
-		    <!-- CHARACTER TYPES -->
-		    <!-- https://www.postgresql.org/docs/12/datatype-character.html -->
+		    <!-- STRING TYPES -->
+		    <!-- https://dev.mysql.com/doc/refman/8.0/en/string-type-syntax.html -->
 
-            <!-- variable -->
-            <column name="character_varying1" type="character varying(1)"/>
-            <column name="character_varying10" type="character varying(10)"/>
-            <column name="character_varying100" type="character varying(100)"/>
-            <column name="character_varying1000" type="character varying(1000)"/>
-            <!-- variable -->
-            <column name="varchar1" type="varchar(1)"/>
+            <!-- ENUM and SET are not supported yet -->
+
+            <column name="char0" type="char(0))"/>
+            <column name="char1" type="char(1))"/>
+            <column name="char10" type="char(10)"/>
+            <column name="char100" type="char(100)"/>
+            <column name="char255" type="char(255)"/>
+
+            <column name="varchar0" type="varchar(0))"/>
+            <column name="varchar1" type="varchar(1))"/>
             <column name="varchar10" type="varchar(10)"/>
             <column name="varchar100" type="varchar(100)"/>
             <column name="varchar1000" type="varchar(1000)"/>
-            <!-- variable -->
-            <column name="character1" type="character(1)"/>
-            <column name="character10" type="character(10)"/>
-            <column name="character100" type="character(100)"/>
-            <column name="character1000" type="character(1000)"/>
-            <!-- variable -->
-            <column name="char1" type="char(1)"/>
-            <column name="char10" type="char(10)"/>
-            <column name="char100" type="char(100)"/>
-            <column name="char1000" type="char(1000)"/>
-            <!-- variable -->
-            <column name="bpchar1" type="bpchar(1)"/>
-            <column name="bpchar10" type="bpchar(10)"/>
-            <column name="bpchar100" type="bpchar(100)"/>
-            <column name="bpchar1000" type="bpchar(1000)"/>
+            <column name="varchar10000" type="varchar(10000)"/>
 
+            <column name="binary0" type="binary(0))"/>
+            <column name="binary1" type="binary(1))"/>
+            <column name="binary10" type="binary(10)"/>
+            <column name="binary100" type="binary(100)"/>
+            <column name="binary255" type="binary(255)"/>
+
+            <column name="varbinary0" type="varbinary(0))"/>
+            <column name="varbinary1" type="varbinary(1))"/>
+            <column name="varbinary10" type="varbinary(10)"/>
+            <column name="varbinary100" type="varbinary(100)"/>
+            <column name="varbinary1000" type="varbinary(1000)"/>
+            <column name="varbinary10000" type="varbinary(10000)"/>
+
+            <column name="tinyblob" type="tinyblob"/>
+            <column name="blob" type="blob"/>
+            <column name="mediumblob" type="mediumblob"/>
+            <column name="longblob" type="longblob"/>
+
+            <column name="tinytext" type="tinytext"/>
             <column name="text" type="text"/>
+            <column name="mediumtext" type="mediumtext"/>
+            <column name="longtext" type="longtext"/>
 
         </createTable>
     </changeSet>
