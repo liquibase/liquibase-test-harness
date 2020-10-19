@@ -5,7 +5,7 @@
         {
           "column": {
             "name": "title",
-            "defaultValue": "title_test"
+            "nullable": false
           }
         }
       ]

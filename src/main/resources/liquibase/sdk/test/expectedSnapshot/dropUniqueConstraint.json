@@ -4,8 +4,8 @@
       "_noMatch": true,
       "liquibase.structure.core.UniqueConstraint": [
         {
-          "name": "test_unique_constraint"
-        }
+            "name": "test_unique_constraint"
+          }
       ]
     }
   }
