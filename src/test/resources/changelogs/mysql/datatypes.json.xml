@@ -8,7 +8,7 @@
         <createTable tableName="datatypes.json_test_table">
 
     		<!-- JSON -->
-            <!-- https://www.postgresql.org/docs/12/datatype-json.html -->
+            <!-- https://dev.mysql.com/doc/refman/8.0/en/json.html -->
             <column name="json" type="json" />
 
         </createTable>

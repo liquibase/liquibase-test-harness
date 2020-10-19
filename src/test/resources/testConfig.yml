@@ -59,7 +59,6 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
     databaseSpecificChangeObjects:
-      - datatypes.character
       - datatypes.datetime
       - datatypes.json
       - datatypes.numeric
