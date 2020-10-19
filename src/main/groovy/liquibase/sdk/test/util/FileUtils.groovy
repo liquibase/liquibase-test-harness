@@ -9,12 +9,17 @@ import org.yaml.snakeyaml.Yaml
 class FileUtils {
 
     static String getFileContent(TestInput testInput, String expectedFolder, String fileExtension) {
-        def content = TestUtils.resourceAccessor.openStream(null, expectedFolder + "/" + testInput.databaseName + "/" + testInput.database.databaseMajorVersion + "/" + testInput.changeObject + fileExtension)
+        def content = TestUtils.resourceAccessor.openStream(null, expectedFolder + "/" + testInput.database.shortName + "/" + testInput.database.databaseMajorVersion + "/" + testInput.changeObject + fileExtension)
         if (content != null) {
             return StreamUtil.readStreamAsString(content)
         }
 
-        content = TestUtils.resourceAccessor.openStream(null, expectedFolder + "/" + testInput.databaseName + "/" + testInput.changeObject + fileExtension)
+        content = TestUtils.resourceAccessor.openStream(null, expectedFolder + "/" + testInput.database.shortName + "/" + testInput.changeObject + fileExtension)
+        if (content != null) {
+            return StreamUtil.readStreamAsString(content)
+        }
+
+        content = TestUtils.resourceAccessor.openStream(null, expectedFolder + "/" + testInput.changeObject + fileExtension)
         if (content != null) {
             return StreamUtil.readStreamAsString(content)
         }

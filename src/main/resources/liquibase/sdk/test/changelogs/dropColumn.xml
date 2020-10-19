@@ -6,16 +6,9 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 <!--https://docs.liquibase.com/change-types/community/add-default-value.html-->
         <changeSet author="oleh" id="1">
-            <addColumn tableName="posts" >
-                <column name="address"
-                        position="2"
-                        type="varchar(255)"/>
-                <column afterColumn="id"
-                        name="name"
-                        type="varchar(50)" >
-                    <constraints nullable="false" />
-                </column>
-            </addColumn>
-            <dropColumn tableName=""
+            <dropColumn tableName="posts" columnName="content"/>
         </changeSet>
+
+
+
 </databaseChangeLog>

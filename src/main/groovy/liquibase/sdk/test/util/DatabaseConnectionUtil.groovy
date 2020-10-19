@@ -27,7 +27,7 @@ class DatabaseConnectionUtil {
             return init(database)
         }
         catch (Exception e) {
-            logger.severe("Unable to initialize database connection", e)
+            logger.severe("Unable to initialize database connection: ${e.getMessage()}", e)
             return null
         }
     }

@@ -6,6 +6,8 @@ import liquibase.change.Change
 import liquibase.changelog.ChangeSet
 import liquibase.database.Database
 import liquibase.database.DatabaseFactory
+import liquibase.database.OfflineConnection
+import liquibase.lockservice.LockServiceFactory
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.ResourceAccessor
 import liquibase.sdk.test.config.DatabaseUnderTest
@@ -101,16 +103,24 @@ class TestUtils {
                         break
                     }
                 }
+            } else {
+                LockServiceFactory.getInstance().getLockService(database).forceReleaseLock()
             }
 
             database.outputDefaultCatalog = false
             database.outputDefaultSchema = false
 
-            for (def changeLogEntry : getChangeLogPaths(database).entrySet()) {
-                def databaseName = databaseUnderTest.name
-                if (databaseName == null) {
-                    databaseName = database.getShortName()
+            def databaseName = databaseUnderTest.name
+            if (databaseName == null) {
+                databaseName = database.getShortName()
+                if (database.connection instanceof OfflineConnection) {
+                    databaseName += " ${databaseUnderTest.url}"
+                } else {
+                    databaseName += " ${database.getDatabaseProductVersion()}"
                 }
+            }
+
+            for (def changeLogEntry : getChangeLogPaths(database).entrySet()) {
 
                 def testInput = TestInput.builder()
                         .databaseName(databaseName)

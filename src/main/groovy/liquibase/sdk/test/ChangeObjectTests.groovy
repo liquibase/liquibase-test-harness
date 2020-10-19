@@ -27,7 +27,7 @@ class ChangeObjectTests extends Specification {
     }
 
     @Unroll
-    def "apply #testInput.changeObject for #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
+    def "apply #testInput.changeObject against #testInput.databaseName; verify generated SQL and DB snapshot"() {
         given:
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, testInput.database)
 
@@ -39,7 +39,7 @@ class ChangeObjectTests extends Specification {
         def generatedSql = cleanSql(TestUtils.toSqlFromLiquibaseChangeSets(liquibase))
 
         then:
-        assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.changeObject} on ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
+        assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.changeObject} against ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
 
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             assert generatedSql == expectedSql : "Expected SQL does not match actual sql. Deleting the existing expectedSql file will test that the new SQL works correctly and will auto-generate a new version if it passes"
@@ -48,7 +48,7 @@ class ChangeObjectTests extends Specification {
             }
         }
 
-        assert testInput.database.getConnection() instanceof JdbcConnection : "SQL changed, but we cannot verify if it still works because the database is offline"
+        assert testInput.database.getConnection() instanceof JdbcConnection : "We cannot verify the following SQL works works because the database is offline:\n${generatedSql}"
 
         when:
         liquibase.update(testInput.context)
@@ -78,8 +78,10 @@ class ChangeObjectTests extends Specification {
             return null
         }
         return StringUtil.trimToNull(sql.replace("\r", "")
-                .replaceAll(/^\s+/, "") //remove beginning whitepace per line
-                .replaceAll(/\s+$/, "")) //remove trailing whitepace per line
+                .replaceAll(/(?m)^--.*/, "") //remove comments
+                .replaceAll(/(?m)^\s+/, "") //remove beginning whitepace per line
+                .replaceAll(/(?m)\s+$/, "") //remove trailing whitespace per line
+        ) //remove trailing whitepace per line
     }
 
     static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
