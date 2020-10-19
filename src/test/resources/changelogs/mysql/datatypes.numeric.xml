@@ -7,7 +7,7 @@
     <changeSet id="1" author="r2">
         <createTable tableName="datatypes.numeric_test_table">
             <!-- https://dev.mysql.com/doc/refman/8.0/en/data-types.html -->
-        
+
             <!-- NUMERIC -->
             <!-- https://dev.mysql.com/doc/refman/8.0/en/numeric-types.html  -->
 
