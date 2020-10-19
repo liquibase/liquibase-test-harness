@@ -4,56 +4,72 @@
       "liquibase.structure.core.Table": [
         {
           "table": {
-            "name": "datatypes.geometric_test_table"
+            "name": "datatypes.spatial_test_table"
           }
         }
       ],
       "liquibase.structure.core.Column": [
         {
         "column": {
-            "name": "point",
+            "name": "GEOMETRY",
             "type": {
-              "typeName": "point"
+              "typeName": "GEOMETRY"
             }
           }
         },
         {
           "column": {
-            "name": "line",
+            "name": "POINT",
             "type": {
-              "typeName": "line"
+              "typeName": "GEOMETRY"
             }
           }
         },
 		  {
 			  "column": {
-				  "name": "box",
+				  "name": "LINESTRING",
 				  "type": {
-					  "typeName": "box"
+					  "typeName": "GEOMETRY"
 				  }
 			  }
 		  },
 		  {
 			  "column": {
-				  "name": "path",
+				  "name": "POLYGON",
 				  "type": {
-					  "typeName": "path"
+					  "typeName": "GEOMETRY"
 				  }
 			  }
 		  },
 		  {
 			  "column": {
-				  "name": "polygon",
+				  "name": "MULTIPOINT",
 				  "type": {
-					  "typeName": "polygon"
+					  "typeName": "GEOMETRY"
 				  }
 			  }
 		  },
 		  {
 			  "column": {
-				  "name": "circle",
+				  "name": "MULTILINESTRING",
 				  "type": {
-					  "typeName": "circle"
+					  "typeName": "GEOMETRY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "MULTIPOLYGON",
+				  "type": {
+					  "typeName": "GEOMETRY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "GEOMETRYCOLLECTION",
+				  "type": {
+					  "typeName": "GEOMETRY"
 				  }
 			  }
 		  }

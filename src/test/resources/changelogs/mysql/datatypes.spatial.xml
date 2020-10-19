@@ -5,20 +5,19 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="1" author="r2">
-        <createTable tableName="datatypes.geometric_test_table">
+        <createTable tableName="datatypes.spatial_test_table">
 
-    		<!-- GEOMETRIC TYPES -->
-            <!-- https://www.postgresql.org/docs/12/datatype-geometric.html -->
-            <column name="point" type="point" />
-            <column name="line" type="line" />
-            <!--
-            moved to datatypes12
-            <column name="lseg" type="lseq" />
-            -->
-            <column name="box" type="box" />
-            <column name="path" type="path" />
-            <column name="polygon" type="polygon" />
-            <column name="circle" type="circle" />
+    		<!-- SPATIAL TYPES -->
+            <!-- https://dev.mysql.com/doc/refman/8.0/en/spatial-types.html -->
+
+            <column name="GEOMETRY" type="GEOMETRY" />
+            <column name="POINT" type="POINT" />
+            <column name="LINESTRING" type="LINESTRING" />
+            <column name="POLYGON" type="POLYGON" />
+            <column name="MULTIPOINT" type="MULTIPOINT" />
+            <column name="MULTILINESTRING" type="MULTILINESTRING" />
+            <column name="MULTIPOLYGON" type="MULTIPOLYGON" />
+            <column name="GEOMETRYCOLLECTION" type="GEOMETRYCOLLECTION" />
 
         </createTable>
     </changeSet>
