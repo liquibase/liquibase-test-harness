@@ -1,0 +1,1 @@
+GRANT "DBA" TO "C##LIQUIBASE" ;
