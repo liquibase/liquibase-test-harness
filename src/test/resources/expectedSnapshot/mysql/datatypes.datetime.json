@@ -1,0 +1,111 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.datetime_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+		  {
+			  "column": {
+				  "name": "date",
+				  "type": {
+					  "typeName": "DATE"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "datetime",
+				  "type": {
+					  "typeName": "DATETIME"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "timestamp",
+				  "type": {
+					  "typeName": "TIMESTAMP"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "timestamp0",
+				  "type": {
+					  "typeName": "TIMESTAMP"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "timestamp1",
+				  "type": {
+					  "typeName": "TIMESTAMP"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "timestamp2",
+				  "type": {
+					  "typeName": "TIMESTAMP"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "timestamp3",
+				  "type": {
+					  "typeName": "TIMESTAMP"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "timestamp4",
+				  "type": {
+					  "typeName": "TIMESTAMP"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "timestamp5",
+				  "type": {
+					  "typeName": "TIMESTAMP"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "timestamp6",
+				  "type": {
+					  "typeName": "TIMESTAMP"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "year",
+				  "type": {
+					  "typeName": "YEAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "time",
+				  "type": {
+					  "typeName": "TIME"
+				  }
+			  }
+		  }
+	  ]
+    }
+  }
+}
