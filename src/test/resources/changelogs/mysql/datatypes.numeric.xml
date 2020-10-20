@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="r2">
+        <createTable tableName="datatypes.numeric_test_table">
+            <!-- https://dev.mysql.com/doc/refman/8.0/en/data-types.html -->
+
+            <!-- NUMERIC -->
+            <!-- https://dev.mysql.com/doc/refman/8.0/en/numeric-types.html  -->
+
+            <column name="bit" type="bit"/>
+            <column name="bit1" type="bit(1)"/>
+            <column name="bit64" type="bit(64)"/>
+
+            <column name="tinyint" type="tinyint"/>
+            <column name="tinyint.unsigned" type="tinyint unsigned"/>
+
+            <!-- bool, boolean equates to tinyint(1) -->
+            <column name="bool" type="bool"/>
+            <column name="boolean" type="boolean"/>
+
+            <column name="smallint" type="smallint"/>
+            <column name="smallint.unsigned" type="smallint unsigned"/>
+
+            <column name="mediumint" type="mediumint"/>
+            <column name="mediumint.unsigned" type="mediumint unsigned"/>
+
+            <column name="int" type="int"/>
+            <column name="int.unsigned" type="int unsigned"/>
+
+            <column name="bigint" type="bigint"/>
+            <column name="bigint.unsigned" type="bigint unsigned"/>
+
+            <!-- default decimal(10,0) -->
+            <column name="decimal" type="decimal"/>
+            <column name="decimal.max" type="decimal(65,30)"/>
+
+            <column name="float" type="float"/>
+            <column name="float.10.10" type="float(10,10)"/>
+
+            <!-- double and double precision are deprecated at 8.0.17 -->
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
