@@ -1,0 +1,1 @@
+CREATE TABLE "C##LIQUIBASE".createTableDataTypeText (textCol CLOB)

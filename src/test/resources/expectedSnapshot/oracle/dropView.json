@@ -1,0 +1,13 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+    "liquibase.structure.core.View": [
+      {
+        "view": {
+          "name": "test_view"
+        }
+      }]
+    }
+  }
+}

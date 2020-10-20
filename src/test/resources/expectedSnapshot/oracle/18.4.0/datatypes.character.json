@@ -1,0 +1,167 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.character_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+        "column": {
+            "name": "text",
+            "type": {
+              "typeName": "text"
+            }
+          }
+        },
+		  {
+			  "column": {
+				  "name": "character_varying1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "varchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "character_varying10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "varchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "character_varying100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "varchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "character_varying1000",
+				  "type": {
+					  "columnSize": "1000\\!\\{java.lang.Integer\\}",
+					  "typeName": "varchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "varchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "varchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "varchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar1000",
+				  "type": {
+					  "columnSize": "1000\\!\\{java.lang.Integer\\}",
+					  "typeName": "varchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "character1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "bpchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "character10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "bpchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "character100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "bpchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "character1000",
+				  "type": {
+					  "columnSize": "1000\\!\\{java.lang.Integer\\}",
+					  "typeName": "bpchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "char1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "bpchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "char10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "bpchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "char100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "bpchar"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "char1000",
+				  "type": {
+					  "columnSize": "1000\\!\\{java.lang.Integer\\}",
+					  "typeName": "bpchar"
+				  }
+			  }
+		  }
+	  ]
+    }
+  }
+}
