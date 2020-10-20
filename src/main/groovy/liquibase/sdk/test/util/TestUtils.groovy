@@ -5,14 +5,7 @@ import liquibase.Liquibase
 import liquibase.change.Change
 import liquibase.changelog.ChangeSet
 import liquibase.database.Database
-import liquibase.database.DatabaseFactory
-import liquibase.database.OfflineConnection
-import liquibase.lockservice.LockServiceFactory
-import liquibase.resource.ClassLoaderResourceAccessor
-import liquibase.resource.ResourceAccessor
-import liquibase.sdk.test.config.DatabaseUnderTest
 import liquibase.sdk.test.config.TestConfig
-import liquibase.sdk.test.config.TestInput
 import liquibase.sql.Sql
 import liquibase.sqlgenerator.SqlGeneratorFactory
 
@@ -20,14 +13,10 @@ import java.util.logging.Logger
 import java.util.regex.Pattern
 
 class TestUtils {
-    final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
-
-    static ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
-    static Boolean revalidateSql
 
     static Liquibase createLiquibase(String pathToFile, Database database) {
         database.resetInternalState()
-        return new Liquibase(pathToFile, resourceAccessor, database)
+        return new Liquibase(pathToFile, TestConfig.instance.resourceAccessor, database)
     }
 
     static String toSqlFromLiquibaseChangeSets(Liquibase liquibase) {
@@ -88,66 +77,14 @@ class TestUtils {
         return returnList
     }
 
-    static List<TestInput> buildTestInput(TestConfig config) {
-        List<TestInput> inputList = new ArrayList<>()
-        for (DatabaseUnderTest databaseUnderTest : config.databasesUnderTest) {
-            def database = DatabaseConnectionUtil.initializeDatabase(databaseUnderTest.url, databaseUnderTest.username, databaseUnderTest.password)
-            if (database == null) {
-                Logger.getLogger(TestUtils.name).info("Cannot connect to $databaseUnderTest.url. Using offline connection")
 
-                for (def possibleDatabase : DatabaseFactory.getInstance().getImplementedDatabases()) {
-                    if (possibleDatabase.getDefaultDriver(databaseUnderTest.url) != null) {
-                        println "Database ${possibleDatabase.shortName} accepts $databaseUnderTest.url"
-
-                        database = DatabaseConnectionUtil.initializeDatabase("offline:${possibleDatabase.shortName}", databaseUnderTest.username, null)
-                        break
-                    }
-                }
-            } else {
-                LockServiceFactory.getInstance().getLockService(database).forceReleaseLock()
-            }
-
-            database.outputDefaultCatalog = false
-            database.outputDefaultSchema = false
-
-            def databaseName = databaseUnderTest.name
-            if (databaseName == null) {
-                databaseName = database.getShortName()
-                if (database.connection instanceof OfflineConnection) {
-                    databaseName += " ${databaseUnderTest.url}"
-                } else {
-                    databaseName += " ${database.getDatabaseProductVersion()}"
-                }
-            }
-
-            for (def changeLogEntry : getChangeLogPaths(database).entrySet()) {
-
-                def testInput = TestInput.builder()
-                        .databaseName(databaseName)
-                        .url(databaseUnderTest.url)
-                        .dbSchema(databaseUnderTest.dbSchema)
-                        .username(databaseUnderTest.username)
-                        .password(databaseUnderTest.password)
-                        .version(database.getDatabaseProductVersion())
-                        .context(config.context)
-                        .changeObject(changeLogEntry.key)
-                        .pathToChangeLogFile(changeLogEntry.value)
-                        .database(database)
-                        .build()
-
-                inputList.add(testInput)
-            }
-        }
-        return inputList
-    }
-
-    protected static SortedMap<String, String> getChangeLogPaths(Database database) {
+    static SortedMap<String, String> getChangeLogPaths(Database database) {
         def databaseShortName = database.getShortName()
         def majorVersion = database.getConnection().getDatabaseMajorVersion()
         def minorVersion = database.getConnection().getDatabaseMinorVersion()
 
         def returnPaths = new TreeMap<String, String>()
-        for (String changeLogPath : resourceAccessor.list(null, "liquibase/sdk/test/changelogs", true, true, false)) {
+        for (String changeLogPath : TestConfig.instance.resourceAccessor.list(null, "liquibase/sdk/test/changelogs", true, true, false)) {
             def validChangeLog = false
 
             //is it a common changelog?
@@ -176,53 +113,5 @@ class TestUtils {
 
 
         return returnPaths
-    }
-
-    static void validateAndSetPropertiesFromCommandLine(TestConfig testConfig) {
-        def log = Logger.getLogger(this.class.name)
-
-        if (System.getProperty("revalidateSql") == null) {
-            revalidateSql = true
-        } else {
-            revalidateSql = Boolean.valueOf(System.getProperty("revalidateSql"))
-        }
-        log.info("Revalidate SQL: ${revalidateSql}")
-
-        String inputFormat = System.getProperty("inputFormat")
-        String changeObjects = System.getProperty("changeObjects")
-        String dbName = System.getProperty("dbName")
-        String dbVersion = System.getProperty("dbVersion")
-        if (inputFormat && (!supportedChangeLogFormats.contains(inputFormat))) {
-            throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
-        }
-        testConfig.inputFormat = inputFormat ?: testConfig.inputFormat
-        log.warning("Only " + testConfig.inputFormat + " input files are taken into account for this test run")
-
-//        if (changeObjects) {
-//            testConfig.defaultChangeObjects = Arrays.asList(changeObjects.split(","))
-//            //in case user provided changeObjects in cmd run only them regardless of config file
-//            for (def db : testConfig.databasesUnderTest) {
-//                db.databaseSpecificChangeObjects = null
-//            }
-//            log.info("running for next changeObjects : " + testConfig.defaultChangeObjects)
-//        }
-        if (dbName) {
-            //TODO try improve this, add logging
-            testConfig.databasesUnderTest = testConfig.databasesUnderTest.stream()
-                    .filter({ it.name.equalsIgnoreCase(dbName) })
-                    .findAny()
-                    .map({ Collections.singletonList(it) })
-                    .orElse(testConfig.databasesUnderTest)
-
-            if (dbVersion)
-                for (DatabaseUnderTest databaseUnderTest : testConfig.databasesUnderTest) {
-                    databaseUnderTest.versions = databaseUnderTest.versions.stream()
-                            .filter({ it.version.equalsIgnoreCase(dbVersion) })
-                            .findAny()
-                            .map({ Collections.singletonList(it) })
-                            .orElse(databaseUnderTest.versions)
-                }
-        }
-        log.info(testConfig.toString())
     }
 }
