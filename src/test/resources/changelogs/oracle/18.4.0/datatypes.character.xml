@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="r2">
+        <createTable tableName="datatypes.character_test_table">
+
+		    <!-- CHARACTER TYPES -->
+		    <!-- https://docs.oracle.com/cd/B28359_01/server.111/b28318/datatype.htm#CNCPT012 -->
+
+            <column name="varchar2.1" type="varchar2(1)"/>
+            <column name="varchar2.10" type="varchar2(10)"/>
+            <column name="varchar2.100" type="varchar2(100)"/>
+            <column name="varchar2.1000" type="varchar2(1000)"/>
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
