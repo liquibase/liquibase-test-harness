@@ -9,8 +9,6 @@ services:
         - "5500:5500"
     restart: always
     environment:
-        ORACLE_SID: LIQUIBASE
-        ORACLE_PDB: LIQUIBASE
         ORACLE_PWD: Secret321
     volumes:
         - "./startup:/opt/oracle/scripts/startup"
