@@ -4,10 +4,10 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "inserted_date",
+            "name": "INSERTED_DATE",
             "nullable": true,
             "type": {
-              "typeName": "date"
+              "typeName": "TIMESTAMP(6)"
             }
           }
         }

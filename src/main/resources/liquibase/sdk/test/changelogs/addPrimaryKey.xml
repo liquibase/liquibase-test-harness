@@ -6,10 +6,14 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="oleh" id="1">
+        <createTable tableName="test_table_addpk">
+            <column name="test_id" type="int"/>
+            <column name="test_column" type="varchar(50)"/>
+        </createTable>
         <addPrimaryKey
-                columnNames="id"
-                constraintName="pk_posts"
-                tableName="posts"
+                columnNames="test_id"
+                constraintName="pk_test_table_addpk"
+                tableName="test_table_addpk"
                 validate="true"/>
     </changeSet>
 </databaseChangeLog>

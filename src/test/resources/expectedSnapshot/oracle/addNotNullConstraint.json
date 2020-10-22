@@ -7,7 +7,7 @@
             "name": "inserted_date",
             "nullable": false,
             "type": {
-              "typeName": "date"
+              "typeName": "TIMESTAMP(6)"
             }
           }
         }

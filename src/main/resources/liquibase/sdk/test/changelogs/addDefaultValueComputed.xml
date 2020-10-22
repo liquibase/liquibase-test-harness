@@ -9,6 +9,6 @@
         <addDefaultValue  tableName="posts"
                           columnName="inserted_date"
                           columnDataType="date"
-                          defaultValueComputed="now()"/>
+                          defaultValueComputed="CURRENT_TIMESTAMP"/>
     </changeSet>
 </databaseChangeLog>
