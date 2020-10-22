@@ -4,7 +4,7 @@
       "liquibase.structure.core.PrimaryKey": [
         {
           "primaryKey": {
-            "name": "pk_posts"
+            "name": "pk_test_table_addpk"
           }
         }]
     }
