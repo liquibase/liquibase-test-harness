@@ -31,7 +31,7 @@
 			  "column": {
 				  "name": "varchar2.100",
 				  "type": {
-					  "columnSize": "1000\\!\\{java.lang.Integer\\}",
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
 					  "typeName": "VARCHAR"
 				  }
 			  }
