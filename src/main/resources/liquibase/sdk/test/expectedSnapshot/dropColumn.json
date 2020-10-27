@@ -2,12 +2,13 @@
   "snapshot": {
     "objects": {
       "_noMatch": true,
-    "liquibase.structure.core.Column": [
-      {
-        "column": {
-          "name": "content"
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "varcharColumn"
+          }
         }
-      }]
+      ]
     }
   }
 }

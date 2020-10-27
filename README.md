@@ -1,24 +1,24 @@
 # A Harness of Integration Tests
 ## Framework
 The Harness Test framework logically consists of 2 main folders:
-1) A src/test/groovy/liquibase/harness with groovy code and
-2) A src/test/resources with test resources
+1) A src/main/groovy/liquibase/sdk/test with groovy code and
+2) A src/main/resources with test resources
 
 ## Test Scope
 #### Change Object Test
-* At present there is only one test class to execute, which is `groovy/liquibase/harness/ChangeObjectsTest.groovy` -- This test class
-will execute a set of test cases based on provided input. 
-* The test input is configured via `resources/testConfig.yml` -- This yaml file takes 
-input changelogs from the `resources/changelogs` folder 
+* At present there is only one test class to execute, which is `groovy/liquibase/sdk/test/ChangeObjectsTest.groovy` -- This test class
+will execute a set of test cases based on provided input. It's added to `BaseLiquibaseSdkSuite` but it's the only one
+ test in this suite for now.
+* Database connections are configured via `resources/liquibase/sdk/test/liquibase.sdk.test.yml`
 * The test behavior is as follows:
-  * It reads the changesets from the changelogs provided
+  * It reads the changesets from the changelogs provided in `resources/liquibase/sdk/test/changelogs` 
   * Runs the changeset thru the SqlGeneratorFactory to generate SQL
-  * Compares the generated SQL with the expected SQL (provided in `resources/expectedSql`)
+  * Compares the generated SQL with the expected SQL (provided in `resources/liquibase/sdk/test/expectedSql`)
   * If the SQL generation is correct, the test then runs `liquibase update` to deploy the
   changeset to the DB
   * The test takes a snapshot of the database after deployment
   * The deployed changes are then rolled back 
-  * Finally, the actual DB snapshot is compared to the expected DB snapshot (provided in `resources/expectedSnapshot`)
+  * Finally, the actual DB snapshot is compared to the expected DB snapshot (provided in `resources/liquibase/sdk/test/expectedSnapshot`)
 
 #### Types of input files
 * The tests work with the 4 types of input files that are supported by liquibase itself - xml, yaml, json, sql.
@@ -28,19 +28,21 @@ To change it to another format, like 'sql' for instance, specify `-DinputFormat=
 
 
 ### Adding a change object test
-1) Go to `src/test/resources/changelogs` and add the xml changeset for the change type you want to test.
+1) Go to `src/main/resources/liquibase/sdk/test/changelogs` and add the xml (or other) changeset for the change type you
+ want to test.
   - The framework tries to rollback changes after deploying them to DB. If liquibase knows how to do a rollback for that particular changeset, it will automatically do that.
 If not, you will need to provide the rollback by yourself. To learn more about rollbacks read [Rolling back changesets](https://docs.liquibase.com/workflows/liquibase-community/using-rollback.html) article.
-2) Go to `src/test/resources/expectedSQL` and add the expected generated SQL. 
- - You will need to add this under the database specific folder. Currently, we only have Postgresql & MySQL folders. 
+2) Go to `src/main/resources/liquibase/sdk/test/expectedSQL` and add the expected generated SQL. 
+ - You will need to add this under the database specific folder.
  - NOTE: If your changeset will generate multiple SQL statements, you should add each SQL statement as a separate line. (See `renameTable.sql` in the postgres folder for an example.)
  - If you would like to test another DB type, please add the requisite folder.
-3) Go to `src/test/resources/expectedSnapshot` and add the expected DB Snapshot results.
+3) Go to `src/main/resources/liquibase/sdk/test/expectedSnapshot` and add the expected DB Snapshot results.
   - To verify the absence of an object in a snapshot (such as with drop* commands) add `"_noMatch": true,` to that tree level where the missing object should be verified.
   See [dropSequence.json](src/test/resources/expectedSnapshot/postgresql/dropSequence.json) as an example.
-  - You will need to add this under the database specific folder. Currently, we only have Postgresql & MySQL folders. 
+  - You will need to add this under the database specific folder.
   - If you would like to test another DB type, please add the requisite folder.
-4) Go to your IDE and run the test class `ChangeObjectsTest.groovy`
+4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (or BaseLiquibaseSdkSuite, or LiquibaseSdkSuite
+, they work same as for now)
 
 ## Running the integration test suite is as easy as one-two-three
 1) Make sure you have docker container up and running first

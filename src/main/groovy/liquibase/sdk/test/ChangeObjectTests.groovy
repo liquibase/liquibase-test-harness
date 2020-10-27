@@ -1,28 +1,22 @@
 package liquibase.sdk.test
 
-import groovy.transform.builder.Builder
 import liquibase.CatalogAndSchema
 import liquibase.Liquibase
-import liquibase.database.Database
 import liquibase.database.jvm.JdbcConnection
-import liquibase.sdk.test.config.DatabaseUnderTest
 import liquibase.sdk.test.config.TestConfig
 import liquibase.sdk.test.util.FileUtils
 import liquibase.sdk.test.util.SnapshotHelpers
 import liquibase.sdk.test.util.TestUtils
-import liquibase.util.StringUtil
-import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.util.logging.Logger
+import static liquibase.sdk.test.util.ChangeObjectTestHelper.*
 
 class ChangeObjectTests extends Specification {
 
-    final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
 
     @Unroll
-    def "apply #testInput.changeObject against #testInput.databaseName; verify generated SQL and DB snapshot"() {
+    def "apply #testInput.changeObject against #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
         given:
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, testInput.database)
 
@@ -61,93 +55,6 @@ class ChangeObjectTests extends Specification {
 
         where:
         testInput << buildTestInput()
-    }
-
-    /**
-     * Standardizes sql content. Removes line ending differences, and unnessisary leading/trailing whitespace
-     * @param sql
-     * @return
-     */
-    protected String cleanSql(String sql) {
-        if (sql == null) {
-            return null
-        }
-        return StringUtil.trimToNull(sql.replace("\r", "")
-                .replaceAll(/(?m)^--.*/, "") //remove comments
-                .replaceAll(/(?m)^\s+/, "") //remove beginning whitepace per line
-                .replaceAll(/(?m)\s+$/, "") //remove trailing whitespace per line
-        ) //remove trailing whitepace per line
-    }
-
-    static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
-        JSONAssert.assertEquals(expected, actual, new SnapshotHelpers.GeneralSnapshotComparator())
-    }
-
-    void saveAsExpectedSql(String generatedSql, TestInput testInput) {
-        File outputFile = "${outputResourcesBase}/liquibase/sdk/test/expectedSql/${testInput.database.shortName}/${testInput.changeObject}.sql" as File
-        outputFile.parentFile.mkdirs()
-
-        outputFile.write(generatedSql)
-    }
-
-    List<TestInput> buildTestInput() {
-        //TODO: Handle changeObject selection
-        String inputFormat = System.getProperty("inputFormat")
-        String changeObjects = System.getProperty("changeObjects")
-        if (inputFormat && (!supportedChangeLogFormats.contains(inputFormat))) {
-            throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
-        }
-
-        Logger.getLogger(this.class.name).warning("Only " + inputFormat + " input files are taken into account for this test run")
-
-//        if (changeObjects) {
-//            testConfig.defaultChangeObjects = Arrays.asList(changeObjects.split(","))
-//            //in case user provided changeObjects in cmd run only them regardless of config file
-//            for (def db : testConfig.databasesUnderTest) {
-//                db.databaseSpecificChangeObjects = null
-//            }
-//            log.info("running for next changeObjects : " + testConfig.defaultChangeObjects)
-//        }
-
-
-        List<TestInput> inputList = new ArrayList<>()
-        for (DatabaseUnderTest databaseUnderTest : TestConfig.instance.databasesUnderTest) {
-            def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.getChangeLogPaths(database).entrySet()) {
-
-                def testInput = TestInput.builder()
-                        .databaseName(databaseUnderTest.name)
-                        .url(databaseUnderTest.url)
-                        .dbSchema(databaseUnderTest.dbSchema)
-                        .username(databaseUnderTest.username)
-                        .password(databaseUnderTest.password)
-                        .version(database.getDatabaseProductVersion())
-                        .context(TestConfig.instance.context)
-                        .changeObject(changeLogEntry.key)
-                        .pathToChangeLogFile(changeLogEntry.value)
-                        .database(database)
-                        .build()
-
-                inputList.add(testInput)
-            }
-        }
-        return inputList
-    }
-
-
-    @Builder
-    static class TestInput {
-        String databaseName
-        String url
-        String dbSchema
-        String username
-        String password
-        String version
-        String context
-        String changeObject
-        String pathToChangeLogFile
-
-        Database database
     }
 
 }

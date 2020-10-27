@@ -10,7 +10,8 @@ import liquibase.sdk.test.util.DatabaseConnectionUtil
 import liquibase.sdk.test.util.TestUtils
 import org.yaml.snakeyaml.Yaml
 
-import java.util.logging.Logger;
+import java.util.logging.Logger
+import java.util.stream.Collectors;
 
 @ToString
 class TestConfig {
@@ -21,7 +22,6 @@ class TestConfig {
     ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
     Boolean revalidateSql
 
-    String inputFormat
     String context
     List<DatabaseUnderTest> databasesUnderTest
 
@@ -43,22 +43,11 @@ class TestConfig {
             String dbName = System.getProperty("dbName")
             String dbVersion = System.getProperty("dbVersion")
 
-            if (dbName) {
-                //TODO try improve this, add logging
+            if (dbName || dbVersion) {
                 instance.databasesUnderTest = instance.databasesUnderTest.stream()
                         .filter({ it.name.equalsIgnoreCase(dbName) })
-                        .findAny()
-                        .map({ Collections.singletonList(it) })
-                        .orElse(instance.databasesUnderTest)
-
-                if (dbVersion)
-                    for (DatabaseUnderTest databaseUnderTest : instance.databasesUnderTest) {
-                        databaseUnderTest.versions = databaseUnderTest.versions.stream()
-                                .filter({ it.version.equalsIgnoreCase(dbVersion) })
-                                .findAny()
-                                .map({ Collections.singletonList(it) })
-                                .orElse(databaseUnderTest.versions)
-                    }
+                        .filter({ it.version.equalsIgnoreCase(dbVersion) })
+                        .collect(Collectors.toList())
             }
 
             for (def databaseUnderTest : instance.databasesUnderTest) {
@@ -88,6 +77,12 @@ class TestConfig {
                     } else {
                         databaseUnderTest.name += " ${databaseUnderTest.database.getDatabaseProductVersion()}"
                     }
+                } else if (databaseUnderTest.name != databaseUnderTest.database.shortName ||
+                        !databaseUnderTest.version.startsWith(databaseUnderTest.database.databaseMajorVersion.toString())) {
+                    throw new IllegalArgumentException("Provided database name/majorVersion doesn't match with actual\
+${System.getProperty("line.separator")}    provided: ${databaseUnderTest.name} ${databaseUnderTest.version}\
+${System.getProperty("line.separator")}    actual: ${databaseUnderTest.database.shortName} \
+${databaseUnderTest.database.databaseMajorVersion.toString()}")
                 }
             }
         }

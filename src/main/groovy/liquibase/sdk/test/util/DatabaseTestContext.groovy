@@ -12,16 +12,16 @@ import liquibase.resource.ClassLoaderResourceAccessor
 
 import java.sql.SQLException
 
-public class DatabaseTestContext {
-    public static final String ALT_SCHEMA = "LIQUIBASEB";
-    private static final String TEST_DATABASES_PROPERTY = "test.databases";
-    private static DatabaseTestContext instance = new DatabaseTestContext();
-    private Map<String, DatabaseConnection> connectionsByUrl = new HashMap<>();
-    private Map<String, Boolean> connectionsAttempted = new HashMap<>();
+class DatabaseTestContext {
+    public static final String ALT_SCHEMA = "LIQUIBASEB"
+    private static final String TEST_DATABASES_PROPERTY = "test.databases"
+    private static DatabaseTestContext instance = new DatabaseTestContext()
+    private Map<String, DatabaseConnection> connectionsByUrl = new HashMap<>()
+    private Map<String, Boolean> connectionsAttempted = new HashMap<>()
 
 
-    public static DatabaseTestContext getInstance() {
-        return instance;
+    static DatabaseTestContext getInstance() {
+        return instance
     }
 
     /**
@@ -34,16 +34,16 @@ public class DatabaseTestContext {
         try {
             try {
                 if (!databaseConnection.getUnderlyingConnection().getAutoCommit()) {
-                    databaseConnection.getUnderlyingConnection().rollback();
+                    databaseConnection.getUnderlyingConnection().rollback()
                 }
             } catch (SQLException e) {
                 // Ignore. If rollback fails or is impossible, there is nothing we can do about it.
             }
 
             // Close the JDBC connection
-            databaseConnection.getUnderlyingConnection().close();
+            databaseConnection.getUnderlyingConnection().close()
         } catch (SQLException e) {
-            Scope.getCurrentScope().getLog(DatabaseTestContext.class).warning("Could not close the following connection: " + databaseConnection.getURL(), e);
+            Scope.getCurrentScope().getLog(DatabaseTestContext.class).warning("Could not close the following connection: " + databaseConnection.getURL(), e)
         }
     }
 
@@ -61,88 +61,88 @@ public class DatabaseTestContext {
     private DatabaseConnection openConnection(final String givenUrl,
                                               final String username, final String password) throws Exception {
         // Insert the temp dir path and ensure our replacement ends with /
-        String tempDir = System.getProperty("java.io.tmpdir");
+        String tempDir = System.getProperty("java.io.tmpdir")
         if (!tempDir.endsWith(System.getProperty("file.separator")))
-            tempDir += System.getProperty("file.separator");
+            tempDir += System.getProperty("file.separator")
 
-        final String url = givenUrl.replace("***TEMPDIR***/", tempDir);
+        final String url = givenUrl.replace("***TEMPDIR***/", tempDir)
 
         if (connectionsAttempted.containsKey(url)) {
             def connection = connectionsByUrl.get(url)
             if (connection == null) {
-                return null;
+                return null
             }
 
             if (connection instanceof JdbcConnection && connection.getUnderlyingConnection().isClosed()) {
-                connectionsByUrl.put(url, DatabaseFactory.getInstance().openConnection(url, username, password, null, new ClassLoaderResourceAccessor()));
+                connectionsByUrl.put(url, DatabaseFactory.getInstance().openConnection(url, username, password, null, new ClassLoaderResourceAccessor()))
             }
-            return connection;
+            return connection
         }
 
-        connectionsAttempted.put(url, Boolean.TRUE);
+        connectionsAttempted.put(url, Boolean.TRUE)
 
         if (System.getProperty(TEST_DATABASES_PROPERTY) != null) {
-            boolean shouldTest = false;
-            String[] databasesToTest = System.getProperty(TEST_DATABASES_PROPERTY).split("\\s*,\\s*");
+            boolean shouldTest = false
+            String[] databasesToTest = System.getProperty(TEST_DATABASES_PROPERTY).split("\\s*,\\s*")
             for (String database : databasesToTest) {
                 if (url.contains(database)) {
-                    shouldTest = true;
+                    shouldTest = true
                 }
             }
             if (!shouldTest) {
-                System.out.println("test.databases system property forbids testing against " + url);
-                return null;
+                System.out.println("test.databases system property forbids testing against " + url)
+                return null
             } else {
-                System.out.println("Will be tested against " + url);
+                System.out.println("Will be tested against " + url)
             }
         }
 
-        DatabaseConnection connection = DatabaseFactory.getInstance().openConnection(url, username, password, null, new ClassLoaderResourceAccessor());
+        DatabaseConnection connection = DatabaseFactory.getInstance().openConnection(url, username, password, null, new ClassLoaderResourceAccessor())
         if (connection == null) {
-            return null;
+            return null
         }
 
-        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(connection);
-        final DatabaseConnection databaseConnection = database.getConnection();
+        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(connection)
+        final DatabaseConnection databaseConnection = database.getConnection()
 
         if (databaseConnection.getAutoCommit()) {
-            databaseConnection.setAutoCommit(false);
+            databaseConnection.setAutoCommit(false)
         }
 
         try {
             if (url.startsWith("jdbc:hsql")) {
-                String sql = "CREATE SCHEMA " + ALT_SCHEMA + " AUTHORIZATION DBA";
+                String sql = "CREATE SCHEMA " + ALT_SCHEMA + " AUTHORIZATION DBA"
                 for (SqlListener listener : Scope.getCurrentScope().getListeners(SqlListener.class)) {
-                    listener.writeSqlWillRun(sql);
+                    listener.writeSqlWillRun(sql)
                 }
-                ((JdbcConnection) databaseConnection).getUnderlyingConnection().createStatement().execute(sql);
+                ((JdbcConnection) databaseConnection).getUnderlyingConnection().createStatement().execute(sql)
             } else if (url.startsWith("jdbc:sqlserver")
                     || url.startsWith("jdbc:postgresql")
                     || url.startsWith("jdbc:h2")) {
-                String sql = "CREATE SCHEMA " + ALT_SCHEMA;
+                String sql = "CREATE SCHEMA " + ALT_SCHEMA
                 for (SqlListener listener : Scope.getCurrentScope().getListeners(SqlListener.class)) {
-                    listener.writeSqlWillRun(sql);
+                    listener.writeSqlWillRun(sql)
                 }
-                ((JdbcConnection) databaseConnection).getUnderlyingConnection().createStatement().execute(sql);
+                ((JdbcConnection) databaseConnection).getUnderlyingConnection().createStatement().execute(sql)
             }
             if (!databaseConnection.getAutoCommit()) {
-                databaseConnection.commit();
+                databaseConnection.commit()
             }
         } catch (SQLException e) {
             // schema already exists
         } finally {
             try {
-                databaseConnection.rollback();
+                databaseConnection.rollback()
             } catch (DatabaseException e) {
                 if (database instanceof AbstractDb2Database) {
 //                    expected, there is a problem with it
                 } else {
-                    throw e;
+                    throw e
                 }
             }
         }
 
-        connectionsByUrl.put(url, databaseConnection);
+        connectionsByUrl.put(url, databaseConnection)
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
@@ -150,11 +150,11 @@ public class DatabaseTestContext {
                 shutdownConnection((JdbcConnection) databaseConnection)
             }
         }))
-        return databaseConnection;
+        return databaseConnection
     }
 
-    public DatabaseConnection getConnection(String url, String username, String password) throws Exception {
-        return openConnection(url, username, password);
+    DatabaseConnection getConnection(String url, String username, String password) throws Exception {
+        return openConnection(url, username, password)
     }
 
 }
