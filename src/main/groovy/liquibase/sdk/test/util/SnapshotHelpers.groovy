@@ -95,20 +95,20 @@ class SnapshotHelpers {
         }
 
         private static boolean checkArrayContainsObject(JSONArray expected, JSONArray actual) {
-            JSONObject expectedOuter = expected.get(0)
+            JSONObject expectedOuter = expected.get(0) as JSONObject
 
             Iterator iterator = expectedOuter.keys()
             while (iterator.hasNext()) {
                 String expectedArrayName = iterator.next()
-                JSONObject innerOne = expectedOuter.get(expectedArrayName)
+                JSONObject innerOne = expectedOuter.get(expectedArrayName) as JSONObject
                 String expectedPropertyName = innerOne.names().get(0)
-                String expectedPropertyValue = innerOne.get(innerOne.names().get(0))
+                String expectedPropertyValue = innerOne.get(innerOne.names().get(0) as String)
                 boolean found = false
                 for (int i = 0; i < actual.length(); i++) {
-                    JSONObject actualObjectOuter = actual.get(i)
-                    JSONObject actualArray = actualObjectOuter.get(expectedArrayName)
+                    JSONObject actualObjectOuter = actual.get(i) as JSONObject
+                    JSONObject actualArray = actualObjectOuter.get(expectedArrayName) as JSONObject
                     String actualPropertyValue = actualArray.get(expectedPropertyName)
-                    if (actualPropertyValue.equals(expectedPropertyValue)) {
+                    if (actualPropertyValue == expectedPropertyValue) {
                         found = true
                         break
                     }
