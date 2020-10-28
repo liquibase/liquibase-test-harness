@@ -77,26 +77,26 @@ class TestUtils {
         return returnList
     }
 
-
-    static SortedMap<String, String> getChangeLogPaths(Database database) {
+    static SortedMap<String, String> getChangeLogPaths(Database database, String inputFormat) {
         def databaseShortName = database.getShortName()
         def majorVersion = database.getConnection().getDatabaseMajorVersion()
         def minorVersion = database.getConnection().getDatabaseMinorVersion()
 
+        inputFormat = inputFormat ?: ""
         def returnPaths = new TreeMap<String, String>()
         for (String changeLogPath : TestConfig.instance.resourceAccessor.list(null, "liquibase/sdk/test/changelogs", true, true, false)) {
             def validChangeLog = false
 
             //is it a common changelog?
-            if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/[\\w.]+\$")) {
+            if (changeLogPath =~ "liquibase/sdk/test/changelogs/[\\w.]+${inputFormat}+\$") {
                 validChangeLog = true
-            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseShortName}/[\\w.]+\$")) {
+            } else if (changeLogPath =~ "liquibase/sdk/test/changelogs/${databaseShortName}/[\\w.]+${inputFormat}+\$") {
                 //is it a database-specific changelog?
                 validChangeLog = true
-            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseShortName}/${majorVersion}/[\\w.]+\$")) {
+            } else if (changeLogPath =~ "liquibase/sdk/test/changelogs/${databaseShortName}/${majorVersion}/[\\w.]+${inputFormat}+\$") {
                 //is it a database-major-version specific changelog?
                 validChangeLog = true
-            } else if (changeLogPath =~ Pattern.compile("liquibase/sdk/test/changelogs/${databaseShortName}/${majorVersion}/${minorVersion}/[\\w.]+\$")) {
+            } else if (changeLogPath =~ """liquibase/sdk/test/changelogs/${databaseShortName}/${majorVersion}/${minorVersion}/[\\w.]+${inputFormat}+\$""") {
                 //is it a database-minor-version specific changelog?
                 validChangeLog = true
             }

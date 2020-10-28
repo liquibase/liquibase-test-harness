@@ -12,17 +12,25 @@ class TestUtilsTest extends Specification {
         when:
         def database = new MySQLDatabase()
         database.setConnection(new OfflineConnection("offline:mysql?version=8.1", new ClassLoaderResourceAccessor()))
-        def paths = TestUtils.getChangeLogPaths(database)
+        def paths = TestUtils.getChangeLogPaths(database, "xml")
 
         then:
         paths["addColumn"] == "liquibase/sdk/test/changelogs/addColumn.xml"
         paths["addPrimaryKey"] == "liquibase/sdk/test/changelogs/addPrimaryKey.xml"
+        paths["renameColumn"] == "liquibase/sdk/test/changelogs/renameColumn.xml"
+
+        when:
+        paths = TestUtils.getChangeLogPaths(database, "sql")
+
+        then:
         paths["renameColumn"] == "liquibase/sdk/test/changelogs/mysql/8/renameColumn.sql"
+        paths["renameTable"] == "liquibase/sdk/test/changelogs/mysql/renameTable.sql"
+
 
         when:
         database = new PostgresDatabase()
         database.setConnection(new OfflineConnection("offline:postgresql?version=12.1", new ClassLoaderResourceAccessor()))
-        paths = TestUtils.getChangeLogPaths(database)
+        paths = TestUtils.getChangeLogPaths(database, "xml")
 
         then:
         paths["addColumn"] == "liquibase/sdk/test/changelogs/addColumn.xml"
