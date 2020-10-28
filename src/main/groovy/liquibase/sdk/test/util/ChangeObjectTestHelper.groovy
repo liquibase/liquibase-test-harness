@@ -25,9 +25,8 @@ class ChangeObjectTestHelper {
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : TestConfig.instance.databasesUnderTest) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.getChangeLogPaths(database).entrySet()) {
+            for (def changeLogEntry : TestUtils.getChangeLogPaths(database, inputFormat).entrySet()) {
                 if (!changeObjects || (changeObjects && changeObjects.contains(changeLogEntry.key))) {
-                    if (!inputFormat || inputFormat && changeLogEntry.value.endsWith(inputFormat)) {
                         inputList.add(TestInput.builder()
                                 .databaseName(databaseUnderTest.name)
                                 .url(databaseUnderTest.url)
@@ -40,7 +39,6 @@ class ChangeObjectTestHelper {
                                 .pathToChangeLogFile(changeLogEntry.value)
                                 .database(database)
                                 .build())
-                    }
                 }
             }
         }

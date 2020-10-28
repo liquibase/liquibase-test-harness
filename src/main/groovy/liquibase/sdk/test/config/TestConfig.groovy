@@ -90,4 +90,7 @@ ${databaseUnderTest.database.databaseMajorVersion.toString()}")
         return instance
 
     }
+    static void setInstance(TestConfig instance) {
+        TestConfig.instance = instance
+    }
 }

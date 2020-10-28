@@ -57,7 +57,7 @@ Execute `mvn failsafe:integration-test` with the flags outlined below:
 * `-DchangeObjects=createTable,dropTable` flag allows you to override changeObjects configured in testConfig.yml. Use comma
  separated lists.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
-* `-DdbVersion` overrides the database version. This works only in conjunction with `DdbName` flag
+* `-DdbVersion` overrides the database version. Works in conjunction with `-DdbName` flag.
 
 ## Cleanup
 When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
