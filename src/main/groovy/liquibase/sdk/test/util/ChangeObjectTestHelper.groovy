@@ -29,7 +29,8 @@ class ChangeObjectTestHelper {
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : TestConfig.instance.databasesUnderTest) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.getChangeLogPaths(database, commandLineInputFormat).entrySet()) {
+            for (def changeLogEntry : TestUtils.getChangeLogPaths(databaseUnderTest, commandLineInputFormat).entrySet
+                    ()) {
                 if (!changeObjects || (changeObjects && changeObjects.contains(changeLogEntry.key))) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
