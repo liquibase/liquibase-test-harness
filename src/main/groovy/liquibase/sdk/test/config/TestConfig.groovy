@@ -38,7 +38,7 @@ class TestConfig {
             } else {
                 instance.revalidateSql = Boolean.valueOf(System.getProperty("revalidateSql"))
             }
-            Logger.getLogger(TestConfig.name).info("Revalidate SQL: ${instance.revalidateSql}")
+            Logger.getLogger(this.class.name).info("Revalidate SQL: ${instance.revalidateSql}")
 
             String dbName = System.getProperty("dbName")
             String dbVersion = System.getProperty("dbVersion")
@@ -53,7 +53,8 @@ class TestConfig {
             for (def databaseUnderTest : instance.databasesUnderTest) {
                 databaseUnderTest.database = DatabaseConnectionUtil.initializeDatabase(databaseUnderTest.url, databaseUnderTest.username, databaseUnderTest.password)
                 if (databaseUnderTest.database == null) {
-                    Logger.getLogger(TestUtils.name).severe("Cannot connect to $databaseUnderTest.url. Using offline connection")
+                    Logger.getLogger(this.class.name).severe("Cannot connect to $databaseUnderTest.url. Using offline" +
+                            " connection")
 
                     for (def possibleDatabase : DatabaseFactory.getInstance().getImplementedDatabases()) {
                         if (possibleDatabase.getDefaultDriver(databaseUnderTest.url) != null) {
@@ -79,7 +80,7 @@ class TestConfig {
                     }
                 } else if (databaseUnderTest.name != databaseUnderTest.database.shortName ||
                         !databaseUnderTest.version.startsWith(databaseUnderTest.database.databaseMajorVersion.toString())) {
-                    throw new IllegalArgumentException("Provided database name/majorVersion doesn't match with actual\
+                    Logger.getLogger(this.class.name).severe("Provided database name/majorVersion doesn't match with actual\
 ${System.getProperty("line.separator")}    provided: ${databaseUnderTest.name} ${databaseUnderTest.version}\
 ${System.getProperty("line.separator")}    actual: ${databaseUnderTest.database.shortName} \
 ${databaseUnderTest.database.databaseMajorVersion.toString()}")
