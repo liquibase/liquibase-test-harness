@@ -5,12 +5,12 @@ import liquibase.Liquibase
 import liquibase.change.Change
 import liquibase.changelog.ChangeSet
 import liquibase.database.Database
+import liquibase.sdk.test.config.DatabaseUnderTest
 import liquibase.sdk.test.config.TestConfig
 import liquibase.sql.Sql
 import liquibase.sqlgenerator.SqlGeneratorFactory
 
 import java.util.logging.Logger
-import java.util.regex.Pattern
 
 class TestUtils {
 
@@ -77,10 +77,8 @@ class TestUtils {
         return returnList
     }
 
-    static SortedMap<String, String> getChangeLogPaths(Database database, String inputFormat) {
-        def databaseShortName = database.getShortName()
-        def majorVersion = database.getConnection().getDatabaseMajorVersion()
-        def minorVersion = database.getConnection().getDatabaseMinorVersion()
+    static SortedMap<String, String> getChangeLogPaths(DatabaseUnderTest database, String inputFormat) {
+        database
 
         inputFormat = inputFormat ?: ""
         def returnPaths = new TreeMap<String, String>()
@@ -90,14 +88,12 @@ class TestUtils {
             //is it a common changelog?
             if (changeLogPath =~ "liquibase/sdk/test/changelogs/[\\w.]+${inputFormat}+\$") {
                 validChangeLog = true
-            } else if (changeLogPath =~ "liquibase/sdk/test/changelogs/${databaseShortName}/[\\w.]+${inputFormat}+\$") {
+            } else if (changeLogPath =~ "liquibase/sdk/test/changelogs/${database.name}/[\\w.]+${inputFormat}+\$") {
                 //is it a database-specific changelog?
                 validChangeLog = true
-            } else if (changeLogPath =~ "liquibase/sdk/test/changelogs/${databaseShortName}/${majorVersion}/[\\w.]+${inputFormat}+\$") {
+            } else if (changeLogPath =~ "liquibase/sdk/test/changelogs/${database.name}/${database.version}/[\\w" +
+                    ".]+${inputFormat}+\$") {
                 //is it a database-major-version specific changelog?
-                validChangeLog = true
-            } else if (changeLogPath =~ """liquibase/sdk/test/changelogs/${databaseShortName}/${majorVersion}/${minorVersion}/[\\w.]+${inputFormat}+\$""") {
-                //is it a database-minor-version specific changelog?
                 validChangeLog = true
             }
 
@@ -109,7 +105,8 @@ class TestUtils {
             }
         }
 
-        Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.getShortName() + "/" + database.getDatabaseProductVersion() + " in liquibase/sdk/test/changelogs")
+        Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.name +
+                "/" + database.version + " in liquibase/sdk/test/changelogs")
 
 
         return returnPaths

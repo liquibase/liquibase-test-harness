@@ -4,6 +4,7 @@ import liquibase.database.OfflineConnection
 import liquibase.database.core.MySQLDatabase
 import liquibase.database.core.PostgresDatabase
 import liquibase.resource.ClassLoaderResourceAccessor
+import liquibase.sdk.test.config.DatabaseUnderTest
 import spock.lang.Specification
 
 class TestUtilsTest extends Specification {
@@ -12,7 +13,13 @@ class TestUtilsTest extends Specification {
         when:
         def database = new MySQLDatabase()
         database.setConnection(new OfflineConnection("offline:mysql?version=8.1", new ClassLoaderResourceAccessor()))
-        def paths = TestUtils.getChangeLogPaths(database, "xml")
+
+        DatabaseUnderTest databaseUnderTest = new DatabaseUnderTest()
+        databaseUnderTest.database = database
+        databaseUnderTest.name = "mysql"
+        databaseUnderTest.version = "8"
+
+        def paths = TestUtils.getChangeLogPaths(databaseUnderTest, "xml")
 
         then:
         paths["addColumn"] == "liquibase/sdk/test/changelogs/addColumn.xml"
@@ -20,7 +27,7 @@ class TestUtilsTest extends Specification {
         paths["renameColumn"] == "liquibase/sdk/test/changelogs/renameColumn.xml"
 
         when:
-        paths = TestUtils.getChangeLogPaths(database, "sql")
+        paths = TestUtils.getChangeLogPaths(databaseUnderTest, "sql")
 
         then:
         paths["renameColumn"] == "liquibase/sdk/test/changelogs/mysql/8/renameColumn.sql"
@@ -30,7 +37,12 @@ class TestUtilsTest extends Specification {
         when:
         database = new PostgresDatabase()
         database.setConnection(new OfflineConnection("offline:postgresql?version=12.1", new ClassLoaderResourceAccessor()))
-        paths = TestUtils.getChangeLogPaths(database, "xml")
+
+        DatabaseUnderTest databaseUnderTestPostgre = new DatabaseUnderTest()
+        databaseUnderTestPostgre.database = database
+        databaseUnderTestPostgre.name = "postgresql"
+        databaseUnderTestPostgre.version = "12"
+        paths = TestUtils.getChangeLogPaths(databaseUnderTestPostgre, "xml")
 
         then:
         paths["addColumn"] == "liquibase/sdk/test/changelogs/addColumn.xml"
