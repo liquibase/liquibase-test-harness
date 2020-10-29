@@ -14,31 +14,35 @@ class ChangeObjectTestHelper {
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
 
     static List<TestInput> buildTestInput() {
-        String inputFormat = System.getProperty("inputFormat")
+        String commandLineInputFormat = System.getProperty("inputFormat")
+
         String changeObjects = System.getProperty("changeObjects")
-        if (inputFormat && (!supportedChangeLogFormats.contains(inputFormat))) {
-            throw new IllegalArgumentException(inputFormat + " inputFormat is not supported")
+        if (commandLineInputFormat) {
+            if (!supportedChangeLogFormats.contains(commandLineInputFormat)) {
+                throw new IllegalArgumentException(commandLineInputFormat + " inputFormat is not supported")
+            }
+            TestConfig.instance.inputFormat = commandLineInputFormat
         }
 
-        Logger.getLogger(this.class.name).warning("Only " + inputFormat + " input files are taken into account for this test run")
+        Logger.getLogger(this.class.name).warning("Only " + commandLineInputFormat + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : TestConfig.instance.databasesUnderTest) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.getChangeLogPaths(database, inputFormat).entrySet()) {
+            for (def changeLogEntry : TestUtils.getChangeLogPaths(database, commandLineInputFormat).entrySet()) {
                 if (!changeObjects || (changeObjects && changeObjects.contains(changeLogEntry.key))) {
-                        inputList.add(TestInput.builder()
-                                .databaseName(databaseUnderTest.name)
-                                .url(databaseUnderTest.url)
-                                .dbSchema(databaseUnderTest.dbSchema)
-                                .username(databaseUnderTest.username)
-                                .password(databaseUnderTest.password)
-                                .version(database.getDatabaseProductVersion())
-                                .context(TestConfig.instance.context)
-                                .changeObject(changeLogEntry.key)
-                                .pathToChangeLogFile(changeLogEntry.value)
-                                .database(database)
-                                .build())
+                    inputList.add(TestInput.builder()
+                            .databaseName(databaseUnderTest.name)
+                            .url(databaseUnderTest.url)
+                            .dbSchema(databaseUnderTest.dbSchema)
+                            .username(databaseUnderTest.username)
+                            .password(databaseUnderTest.password)
+                            .version(database.getDatabaseProductVersion())
+                            .context(TestConfig.instance.context)
+                            .changeObject(changeLogEntry.key)
+                            .pathToChangeLogFile(changeLogEntry.value)
+                            .database(database)
+                            .build())
                 }
             }
         }

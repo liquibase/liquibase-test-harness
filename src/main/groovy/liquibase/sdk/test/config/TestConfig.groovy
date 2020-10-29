@@ -21,7 +21,7 @@ class TestConfig {
     String outputResourcesBase = "src/test/resources"
     ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
     Boolean revalidateSql
-
+    String inputFormat
     String context
     List<DatabaseUnderTest> databasesUnderTest
 
@@ -43,9 +43,14 @@ class TestConfig {
             String dbName = System.getProperty("dbName")
             String dbVersion = System.getProperty("dbVersion")
 
-            if (dbName || dbVersion) {
+            if (dbName) {
                 instance.databasesUnderTest = instance.databasesUnderTest.stream()
                         .filter({ it.name.equalsIgnoreCase(dbName) })
+                        .collect(Collectors.toList())
+            }
+
+            if (dbVersion) {
+                instance.databasesUnderTest = instance.databasesUnderTest.stream()
                         .filter({ it.version.equalsIgnoreCase(dbVersion) })
                         .collect(Collectors.toList())
             }
@@ -87,7 +92,6 @@ ${databaseUnderTest.database.databaseMajorVersion.toString()}")
                 }
             }
         }
-
         return instance
 
     }
