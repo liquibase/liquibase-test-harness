@@ -20,8 +20,10 @@ class ChangeObjectTests extends Specification {
         given:
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, testInput.database)
 
-        String expectedSql = cleanSql(FileUtils.getExpectedSqlFileContent(testInput.changeObject, testInput.database.shortName, testInput.database.databaseMajorVersion, testInput.database.databaseMinorVersion))
-        String expectedSnapshot = FileUtils.getExpectedSnapshotFileContent(testInput.changeObject, testInput.database.shortName, testInput.database.databaseMajorVersion, testInput.database.databaseMinorVersion)
+        String expectedSql = cleanSql(FileUtils.getExpectedSqlFileContent(
+                testInput.changeObject, testInput.databaseName, testInput.version))
+        String expectedSnapshot = FileUtils.getExpectedSnapshotFileContent(
+                testInput.changeObject, testInput.databaseName, testInput.version)
         List<CatalogAndSchema> catalogAndSchemaList = TestUtils.getCatalogAndSchema(testInput.database, testInput.dbSchema)
 
         when:
