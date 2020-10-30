@@ -78,8 +78,6 @@ class TestUtils {
     }
 
     static SortedMap<String, String> getChangeLogPaths(DatabaseUnderTest database, String inputFormat) {
-        database
-
         inputFormat = inputFormat ?: ""
         def returnPaths = new TreeMap<String, String>()
         for (String changeLogPath : TestConfig.instance.resourceAccessor.list(null, "liquibase/sdk/test/changelogs", true, true, false)) {

@@ -24,12 +24,12 @@ class ChangeObjectTestHelper {
             TestConfig.instance.inputFormat = commandLineInputFormat
         }
 
-        Logger.getLogger(this.class.name).warning("Only " + commandLineInputFormat + " input files are taken into account for this test run")
+        Logger.getLogger(this.class.name).warning("Only " +  TestConfig.instance.inputFormat + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : TestConfig.instance.databasesUnderTest) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.getChangeLogPaths(databaseUnderTest, commandLineInputFormat).entrySet
+            for (def changeLogEntry : TestUtils.getChangeLogPaths(databaseUnderTest,  TestConfig.instance.inputFormat).entrySet
                     ()) {
                 if (!changeObjects || (changeObjects && changeObjects.contains(changeLogEntry.key))) {
                     inputList.add(TestInput.builder()
@@ -38,7 +38,7 @@ class ChangeObjectTestHelper {
                             .dbSchema(databaseUnderTest.dbSchema)
                             .username(databaseUnderTest.username)
                             .password(databaseUnderTest.password)
-                            .version(database.getDatabaseProductVersion())
+                            .version(databaseUnderTest.version)
                             .context(TestConfig.instance.context)
                             .changeObject(changeLogEntry.key)
                             .pathToChangeLogFile(changeLogEntry.value)
@@ -72,7 +72,7 @@ class ChangeObjectTestHelper {
 
     static void saveAsExpectedSql(String generatedSql, TestInput testInput) {
         File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/sdk/test/expectedSql/" +
-                "${testInput.database.shortName}/${testInput.changeObject}.sql" as File
+                "${testInput.databaseName}/${testInput.changeObject}.sql" as File
         outputFile.parentFile.mkdirs()
         outputFile.write(generatedSql)
     }
