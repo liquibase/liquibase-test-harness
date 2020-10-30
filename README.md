@@ -9,16 +9,16 @@ The Harness Test framework logically consists of 2 main folders:
 * At present there is only one test class to execute, which is `groovy/liquibase/sdk/test/ChangeObjectsTest.groovy` -- This test class
 will execute a set of test cases based on provided input. It's added to `BaseLiquibaseSdkSuite` but it's the only one
  test in this suite for now.
-* Database connections are configured via `resources/liquibase/sdk/test/liquibase.sdk.test.yml`
+* Database connections are configured via `src/test/resources/liquibase/sdk/test/liquibase.sdk.test.yml`
 * The test behavior is as follows:
-  * It reads the changesets from the changelogs provided in `resources/liquibase/sdk/test/changelogs` 
+  * It reads the changesets from the changelogs provided in `src/main/resources/liquibase/sdk/test/changelogs` folders (recursively)
   * Runs the changeset thru the SqlGeneratorFactory to generate SQL
-  * Compares the generated SQL with the expected SQL (provided in `resources/liquibase/sdk/test/expectedSql`)
+  * Compares the generated SQL with the expected SQL (provided in `src/main/resources/liquibase/sdk/test/expectedSql`)
   * If the SQL generation is correct, the test then runs `liquibase update` to deploy the
   changeset to the DB
   * The test takes a snapshot of the database after deployment
   * The deployed changes are then rolled back 
-  * Finally, the actual DB snapshot is compared to the expected DB snapshot (provided in `resources/liquibase/sdk/test/expectedSnapshot`)
+  * Finally, the actual DB snapshot is compared to the expected DB snapshot (provided in `src/main/resources/liquibase/sdk/test/expectedSnapshot`)
 
 #### Types of input files
 * The tests work with the 4 types of input files that are supported by liquibase itself - xml, yaml, json, sql.
@@ -32,7 +32,7 @@ To change it to another format, like 'sql' for instance, specify `-DinputFormat=
  want to test.
   - The framework tries to rollback changes after deploying them to DB. If liquibase knows how to do a rollback for that particular changeset, it will automatically do that.
 If not, you will need to provide the rollback by yourself. To learn more about rollbacks read [Rolling back changesets](https://docs.liquibase.com/workflows/liquibase-community/using-rollback.html) article.
-2) Go to `src/main/resources/liquibase/sdk/test/expectedSQL` and add the expected generated SQL. 
+2) Go to `src/main/resources/liquibase/sdk/test/expectedSql` and add the expected generated SQL. 
  - You will need to add this under the database specific folder.
  - NOTE: If your changeset will generate multiple SQL statements, you should add each SQL statement as a separate line. (See `renameTable.sql` in the postgres folder for an example.)
  - If you would like to test another DB type, please add the requisite folder.
@@ -52,7 +52,7 @@ Wait until the databases start up.
 and run the test class `ChangeObjectsTest.groovy`
 
 ## Running from the cmd line with Maven
-Execute `mvn failsafe:integration-test` with the flags outlined below:
+Execute `mvn -Dtest=LiquibaseSdkSuite test` with the flags outlined below:
 * `-DinputFormat=xml` or select from the other inputFormats listed in [Types of input files](#types-of-input-files)
 * `-DchangeObjects=createTable,dropTable` flag allows you to override changeObjects configured in testConfig.yml. Use comma
  separated lists.
