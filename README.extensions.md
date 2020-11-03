@@ -1,6 +1,6 @@
 # Using Test Harness in Extensions
 
-This test harness is designed to make it easy for you to test your extensions.
+This test harness is *also* designed to make it easy for you to test your extensions.
 
 ## Configuring your project
  
