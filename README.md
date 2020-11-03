@@ -28,8 +28,9 @@ Currently, there is one test type defined in the test harness:
 
 This repository is configured to run against databases supported by Liquibase Core. 
 
-Extensions that add support for additional databases and/or define additional functionality can add this framework as a dependency and use the existing tests to
-more easily verify their new functionality works and doesn't break existing logic.
+Extensions that add support for additional databases and/or define additional functionality can add this framework as a dependency and use the existing tests to:
+- More easily verify their new functionality works
+- And that it also doesn't break existing logic
 
 ## Configuring Execution   
 
@@ -41,7 +42,7 @@ That file contains a list of the database connections to test against, as well a
 
 See `src/test/resources/liquibase.sdk.test.yml` to see what this repository is configured to use.
 
-## Using in extensions
+## For use in extensions
 
 For more information on using the test harness in your extension, see [README.extensions.md] 
 
@@ -64,7 +65,7 @@ whether they make the expected changes.
 
 #### Types of input files
 * The tests work with the 4 types of input files that are supported by liquibase itself - xml, yaml, json, sql.
-Thus files with extensions 'xml', 'sql', 'json', 'yml', 'yaml' are taken into account, but not all together.
+Thus files with extensions 'xml', 'sql', 'json', 'yml', 'yaml' are taken into account, but not all formats together in the same run.
 * The default format is xml, so by default only changelogs with xml file extension are executed.
 To change it to another format, like 'sql' for instance, specify `-DinputFormat=sql` as the command line argument for Maven or as VM option to your JUnit test run config.
 
@@ -83,8 +84,7 @@ If not, you will need to provide the rollback by yourself. To learn more about r
   See [dropSequence.json](src/test/resources/expectedSnapshot/postgresql/dropSequence.json) as an example.
   - You will need to add this under the database specific folder.
   - If you would like to test another DB type, please add the requisite folder.
-4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (or BaseLiquibaseSdkSuite, or LiquibaseSdkSuite
-, they work same as for now)
+4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (You can also choose to run `BaseLiquibaseSdkSuite`, or `LiquibaseSdkSuite` -- at present they all work the same).
 
 # Running the Tests
 
@@ -96,7 +96,7 @@ Wait until the databases start up.
 ## Running from the cmd line with Maven
 Execute `mvn test` with the (optional) flags outlined below:
 * `-DinputFormat=xml` or select from the other inputFormats listed in [Types of input files](#types-of-input-files)
-* `-DchangeObjects=createTable,dropTable` flag allows you to override changeObjects configured in testConfig.yml. Use comma
+* `-DchangeObjects=createTable,dropTable` flag allows you to override changeObjects configured in `liquibase.sdk.test.yml`. Use comma
  separated lists.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
 * `-DdbVersion` overrides the database version. Works in conjunction with `-DdbName` flag.
