@@ -1,1 +1,0 @@
-CREATE TABLE lbcat.createTableDataTypeText (textCol TEXT NULL)

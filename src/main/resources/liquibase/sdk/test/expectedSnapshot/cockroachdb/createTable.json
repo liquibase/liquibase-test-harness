@@ -1,0 +1,23 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "cockroachdb_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "id_column"
+          },
+          "column": {
+            "name": "name_column"
+          }
+        }
+      ]
+    }
+  }
+}

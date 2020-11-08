@@ -1,1 +1,0 @@
-ALTER TABLE public.posts ALTER COLUMN  inserted_date SET DEFAULT NOW()

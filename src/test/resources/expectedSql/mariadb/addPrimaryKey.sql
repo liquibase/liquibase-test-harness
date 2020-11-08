@@ -1,1 +1,0 @@
-ALTER TABLE lbcat.posts ADD PRIMARY KEY (id)

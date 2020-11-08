@@ -1,0 +1,23 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.money_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+        "column": {
+            "name": "money",
+            "type": {
+              "typeName": "numeric"
+            }
+          }
+        }
+     ]
+    }
+  }
+}

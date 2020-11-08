@@ -1,0 +1,1 @@
+CREATE TABLE "datatypes.xml_test_table" (xml XML)
