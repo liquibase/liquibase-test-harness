@@ -1,0 +1,1 @@
+CREATE TABLE smallint_test_table (test_id SMALLINT)

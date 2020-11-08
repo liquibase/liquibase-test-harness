@@ -1,0 +1,1 @@
+CREATE TABLE "datatypes.arrays_test_table" (single_int_array INTEGER[], double_int_array INTEGER[][], single_text_array TEXT[], double_text_array TEXT[][], exact1_single_text_array TEXT[1], exact1_double_text_array TEXT[1][1], exact10_single_text_array TEXT[10], exact10_double_text_array TEXT[10][10])

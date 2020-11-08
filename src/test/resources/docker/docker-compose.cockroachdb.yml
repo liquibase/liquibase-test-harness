@@ -1,0 +1,28 @@
+version: '3.5'
+
+services:
+
+  crdb:
+    image: cockroachdb/cockroach:latest
+    command: start --insecure
+    expose:
+      - "8080"
+      - "26257"
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+    networks:
+      - roachnet
+  crdb-init:
+    image: cockroachdb/cockroach:latest
+    networks:
+      - roachnet
+    volumes:
+      - ./setup_db.sh:/setup_db.sh
+    entrypoint: "/bin/bash"
+    command: /setup_db.sh
+    depends_on:
+      - crdb
+networks:
+  roachnet:
+
