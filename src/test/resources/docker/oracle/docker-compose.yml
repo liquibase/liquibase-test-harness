@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+
+  oracle-xe-18.4.0:
+    image: oracle/database:18.4.0-xe
+    ports:
+        - "1521:1521"
+        - "5500:5500"
+    restart: always
+    environment:
+        ORACLE_PWD: Secret321
+    volumes:
+        - "./startup:/opt/oracle/scripts/startup"
