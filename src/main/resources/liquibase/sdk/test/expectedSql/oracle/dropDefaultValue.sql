@@ -1,0 +1,2 @@
+ALTER TABLE posts MODIFY title DEFAULT 'title_test'
+ALTER TABLE posts MODIFY title DEFAULT NULL

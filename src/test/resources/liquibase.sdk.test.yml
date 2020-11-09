@@ -37,3 +37,9 @@ databasesUnderTest:
     url: jdbc:postgresql://localhost:26257/lbcat
     username: lbuser
     password:
+
+  - name: oracle
+    version: 18.4.0
+    url: 'jdbc:oracle:thin:@localhost:1521/xe'
+    username: C##LIQUIBASE
+    password: Secret321

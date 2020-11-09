@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "INSERTED_DATE",
+            "nullable": true,
+            "type": {
+              "typeName": "TIMESTAMP(6)"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+

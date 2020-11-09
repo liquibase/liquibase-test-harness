@@ -1,0 +1,1 @@
+ALTER TABLE posts MODIFY title DEFAULT 'title_test'
