@@ -6,16 +6,12 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="oleh" id="1">
-        <createTable tableName="test_table_droppk">
-            <column name="test_id" type="int"/>
-            <column name="test_column" type="varchar(50)"/>
-        </createTable>
         <addPrimaryKey
-                columnNames="test_id"
-                constraintName="pk_test_table_droppk"
-                tableName="test_table_droppk"
+                columnNames="id"
+                constraintName="pk_posts"
+                tableName="posts"
                 validate="true"/>
-        <dropPrimaryKey tableName="test_table_droppk" constraintName="pk_test_table_droppk"/>
+        <dropPrimaryKey tableName="posts" constraintName="pk_posts"/>
         <rollback/>
     </changeSet>
 </databaseChangeLog>

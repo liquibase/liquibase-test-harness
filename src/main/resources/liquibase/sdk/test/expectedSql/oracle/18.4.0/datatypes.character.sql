@@ -1,0 +1,1 @@
+CREATE TABLE "datatypes.character_test_table" ("varchar2.1" VARCHAR2(1), "varchar2.10" VARCHAR2(10), "varchar2.100" VARCHAR2(100), "varchar2.1000" VARCHAR2(1000))
