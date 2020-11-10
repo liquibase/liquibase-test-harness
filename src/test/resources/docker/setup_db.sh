@@ -26,8 +26,8 @@ $SQL -e "INSERT INTO lbcat.authors VALUES ('1','Eileen','Lubowitz','ppaucek@exam
 ('3','Cyril','Funk','reynolds.godfrey@example.com','1988-04-21','2011-06-24 18:17:48'),
 ('4','Nicolas','Buckridge','xhoeger@example.net','2017-02-03','2019-04-22 02:04:41'),
 ('5','Jayden','Walter','lillian66@example.com','2010-02-27','1990-02-04 02:32:00');"
-$SQL -e "ALTER TABLE lbcat.authors OWNER TO lbuser;"
-#$SQL -e "GRANT ALL PRIVILEGES ON TABLE lbcat.authors TO lbuser;"
+
+$SQL -e "GRANT ALL ON TABLE lbcat.authors TO lbuser;"
 
 
 $SQL -e "DROP TABLE IF EXISTS lbcat.posts;"
@@ -40,8 +40,8 @@ $SQL -e "CREATE TABLE lbcat.posts (
   inserted_date date
 );"
 
-$SQL -e "ALTER TABLE lbcat.posts OWNER TO lbuser;"
-#$SQL -e "GRANT ALL PRIVILEGES ON TABLE lbcat.posts TO lbuser;"
+
+$SQL -e "GRANT ALL ON TABLE lbcat.posts TO lbuser;"
 
 $SQL -e "INSERT INTO lbcat.posts VALUES ('1','1','temporibus','voluptatum','Fugit non et doloribus repudiandae.','2015-11-18'),
 ('2','2','ea','aut','Tempora molestias maiores provident molestiae sint possimus quasi.','1975-06-08'),

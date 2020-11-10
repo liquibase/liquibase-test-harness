@@ -4,17 +4,17 @@
       "liquibase.structure.core.Table": [
         {
           "table": {
-            "name": "cockroachdb_table"
+            "name": "test_table"
           }
         }
       ],
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "id_column"
+            "name": "test_id"
           },
           "column": {
-            "name": "name_column"
+            "name": "test_column"
           }
         }
       ]
