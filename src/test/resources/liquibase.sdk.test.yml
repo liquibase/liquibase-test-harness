@@ -32,14 +32,14 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-  - name: cockroachdb
-    version: 20.1
-    url: jdbc:postgresql://localhost:26257/lbcat
-    username: lbuser
-    password:
-
   - name: oracle
     version: 18.4.0
     url: 'jdbc:oracle:thin:@localhost:1521/xe'
     username: C##LIQUIBASE
     password: Secret321
+
+#  - name: cockroachdb
+#    version: 20.1
+#    url: jdbc:postgresql://localhost:26257/lbcat
+#    username: lbuser
+#    password:
