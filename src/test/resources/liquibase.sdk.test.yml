@@ -38,8 +38,8 @@ databasesUnderTest:
     username: C##LIQUIBASE
     password: Secret321
 
-#  - name: cockroachdb
-#    version: 20.1
-#    url: jdbc:postgresql://localhost:26257/lbcat
-#    username: lbuser
-#    password:
+  - name: cockroachdb
+    version: 20.2
+    url: jdbc:postgresql://localhost:26257/lbcat
+    username: lbuser
+    password:
