@@ -43,3 +43,10 @@ databasesUnderTest:
     url: jdbc:postgresql://localhost:26257/lbcat
     username: lbuser
     password:
+
+  - name: cockroachdb
+    version: 20.1
+    url: jdbc:postgresql://localhost:26258/lbcat
+    username: lbuser
+    password:
+

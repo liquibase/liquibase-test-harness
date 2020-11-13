@@ -2,7 +2,8 @@
 #echo "Wait for servers to be up"
 #sleep 10
 
-HOSTPARAMS="--host crdb --insecure"
+HOST=$1
+HOSTPARAMS="--host $HOST --insecure"
 SQL="/cockroach/cockroach.sh sql $HOSTPARAMS"
 
 $SQL -e "CREATE DATABASE lbcat;"
