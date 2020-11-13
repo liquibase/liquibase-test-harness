@@ -2,44 +2,50 @@ inputFormat: xml
 context: testContext
 
 databasesUnderTest:
-  - name: postgresql
-    version: 9
-    url: jdbc:postgresql://localhost:5433/lbcat
-    username: lbuser
-    password: LiquibasePass1
+#  - name: postgresql
+#    version: 9
+#    url: jdbc:postgresql://localhost:5433/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: postgresql
+#    version: 12
+#    url: jdbc:postgresql://localhost:5434/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: mysql
+#    version: 5.7
+#    url: jdbc:mysql://localhost:33062/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: mysql
+#    version: 8
+#    url: jdbc:mysql://localhost:33061/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: mariadb
+#    version: 10.3
+#    url: jdbc:mariadb://localhost:33063/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: oracle
+#    version: 18.4.0
+#    url: 'jdbc:oracle:thin:@localhost:1521/xe'
+#    username: C##LIQUIBASE
+#    password: Secret321
+#
+#  - name: cockroachdb
+#    version: 20.2
+#    url: jdbc:postgresql://localhost:26257/lbcat
+#    username: lbuser
+#    password:
 
-  - name: postgresql
-    version: 12
-    url: jdbc:postgresql://localhost:5434/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mysql
-    version: 5.7
-    url: jdbc:mysql://localhost:33062/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mysql
-    version: 8
-    url: jdbc:mysql://localhost:33061/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mariadb
-    version: 10.3
-    url: jdbc:mariadb://localhost:33063/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: oracle
-    version: 18.4.0
-    url: 'jdbc:oracle:thin:@localhost:1521/xe'
-    username: C##LIQUIBASE
-    password: Secret321
-
-  - name: cockroachdb
-    version: 20.2
-    url: jdbc:postgresql://localhost:26257/lbcat
-    username: lbuser
+  - name: cassandra
+    version: 3.11
+    url: jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz
+    username:
     password:

@@ -72,6 +72,20 @@
             <artifactId>ojdbc8</artifactId>
             <version>18.3.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.datastax.jdbc</groupId>
+            <artifactId>CassandraJDBC42</artifactId>
+            <version>4.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/CassandraJDBC42.jar</systemPath>
+        </dependency>
+        <!-- ARGH! THERE BE EXTENSIONS BELOW, MATEY! -->
+        <dependency>
+            <groupId>org.liquibase.ext</groupId>
+            <artifactId>liquibase-cassandra</artifactId>
+            <version>4.1.1.2</version>
+        </dependency>
+        <!-- END EXTENSIONS -->
     </dependencies>
     <build>
         <plugins>
