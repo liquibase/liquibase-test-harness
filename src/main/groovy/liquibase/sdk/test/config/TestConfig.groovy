@@ -83,7 +83,13 @@ class TestConfig {
                     } else {
                         databaseUnderTest.name += " ${databaseUnderTest.database.getDatabaseProductVersion()}"
                     }
-                } else if (databaseUnderTest.name != databaseUnderTest.database.shortName ||
+                } else if (databaseUnderTest.version == null) {
+                    Logger.getLogger(this.class.name)
+                            .warning("Database version is not provided applying version from Database metadata")
+                    databaseUnderTest.version = databaseUnderTest.database.getDatabaseMajorVersion() + "."
+                    +databaseUnderTest.database.getDatabaseMinorVersion()
+                }
+                else if (databaseUnderTest.name != databaseUnderTest.database.shortName ||
                         !databaseUnderTest.version.startsWith(databaseUnderTest.database.databaseMajorVersion.toString())) {
                     Logger.getLogger(this.class.name).severe("Provided database name/majorVersion doesn't match with actual\
 ${System.getProperty("line.separator")}    provided: ${databaseUnderTest.name} ${databaseUnderTest.version}\
@@ -94,8 +100,5 @@ ${databaseUnderTest.database.databaseMajorVersion.toString()}")
         }
         return instance
 
-    }
-    static void setInstance(TestConfig instance) {
-        TestConfig.instance = instance
     }
 }
