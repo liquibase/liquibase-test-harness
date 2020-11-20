@@ -2,10 +2,7 @@ package liquibase.sdk.test
 
 import liquibase.CatalogAndSchema
 import liquibase.Liquibase
-import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
-import liquibase.lockservice.LockServiceFactory
-import liquibase.lockservice.MockLockService
 import liquibase.sdk.test.config.TestConfig
 import liquibase.sdk.test.util.FileUtils
 import liquibase.sdk.test.util.SnapshotHelpers
