@@ -14,10 +14,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repo
       - uses: actions/checkout@v2
       - name: Build the test stack
-        with:
-          file: src/test/resources/docker/docker-compose.yml
+        working-directory: src/test/resources/docker
         run: docker-compose up -d
       - name: Test
         run: mvn test
