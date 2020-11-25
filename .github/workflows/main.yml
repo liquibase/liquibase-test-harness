@@ -1,0 +1,20 @@
+name: test-harness-actions-workflow
+on:
+  # Triggers the workflow on push or pull request events but only for the main & DAT-6102branch
+  push:
+    branches: [ main, DAT-6102 ]
+  pull_request:
+    branches: [ main, DAT-6102 ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the test stack
+        run: docker-compose up -d
+      - name: Test
+        run: mvn test
+
