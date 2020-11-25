@@ -16,6 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the test stack
+        with:
+          file: src/test/resources/docker/docker-compose.yml
         run: docker-compose up -d
       - name: Test
         run: mvn test
