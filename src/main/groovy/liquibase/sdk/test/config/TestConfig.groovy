@@ -7,7 +7,6 @@ import liquibase.lockservice.LockServiceFactory
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.ResourceAccessor
 import liquibase.sdk.test.util.DatabaseConnectionUtil
-import liquibase.sdk.test.util.TestUtils
 import org.yaml.snakeyaml.Yaml
 
 import java.util.logging.Logger
