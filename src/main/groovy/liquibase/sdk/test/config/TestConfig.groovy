@@ -1,6 +1,7 @@
 package liquibase.sdk.test.config
 
 import groovy.transform.ToString
+import liquibase.Scope
 import liquibase.database.DatabaseFactory
 import liquibase.database.OfflineConnection
 import liquibase.lockservice.LockServiceFactory
@@ -31,7 +32,10 @@ class TestConfig {
     public static TestConfig getInstance() {
         if (instance == null) {
             Yaml configFileYml = new Yaml()
-            instance = configFileYml.loadAs(getClass().getResourceAsStream("/liquibase.sdk.test.yml"), TestConfig.class)
+            def testConfig = getClass().getResourceAsStream("/liquibase.sdk.test.yml")
+            assert testConfig != null : "Cannot find liquibase.sdk.test.yml in classpath"
+
+            instance = configFileYml.loadAs(testConfig, TestConfig.class)
 
             if (System.getProperty("revalidateSql") == null) {
                 instance.revalidateSql = true
