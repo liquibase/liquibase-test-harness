@@ -15,9 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build the test stack
+      - name: Build test infra
         working-directory: src/test/resources/docker
         run: docker-compose up -d
       - name: Test
-        run: mvn test
+        run: mvn -Dtest=LiquibaseSdkSuiteTest test
+      - name: Tear down test infra
+        working-directory: src/test/resources/docker
+        run: docker-compose down --volumes
 
