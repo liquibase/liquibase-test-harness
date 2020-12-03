@@ -1,14 +1,14 @@
 # Basic workflow with Actions
 
-name: Stand up test environments + execute tests
+name: Test Execution
 on:
-  # Triggers the workflow on push or pull request events but only for the DAT-6102 branch
+  # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers
   push:
-    branches: [ DAT-6102 ]
+    branches: [ main ]
   pull_request:
-    branches: [ DAT-6102 ]
+    branches: [ main ]
   workflow_dispatch:
-  # Allows you to run this workflow manually from the Actions tab
+
 
 jobs:
   test:
