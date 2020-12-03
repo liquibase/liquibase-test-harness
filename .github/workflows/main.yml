@@ -1,6 +1,6 @@
 # Basic workflow with Actions
 
-name: CI
+name: Stand up test environments + execute tests
 on:
   # Triggers the workflow on push or pull request events but only for the DAT-6102 branch
   push:
