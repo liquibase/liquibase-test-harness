@@ -16,10 +16,10 @@ class ChangeObjectTestHelper {
     static List<TestInput> buildTestInput() {
         String commandLineInputFormat = System.getProperty("inputFormat")
 
-        String changeObjects = System.getProperty("changeObjects")
-        List changeObjectList;
-        if(changeObjects){
-            changeObjectList = Arrays.asList(changeObjects.contains(",") ? changeObjects.split(",") : changeObjects)
+        String commandLineChangeObjects = System.getProperty("changeObjects")
+        List commandLineChangeObjectList;
+        if(commandLineChangeObjects){
+            commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",") ? commandLineChangeObjects.split(",") : commandLineChangeObjects)
         }
         if (commandLineInputFormat) {
             if (!supportedChangeLogFormats.contains(commandLineInputFormat)) {
@@ -35,7 +35,7 @@ class ChangeObjectTestHelper {
             def database = databaseUnderTest.database
             for (def changeLogEntry : TestUtils.getChangeLogPaths(databaseUnderTest,  TestConfig.instance.inputFormat).entrySet
                     ()) {
-                if (!changeObjectList || (changeObjectList && changeObjectList.contains(changeLogEntry.key))) {
+                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)
