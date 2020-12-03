@@ -2,14 +2,14 @@
 
 name: CI
 on:
-  # Triggers the workflow on push or pull request events but only for the DAT-6102branch
+  # Triggers the workflow on push or pull request events but only for the DAT-6102 branch
   push:
     branches: [ DAT-6102 ]
   pull_request:
     branches: [ DAT-6102 ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  # Allows you to run this workflow manually from the Actions tab
+
 jobs:
   test:
     runs-on: ubuntu-18.04
@@ -24,8 +24,11 @@ jobs:
         working-directory: src/test/resources/docker
         run: docker-compose up -d
 
-      - name: MYSQL Test Run
+      - name: MySQL Test Run
         run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=mysql -Dmaven.test.failure.ignore=true test
+
+      - name: MariaDB Test Run
+        run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=mariadb -Dmaven.test.failure.ignore=true test
 
       - name: Postgres Test Run
         run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=postgresql -Dmaven.test.failure.ignore=true test
