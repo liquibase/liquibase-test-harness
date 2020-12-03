@@ -24,11 +24,11 @@ jobs:
         working-directory: src/test/resources/docker
         run: docker-compose up -d
 
-      - name: Postgres Test Run
-        run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=postgresql test
-
       - name: MYSQL Test Run
-        run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=mysql test
+        run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=mysql -Dmaven.test.failure.ignore=true test
+
+      - name: Postgres Test Run
+        run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=postgresql -Dmaven.test.failure.ignore=true test
 
       - name: Tear down test infra
         working-directory: src/test/resources/docker
