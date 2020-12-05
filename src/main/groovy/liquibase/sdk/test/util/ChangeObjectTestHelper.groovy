@@ -16,7 +16,11 @@ class ChangeObjectTestHelper {
     static List<TestInput> buildTestInput() {
         String commandLineInputFormat = System.getProperty("inputFormat")
 
-        String changeObjects = System.getProperty("changeObjects")
+        String commandLineChangeObjects = System.getProperty("changeObjects")
+        List commandLineChangeObjectList;
+        if(commandLineChangeObjects){
+            commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",") ? commandLineChangeObjects.split(",") : commandLineChangeObjects)
+        }
         if (commandLineInputFormat) {
             if (!supportedChangeLogFormats.contains(commandLineInputFormat)) {
                 throw new IllegalArgumentException(commandLineInputFormat + " inputFormat is not supported")
@@ -31,7 +35,7 @@ class ChangeObjectTestHelper {
             def database = databaseUnderTest.database
             for (def changeLogEntry : TestUtils.getChangeLogPaths(databaseUnderTest,  TestConfig.instance.inputFormat).entrySet
                     ()) {
-                if (!changeObjects || (changeObjects && changeObjects.contains(changeLogEntry.key))) {
+                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)
