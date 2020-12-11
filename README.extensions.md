@@ -18,7 +18,7 @@ If you are using maven, you can add the dependency as follows:
         </dependency>
     </dependencies>
 ```
-You will need to `git clone https://github.com/liquibase/liquibase-test-harness.git` and then run `mvn install -skipTests` to install the liquibase-sdk in your `~/.m2/repository`. 
+You will need to `git clone https://github.com/liquibase/liquibase-test-harness.git` and then run `mvn install -DskipTests` to install the liquibase-sdk in your `~/.m2/repository`. 
 
 #### Configuring your connections
 
