@@ -88,8 +88,11 @@ If not, you will need to provide the rollback by yourself. To learn more about r
 
 # Running the Tests
 
-1) Make sure you have docker container up and running first
-2) Go to  `src/test/resources/docker` and run `docker-compose up -d`. 
+### Minimum Requirements
+Java 1.8
+
+1) Make sure you have a docker container up and running first
+2) Go to `src/test/resources/docker` and run `docker-compose up -d`. 
 Wait until the databases start up.
 3) Open `src/test/groovy/liquibase/sdk/test/LiquibaseSdkSuite.groovy` in your IDE of choice and run it
 
