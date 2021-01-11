@@ -22,16 +22,16 @@ class TestUtilsTest extends Specification {
         def paths = TestUtils.getChangeLogPaths(databaseUnderTest, "xml")
 
         then:
-        paths["addColumn"] == "liquibase/harness/changelogs/addColumn.xml"
-        paths["addPrimaryKey"] == "liquibase/harness/changelogs/addPrimaryKey.xml"
-        paths["renameColumn"] == "liquibase/harness/changelogs/renameColumn.xml"
+        paths["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
+        paths["addPrimaryKey"] == "liquibase/harness/change/changelogs/addPrimaryKey.xml"
+        paths["renameColumn"] == "liquibase/harness/change/changelogs/renameColumn.xml"
 
         when:
         paths = TestUtils.getChangeLogPaths(databaseUnderTest, "sql")
 
         then:
-        paths["renameColumn"] == "liquibase/harness/changelogs/mysql/8/renameColumn.sql"
-        paths["renameTable"] == "liquibase/harness/changelogs/mysql/renameTable.sql"
+        paths["renameColumn"] == "liquibase/harness/change/changelogs/mysql/8/renameColumn.sql"
+        paths["renameTable"] == "liquibase/harness/change/changelogs/mysql/renameTable.sql"
 
 
         when:
@@ -45,8 +45,8 @@ class TestUtilsTest extends Specification {
         paths = TestUtils.getChangeLogPaths(databaseUnderTestPostgre, "xml")
 
         then:
-        paths["addColumn"] == "liquibase/harness/changelogs/addColumn.xml"
-        paths["addPrimaryKey"] == "liquibase/harness/changelogs/addPrimaryKey.xml"
-        paths["datatypes.binary"] == "liquibase/harness/changelogs/postgresql/datatypes.binary.xml"
+        paths["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
+        paths["addPrimaryKey"] == "liquibase/harness/change/changelogs/addPrimaryKey.xml"
+        paths["datatypes.binary"] == "liquibase/harness/change/changelogs/postgresql/datatypes.binary.xml"
     }
 }

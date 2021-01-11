@@ -29,10 +29,10 @@ class FileUtils {
     }
 
     static String getExpectedSqlFileContent(String changeObject, String databaseName, String version) {
-        return getFileContent(changeObject, databaseName, version, "liquibase/harness/expectedSql", ".sql")
+        return getFileContent(changeObject, databaseName, version, "liquibase/harness/change/expectedSql", ".sql")
     }
 
     static String getExpectedSnapshotFileContent(String changeObject, String databaseName, String version) {
-        return getFileContent(changeObject, databaseName, version, "liquibase/harness/expectedSnapshot", ".json")
+        return getFileContent(changeObject, databaseName, version, "liquibase/harness/change/expectedSnapshot", ".json")
     }
 }

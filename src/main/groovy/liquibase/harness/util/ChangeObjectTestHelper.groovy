@@ -75,7 +75,7 @@ class ChangeObjectTestHelper {
     }
 
     static void saveAsExpectedSql(String generatedSql, TestInput testInput) {
-        File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/expectedSql/" +
+        File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/change/expectedSql/" +
                 "${testInput.databaseName}/${testInput.changeObject}.sql" as File
         outputFile.parentFile.mkdirs()
         outputFile.write(generatedSql)
