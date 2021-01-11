@@ -1,9 +1,9 @@
-package liquibase.sdk.test.util
+package liquibase.harness.util
 
 import groovy.transform.builder.Builder
 import liquibase.database.Database
-import liquibase.sdk.test.config.DatabaseUnderTest
-import liquibase.sdk.test.config.TestConfig
+import liquibase.harness.config.DatabaseUnderTest
+import liquibase.harness.config.TestConfig
 import liquibase.util.StringUtil
 import org.skyscreamer.jsonassert.JSONAssert
 
@@ -75,7 +75,7 @@ class ChangeObjectTestHelper {
     }
 
     static void saveAsExpectedSql(String generatedSql, TestInput testInput) {
-        File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/sdk/test/expectedSql/" +
+        File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/expectedSql/" +
                 "${testInput.databaseName}/${testInput.changeObject}.sql" as File
         outputFile.parentFile.mkdirs()
         outputFile.write(generatedSql)

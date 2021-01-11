@@ -1,12 +1,12 @@
-package liquibase.sdk.test.util
+package liquibase.harness.util
 
 import liquibase.CatalogAndSchema
 import liquibase.Liquibase
 import liquibase.change.Change
 import liquibase.changelog.ChangeSet
 import liquibase.database.Database
-import liquibase.sdk.test.config.DatabaseUnderTest
-import liquibase.sdk.test.config.TestConfig
+import liquibase.harness.config.DatabaseUnderTest
+import liquibase.harness.config.TestConfig
 import liquibase.sql.Sql
 import liquibase.sqlgenerator.SqlGeneratorFactory
 
@@ -80,16 +80,16 @@ class TestUtils {
     static SortedMap<String, String> getChangeLogPaths(DatabaseUnderTest database, String inputFormat) {
         inputFormat = inputFormat ?: ""
         def returnPaths = new TreeMap<String, String>()
-        for (String changeLogPath : TestConfig.instance.resourceAccessor.list(null, "liquibase/sdk/test/changelogs", true, true, false)) {
+        for (String changeLogPath : TestConfig.instance.resourceAccessor.list(null, "liquibase/harness/changelogs", true, true, false)) {
             def validChangeLog = false
 
             //is it a common changelog?
-            if (changeLogPath =~ "liquibase/sdk/test/changelogs/[\\w.]+${inputFormat}+\$") {
+            if (changeLogPath =~ "liquibase/harness/changelogs/[\\w.]+${inputFormat}+\$") {
                 validChangeLog = true
-            } else if (changeLogPath =~ "liquibase/sdk/test/changelogs/${database.name}/[\\w.]+${inputFormat}+\$") {
+            } else if (changeLogPath =~ "liquibase/harness/changelogs/${database.name}/[\\w.]+${inputFormat}+\$") {
                 //is it a database-specific changelog?
                 validChangeLog = true
-            } else if (changeLogPath =~ "liquibase/sdk/test/changelogs/${database.name}/${database.version}/[\\w" +
+            } else if (changeLogPath =~ "liquibase/harness/changelogs/${database.name}/${database.version}/[\\w" +
                     ".]+${inputFormat}+\$") {
                 //is it a database-major-version specific changelog?
                 validChangeLog = true
@@ -104,7 +104,7 @@ class TestUtils {
         }
 
         Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.name +
-                "/" + database.version + " in liquibase/sdk/test/changelogs")
+                "/" + database.version + " in liquibase/harness/changelogs")
 
 
         return returnPaths

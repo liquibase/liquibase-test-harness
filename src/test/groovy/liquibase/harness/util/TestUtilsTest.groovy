@@ -1,10 +1,10 @@
-package liquibase.sdk.test.util
+package liquibase.harness.util
 
 import liquibase.database.OfflineConnection
 import liquibase.database.core.MySQLDatabase
 import liquibase.database.core.PostgresDatabase
 import liquibase.resource.ClassLoaderResourceAccessor
-import liquibase.sdk.test.config.DatabaseUnderTest
+import liquibase.harness.config.DatabaseUnderTest
 import spock.lang.Specification
 
 class TestUtilsTest extends Specification {
@@ -22,16 +22,16 @@ class TestUtilsTest extends Specification {
         def paths = TestUtils.getChangeLogPaths(databaseUnderTest, "xml")
 
         then:
-        paths["addColumn"] == "liquibase/sdk/test/changelogs/addColumn.xml"
-        paths["addPrimaryKey"] == "liquibase/sdk/test/changelogs/addPrimaryKey.xml"
-        paths["renameColumn"] == "liquibase/sdk/test/changelogs/renameColumn.xml"
+        paths["addColumn"] == "liquibase/harness/changelogs/addColumn.xml"
+        paths["addPrimaryKey"] == "liquibase/harness/changelogs/addPrimaryKey.xml"
+        paths["renameColumn"] == "liquibase/harness/changelogs/renameColumn.xml"
 
         when:
         paths = TestUtils.getChangeLogPaths(databaseUnderTest, "sql")
 
         then:
-        paths["renameColumn"] == "liquibase/sdk/test/changelogs/mysql/8/renameColumn.sql"
-        paths["renameTable"] == "liquibase/sdk/test/changelogs/mysql/renameTable.sql"
+        paths["renameColumn"] == "liquibase/harness/changelogs/mysql/8/renameColumn.sql"
+        paths["renameTable"] == "liquibase/harness/changelogs/mysql/renameTable.sql"
 
 
         when:
@@ -45,8 +45,8 @@ class TestUtilsTest extends Specification {
         paths = TestUtils.getChangeLogPaths(databaseUnderTestPostgre, "xml")
 
         then:
-        paths["addColumn"] == "liquibase/sdk/test/changelogs/addColumn.xml"
-        paths["addPrimaryKey"] == "liquibase/sdk/test/changelogs/addPrimaryKey.xml"
-        paths["datatypes.binary"] == "liquibase/sdk/test/changelogs/postgresql/datatypes.binary.xml"
+        paths["addColumn"] == "liquibase/harness/changelogs/addColumn.xml"
+        paths["addPrimaryKey"] == "liquibase/harness/changelogs/addPrimaryKey.xml"
+        paths["datatypes.binary"] == "liquibase/harness/changelogs/postgresql/datatypes.binary.xml"
     }
 }

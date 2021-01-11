@@ -1,7 +1,7 @@
-package liquibase.sdk.test.util
+package liquibase.harness.util
 
 
-import liquibase.sdk.test.config.TestConfig
+import liquibase.harness.config.TestConfig
 import liquibase.util.StreamUtil
 
 class FileUtils {
@@ -29,10 +29,10 @@ class FileUtils {
     }
 
     static String getExpectedSqlFileContent(String changeObject, String databaseName, String version) {
-        return getFileContent(changeObject, databaseName, version, "liquibase/sdk/test/expectedSql", ".sql")
+        return getFileContent(changeObject, databaseName, version, "liquibase/harness/expectedSql", ".sql")
     }
 
     static String getExpectedSnapshotFileContent(String changeObject, String databaseName, String version) {
-        return getFileContent(changeObject, databaseName, version, "liquibase/sdk/test/expectedSnapshot", ".json")
+        return getFileContent(changeObject, databaseName, version, "liquibase/harness/expectedSnapshot", ".json")
     }
 }

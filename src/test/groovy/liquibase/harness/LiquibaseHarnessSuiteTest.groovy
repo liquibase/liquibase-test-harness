@@ -1,8 +1,8 @@
-package liquibase.sdk.test
+package liquibase.harness
 
-import liquibase.sdk.test.config.TestConfig
+import liquibase.harness.config.TestConfig
 
-class LiquibaseSdkSuiteTest extends BaseLiquibaseSdkSuite {
+class LiquibaseHarnessSuiteTest extends BaseTestHarnessSuite {
 
     static {
         //extensions don't distribute their files. Only we store them in src/main/resources.

@@ -1,4 +1,4 @@
-package liquibase.sdk.test
+package liquibase.harness
 
 import spock.lang.Specification
 
