@@ -5,5 +5,5 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses([ChangeObjectTests.class])
-public abstract class BaseTestHarnessSuite {
+public abstract class BaseHarnessSuite {
 }

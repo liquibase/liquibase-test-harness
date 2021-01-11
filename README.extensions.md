@@ -38,7 +38,7 @@ The test harness requires certain objects to be pre-created in your database. Se
 In your `src/test/groovy` directory, create a file like:      
 
 ```
-class LiquibasehHarnessTest extends BaseTestHarnessSuite {
+class LiquibaseHarnessTest extends BaseTestHarnessSuite {
 
 }
 ```
