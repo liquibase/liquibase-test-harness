@@ -1,18 +1,18 @@
-package liquibase.sdk.test
+package liquibase.harness
 
 import liquibase.CatalogAndSchema
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
-import liquibase.sdk.test.config.TestConfig
-import liquibase.sdk.test.util.FileUtils
-import liquibase.sdk.test.util.SnapshotHelpers
-import liquibase.sdk.test.util.TestUtils
+import liquibase.harness.config.TestConfig
+import liquibase.harness.util.FileUtils
+import liquibase.harness.util.SnapshotHelpers
+import liquibase.harness.util.TestUtils
 import org.junit.Assert
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static liquibase.sdk.test.util.ChangeObjectTestHelper.*
+import static liquibase.harness.util.ChangeObjectTestHelper.*
 
 class ChangeObjectTests extends Specification {
 

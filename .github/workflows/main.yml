@@ -25,13 +25,13 @@ jobs:
         run: docker-compose up -d
 
       - name: MySQL Test Run
-        run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=mysql -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -Dmaven.test.failure.ignore=true test
 
       - name: MariaDB Test Run
-        run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=mariadb -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -Dmaven.test.failure.ignore=true test
 
       - name: Postgres Test Run
-        run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=postgresql -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -Dmaven.test.failure.ignore=true test
 
       - name: Tear down test infra
         working-directory: src/test/resources/docker
@@ -42,7 +42,7 @@ jobs:
         run: docker-compose -f docker-compose.cockroachdb.yml up -d
 
       - name: cockroachDB Test Run
-        run: mvn -Dtest=LiquibaseSdkSuiteTest -DdbName=cockroachdb test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb test
 
       - name: Tear down cockroachDB test infra
         working-directory: src/test/resources/docker
