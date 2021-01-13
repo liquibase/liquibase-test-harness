@@ -12,20 +12,20 @@ If you are using maven, you can add the dependency as follows:
     <dependencies>
         <dependency>
             <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-sdk</artifactId>
+            <artifactId>liquibase-test-harness</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 ```
-You will need to `git clone https://github.com/liquibase/liquibase-test-harness.git` and then run `mvn install -DskipTests` to install the liquibase-sdk in your `~/.m2/repository`. 
+You will need to `git clone https://github.com/liquibase/liquibase-test-harness.git` and then run `mvn install -DskipTests` to install the liquibase-test-harness in your `~/.m2/repository`. 
 
 #### Configuring your connections
 
-Add a liquibase.sdk.test.yml file to your `src/test/resources` file. 
+Add a harness-config.yml file to your `src/test/resources` file. 
 This file should contain the connection information for all the databases you want your extension to be tested against.
 
-See [src/test/resources/liquibase.sdk.test.yml] as an example.
+See [src/test/resources/harness-config.yml] as an example.
 
 #### Setting up your databases
 
@@ -33,12 +33,12 @@ If possible, provide a docker-compose.yml file that starts and configures your t
 
 The test harness requires certain objects to be pre-created in your database. See [src/test/resources/docker/postgres-init.sh] as an example of what setup is required.
 
-#### Adding a LiquibaseSdkSuite file
+#### Adding a LiquibaseHarnessSuite file
 
 In your `src/test/groovy` directory, create a file like:      
 
 ```
-class LiquibaseSdkSuite extends liquibase.sdk.test.BaseLiquibaseSdkSuite {
+class ExtensionHarnessTest extends BaseHarnessSuite {
 
 }
 ```
