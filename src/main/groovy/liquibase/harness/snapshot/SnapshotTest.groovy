@@ -1,4 +1,4 @@
-package liquibase.sdk.test.snapshot
+package liquibase.harness.snapshot
 
 import groovy.transform.Canonical
 import liquibase.snapshot.DatabaseSnapshot

@@ -1,4 +1,4 @@
-package liquibase.harness
+package liquibase.harness.change
 
 import liquibase.CatalogAndSchema
 import liquibase.Liquibase

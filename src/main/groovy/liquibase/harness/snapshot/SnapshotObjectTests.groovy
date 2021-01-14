@@ -1,9 +1,9 @@
-package liquibase.sdk.test.snapshot
+package liquibase.harness.snapshot
 
 import liquibase.CatalogAndSchema
 import liquibase.database.OfflineConnection
-import liquibase.sdk.test.config.DatabaseUnderTest
-import liquibase.sdk.test.config.TestConfig
+import liquibase.harness.config.DatabaseUnderTest
+import liquibase.harness.config.TestConfig
 import liquibase.snapshot.SnapshotControl
 import liquibase.snapshot.SnapshotGeneratorFactory
 import liquibase.statement.SqlStatement
@@ -64,7 +64,7 @@ class SnapshotObjectTests extends Specification {
         def returnList = new ArrayList<TestInput>()
 
         for (def databaseUnderTest : TestConfig.instance.databasesUnderTest) {
-            for (def file : TestConfig.getInstance().resourceAccessor.list(null, "liquibase/sdk/test/snapshot/", true, true, false)) {
+            for (def file : TestConfig.getInstance().resourceAccessor.list(null, "liquibase/harness/snapshot/", true, true, false)) {
                 if (!file.endsWith(".groovy")) {
                     continue
                 }
@@ -74,7 +74,7 @@ class SnapshotObjectTests extends Specification {
                     returnList.add(new TestInput(
                             database: databaseUnderTest,
                             permutation: testConfig,
-                            testName: "column"
+                            testName: testClass.getName()
                     ))
                 }
 

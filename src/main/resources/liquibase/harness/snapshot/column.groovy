@@ -1,4 +1,4 @@
-import liquibase.sdk.test.snapshot.SnapshotTest
+import liquibase.harness.snapshot.SnapshotTest
 import liquibase.snapshot.DatabaseSnapshot
 import liquibase.structure.core.Column
 import liquibase.structure.core.Table
