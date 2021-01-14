@@ -4,7 +4,7 @@
 
     <groupId>org.liquibase</groupId>
     <artifactId>liquibase-test-harness</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -26,7 +26,7 @@
     <scm>
         <connection>scm:git:https://github.com/liquibase/liquibase-test-harness.git</connection>
         <url>https://github.com/liquibase/liquibase-test-harness</url>
-        <tag>liquibase-test-harness-1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
     <developers>
         <developer>
