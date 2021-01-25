@@ -50,3 +50,9 @@ jobs:
         working-directory: src/test/resources/docker
         run: docker-compose -f docker-compose.cockroachdb.yml down --volumes
 
+      - name: Archive test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: build/spock-reports
+
