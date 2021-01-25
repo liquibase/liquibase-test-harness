@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="nvoxland">
+        <comment>
+            You can add comments to changeSets.
+            They can even be multiple lines if you would like.
+            They aren't used to compute the changeSet MD5Sum, so you can update them whenever you want without causing problems.
+        </comment>
+        <createTable tableName="person">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="firstname" type="varchar(50)"/>
+            <column name="lastname" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="7" author="nvoxland">
+        <createTable tableName="company">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="22" author="nvoxland">
+        <addColumn tableName="person">
+            <column name="employer_id" type="int"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="23" author="nvoxland">
+        <addForeignKeyConstraint
+                baseTableName="person" baseColumnNames="employer_id"
+                constraintName="fk_person_employer"
+                referencedTableName="company" referencedColumnNames="id"
+                deleteCascade="true"/>
+    </changeSet>
+
+    <changeSet id="24" author="nvoxland">
+        <dropForeignKeyConstraint baseTableName="person" constraintName="fk_person_employer"/>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>
