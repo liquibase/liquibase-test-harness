@@ -1,4 +1,4 @@
-package liquibase.sdk.test.config
+package liquibase.harness.config
 
 import liquibase.database.Database;
 
