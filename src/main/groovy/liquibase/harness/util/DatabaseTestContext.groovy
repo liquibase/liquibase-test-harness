@@ -1,4 +1,4 @@
-package liquibase.sdk.test.util
+package liquibase.harness.util
 
 import liquibase.Scope
 import liquibase.database.Database

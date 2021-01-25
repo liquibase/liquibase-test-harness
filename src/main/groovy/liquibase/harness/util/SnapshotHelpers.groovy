@@ -1,4 +1,4 @@
-package liquibase.sdk.test.util
+package liquibase.harness.util
 
 import liquibase.CatalogAndSchema
 import liquibase.command.core.SnapshotCommand

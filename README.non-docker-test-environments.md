@@ -5,7 +5,7 @@ For instance, you may wish to run against a database running in the cloud or a n
 
 ## Getting Started Guide
 #### The execution & writing of tests will remain the same -- but you will need to recreate the starting test environment yourself. See below for instructions:
-1. In the `liquibase.sdk.test.yml` file, edit the jdbc URL to point to the hostname for your database.
+1. In the `harness-config.yml` file, edit the jdbc URL to point to the hostname for your database.
     1. If your username and/or password is different, you will need to modify those values as well.
 1. Ensure that you set up the test environment before executing the test-harness tests
     1. For example, if you need to run the tests against a postgres instance, then:
