@@ -36,7 +36,7 @@ jobs:
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -Dmaven.test.failure.ignore=true test
 
       - name: MSSQL Test Run
-          run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -Dmaven.test.failure.ignore=true test
 
       - name: Archive MSSQL test results
         uses: actions/upload-artifact@v2
