@@ -1,9 +1,11 @@
-package liquibase.harness.util
+package liquibase.harness.change
 
 import groovy.transform.builder.Builder
 import liquibase.database.Database
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.SnapshotHelpers
+import liquibase.harness.util.TestUtils
 import liquibase.util.StringUtil
 import org.skyscreamer.jsonassert.JSONAssert
 
@@ -12,6 +14,8 @@ import java.util.logging.Logger
 class ChangeObjectTestHelper {
 
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
+
+    final static String baseChangelogPath = "liquibase/harness/change/changelogs"
 
     static List<TestInput> buildTestInput() {
         String commandLineInputFormat = System.getProperty("inputFormat")
@@ -33,7 +37,7 @@ class ChangeObjectTestHelper {
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : TestConfig.instance.databasesUnderTest) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.getChangeLogPaths(databaseUnderTest,  TestConfig.instance.inputFormat).entrySet
+            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,  TestConfig.instance.inputFormat).entrySet
                     ()) {
                 if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
                     inputList.add(TestInput.builder()

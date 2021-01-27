@@ -9,8 +9,7 @@ import liquibase.structure.core.Table
                 verify: {
                     DatabaseSnapshot snapshot ->
                         snapshot.get(new Column(Table.class, null, null, "test_table", "test_col")).with {
-                            assert type.typeName.toLowerCase().startsWith("int")
-                        }
+                            assert type.typeName.toLowerCase().startsWith("number")                        }
 
                 }
         ],
@@ -31,6 +30,6 @@ import liquibase.structure.core.Table
                         assert !nullable
                     }
                 }
-        ],
+        ]
 ] as SnapshotTest.TestConfig[]
 

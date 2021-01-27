@@ -8,9 +8,10 @@ import liquibase.structure.core.Table
                 verify: {
                     DatabaseSnapshot snapshot ->
                         snapshot.get(new Table(name: "test_table")).with {
-                            assert name.equalsIgnoreCase("test_table")
-                            assert columns*.name.toString().equalsIgnoreCase("[test_col, col2]")
-                            assert primaryKey == null
+                            assert name == "test_table"
+                            assert columns*.name.toString().equalsIgnoreCase("[test_col, col2, rowid]")
+                            assert primaryKey != null
+                            //for cockroach rowid is auto created for tables without primary keys
                         }
 
                 }

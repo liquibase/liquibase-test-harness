@@ -8,8 +8,8 @@ import liquibase.structure.core.Table
                 verify: {
                     DatabaseSnapshot snapshot ->
                         snapshot.get(new Table(name: "test_table")).with {
-                            assert name.equalsIgnoreCase("test_table")
-                            assert columns*.name.toString().equalsIgnoreCase("[test_col, col2]")
+                            assert name == "TEST_TABLE"
+                            assert columns*.name.toString().equalsIgnoreCase("[TEST_COL, COL2]")
                             assert primaryKey == null
                         }
 

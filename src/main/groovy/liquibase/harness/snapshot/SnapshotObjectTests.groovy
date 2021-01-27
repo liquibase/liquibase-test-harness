@@ -2,21 +2,17 @@ package liquibase.harness.snapshot
 
 import liquibase.CatalogAndSchema
 import liquibase.database.OfflineConnection
-import liquibase.harness.config.DatabaseUnderTest
-import liquibase.harness.config.TestConfig
 import liquibase.snapshot.SnapshotControl
 import liquibase.snapshot.SnapshotGeneratorFactory
 import liquibase.statement.SqlStatement
 import liquibase.statement.core.RawSqlStatement
 import org.junit.Assume
-import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class SnapshotObjectTests extends Specification {
+import static SnapshotObjectTestHelper.*
 
-    @Shared
-    def loader = new GroovyClassLoader()
+class SnapshotObjectTests extends Specification {
 
     @Unroll
     def "Snapshot #input.testName '#input.permutation.setup' on #input.database.name"() {
@@ -58,34 +54,5 @@ class SnapshotObjectTests extends Specification {
 
         where:
         input << buildTestInput()
-    }
-
-    List<TestInput> buildTestInput() {
-        def returnList = new ArrayList<TestInput>()
-
-        for (def databaseUnderTest : TestConfig.instance.databasesUnderTest) {
-            for (def file : TestConfig.getInstance().resourceAccessor.list(null, "liquibase/harness/snapshot/", true, true, false)) {
-                if (!file.endsWith(".groovy")) {
-                    continue
-                }
-
-                def testClass = loader.parseClass(new InputStreamReader(TestConfig.getInstance().resourceAccessor.openStream(null, file)), file)
-                for (def testConfig : (Collection<SnapshotTest.TestConfig>) ((Script) testClass.newInstance()).run()) {
-                    returnList.add(new TestInput(
-                            database: databaseUnderTest,
-                            permutation: testConfig,
-                            testName: testClass.getName()
-                    ))
-                }
-
-            }
-        }
-        return returnList
-    }
-
-    static class TestInput {
-        DatabaseUnderTest database
-        SnapshotTest.TestConfig permutation
-        String testName
     }
 }
