@@ -5,5 +5,6 @@ target/
 /.apt_generated/
 /.apt_generated_tests/
 bin/
+build/
 .project
 .DS_Store
