@@ -50,3 +50,8 @@ databasesUnderTest:
     username: lbuser
     password:
 
+  - name: mssql
+    version: 2017
+    url: jdbc:sqlserver://localhost:1433;databaseName=lbcat
+    username: lbuser
+    password: LiquibasePass1
