@@ -13,12 +13,11 @@ If you are using maven, you can add the dependency as follows:
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-test-harness</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version> // pick up latest version availbale on maven-central
             <scope>test</scope>
         </dependency>
     </dependencies>
 ```
-You will need to `git clone https://github.com/liquibase/liquibase-test-harness.git` and then run `mvn install -DskipTests` to install the liquibase-test-harness in your `~/.m2/repository`. 
 
 #### Configuring your connections
 
