@@ -77,35 +77,33 @@ class TestUtils {
         return returnList
     }
 
-    static SortedMap<String, String> getChangeLogPaths(DatabaseUnderTest database, String inputFormat) {
+    static SortedMap<String, String> resolveInputFilePaths(DatabaseUnderTest database, String basePath, String inputFormat) {
         inputFormat = inputFormat ?: ""
         def returnPaths = new TreeMap<String, String>()
-        for (String changeLogPath : TestConfig.instance.resourceAccessor.list(null, "liquibase/harness/change/changelogs", true, true, false)) {
-            def validChangeLog = false
+        for (String filePath : TestConfig.instance.resourceAccessor.list(null, basePath, true, true, false)) {
+            def validFile = false
 
             //is it a common changelog?
-            if (changeLogPath =~ "liquibase/harness/change/changelogs/[\\w.]+${inputFormat}+\$") {
-                validChangeLog = true
-            } else if (changeLogPath =~ "liquibase/harness/change/changelogs/${database.name}/[\\w.]+${inputFormat}+\$") {
+            if (filePath =~ basePath+"/[\\w.]*\\."+inputFormat+"\$") {
+                validFile = true
+            } else if (filePath =~ basePath+"/${database.name}/[\\w.]*\\.${inputFormat}\$") {
                 //is it a database-specific changelog?
-                validChangeLog = true
-            } else if (changeLogPath =~ "liquibase/harness/change/changelogs/${database.name}/${database.version}/[\\w" +
-                    ".]+${inputFormat}+\$") {
+                validFile = true
+            } else if (filePath =~ basePath+"/${database.name}/${database.version}/[\\w.]*\\.${inputFormat}\$") {
                 //is it a database-major-version specific changelog?
-                validChangeLog = true
+                validFile = true
             }
 
-            if (validChangeLog) {
-                def fileName = changeLogPath.replaceFirst(".*/", "").replaceFirst("\\.[^.]+\$", "")
-                if (!returnPaths.containsKey(fileName) || returnPaths.get(fileName).length() < changeLogPath.length()) {
-                    returnPaths.put(fileName, changeLogPath)
+            if (validFile) {
+                def fileName = filePath.replaceFirst(".*/", "").replaceFirst("\\.[^.]+\$", "")
+                if (!returnPaths.containsKey(fileName) || returnPaths.get(fileName).length() < filePath.length()) {
+                    returnPaths.put(fileName, filePath)
                 }
             }
         }
 
         Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.name +
-                "/" + database.version + " in liquibase/harness/change/changelogs")
-
+                "/" + database.version + " in "+basePath)
 
         return returnPaths
     }

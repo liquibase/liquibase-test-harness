@@ -2,6 +2,7 @@ package liquibase.harness.util
 
 import liquibase.database.OfflineConnection
 import liquibase.database.core.MySQLDatabase
+import liquibase.database.core.OracleDatabase
 import liquibase.database.core.PostgresDatabase
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.harness.config.DatabaseUnderTest
@@ -9,7 +10,10 @@ import spock.lang.Specification
 
 class TestUtilsTest extends Specification {
 
-    def "getChangeLogPaths"() {
+    def "getInputFilesPaths"() {
+        final String baseChangelogPath = "liquibase/harness/change/changelogs"
+        final String baseSnapshotPath = "liquibase/harness/snapshot"
+
         when:
         def database = new MySQLDatabase()
         database.setConnection(new OfflineConnection("offline:mysql?version=8.1", new ClassLoaderResourceAccessor()))
@@ -19,19 +23,20 @@ class TestUtilsTest extends Specification {
         databaseUnderTest.name = "mysql"
         databaseUnderTest.version = "8"
 
-        def paths = TestUtils.getChangeLogPaths(databaseUnderTest, "xml")
+        def changeLogPaths = TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "xml")
 
         then:
-        paths["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
-        paths["addPrimaryKey"] == "liquibase/harness/change/changelogs/addPrimaryKey.xml"
-        paths["renameColumn"] == "liquibase/harness/change/changelogs/renameColumn.xml"
+        changeLogPaths["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
+        changeLogPaths["addPrimaryKey"] == "liquibase/harness/change/changelogs/addPrimaryKey.xml"
+        changeLogPaths["renameColumn"] == "liquibase/harness/change/changelogs/renameColumn.xml"
+
 
         when:
-        paths = TestUtils.getChangeLogPaths(databaseUnderTest, "sql")
+        changeLogPaths = TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "sql")
 
         then:
-        paths["renameColumn"] == "liquibase/harness/change/changelogs/mysql/8/renameColumn.sql"
-        paths["renameTable"] == "liquibase/harness/change/changelogs/mysql/renameTable.sql"
+        changeLogPaths["renameColumn"] == "liquibase/harness/change/changelogs/mysql/8/renameColumn.sql"
+        changeLogPaths["renameTable"] == "liquibase/harness/change/changelogs/mysql/renameTable.sql"
 
 
         when:
@@ -42,11 +47,30 @@ class TestUtilsTest extends Specification {
         databaseUnderTestPostgre.database = database
         databaseUnderTestPostgre.name = "postgresql"
         databaseUnderTestPostgre.version = "12"
-        paths = TestUtils.getChangeLogPaths(databaseUnderTestPostgre, "xml")
+        changeLogPaths = TestUtils.resolveInputFilePaths(databaseUnderTestPostgre, baseChangelogPath, "xml")
 
         then:
-        paths["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
-        paths["addPrimaryKey"] == "liquibase/harness/change/changelogs/addPrimaryKey.xml"
-        paths["datatypes.binary"] == "liquibase/harness/change/changelogs/postgresql/datatypes.binary.xml"
+        changeLogPaths["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
+        changeLogPaths["addPrimaryKey"] == "liquibase/harness/change/changelogs/addPrimaryKey.xml"
+        changeLogPaths["datatypes.binary"] == "liquibase/harness/change/changelogs/postgresql/datatypes.binary.xml"
+
+        when:
+        database = new OracleDatabase()
+        database.setConnection(new OfflineConnection("offline:oracle?version=18.4.0", new ClassLoaderResourceAccessor()))
+
+        DatabaseUnderTest databaseUnderTestOracle = new DatabaseUnderTest()
+        databaseUnderTestOracle.database = database
+        databaseUnderTestOracle.name = "oracle"
+        databaseUnderTestOracle.version = "18"
+        changeLogPaths = TestUtils.resolveInputFilePaths(databaseUnderTestOracle, baseChangelogPath, "xml")
+        def snapshotPaths = TestUtils.resolveInputFilePaths(databaseUnderTestOracle, baseSnapshotPath, "groovy")
+
+        then:
+        changeLogPaths["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
+        changeLogPaths["addPrimaryKey"] == "liquibase/harness/change/changelogs/oracle/addPrimaryKey.xml"
+        changeLogPaths["datatypes.character"] == "liquibase/harness/change/changelogs/oracle/18.4.0/datatypes.character.xml"
+
+        snapshotPaths["column"] == "liquibase/harness/snapshot/column.groovy"
+        snapshotPaths["table"] == "liquibase/harness/snapshot/table.groovy"
     }
 }

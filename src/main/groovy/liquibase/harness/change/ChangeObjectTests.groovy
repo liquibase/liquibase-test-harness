@@ -1,4 +1,4 @@
-package liquibase.harness
+package liquibase.harness.change
 
 import liquibase.CatalogAndSchema
 import liquibase.Liquibase
@@ -12,7 +12,7 @@ import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static liquibase.harness.util.ChangeObjectTestHelper.*
+import static ChangeObjectTestHelper.*
 
 class ChangeObjectTests extends Specification {
 
