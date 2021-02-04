@@ -55,6 +55,17 @@
             </roles>
             <timezone>-6</timezone>
         </developer>
+        <developer>
+            <id>KushnirykOleh</id>
+            <name>Oleh Kushniryk</name>
+            <email>okushniryk@liquibase.com</email>
+            <url>https://www.liquibase.org/</url>
+            <organizationUrl>https://www.liquibase.org/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
     </developers>
     <dependencies>
         <dependency>
