@@ -29,11 +29,29 @@ jobs:
       - name: MySQL Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -Dmaven.test.failure.ignore=true test
 
+      - name: Archive MySQL test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: mssql-test-results
+          path: build/spock-reports
+
       - name: MariaDB Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -Dmaven.test.failure.ignore=true test
 
+      - name: Archive MariaDB test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: mssql-test-results
+          path: build/spock-reports
+
       - name: Postgres Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -Dmaven.test.failure.ignore=true test
+
+      - name: Archive Postgres test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: mssql-test-results
+          path: build/spock-reports
 
       - name: MSSQL Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -Dmaven.test.failure.ignore=true test
