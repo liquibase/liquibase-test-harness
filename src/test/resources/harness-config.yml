@@ -16,7 +16,7 @@ databasesUnderTest:
 
   - name: mysql
     version: 5.6
-    url: jdbc:mysql://localhost:33063/lbcat
+    url: jdbc:mysql://localhost:33064/lbcat
     username: lbuser
     password: LiquibasePass1
 
@@ -44,6 +44,12 @@ databasesUnderTest:
     username: C##LIQUIBASE
     password: Secret321
 
+#  - name: oracle
+#    version: 19.9.0
+#    url: 'jdbc:oracle:thin:@localhost:1521/xe'
+#    username: C##LIQUIBASE
+#    password: Secret321
+#
   - name: cockroachdb
     version: 20.2
     url: jdbc:postgresql://localhost:26257/lbcat

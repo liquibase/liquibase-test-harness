@@ -5,7 +5,7 @@ services:
   mysql-5.6:
     image: library/mysql:5.6
     ports:
-      - "33063:3306"
+      - "33064:3306"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: LbRootPass1
