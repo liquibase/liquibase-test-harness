@@ -1,0 +1,31 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes12_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+			"column": {
+  				"name": "serial",
+  				"type": {
+    				"typeName": "int4"
+  				}
+			}
+		},
+        {
+			"column": {
+  				"name": "bigserial",
+  				"type": {
+    				"typeName": "int8"
+  				}
+			}
+        }
+      ]
+    }
+  }
+}
