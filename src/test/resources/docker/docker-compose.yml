@@ -2,32 +2,42 @@ version: '3.3'
 
 services:
 
-  mysql-5.7:
-    image: library/mysql:5.7.31
+#  mysql-5.7:
+#    image: library/mysql:5.7.31
+#    ports:
+#      - "33062:3306"
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: LbRootPass1
+#      MYSQL_DATABASE: lbcat
+#      MYSQL_USER: lbuser
+#      MYSQL_PASSWORD: LiquibasePass1
+#    volumes:
+#      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+#
+#  mysql-8:
+#    image: mysql:8
+#    ports:
+#      - "33061:3306"
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: LbRootPass1
+#      MYSQL_DATABASE: lbcat
+#      MYSQL_USER: lbuser
+#      MYSQL_PASSWORD: LiquibasePass1
+#    volumes:
+#    - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+
+  postgres-9.5:
+    image: postgres:9
     ports:
-      - "33062:3306"
+      - "5432:5432"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
+      POSTGRES_PASSWORD: LbRootPass1
+      POSTGRES_DB: lbcat
     volumes:
-      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
-
-  mysql-8:
-    image: mysql:8
-    ports:
-      - "33061:3306"
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
-    volumes:
-    - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
-
+      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
   postgres-9:
     image: postgres:9
@@ -40,8 +50,8 @@ services:
     volumes:
       - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
-  postgres-12:
-    image: postgres:12
+  postgres-10:
+    image: postgres:10
     ports:
       - "5434:5432"
     restart: always
@@ -51,29 +61,61 @@ services:
     volumes:
       - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
-
-  mariadb-10.3:
-    image: mariadb:10.3
+  postgres-11:
+    image: postgres:11
     ports:
-      - "33063:3306"
+      - "5435:5432"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
+      POSTGRES_PASSWORD: LbRootPass1
+      POSTGRES_DB: lbcat
     volumes:
-      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
-  mssql-2017:
-    container_name: sql-server-db
-    image: microsoft/mssql-server-linux:2017-latest
+  postgres-12:
+    image: postgres:12
     ports:
-      - "1433:1433"
+      - "5436:5432"
+    restart: always
     environment:
-      SA_PASSWORD: "LiquibasePass1"
-      ACCEPT_EULA: "Y"
+      POSTGRES_PASSWORD: LbRootPass1
+      POSTGRES_DB: lbcat
     volumes:
-      - "./mssql-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
-      - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
-    entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
+      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
+
+  postgres-13:
+    image: postgres:13
+    ports:
+      - "5437:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: LbRootPass1
+      POSTGRES_DB: lbcat
+    volumes:
+      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
+
+#  mariadb-10.3:
+#    image: mariadb:10.3
+#    ports:
+#      - "33063:3306"
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: LbRootPass1
+#      MYSQL_DATABASE: lbcat
+#      MYSQL_USER: lbuser
+#      MYSQL_PASSWORD: LiquibasePass1
+#    volumes:
+#      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+#
+#  mssql-2017:
+#    container_name: sql-server-db
+#    image: microsoft/mssql-server-linux:2017-latest
+#    ports:
+#      - "1433:1433"
+#    environment:
+#      SA_PASSWORD: "LiquibasePass1"
+#      ACCEPT_EULA: "Y"
+#    volumes:
+#      - "./mssql-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
+#      - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
+#    entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
