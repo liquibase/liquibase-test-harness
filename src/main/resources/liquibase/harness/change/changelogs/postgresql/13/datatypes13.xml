@@ -8,6 +8,7 @@
         <createTable tableName="datatypes12_test_table">
             <column name="serial" type="serial"/>
             <column name="bigserial" type="bigserial"/>
+            <column name="lseq" type="lseq" />
             <column name="macaddr8" type="macaddr8" />
         </createTable>
     </changeSet>
