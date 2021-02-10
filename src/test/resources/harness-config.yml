@@ -3,14 +3,38 @@ context: testContext
 
 databasesUnderTest:
   - name: postgresql
+    version: 13
+    url: jdbc:postgresql://localhost:5437/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
+    version: 12
+    url: jdbc:postgresql://localhost:5436/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
+    version: 11
+    url: jdbc:postgresql://localhost:5435/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
+    version: 10
+    url: jdbc:postgresql://localhost:5434/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
     version: 9
     url: jdbc:postgresql://localhost:5433/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: postgresql
-    version: 12
-    url: jdbc:postgresql://localhost:5434/lbcat
+    version: 9.5
+    url: jdbc:postgresql://localhost:5432/lbcat
     username: lbuser
     password: LiquibasePass1
 
