@@ -1,0 +1,1 @@
+exec sp_rename 'authors.first_name', 'first_name_renameColumn_test'
