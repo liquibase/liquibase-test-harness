@@ -62,6 +62,12 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: mariadb
+    version: 10.5
+    url: jdbc:mariadb://localhost:33066/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
   - name: oracle
     version: 18.4.0
     url: 'jdbc:oracle:thin:@localhost:1521/xe'
