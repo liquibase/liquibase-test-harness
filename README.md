@@ -1,5 +1,7 @@
 # A Harness of Integration Tests
 
+![Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Test%20Execution/badge.svg)
+
 ## Framework
 
 The test harness consists of a variety of standard tests to ensure the database-specific interactions within Liquibase work against specific 
