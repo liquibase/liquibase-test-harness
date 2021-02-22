@@ -110,4 +110,18 @@ Execute `mvn test` with the (optional) flags outlined below:
 When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
 gracefully and to allow the tests to start from a clean slate on the next run.
 
-#### Stay tuned, there is more to come!
+---
+
+## Test-Harness Support Matrix
+
+| Database | Versions Tested|
+| ----------- | ----------- |
+| Postgres |  9, 9.5, 10, 11, 12, 13 |
+| MySQL | 5.6, 5.7, 8 |
+| MariaDB | 10.3 , 10.5 |
+| SQL Server | 2017 |
+| Oracle | 18.4.0, 19.9.0 |
+| CockroachDB | 20.1, 20.2 |
+
+
+
