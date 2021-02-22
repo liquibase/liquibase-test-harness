@@ -110,7 +110,7 @@ Execute `mvn test` with the (optional) flags outlined below:
 When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
 gracefully and to allow the tests to start from a clean slate on the next run.
 
----
+
 
 ## Test-Harness Support Matrix
 
