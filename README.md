@@ -87,7 +87,7 @@ If not, you will need to provide the rollback by yourself. To learn more about r
   - If you would like to test another DB type, please add the requisite folder.
 4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (You can also choose to run `BaseTestHarnessSuite`, or `LiquibaseHarnessSuiteTest` -- at present they all work the same).
 
-# Running the Tests
+## Running the Tests
 
 ### Minimum Requirements
 Java 1.8
@@ -105,12 +105,10 @@ Execute `mvn test` with the (optional) flags outlined below:
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
 * `-DdbVersion` overrides the database version. Works in conjunction with `-DdbName` flag.
 
-# Cleanup
+## Cleanup
 
 When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
 gracefully and to allow the tests to start from a clean slate on the next run.
-
-
 
 ## Test-Harness Support Matrix
 
@@ -122,6 +120,4 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | SQL Server | 2017 |
 | Oracle | 18.4.0, 19.9.0 |
 | CockroachDB | 20.1, 20.2 |
-
-
 
