@@ -47,7 +47,7 @@ class TestConfig {
         return instance
     }
 
-    public List<DatabaseUnderTest> getDatabasesUnderTest() {
+    List<DatabaseUnderTest> getDatabasesUnderTest() {
         if (!databasesConnected) {
             String dbName = System.getProperty("dbName")
             String dbVersion = System.getProperty("dbVersion")

@@ -1,0 +1,18 @@
+# note database names should match with ones provided in harness-config.yml
+---
+references:
+  - targetDatabaseName: postgresql
+    targetDatabaseVersion: 9
+    referenceDatabaseName: postgresql
+    referenceDatabaseVersion: 12
+
+
+  - targetDatabaseName: mysql
+    targetDatabaseVersion: 5.7
+    referenceDatabaseName: mysql
+    referenceDatabaseVersion: 8
+
+  - targetDatabaseName: postgresql
+    targetDatabaseVersion: 9
+    referenceDatabaseName: mysql
+    referenceDatabaseVersion: 8
