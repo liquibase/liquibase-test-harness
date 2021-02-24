@@ -9,6 +9,6 @@ services:
         - "5500:5500"
     restart: always
     environment:
-        ORACLE_PWD: Secret321
+        ORACLE_PWD: JamesBond007_123#
     volumes:
         - "./startup:/opt/oracle/scripts/startup"

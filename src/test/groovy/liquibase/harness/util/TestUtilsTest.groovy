@@ -57,7 +57,7 @@ class TestUtilsTest extends Specification {
         when:
         database = new OracleDatabase()
         database.setConnection(new OfflineConnection("offline:oracle?version=18.4.0", new ClassLoaderResourceAccessor()))
-
+	
         DatabaseUnderTest databaseUnderTestOracle = new DatabaseUnderTest()
         databaseUnderTestOracle.database = database
         databaseUnderTestOracle.name = "oracle"
