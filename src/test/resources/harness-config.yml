@@ -72,7 +72,7 @@ databasesUnderTest:
     version: 19.9.0
 #    url: 'jdbc:oracle:thin:@129.146.50.152:1521/xe'
     url: 'jdbc:oracle:thin:@129.146.50.152:1521/rddb_phx1k2.sub01161048400.rdphxnetwork.oraclevcn.com'
-    username: 'sys as sysdba'
+    username: C##LIQUIBASE
     password: JamesBond007_123#
 
   # - name: cockroachdb
