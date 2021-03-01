@@ -37,8 +37,10 @@ class DiffCommandTestHelper {
             DatabaseUnderTest referenceDatabase = TestConfig.instance.databasesUnderTest.find{it.name.equalsIgnoreCase(targetToReference.referenceDatabaseName)&&
                     it.version.equalsIgnoreCase(targetToReference.referenceDatabaseVersion)}
 
+            List<String> expectedDiffs = readExpectedDiffFile(targetToReference.expectedDiffFile)
             inputList.add(TestInput.builder()
                     .context(TestConfig.instance.context)
+                    .expectedDiffs(expectedDiffs)
                     .targetDatabase(targetDatabase)
                     .referenceDatabase(referenceDatabase)
                     .build())
@@ -139,17 +141,14 @@ class DiffCommandTestHelper {
         }
     }
 
+    static List<String> readExpectedDiffFile(String expectedDiffFile) {
+
+    }
+
     @Builder
     static class TestInput {
-//        String databaseName
-//        String url
-//        String dbSchema
-//        String username
-//        String password
-//        String version
         String context
-//        String changeObject
-//        String pathToChangeLogFile
+        List<String> expectedDiffs
         DatabaseUnderTest referenceDatabase
         DatabaseUnderTest targetDatabase
     }

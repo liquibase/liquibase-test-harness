@@ -5,14 +5,16 @@ references:
     targetDatabaseVersion: 9
     referenceDatabaseName: postgresql
     referenceDatabaseVersion: 12
-
+    expectedDiffFile: postgre9_12.txt
 
   - targetDatabaseName: mysql
     targetDatabaseVersion: 5.7
     referenceDatabaseName: mysql
     referenceDatabaseVersion: 8
+    expectedDiffFile: mysql5.7_8.txt
 
   - targetDatabaseName: postgresql
     targetDatabaseVersion: 9
     referenceDatabaseName: mysql
     referenceDatabaseVersion: 8
+    expectedDiffFile: postgre9_mysql8.txt
