@@ -26,12 +26,10 @@ class ChangeObjectTests extends Specification {
                 testInput.changeObject, testInput.databaseName, testInput.version)
         List<CatalogAndSchema> catalogAndSchemaList = TestUtils.getCatalogAndSchema(testInput.database, testInput.dbSchema)
 
-        when: "expected sql file contains 'invalid test'"
-        then: "ingore test"
+        and: "skip testcase if it's invalid for this combination of db type and/or version"
         Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
 
-        when: "snapshot is not provided"
-        then: "fail test"
+        and: "fail test if snapshot is not provided"
         assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
 
         when: "get sql that is generated for changeset"
