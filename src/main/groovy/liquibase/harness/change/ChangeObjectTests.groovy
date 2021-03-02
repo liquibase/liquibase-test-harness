@@ -18,7 +18,7 @@ class ChangeObjectTests extends Specification {
 
     @Unroll
     def "apply #testInput.changeObject against #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
-        given: "create Liquibase, read expected sql and json files"
+        given: "create Liquibase connection, read expected sql and snapshot files"
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, testInput.database)
         String expectedSql = cleanSql(FileUtils.getExpectedSqlFileContent(
                 testInput.changeObject, testInput.databaseName, testInput.version))
@@ -37,7 +37,7 @@ class ChangeObjectTests extends Specification {
         when: "get sql that is generated for changeset"
         def generatedSql = cleanSql(TestUtils.toSqlFromLiquibaseChangeSets(liquibase))
 
-        then: "verify expected sql matches generated"
+        then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             assert generatedSql == expectedSql: "Expected SQL does not match actual sql. Deleting the existing expectedSql file will test that the new SQL works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
@@ -56,13 +56,13 @@ class ChangeObjectTests extends Specification {
             Assert.fail e.message
         }
 
-        then: "get DB snapshot, rollback changes, check if actual snapshot matches expected"
+        then: "get DB snapshot, rollback changes, check if actual snapshot matches expected snapshot"
         String jsonSnapshot = SnapshotHelpers.getJsonSnapshot(testInput.database, catalogAndSchemaList)
         liquibase.rollback(liquibase.databaseChangeLog.changeSets.size(), testInput.context)
 
         snapshotMatchesSpecifiedStructure(expectedSnapshot, jsonSnapshot)
 
-        and: "save generated sql as expected if expected sql wasn't provided"
+        and: "if expected sql is not provided save generated sql as expected sql"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             saveAsExpectedSql(generatedSql, testInput)
         }
