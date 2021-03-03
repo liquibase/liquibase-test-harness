@@ -18,23 +18,24 @@ class ChangeObjectTests extends Specification {
 
     @Unroll
     def "apply #testInput.changeObject against #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
-        given:
+        given: "create Liquibase connection, read expected sql and snapshot files"
         Liquibase liquibase = TestUtils.createLiquibase(testInput.pathToChangeLogFile, testInput.database)
-
         String expectedSql = cleanSql(FileUtils.getExpectedSqlFileContent(
                 testInput.changeObject, testInput.databaseName, testInput.version))
         String expectedSnapshot = FileUtils.getExpectedSnapshotFileContent(
                 testInput.changeObject, testInput.databaseName, testInput.version)
         List<CatalogAndSchema> catalogAndSchemaList = TestUtils.getCatalogAndSchema(testInput.database, testInput.dbSchema)
 
+        and: "skip testcase if it's invalid for this combination of db type and/or version"
         Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
 
-        when:
-        def generatedSql = cleanSql(TestUtils.toSqlFromLiquibaseChangeSets(liquibase))
-
-        then:
+        and: "fail test if snapshot is not provided"
         assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
 
+        when: "get sql that is generated for changeset"
+        def generatedSql = cleanSql(TestUtils.toSqlFromLiquibaseChangeSets(liquibase))
+
+        then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             assert generatedSql == expectedSql: "Expected SQL does not match actual sql. Deleting the existing expectedSql file will test that the new SQL works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
@@ -44,7 +45,7 @@ class ChangeObjectTests extends Specification {
 
         assert testInput.database.getConnection() instanceof JdbcConnection: "We cannot verify the following SQL works works because the database is offline:\n${generatedSql}"
 
-        when:
+        when: "apply changeset to DB"
         try {
             liquibase.update(testInput.context)
         } catch (Throwable e) {
@@ -53,18 +54,18 @@ class ChangeObjectTests extends Specification {
             Assert.fail e.message
         }
 
+        then: "get DB snapshot, rollback changes, check if actual snapshot matches expected snapshot"
         String jsonSnapshot = SnapshotHelpers.getJsonSnapshot(testInput.database, catalogAndSchemaList)
         liquibase.rollback(liquibase.databaseChangeLog.changeSets.size(), testInput.context)
 
-        then:
         snapshotMatchesSpecifiedStructure(expectedSnapshot, jsonSnapshot)
 
+        and: "if expected sql is not provided save generated sql as expected sql"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
-            //save generated sql as expected sql for future runs
             saveAsExpectedSql(generatedSql, testInput)
         }
 
-        where:
+        where: "test input in next data table"
         testInput << buildTestInput()
     }
 

@@ -1,5 +1,6 @@
 package liquibase.harness.change
 
+import groovy.transform.ToString
 import groovy.transform.builder.Builder
 import liquibase.database.Database
 import liquibase.harness.config.DatabaseUnderTest
@@ -87,6 +88,7 @@ class ChangeObjectTestHelper {
 
 
     @Builder
+    @ToString(includeNames=true, includeFields=true, includePackage = false, excludes ='database,password')
     static class TestInput {
         String databaseName
         String url
@@ -99,5 +101,4 @@ class ChangeObjectTestHelper {
         String pathToChangeLogFile
         Database database
     }
-
 }
