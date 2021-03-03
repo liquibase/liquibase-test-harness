@@ -1,0 +1,1 @@
+ALTER TABLE posts ADD CONSTRAINT DF_posts_inserted_date DEFAULT GETDATE() FOR inserted_date
