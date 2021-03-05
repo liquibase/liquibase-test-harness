@@ -145,3 +145,11 @@ services:
       - "./mssql-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
       - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
     entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
+
+  h2-1.4.200:
+    image: 1000kit/h2:latest
+    restart: always
+    ports:
+      - "8181:8181"
+    volumes:
+      - "./H2-init.sql:/docker-entrypoint-initdb.d/H2-init.sql"
