@@ -1,0 +1,15 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "NOW()!{liquibase.statement.DatabaseFunction}",
+            "name": "inserted_date",
+            "nullable": true
+          }
+        }
+      ]
+    }
+  }
+}
