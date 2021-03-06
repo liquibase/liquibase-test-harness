@@ -95,7 +95,7 @@ jobs:
 #        run: docker pull ${{ secrets.RT_URL }}
 
       - name: Docker login
-        run: docker login "${{ secrets.RT_URL }}" -U "${{ secrets.RT_USER }}" -P "${{ secrets.RT_PWD }}"
+        run: docker login "${{ secrets.RT_URL }}" -u "${{ secrets.RT_USER }}" -p "${{ secrets.RT_PWD }}"
 
 #      - name: Run image in container
 #        working-directory: src/test/resources/docker
