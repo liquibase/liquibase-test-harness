@@ -94,4 +94,4 @@ jobs:
 
       - name: Run image in container
 #        working-directory: src/test/resources/docker
-        run: docker run -it --rm -p 5444:5444 "${{ secrets.RT_URL }}":latest
+        run: docker run -i --rm -p 5444:5444 "${{ secrets.RT_URL }}":latest
