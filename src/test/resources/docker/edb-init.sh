@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-psql -v ON_ERROR_STOP=1 --username "jenkinsci" --dbname "password" <<-EOSQL
+#psql -v ON_ERROR_STOP=1 --username "jenkinsci" --dbname "password" <<-EOSQL
+psql -U jenkinsci -d jenkinsci -p 8544 <<-EOSQL
     CREATE USER lbuser WITH PASSWORD 'LiquibasePass1';
     GRANT ALL PRIVILEGES ON DATABASE lbcat TO lbuser;
     GRANT ALL PRIVILEGES ON SCHEMA public TO lbuser;
-
-
 
 
 DROP TABLE IF EXISTS authors;
