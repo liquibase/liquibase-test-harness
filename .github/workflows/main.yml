@@ -93,5 +93,13 @@ jobs:
         run: docker pull ${{ secrets.RT_URL }}
 
       - name: Run image in container
-#        working-directory: src/test/resources/docker
         run: docker run -i --rm -p 5444:5444 "${{ secrets.RT_URL }}":latest
+
+      - name: Make EDB init script runnable
+        working-directory: src/test/resources/docker
+        run: chmod +x ./edb-init.sh
+
+      - name: Execute EDB init script
+        working-directory: src/test/resources/docker
+        run: ./edb-init.sh
+
