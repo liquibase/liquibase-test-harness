@@ -2,7 +2,7 @@
 set -e
 password='password'
 
-PGPASSWORD=$(echo $password) psql -U jenkinsci -d jenkinsci -p 8544
+PGPASSWORD=$(echo $password) psql -h localhost -U jenkinsci -d jenkinsci -p 8544
     CREATE USER lbuser WITH PASSWORD 'LiquibasePass1';
     GRANT ALL PRIVILEGES ON DATABASE lbcat TO lbuser;
     GRANT ALL PRIVILEGES ON SCHEMA public TO lbuser;
