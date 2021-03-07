@@ -6,7 +6,7 @@ CREATE USER lbuser WITH PASSWORD 'LiquibasePass1';
 CREATE DATABASE "lbcat";
 GRANT ALL PRIVILEGES ON DATABASE lbcat TO lbuser;
 --GRANT ALL PRIVILEGES ON SCHEMA public TO lbuser;
-USE lbcat;
+\connect lbcat;
 
 
 DROP TABLE IF EXISTS authors;
