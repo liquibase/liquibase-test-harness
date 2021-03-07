@@ -103,3 +103,6 @@ jobs:
         working-directory: src/test/resources/docker
         run: ./edb-init.sh
 
+      - name: EDB Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb test
+

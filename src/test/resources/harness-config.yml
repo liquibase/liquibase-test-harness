@@ -97,3 +97,9 @@ databasesUnderTest:
     url: jdbc:sqlserver://localhost:1433;databaseName=lbcat
     username: lbuser
     password: LiquibasePass1
+
+  - name: edb
+    version: 9.5
+    url: jdbc:postgresql://localhost:8544/lbcat
+    username: lbuser
+    password: LiquibasePass1
