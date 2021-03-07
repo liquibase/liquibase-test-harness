@@ -95,14 +95,27 @@ jobs:
       - name: Run image in container
         run: docker run --name edb_container -d --rm -p 8544:5444 "${{ secrets.RT_URL }}":latest
 
-      - name: Make EDB init script runnable
-        working-directory: src/test/resources/docker
-        run: chmod +x ./edb-init.sh
+#      - name: Make EDB init script runnable
+#        working-directory: src/test/resources/docker
+#        run: chmod +x ./edb-init.sh
 
       - name: Execute EDB init script
         working-directory: src/test/resources/docker
-        run: ./edb-init.sh
+        run: |
+          chmod +x ./edb-init.sh
+          ./edb-init.sh
 
       - name: EDB Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb test
+
+      - name: Cleanup
+        run: |
+          docker stop edb_container
+          docker logout
+
+      - name: Archive EDB test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: edb-test-results
+          path: build/spock-reports
 
