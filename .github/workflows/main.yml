@@ -22,71 +22,68 @@ jobs:
         with:
           java-version: '1.8.0'
 
-#      - name: Build test infra
-#        working-directory: src/test/resources/docker
-#        run: docker-compose up -d
-#
-#      - name: MySQL Test Run
-#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -Dmaven.test.failure.ignore=true test
-#
-#      - name: Archive MySQL test results
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: mysql-test-results
-#          path: build/spock-reports
-#
-#      - name: MariaDB Test Run
-#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -Dmaven.test.failure.ignore=true test
-#
-#      - name: Archive MariaDB test results
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: mariadb-test-results
-#          path: build/spock-reports
-#
-#      - name: Postgres Test Run
-#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -Dmaven.test.failure.ignore=true test
-#
-#      - name: Archive Postgres test results
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: postgres-test-results
-#          path: build/spock-reports
-#
-#      - name: MSSQL Test Run
-#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -Dmaven.test.failure.ignore=true test
-#
-#      - name: Archive MSSQL test results
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: mssql-test-results
-#          path: build/spock-reports
-#
-#      - name: Tear down test infra
-#        working-directory: src/test/resources/docker
-#        run: docker-compose down --volumes
-#
-#      - name: Build cockroachDB test infra
-#        working-directory: src/test/resources/docker
-#        run: docker-compose -f docker-compose.cockroachdb.yml up -d
-#
-#      - name: cockroachDB Test Run
-#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb test
-#
-#      - name: Tear down cockroachDB test infra
-#        working-directory: src/test/resources/docker
-#        run: docker-compose -f docker-compose.cockroachdb.yml down --volumes
-#
-#      - name: Archive cockroachdb test results
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: cockroachdb-test-results
-#          path: build/spock-reports
+      - name: Build test infrastructure
+        working-directory: src/test/resources/docker
+        run: docker-compose up -d
 
+      - name: MySQL Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -Dmaven.test.failure.ignore=true test
 
+      - name: Archive MySQL test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: mysql-test-results
+          path: build/spock-reports
 
+      - name: MariaDB Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -Dmaven.test.failure.ignore=true test
 
-      - name: Docker login
+      - name: Archive MariaDB test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: mariadb-test-results
+          path: build/spock-reports
+
+      - name: Postgres Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -Dmaven.test.failure.ignore=true test
+
+      - name: Archive Postgres test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: postgres-test-results
+          path: build/spock-reports
+
+      - name: MSSQL Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -Dmaven.test.failure.ignore=true test
+
+      - name: Archive MSSQL test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: mssql-test-results
+          path: build/spock-reports
+
+      - name: Tear down test infra
+        working-directory: src/test/resources/docker
+        run: docker-compose down --volumes
+
+      - name: Build cockroachDB test infra
+        working-directory: src/test/resources/docker
+        run: docker-compose -f docker-compose.cockroachdb.yml up -d
+
+      - name: cockroachDB Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb test
+
+      - name: Tear down cockroachDB test infra
+        working-directory: src/test/resources/docker
+        run: docker-compose -f docker-compose.cockroachdb.yml down --volumes
+
+      - name: Archive cockroachdb test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: cockroachdb-test-results
+          path: build/spock-reports
+
+      - name: Docker login to retrive EDB image from private repo
         run: docker login "${{ secrets.RT_URL }}" -u "${{ secrets.RT_USER }}" -p "${{ secrets.RT_PWD }}"
 
       - name: Pull image from DockerHub
@@ -94,10 +91,6 @@ jobs:
 
       - name: Run image in container
         run: docker run --name edb_container -d --rm -p 8544:5444 "${{ secrets.RT_URL }}":latest
-
-#      - name: Make EDB init script runnable
-#        working-directory: src/test/resources/docker
-#        run: chmod +x ./edb-init.sh
 
       - name: Execute EDB init script
         working-directory: src/test/resources/docker
@@ -108,7 +101,7 @@ jobs:
       - name: EDB Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb test
 
-      - name: Cleanup
+      - name: Cleanup EDB container
         run: |
           docker stop edb_container
           docker logout
