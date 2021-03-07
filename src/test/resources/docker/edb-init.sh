@@ -2,9 +2,10 @@
 set -e
 
 #psql -v ON_ERROR_STOP=1 --username "jenkinsci" --dbname "password" <<-EOSQL
-psql /usr/ppas-9.5/bin/pg_ctl -w start -D /var/lib/ppas/9.5/data
-#psql -U jenkinsci -d jenkinsci -p 8544 <<-EOSQL
-psql -U jenkinsci -d jenkinsci -p 8544 <<-EOSQL
+#CMD bash -c "/usr/ppas-9.5/bin/edb-postgres -D /var/lib/ppas/9.5/data"
+#psql /usr/ppas-9.5/bin/pg_ctl -w start -D /var/lib/ppas/9.5/data
+#docker exec -it {postgres_container}  psql -U postgres -c "SELECT pg_reload_conf();"
+psql -U jenkinsci -d jenkinsci -p 8544 "password" <<-EOSQL
     CREATE USER lbuser WITH PASSWORD 'LiquibasePass1';
     GRANT ALL PRIVILEGES ON DATABASE lbcat TO lbuser;
     GRANT ALL PRIVILEGES ON SCHEMA public TO lbuser;
