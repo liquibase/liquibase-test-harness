@@ -70,8 +70,7 @@ databasesUnderTest:
 
   - name: oracle
     version: 19.9.0
-#    url: 'jdbc:oracle:thin:@129.146.50.152:1521/xe'
-    url: 'jdbc:oracle:thin:@129.146.50.152:1521/rddb_phx1k2.sub01161048400.rdphxnetwork.oraclevcn.com'
+    url: 'jdbc:oracle:thin:@129.146.174.79:1521/testdb_phx1gj.sub03081736090.testharness.oraclevcn.com'
     username: C##LIQUIBASE
     password: JamesBond007_123#
 

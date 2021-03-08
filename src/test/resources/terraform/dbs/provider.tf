@@ -9,8 +9,9 @@ terraform {
 
 provider "oci" {
   # Configuration options
-  auth = "InstancePrincipal"
+  #auth = "InstancePrincipal"
   region = var.region
+  config_file_profile = "DEFAULT"
   #tenancy_ocid = var.tenancy_ocid
   #user_ocid = var.user_ocid
   #fingerprint = var.fingerprint
