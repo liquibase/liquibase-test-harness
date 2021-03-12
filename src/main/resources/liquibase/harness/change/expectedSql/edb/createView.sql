@@ -1,3 +1,1 @@
-INVALID TEST
--- This does not appear to be a genuine failure, the test is failing because the expected snapshot file is not found when it in fact is present
--- This is needs to be investigated further by Oleh
+CREATE VIEW test_view AS select id, first_name, last_name, email from authors
