@@ -4,7 +4,7 @@
       "liquibase.structure.core.Table": [
         {
           "table": {
-            "name": "datatypes12_test_table"
+            "name": "datatypes10_test_table"
           }
         }
       ],
