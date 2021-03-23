@@ -1,1 +1,1 @@
-CREATE TABLE "datatypes.geometric_test_table" (point POINT, line LINE, box BOX, path PATH, polygon POLYGON, circle CIRCLE)
+CREATE TABLE "datatypes.geometric_test_table" (point POINT, line LINE, box BOX, path PATH, polygon POLYGON, circle CIRCLE, lseg LSEG)

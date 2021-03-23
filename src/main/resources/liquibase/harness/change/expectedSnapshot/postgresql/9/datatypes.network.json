@@ -32,14 +32,6 @@
 							"typeName": "macaddr"
 						}
 					}
-				},
-				{
-					"column": {
-						"name": "macaddr8",
-						"type": {
-							"typeName": "macaddr8"
-						}
-					}
 				}
 			]
 		}

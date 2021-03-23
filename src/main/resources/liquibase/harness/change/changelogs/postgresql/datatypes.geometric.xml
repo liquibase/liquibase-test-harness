@@ -13,12 +13,13 @@
             <column name="line" type="line" />
             <!--
             moved to datatypes12
-            <column name="lseg" type="lseq" />
+
             -->
             <column name="box" type="box" />
             <column name="path" type="path" />
             <column name="polygon" type="polygon" />
             <column name="circle" type="circle" />
+            <column name="lseg" type="lseg" />
 
         </createTable>
     </changeSet>
