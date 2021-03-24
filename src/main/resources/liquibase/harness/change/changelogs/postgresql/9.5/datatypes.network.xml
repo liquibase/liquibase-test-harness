@@ -8,7 +8,7 @@
         <createTable tableName="datatypes.network_test_table">
 
 		    <!-- NETWORK TYPES -->
-            <!-- https://www.postgresql.org/docs/12/datatype-net-types.html -->
+            <!-- https://www.postgresql.org/docs/9/datatype-net-types.html -->
             <column name="cidr" type="cidr" />
             <column name="inet" type="inet" />
             <column name="macaddr" type="macaddr" />
