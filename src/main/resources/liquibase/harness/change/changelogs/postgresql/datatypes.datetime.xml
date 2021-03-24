@@ -27,7 +27,7 @@
             <column name="timestamp5wtz" type="timestamp [ 5 ] with time zone"/>
             <column name="timestamp6" type="timestamp [ 6 ]"/>
             <column name="timestamp6wtz" type="timestamp [ 6 ] with time zone"/>
-            
+
             <column name="date" type="date"/>
 
             <!-- VARIABLE -->

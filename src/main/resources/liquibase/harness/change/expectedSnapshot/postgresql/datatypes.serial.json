@@ -1,0 +1,31 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "serial_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "serial",
+            "type": {
+              "typeName": "serial"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "bigserial",
+            "type": {
+              "typeName": "bigserial"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

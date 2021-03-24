@@ -56,6 +56,14 @@
 					  "typeName": "circle"
 				  }
 			  }
+		  },
+		  {
+			  "column": {
+				  "name": "lseg",
+				  "type": {
+					  "typeName": "lseg"
+				  }
+			  }
 		  }
       ]
     }
