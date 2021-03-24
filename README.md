@@ -21,6 +21,7 @@ The general pattern is that for each directory containing configuration files:
 - Files directly in that root apply to all databases. Example: `liquibase/harness/change/changelogs`
 - Files in a subdirectory named for the database type apply to only that type of database. Example: `liquibase/harness/change/changelogs/mysql`
 - Files in a subdirectory with a version apply only to this version of the database. Example: `liquibase/harness/change/changelogs/mysql/8`
+##### Note: version folder name should be exact match with DB version provided in `harness-config.yml` file. We do not split this to major/minor/path subversion folders as for now.
 
 At each level in that hierarchy, new configurations can be added and/or can override configurations from a lower level. 
 
