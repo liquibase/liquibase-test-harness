@@ -4,7 +4,7 @@
     "liquibase.structure.core.View": [
       {
         "view": {
-          "definition": "SELECT\n    \"ID\",\n    \"FIRST_NAME\",\n    \"LAST_NAME\",\n    \"EMAIL\"\nFROM \"PUBLIC\".\"AUTHORS\"",
+          "definition": "SELECT\n    ID,\n    FIRST_NAME,\n    LAST_NAME,\n    EMAIL\nFROM PUBLIC.AUTHORS",
           "name": "test_view"
         }
       }]
