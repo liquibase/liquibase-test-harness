@@ -53,6 +53,15 @@ jobs:
           name: postgres-test-results
           path: build/spock-reports
 
+      - name: H2 Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=h2 test
+
+      - name: Archive H2 test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: h2-test-results
+          path: build/spock-reports
+
       - name: MSSQL Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -Dmaven.test.failure.ignore=true test
 
@@ -111,4 +120,3 @@ jobs:
         with:
           name: edb-test-results
           path: build/spock-reports
-

@@ -103,3 +103,6 @@ databasesUnderTest:
     url: jdbc:postgresql://localhost:8544/lbcat
     username: lbuser
     password: LiquibasePass1
+
+  - name: h2
+    url: jdbc:h2:tcp://localhost:1523/test
