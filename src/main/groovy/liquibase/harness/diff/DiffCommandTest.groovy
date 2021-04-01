@@ -6,7 +6,6 @@ import liquibase.Scope
 import liquibase.diff.DiffResult
 import liquibase.diff.compare.CompareControl
 import liquibase.harness.config.TestConfig
-import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.structure.DatabaseObject
 import liquibase.structure.core.Column
@@ -20,8 +19,6 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static junit.framework.TestCase.assertEquals
-import static junit.framework.TestCase.assertEquals
 import static liquibase.harness.diff.DiffCommandTestHelper.*
 
 
@@ -50,7 +47,7 @@ class DiffCommandTest extends Specification {
     @Unroll
     def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to #testInput.targetDatabase.name #testInput.targetDatabase.version verify no significant diffs"() {
         given:
-        Liquibase liquibase = new Liquibase((String) null, new ClassLoaderResourceAccessor(), testInput.targetDatabase.database)
+        Liquibase liquibase = new Liquibase((String) null, TestConfig.instance.resourceAccessor, testInput.targetDatabase.database)
 
         DiffResult diffResult = liquibase.diff(testInput.referenceDatabase.database, testInput.targetDatabase.database, compareControl)
 
@@ -65,20 +62,17 @@ class DiffCommandTest extends Specification {
         when:
 
         liquibase = new Liquibase(outFile.toString(), new FileSystemResourceAccessor(File.listRoots()), testInput.targetDatabase.database)
-//        StringWriter stringWriter = new StringWriter();
-//        liquibase.update(testInput.context, stringWriter)
-//        Scope.getCurrentScope().getLog(getClass()).info(stringWriter.toString());
         liquibase.update(testInput.context);
 
         DiffResult newDiffResult =  liquibase.diff(testInput.referenceDatabase.database, testInput.targetDatabase.database, compareControl)
 
-        ignoreDatabaseChangeLogTable(diffResult)
-        ignoreConversionFromFloatToDouble64(diffResult)
-
         then:
-
-        newDiffResult.getMissingObjects().size() == 0
-        newDiffResult.getUnexpectedObjects().size()== 0
+        removeAndCheckExpectedDiffs(testInput.expectedDiffs, newDiffResult)
+        //TODO if found the was to work with unexpected/changed/mising objects all together move check here
+//        then:
+//        newDiffResult.getMissingObjects().size() == 0
+//        newDiffResult.getUnexpectedObjects().size() == 0
+//        newDiffResult.getUnexpectedObjects().size() == 0
 
         where:
         testInput << buildTestInput()
