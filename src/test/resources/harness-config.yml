@@ -109,4 +109,4 @@ databasesUnderTest:
 
   - name: sqlite
     version: 3.34.0
-    url: jdbc:sqlite:./src/test/resources/docker/sqlite.db
+    url: jdbc:sqlite:./src/test/resources/sqlite/sqlite.db
