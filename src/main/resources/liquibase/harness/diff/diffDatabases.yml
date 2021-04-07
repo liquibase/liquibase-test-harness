@@ -38,3 +38,28 @@ references:
         - lbcat.authors.birthdate
         - lbcat.posts.inserted_date
         - lbcat.authors.added
+
+  - targetDatabaseName: postgresql
+    targetDatabaseVersion: 9
+    referenceDatabaseName: edb
+    referenceDatabaseVersion: 9.5
+    expectedDiffs:
+      missingObjects:
+      unexpectedObjects:
+      changedObjects:
+        - public.posts.id
+        - public.authors.added
+        - public.authors.id
+
+  - targetDatabaseName: postgresql
+    targetDatabaseVersion: 12
+    referenceDatabaseName: edb
+    referenceDatabaseVersion: 9.5
+    expectedDiffs:
+      missingObjects:
+      unexpectedObjects:
+      changedObjects:
+        - public.authors.birthdate
+        - public.authors.id
+        - public.posts.inserted_date
+        - public.posts.id
