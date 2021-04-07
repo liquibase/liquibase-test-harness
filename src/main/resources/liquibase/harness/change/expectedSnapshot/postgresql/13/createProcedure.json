@@ -1,0 +1,9 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.StoredProcedure": [
+
+      ]
+    }
+  }
+}
