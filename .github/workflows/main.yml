@@ -62,6 +62,15 @@ jobs:
           name: h2-test-results
           path: build/spock-reports
 
+      -name: SQLite Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=sqlite -Dmaven.test.failure.ignore=true test
+
+      - name: Archive SQLite test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: sqlite-test-results
+          path: build/spock-reports
+
       - name: MSSQL Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -Dmaven.test.failure.ignore=true test
 
