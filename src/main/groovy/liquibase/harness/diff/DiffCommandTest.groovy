@@ -7,14 +7,6 @@ import liquibase.diff.DiffResult
 import liquibase.diff.compare.CompareControl
 import liquibase.harness.config.TestConfig
 import liquibase.resource.FileSystemResourceAccessor
-import liquibase.structure.DatabaseObject
-import liquibase.structure.core.Column
-import liquibase.structure.core.ForeignKey
-import liquibase.structure.core.Index
-import liquibase.structure.core.PrimaryKey
-import liquibase.structure.core.Sequence
-import liquibase.structure.core.Table
-import liquibase.structure.core.UniqueConstraint
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -27,21 +19,7 @@ class DiffCommandTest extends Specification {
     @Shared CompareControl compareControl
 
     def setup() {
-        Set<Class<? extends DatabaseObject>> typesToInclude = new HashSet<Class<? extends DatabaseObject>>()
-        typesToInclude.add(Table.class)
-        typesToInclude.add(Column.class)
-        typesToInclude.add(PrimaryKey.class)
-        typesToInclude.add(ForeignKey.class)
-        typesToInclude.add(UniqueConstraint.class)
-        typesToInclude.add(Sequence.class)
-        compareControl = new CompareControl(typesToInclude)
-        compareControl.addSuppressedField(Table.class, "remarks")
-        compareControl.addSuppressedField(Column.class, "remarks")
-        compareControl.addSuppressedField(Column.class, "certainDataType")
-        compareControl.addSuppressedField(Column.class, "autoIncrementInformation")
-        compareControl.addSuppressedField(ForeignKey.class, "deleteRule")
-        compareControl.addSuppressedField(ForeignKey.class, "updateRule")
-        compareControl.addSuppressedField(Index.class, "unique")
+        compareControl = buildCompareControl()
     }
 
     @Unroll
@@ -51,8 +29,8 @@ class DiffCommandTest extends Specification {
 
         DiffResult diffResult = liquibase.diff(testInput.referenceDatabase.database, testInput.targetDatabase.database, compareControl)
 
-        File outFile = File.createTempFile("lb-test", ".xml")
-        OutputStream outChangeLog = new FileOutputStream(outFile)
+        File tempFile = File.createTempFile("lb-test", ".xml")
+        OutputStream outChangeLog = new FileOutputStream(tempFile)
         String changeLogString = toChangeLog(diffResult)
         outChangeLog.write(changeLogString.getBytes("UTF-8"))
         outChangeLog.close()
@@ -61,18 +39,20 @@ class DiffCommandTest extends Specification {
 
         when:
 
-        liquibase = new Liquibase(outFile.toString(), new FileSystemResourceAccessor(File.listRoots()), testInput.targetDatabase.database)
+        liquibase = new Liquibase(tempFile.toString(), new FileSystemResourceAccessor(File.listRoots()), testInput.targetDatabase.database)
         liquibase.update(testInput.context);
 
         DiffResult newDiffResult =  liquibase.diff(testInput.referenceDatabase.database, testInput.targetDatabase.database, compareControl)
+        //TODO think about rollback as after test execution database change it's state. default rollback doen't work as
+        // generated changelog can contain ModifyDataTypeChange DropDefaultValueChange or others that don't have rollback
+        //liquibase.rollback(liquibase.databaseChangeLog.changeSets.size(), testInput.context);
+
+        removeExpectedDiffs(testInput.expectedDiffs, newDiffResult)
 
         then:
-        removeAndCheckExpectedDiffs(testInput.expectedDiffs, newDiffResult)
-        //TODO if found the was to work with unexpected/changed/mising objects all together move check here
-//        then:
-//        newDiffResult.getMissingObjects().size() == 0
-//        newDiffResult.getUnexpectedObjects().size() == 0
-//        newDiffResult.getUnexpectedObjects().size() == 0
+        newDiffResult.getMissingObjects().size() == 0
+        newDiffResult.getUnexpectedObjects().size() == 0
+        newDiffResult.getUnexpectedObjects().size() == 0
 
         where:
         testInput << buildTestInput()
