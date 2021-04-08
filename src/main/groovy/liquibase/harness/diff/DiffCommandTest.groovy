@@ -35,7 +35,7 @@ class DiffCommandTest extends Specification {
         outChangeLog.write(changeLogString.getBytes("UTF-8"))
         outChangeLog.close()
 
-        Scope.getCurrentScope().getLog(getClass()).info("Changelog:\n" + changeLogString)
+        Scope.getCurrentScope().getLog(DiffCommandTest.class).info("Changelog:\n" + changeLogString)
 
         when:
 
@@ -52,7 +52,7 @@ class DiffCommandTest extends Specification {
         then:
         newDiffResult.getMissingObjects().size() == 0
         newDiffResult.getUnexpectedObjects().size() == 0
-        newDiffResult.getUnexpectedObjects().size() == 0
+        newDiffResult.getChangedObjects().size() == 0
 
         where:
         testInput << buildTestInput()

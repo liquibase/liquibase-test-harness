@@ -14,8 +14,9 @@ class DatabaseConnectionUtil {
     private static Logger logger = Scope.getCurrentScope().getLog(getClass())
 
     static Database initializeDatabase(String url, String username, String password) {
+        Database database;
         try {
-            Database database = openConnection(url, username, password)
+            database = openConnection(url, username, password)
             if (database == null) {
                 return null
             }
@@ -24,7 +25,7 @@ class DatabaseConnectionUtil {
         }
         catch (Exception e) {
             logger.severe("Unable to initialize database connection: ${e.getMessage()}", e)
-            return null
+            return database
         }
     }
 
