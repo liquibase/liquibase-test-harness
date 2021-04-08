@@ -52,7 +52,7 @@ class DiffCommandTestHelper {
 
         List<TestInput> inputList = new ArrayList<>()
         for (TargetToReference targetToReference : targetToReferences) {
-
+            //TODO fix case when DBs don't have versions
             DatabaseUnderTest targetDatabase = TestConfig.instance.databasesUnderTest.find{it.name.equalsIgnoreCase(targetToReference.targetDatabaseName)&&
             it.version.equalsIgnoreCase(targetToReference.targetDatabaseVersion)}
 
