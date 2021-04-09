@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+        <!--https://docs.liquibase.com/change-types/community/drop-procedure.html-->
+        <changeSet author="as" id="1">
+            <dropProcedure procedureName="test_procedure"
+                           schemaName="public"/>
+        </changeSet>
+</databaseChangeLog>
