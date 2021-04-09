@@ -62,7 +62,7 @@ jobs:
           name: h2-test-results
           path: build/spock-reports
 
-      -name: SQLite Test Run
+      - name: SQLite Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=sqlite -Dmaven.test.failure.ignore=true test
 
       - name: Archive SQLite test results
