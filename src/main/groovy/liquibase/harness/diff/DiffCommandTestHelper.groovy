@@ -20,6 +20,10 @@ import liquibase.structure.core.UniqueConstraint
 import liquibase.structure.core.View
 import org.yaml.snakeyaml.Yaml
 
+import java.util.stream.Collectors
+
+import static liquibase.util.StringUtil.isNotEmpty
+
 class DiffCommandTestHelper {
 
     static CompareControl buildCompareControl() {
@@ -42,22 +46,55 @@ class DiffCommandTestHelper {
         compareControl.addSuppressedField(Index.class, "unique")
         return compareControl
     }
+
     static List<TestInput> buildTestInput() {
 
         Yaml configFileYml = new Yaml()
         InputStream testConfig = getClass().getResourceAsStream("/liquibase/harness/diff/diffDatabases.yml")
-        assert testConfig != null : "Cannot find diffDatabases.yml in classpath"
+        assert testConfig != null: "Cannot find diffDatabases.yml in classpath"
 
         List<TargetToReference> targetToReferences = configFileYml.loadAs(testConfig, DiffDatabases.class).references
 
         List<TestInput> inputList = new ArrayList<>()
         for (TargetToReference targetToReference : targetToReferences) {
-            //TODO fix case when DBs don't have versions
-            DatabaseUnderTest targetDatabase = TestConfig.instance.databasesUnderTest.find{it.name.equalsIgnoreCase(targetToReference.targetDatabaseName)&&
-            it.version.equalsIgnoreCase(targetToReference.targetDatabaseVersion)}
+            DatabaseUnderTest targetDatabase;
+            List<DatabaseUnderTest> matchingTargetDatabases = TestConfig.instance.databasesUnderTest.stream()
+                    .filter({ it -> it.name.equalsIgnoreCase(targetToReference.targetDatabaseName) })
+                    .collect(Collectors.toList())
 
-            DatabaseUnderTest referenceDatabase = TestConfig.instance.databasesUnderTest.find{it.name.equalsIgnoreCase(targetToReference.referenceDatabaseName)&&
-                    it.version.equalsIgnoreCase(targetToReference.referenceDatabaseVersion)}
+            if (matchingTargetDatabases.size() == 1) {
+                targetDatabase = matchingTargetDatabases.get(0)
+            } else if (matchingTargetDatabases.size() > 1 && isNotEmpty(targetToReference.targetDatabaseVersion)) {
+                targetDatabase = matchingTargetDatabases.stream()
+                        .filter({ it -> targetToReference.targetDatabaseVersion.equalsIgnoreCase(it.version) })
+                        .findFirst()
+                        .orElseThrow({ ->
+                            new IllegalArgumentException(
+                                    String.format("Versions in harness-config.yml don't match with targetDatabaseVersion=%s provided in diffDatabases.yml",
+                                            targetToReference.targetDatabaseVersion))
+                        })
+            } else {
+                throw new IllegalArgumentException(String.format("can't match target DB for diff test name={%s}, version={%s}", targetToReference.targetDatabaseName, targetToReference.targetDatabaseVersion))
+            }
+
+            DatabaseUnderTest referenceDatabase
+            List<DatabaseUnderTest> matchingReferenceDatabases = TestConfig.instance.databasesUnderTest.stream()
+                    .filter({ it -> it.name.equalsIgnoreCase(targetToReference.referenceDatabaseName) })
+                    .collect(Collectors.toList())
+            if (matchingReferenceDatabases.size() == 1) {
+                referenceDatabase = matchingReferenceDatabases.get(0)
+            } else if (matchingReferenceDatabases.size() > 1 && isNotEmpty(targetToReference.referenceDatabaseVersion)) {
+                referenceDatabase = matchingReferenceDatabases.stream()
+                        .filter({ it -> targetToReference.referenceDatabaseVersion.equalsIgnoreCase(it.version) })
+                        .findFirst()
+                        .orElseThrow({ ->
+                            new IllegalArgumentException(
+                                    String.format("Versions in harness-config.yml don't match with referenceDatabaseVersion=%s provided in diffDatabases.yml",
+                                            targetToReference.referenceDatabaseVersion))
+                        })
+            } else {
+                throw new IllegalArgumentException(String.format("can't match reference DB for diff test name={%s}, version={%s}", targetToReference.referenceDatabaseName, targetToReference.referenceDatabaseVersion))
+            }
 
             inputList.add(TestInput.builder()
                     .context(TestConfig.instance.context)
@@ -65,7 +102,7 @@ class DiffCommandTestHelper {
                     .targetDatabase(targetDatabase)
                     .referenceDatabase(referenceDatabase)
                     .build())
-            }
+        }
         return inputList
     }
 
@@ -82,26 +119,31 @@ class DiffCommandTestHelper {
         return out.toString("UTF-8")
     }
 
-    static void removeExpectedDiffs(ExpectedDiffs expectedDiffs, DiffResult diffResult){
+    static void removeExpectedDiffs(ExpectedDiffs expectedDiffs, DiffResult diffResult) {
         removeUnexpectedObjects(diffResult.getUnexpectedObjects(), expectedDiffs)
         removeMissingObjects(diffResult.getMissingObjects(), expectedDiffs)
         removeChangedObjects(diffResult.getChangedObjects(), expectedDiffs)
 
     }
 
-    static void removeChangedObjects(Map<DatabaseObject, ObjectDifferences> map, ExpectedDiffs expectedDiffs){
-         map.entrySet().removeIf({ entry -> expectedDiffs.changedObjects?.contains(entry.key.toString()) })
+    static void removeChangedObjects(Map<DatabaseObject, ObjectDifferences> map, ExpectedDiffs expectedDiffs) {
+        map.entrySet().removeIf({ entry -> expectedDiffs.changedObjects?.contains(entry.key.toString()) })
         map.entrySet().removeIf({ entry -> entry.key.toString().toUpperCase().contains("DATABASECHANGELOG") })
     }
 
-    static void removeMissingObjects(Set<? extends DatabaseObject> missingObjects, ExpectedDiffs expectedDiffs){
+    static void removeMissingObjects(Set<? extends DatabaseObject> missingObjects, ExpectedDiffs expectedDiffs) {
         missingObjects.removeIf({ object -> expectedDiffs.changedObjects?.contains(object.toString()) })
         missingObjects.removeIf({ object -> object.toString().toUpperCase().contains("DATABASECHANGELOG") })
 
     }
-    static void removeUnexpectedObjects(Set<? extends DatabaseObject> unexpectedObjects, ExpectedDiffs expectedDiffs){
+
+    static void removeUnexpectedObjects(Set<? extends DatabaseObject> unexpectedObjects, ExpectedDiffs expectedDiffs) {
         unexpectedObjects.removeIf({ object -> expectedDiffs.changedObjects?.contains(object.toString()) })
         unexpectedObjects.removeIf({ object -> object.toString().toUpperCase().contains("DATABASECHANGELOG") })
+    }
+
+    static boolean diffsAbsent(DiffResult diffResult) {
+        return diffResult.getChangedObjects()?.isEmpty() && diffResult.getMissingObjects()?.isEmpty() && diffResult.getUnexpectedObjects()?.isEmpty()
     }
 
     @Builder

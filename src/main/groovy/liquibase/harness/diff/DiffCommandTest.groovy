@@ -28,7 +28,9 @@ class DiffCommandTest extends Specification {
         Liquibase liquibase = new Liquibase((String) null, TestConfig.instance.resourceAccessor, testInput.targetDatabase.database)
 
         DiffResult diffResult = liquibase.diff(testInput.referenceDatabase.database, testInput.targetDatabase.database, compareControl)
-
+        if(diffsAbsent(diffResult)) {
+            return
+        }
         File tempFile = File.createTempFile("lb-test", ".xml")
         OutputStream outChangeLog = new FileOutputStream(tempFile)
         String changeLogString = toChangeLog(diffResult)
@@ -43,7 +45,11 @@ class DiffCommandTest extends Specification {
         liquibase.update(testInput.context);
 
         DiffResult newDiffResult =  liquibase.diff(testInput.referenceDatabase.database, testInput.targetDatabase.database, compareControl)
-        //TODO think about rollback as after test execution database change it's state. default rollback doen't work as
+        if(diffsAbsent(newDiffResult)) {
+            return
+        }
+
+        //TODO think about rollback as after test execution database change it's state. default rollback doesn't work as
         // generated changelog can contain ModifyDataTypeChange DropDefaultValueChange or others that don't have rollback
         //liquibase.rollback(liquibase.databaseChangeLog.changeSets.size(), testInput.context);
 
