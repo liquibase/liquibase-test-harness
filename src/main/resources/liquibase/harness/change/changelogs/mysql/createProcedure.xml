@@ -19,8 +19,6 @@
                                END;"
                 relativeToChangelogFile="true">
         </createProcedure>
-        <rollback>
-            <dropProcedure procedureName="test_procedure"/>
-        </rollback>
+        <rollback/>
     </changeSet>
 </databaseChangeLog>

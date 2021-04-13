@@ -8,5 +8,6 @@
         <changeSet author="as" id="1">
             <dropProcedure procedureName="test_procedure"
                            schemaName="public"/>
+            <rollback/>
         </changeSet>
 </databaseChangeLog>
