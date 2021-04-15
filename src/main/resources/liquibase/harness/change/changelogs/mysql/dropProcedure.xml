@@ -6,8 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
         <!--https://docs.liquibase.com/change-types/community/drop-procedure.html-->
         <changeSet author="as" id="1">
-            <dropProcedure procedureName="test_procedure"
-                           schemaName="public"/>
+            <dropProcedure procedureName="test_procedure"/>
             <rollback/>
         </changeSet>
 </databaseChangeLog>

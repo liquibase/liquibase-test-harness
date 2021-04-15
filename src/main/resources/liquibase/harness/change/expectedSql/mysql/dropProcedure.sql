@@ -1,1 +1,1 @@
-DROP PROCEDURE public.test_procedure
+DROP PROCEDURE test_procedure
