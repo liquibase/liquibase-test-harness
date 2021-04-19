@@ -31,7 +31,7 @@ class TestConfig {
     static TestConfig getInstance() {
         if (instance == null) {
             Yaml configFileYml = new Yaml()
-            def testConfig = getClass().getResourceAsStream("/harness-config.yml")
+            def testConfig = TestConfig.class.getResourceAsStream("/harness-config.yml")
             assert testConfig != null : "Cannot find harness-config.yml in classpath"
 
             instance = configFileYml.loadAs(testConfig, TestConfig.class)
