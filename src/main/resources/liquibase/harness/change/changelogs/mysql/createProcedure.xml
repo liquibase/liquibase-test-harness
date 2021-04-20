@@ -13,14 +13,11 @@
                 dbms="mysql"
                 encoding="UTF-8"
                 path="createProcedure.sql"
-                procedureName="test_procedure"
-                procedureText="CREATE PROCEDURE test_procedure()
-
-                               BEGIN
-
-                               END;"
-                relativeToChangelogFile="true">
+                relativeToChangelogFile="true"
+                procedureName="test_procedure">
         </createProcedure>
-        <rollback/>
+        <rollback>
+            <dropProcedure procedureName="test_procedure"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

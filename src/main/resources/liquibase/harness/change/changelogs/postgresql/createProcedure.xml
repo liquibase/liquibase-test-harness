@@ -14,16 +14,10 @@
                 encoding="UTF-8"
                 path="createProcedure.sql"
                 procedureName="test_procedure"
-                procedureText="CREATE PROCEDURE test_procedure()
-                                 LANGUAGE 'plpgsql'
-                                 AS $$
-
-                                 BEGIN
-
-                                 END;
-                                 $$"
                 relativeToChangelogFile="true">
         </createProcedure>
-        <rollback/>
+        <rollback>
+            <dropProcedure procedureName="test_procedure"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>
