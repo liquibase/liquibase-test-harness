@@ -1,5 +1,4 @@
-DROP PROCEDURE IF EXISTS test_procedure();
-CREATE PROCEDURE test_procedure()
+CREATE OR REPLACE PROCEDURE test_procedure()
                                  LANGUAGE 'plpgsql'
                                  AS $$
 
