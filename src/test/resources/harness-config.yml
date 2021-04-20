@@ -134,9 +134,9 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-#  - name: h2
-#    url: jdbc:h2:tcp://localhost:1523/test
-#
-#  - name: sqlite
-#    version: 3.34.0
-#    url: jdbc:sqlite:./src/test/resources/sqlite/sqlite.db
+  - name: h2
+    url: jdbc:h2:tcp://localhost:1523/test
+
+  - name: sqlite
+    version: 3.34.0
+    url: jdbc:sqlite:./src/test/resources/sqlite/sqlite.db
