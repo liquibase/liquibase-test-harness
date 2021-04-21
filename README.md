@@ -121,6 +121,7 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | SQL Server | `2017` |
 | Oracle | `18.4.0, 19.9.0` |
 | CockroachDB | `20.1, 20.2` |
-| EDB | `9.5` |
+| EDB | `9.5, 9.6, 10, 11, 12, 13` |
 | H2 | `1.4.200` |
+| SQLite | `3.34.0` |
 
