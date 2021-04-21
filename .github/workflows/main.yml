@@ -112,32 +112,3 @@ jobs:
         with:
           name: cockroachdb-test-results
           path: build/spock-reports
-
-#       - name: Docker login to retrive EDB image from private repo
-#         run: docker login "${{ secrets.RT_URL }}" -u "${{ secrets.RT_USER }}" -p "${{ secrets.RT_PWD }}"
-
-#       - name: Pull image from DockerHub
-#         run: docker pull ${{ secrets.RT_URL }}
-
-#       - name: Run image in container
-#         run: docker run --name edb_container -d --rm -p 8544:5444 "${{ secrets.RT_URL }}":latest
-
-#       - name: Execute EDB init script
-#         working-directory: src/test/resources/docker
-#         run: |
-#           chmod +x ./edb-init.sh
-#           ./edb-init.sh
-
-#       - name: EDB Test Run
-#         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb test
-
-#       - name: Cleanup EDB container
-#         run: |
-#           docker stop edb_container
-#           docker logout
-
-#       - name: Archive EDB test results
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: edb-test-results
-#           path: build/spock-reports
