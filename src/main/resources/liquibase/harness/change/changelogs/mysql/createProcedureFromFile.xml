@@ -12,11 +12,9 @@
                 comments="test procedure"
                 dbms="mysql"
                 encoding="UTF-8"
-                procedureName="test_procedure">CREATE PROCEDURE test_procedure()
-
-            BEGIN
-
-            END;
+                path="createProcedure.txt"
+                relativeToChangelogFile="true"
+                procedureName="test_procedure">
         </createProcedure>
         <rollback>
             <dropProcedure procedureName="test_procedure"/>

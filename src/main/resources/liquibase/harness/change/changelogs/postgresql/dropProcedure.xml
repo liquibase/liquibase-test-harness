@@ -12,7 +12,7 @@
                 comments="test procedure"
                 dbms="postgresql"
                 encoding="UTF-8"
-                path="createProcedure.sql"
+                path="createProcedure.txt"
                 relativeToChangelogFile="true"
                 procedureName="test_procedure">
         </createProcedure>
