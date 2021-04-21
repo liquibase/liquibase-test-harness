@@ -14,7 +14,10 @@
             "name": "lms_test_id"
           },
           "column": {
-            "name": "lms_test_timestamp"
+            "name": "lms_test_timestamp",
+            "type": {
+              "typeName": "timestamp"
+            }
           }
         }
       ]
