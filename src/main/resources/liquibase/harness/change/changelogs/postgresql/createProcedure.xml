@@ -12,9 +12,14 @@
                 comments="test procedure"
                 dbms="postgresql"
                 encoding="UTF-8"
-                path="createProcedure.sql"
-                procedureName="test_procedure"
-                relativeToChangelogFile="true">
+                procedureName="test_procedure">CREATE OR REPLACE PROCEDURE test_procedure()
+            LANGUAGE 'plpgsql'
+            AS $$
+
+            BEGIN
+
+            END;
+            $$
         </createProcedure>
         <rollback>
             <dropProcedure procedureName="test_procedure"/>
