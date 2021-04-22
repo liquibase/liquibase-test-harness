@@ -1,44 +1,42 @@
 # note: database names and versions should match with ones provided in harness-config.yml
 ---
 references:
-  - targetDatabaseName: postgresql
-    targetDatabaseVersion: 9
-    referenceDatabaseName: postgresql
-    referenceDatabaseVersion: 12
-    expectedDiffs:
-      missingObjects:
-      unexpectedObjects:
-      changedObjects:
-        - public.posts.id
-        - public.authors.added
-        - public.authors.id
-
-  - targetDatabaseName: mysql
-    targetDatabaseVersion: 5.7
-    referenceDatabaseName: mysql
-    referenceDatabaseVersion: 8
-    expectedDiffs:
-      missingObjects:
-      unexpectedObjects:
-      changedObjects:
-
-  - targetDatabaseName: postgresql
-    targetDatabaseVersion: 9
-    referenceDatabaseName: mysql
-    referenceDatabaseVersion: 8
-    expectedDiffs:
-      missingObjects:
-      unexpectedObjects:
-      changedObjects:
-        - lbcat.posts.id
-        - lbcat.authors.id
-        - lbcat.posts.content
-        - lbcat.posts.author_id
-        - lbcat.posts.title
-        - lbcat.authors.birthdate
-        - lbcat.posts.inserted_date
-        - lbcat.authors.added
-
+#  - targetDatabaseName: postgresql
+#    targetDatabaseVersion: 9
+#    referenceDatabaseName: postgresql
+#    referenceDatabaseVersion: 12
+#    expectedDiffs:
+#      missingObjects:
+#      unexpectedObjects:
+#      changedObjects:
+#        - public.authors.added
+#
+#  - targetDatabaseName: mysql
+#    targetDatabaseVersion: 5.7
+#    referenceDatabaseName: mysql
+#    referenceDatabaseVersion: 8
+#    expectedDiffs:
+#      missingObjects:
+#      unexpectedObjects:
+#      changedObjects:
+#
+#  - targetDatabaseName: postgresql
+#    targetDatabaseVersion: 9
+#    referenceDatabaseName: mysql
+#    referenceDatabaseVersion: 8
+#    expectedDiffs:
+#      missingObjects:
+#      unexpectedObjects:
+#      changedObjects:
+#        - lbcat.posts.id
+#        - lbcat.authors.id
+#        - lbcat.posts.content
+#        - lbcat.posts.author_id
+#        - lbcat.posts.title
+#        - lbcat.authors.birthdate
+#        - lbcat.posts.inserted_date
+#        - lbcat.authors.added
+#
   - targetDatabaseName: postgresql
     targetDatabaseVersion: 9
     referenceDatabaseName: edb
@@ -50,16 +48,16 @@ references:
         - public.posts.id
         - public.authors.added
         - public.authors.id
-
-  - targetDatabaseName: postgresql
-    targetDatabaseVersion: 12
-    referenceDatabaseName: edb
-#    referenceDatabaseVersion: 9.5 ---> version parameter could be missed if harness-config.yml has only one DB with such name or DB doesn't have version as such
-    expectedDiffs:
-      missingObjects:
-      unexpectedObjects:
-      changedObjects:
-        - public.authors.birthdate
-        - public.authors.id
-        - public.posts.inserted_date
-        - public.posts.id
+#
+#  - targetDatabaseName: postgresql
+#    targetDatabaseVersion: 12
+#    referenceDatabaseName: edb
+##    referenceDatabaseVersion: 9.5 ---> version parameter could be missed if harness-config.yml has only one DB with such name or DB doesn't have version as such
+#    expectedDiffs:
+#      missingObjects:
+#      unexpectedObjects:
+#      changedObjects:
+#        - public.authors.birthdate
+#        - public.authors.id
+#        - public.posts.inserted_date
+#        - public.posts.id

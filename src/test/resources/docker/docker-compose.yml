@@ -150,7 +150,7 @@ services:
     image: buildo/h2database
     restart: always
     ports:
-      - "1523:9092"
+      - "1524:9092"
     volumes:
       - "./H2-init.sql:/docker-entrypoint-initdb.d/test.sql"
 

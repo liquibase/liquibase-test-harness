@@ -135,7 +135,7 @@ databasesUnderTest:
     password: LiquibasePass1
 
   - name: h2
-    url: jdbc:h2:tcp://localhost:1523/test
+    url: jdbc:h2:tcp://localhost:1524/test
 
   - name: sqlite
     version: 3.34.0
