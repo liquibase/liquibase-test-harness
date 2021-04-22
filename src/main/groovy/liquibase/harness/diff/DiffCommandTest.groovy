@@ -13,7 +13,9 @@ import spock.lang.Unroll
 
 import static liquibase.harness.diff.DiffCommandTestHelper.*
 
-
+/**
+ * Warning: this is destructive test, meaning it will change state of targetDatabase according to referenceDatabase
+ */
 class DiffCommandTest extends Specification {
 
     @Shared CompareControl compareControl
