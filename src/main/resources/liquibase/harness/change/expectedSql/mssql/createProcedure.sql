@@ -1,0 +1,2 @@
+CREATE PROCEDURE test_procedure
+AS
