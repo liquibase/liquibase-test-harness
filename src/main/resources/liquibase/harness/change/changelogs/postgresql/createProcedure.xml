@@ -13,13 +13,11 @@
                 dbms="postgresql"
                 encoding="UTF-8"
                 procedureName="test_procedure">CREATE OR REPLACE PROCEDURE test_procedure()
-            LANGUAGE 'plpgsql'
-            AS $$
-
-            BEGIN
-
-            END;
-            $$
+                                               LANGUAGE 'plpgsql'
+                                               AS $$
+                                               BEGIN
+                                               END;
+                                               $$
         </createProcedure>
         <rollback>
             <dropProcedure procedureName="test_procedure"/>
