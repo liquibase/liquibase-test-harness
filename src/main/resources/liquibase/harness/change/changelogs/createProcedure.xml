@@ -10,11 +10,10 @@
     <changeSet author="as" id="1">
         <createProcedure
                 comments="test procedure"
-                dbms="mariadb"
                 encoding="UTF-8"
-                procedureName="test_procedure"
-                path="createProcedure.txt"
-                relativeToChangelogFile="true">
+                procedureName="test_procedure">CREATE PROCEDURE test_procedure()
+                                               BEGIN
+                                               END;
         </createProcedure>
         <rollback>
             <dropProcedure procedureName="test_procedure"/>
