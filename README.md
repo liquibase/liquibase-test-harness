@@ -92,7 +92,7 @@ If not, you will need to provide the rollback by yourself. To learn more about r
 ## DiffCommandTest
 This test compares two databases using Liquibase Diff command, then makes new changelog file based on this diff, apply 
 this changelog to targetDatabase and check there is now unexpected diffs between this databases.
-### Warning this is destructive test, meaning it will change state of targetDatabase according to referenceDatabase 
+#### Warning: this is destructive test, meaning it will change state of targetDatabase according to referenceDatabase 
 
 ## Running the Tests
 
