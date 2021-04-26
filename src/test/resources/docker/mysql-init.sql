@@ -1,4 +1,5 @@
 GRANT ALL PRIVILEGES ON lbcat.* TO 'lbuser'@'%';
+GRANT PROCESS, SELECT, CREATE ROUTINE, ALTER ROUTINE ON lbcat.* TO 'lbuser'@'%';
 
 DROP TABLE IF EXISTS `authors`;
 CREATE TABLE `authors` (
