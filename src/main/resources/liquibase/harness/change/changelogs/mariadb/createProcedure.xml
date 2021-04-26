@@ -13,10 +13,8 @@
                 dbms="mariadb"
                 encoding="UTF-8"
                 procedureName="test_procedure">CREATE OR REPLACE PROCEDURE test_procedure()
-
-            BEGIN
-
-            END;
+                                               BEGIN
+                                               END;
         </createProcedure>
         <rollback>
             <dropProcedure procedureName="test_procedure"/>
