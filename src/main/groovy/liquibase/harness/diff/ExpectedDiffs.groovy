@@ -3,5 +3,5 @@ package liquibase.harness.diff
 class ExpectedDiffs {
     List<String> missingObjects
     List<String> unexpectedObjects
-    List<String> changedObjects
+    List<HarnessObjectDifference> changedObjects
 }
