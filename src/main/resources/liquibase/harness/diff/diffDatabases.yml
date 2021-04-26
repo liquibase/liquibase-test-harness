@@ -64,13 +64,3 @@ references:
         - diffName: "lbcat.authors.birthdate"
           diffs:
             type: "type changed from 'DATE(10)' to 'date'"
-
-
-  - targetDatabaseName: postgresql
-    targetDatabaseVersion: 9
-    referenceDatabaseName: edb
-    referenceDatabaseVersion: 9.5
-    expectedDiffs:
-      missingObjects:
-      unexpectedObjects:
-      changedObjects:

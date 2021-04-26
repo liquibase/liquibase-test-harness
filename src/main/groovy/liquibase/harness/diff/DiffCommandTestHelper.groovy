@@ -21,7 +21,6 @@ import liquibase.structure.core.UniqueConstraint
 import liquibase.structure.core.View
 import org.yaml.snakeyaml.Yaml
 
-import java.util.function.Function
 import java.util.stream.Collectors
 
 import static liquibase.util.StringUtil.isNotEmpty
@@ -52,14 +51,14 @@ class DiffCommandTestHelper {
     static List<TestInput> buildTestInput() {
 
         Yaml configFileYml = new Yaml()
-        InputStream testConfig =  DiffCommandTestHelper.class.getResourceAsStream("/liquibase/harness/diff/diffDatabases.yml")
+        InputStream testConfig = DiffCommandTestHelper.class.getResourceAsStream("/liquibase/harness/diff/diffDatabases.yml")
         assert testConfig != null: "Cannot find diffDatabases.yml in classpath"
 
         List<TargetToReference> targetToReferences = configFileYml.loadAs(testConfig, DiffDatabases.class).references
 
         List<TestInput> inputList = new ArrayList<>()
         for (TargetToReference targetToReference : targetToReferences) {
-            DatabaseUnderTest targetDatabase;
+            DatabaseUnderTest targetDatabase
             List<DatabaseUnderTest> matchingTargetDatabases = TestConfig.instance.databasesUnderTest.stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.targetDatabaseName) })
                     .collect(Collectors.toList())
@@ -128,9 +127,8 @@ class DiffCommandTestHelper {
 
     }
 
-    static void removeChangedObjects(Map<DatabaseObject, ObjectDifferences> diffResultMap,  List<HarnessObjectDifference> expectedChangedObjects) {
+    static void removeChangedObjects(Map<DatabaseObject, ObjectDifferences> diffResultMap, List<HarnessObjectDifference> expectedChangedObjects) {
         diffResultMap.entrySet().removeIf({ entry -> entry.key.toString().toUpperCase().contains("DATABASECHANGELOG") })
-
         diffResultMap.entrySet().removeIf({ entry ->
             doesKeyMatches(entry, expectedChangedObjects)
         })
@@ -146,34 +144,31 @@ class DiffCommandTestHelper {
     }
 
     static boolean matchDifferences(Map.Entry<DatabaseObject, ObjectDifferences> entry, HarnessObjectDifference harnessObjectDifference) {
-        //we know entry.key matches diffName, time to match maps with diffs
         if (entry.value.differences.size() != harnessObjectDifference.diffs.size()) {
             return false
         }
-        Map<String, String> transformedObjectDiffMap = new HashMap<>();
+        Map<String, String> transformedObjectDiffMap = new HashMap<>()
         for (Difference difference : entry.value.differences) {
             transformedObjectDiffMap.put(difference.field, difference.message)
         }
         return transformedObjectDiffMap == harnessObjectDifference.diffs
     }
 
-    static void removeMissingObjects(Set<? extends DatabaseObject> diffResultMissingObjects,  List<String> missingObjectsFromFile) {
-        diffResultMissingObjects.removeIf({ object -> missingObjectsFromFile?.contains(object.toString()) })
+    static void removeMissingObjects(Set<? extends DatabaseObject> diffResultMissingObjects, List<String> missingObjectsFromFile) {
         diffResultMissingObjects.removeIf({ object -> object.toString().toUpperCase().contains("DATABASECHANGELOG") })
-
+        diffResultMissingObjects.removeIf({ object -> missingObjectsFromFile?.contains(object.toString()) })
     }
 
     static void removeUnexpectedObjects(Set<? extends DatabaseObject> diffResultUnexpectedObjects, List<String> unexpectedObjectsFromFile) {
-    //TODO figure out why null safe isn't working here
-    //  diffResultUnexpectedObjects.removeIf({ object -> unexpectedObjectsFromFile?.contains(object.toString()) })
-        diffResultUnexpectedObjects.removeIf({ object -> unexpectedObjectsFromFile!=null && unexpectedObjectsFromFile.contains(object.toString()) })
         diffResultUnexpectedObjects.removeIf({ object -> object.toString().toUpperCase().contains("DATABASECHANGELOG") })
+        //TODO figure out why null safe isn't working here
+        // diffResultUnexpectedObjects.removeIf({ object -> unexpectedObjectsFromFile?.contains(object.toString()) })
+        diffResultUnexpectedObjects.removeIf({ object -> unexpectedObjectsFromFile != null && unexpectedObjectsFromFile.contains(object.toString()) })
     }
 
     static boolean diffsAbsent(DiffResult diffResult) {
         return diffResult.getChangedObjects()?.isEmpty() && diffResult.getMissingObjects()?.isEmpty() && diffResult.getUnexpectedObjects()?.isEmpty()
     }
-
 
 
     @Builder

@@ -25,7 +25,7 @@ class DiffCommandTest extends Specification {
     }
 
     @Unroll
-    def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to #testInput.targetDatabase.name #testInput.targetDatabase.version verify no significant diffs"() {
+    def "compare targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version to referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version, verify no significant diffs"() {
         given:
         Liquibase liquibase = new Liquibase((String) null, TestConfig.instance.resourceAccessor, testInput.targetDatabase.database)
 
@@ -44,7 +44,7 @@ class DiffCommandTest extends Specification {
         when:
 
         liquibase = new Liquibase(tempFile.toString(), new FileSystemResourceAccessor(File.listRoots()), testInput.targetDatabase.database)
-        liquibase.update(testInput.context);
+        liquibase.update(testInput.context)
 
         DiffResult newDiffResult =  liquibase.diff(testInput.referenceDatabase.database, testInput.targetDatabase.database, compareControl)
         if(diffsAbsent(newDiffResult)) {
