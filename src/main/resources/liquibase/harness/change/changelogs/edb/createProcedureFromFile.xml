@@ -10,11 +10,10 @@
     <changeSet author="as" id="1">
         <createProcedure
                 comments="test procedure"
-                dbms="mysql"
                 encoding="UTF-8"
                 path="createProcedure.txt"
-                relativeToChangelogFile="true"
-                procedureName="test_procedure">
+                procedureName="test_procedure"
+                relativeToChangelogFile="true">
         </createProcedure>
         <rollback>
             <dropProcedure procedureName="test_procedure"/>
