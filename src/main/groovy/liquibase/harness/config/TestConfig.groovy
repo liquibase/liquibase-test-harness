@@ -18,6 +18,7 @@ class TestConfig {
     private static TestConfig instance
 
     String outputResourcesBase = "src/test/resources"
+    boolean initDB = true
     ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
     Boolean revalidateSql
     String inputFormat
