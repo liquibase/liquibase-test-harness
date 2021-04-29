@@ -90,6 +90,19 @@ If not, you will need to provide the rollback by yourself. To learn more about r
   - If you would like to test another DB type, please add the requisite folder.
 4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (You can also choose to run `BaseTestHarnessSuite`, or `LiquibaseHarnessSuiteTest` -- at present they all work the same).
 
+
+## DiffCommandTest
+This test executes the following steps: 
+   * Reads `src/test/resources/harness-config.yml` and `src/main/resources/liquibase/harness/diff/diffDatabases.yml` to locate the
+    databases that need to be compared
+   * Creates a diff based on 2 databases (targetDatabase and referenceDatabase) from `diffDatabases.yml`
+   * Generates the changelog based on diff 
+   * Applies the generated changelog to the targetDatabase
+   * Checks the diff between the target and reference databases again
+   * If some diffs still exist, then they are matched with the expected diff from `diffDatabases.yml`
+
+#### Warning: This is a destructive test -- it will alter the state of targetDatabase to match the referenceDatabase. 
+
 ## Running the Tests
 
 ### Minimum Requirements

@@ -6,6 +6,7 @@ import liquibase.database.Database
 import liquibase.database.DatabaseConnection
 import liquibase.database.DatabaseFactory
 import liquibase.exception.DatabaseException
+import liquibase.harness.config.TestConfig
 import liquibase.lockservice.LockServiceFactory
 import liquibase.logging.Logger
 import liquibase.snapshot.SnapshotGeneratorFactory
@@ -19,8 +20,7 @@ class DatabaseConnectionUtil {
             if (database == null) {
                 return null
             }
-
-            return init(database)
+            return TestConfig.instance.initDB ? init(database) : database
         }
         catch (Exception e) {
             logger.severe("Unable to initialize database connection: ${e.getMessage()}", e)
