@@ -18,6 +18,7 @@ class TestConfig {
     private static TestConfig instance
 
     String outputResourcesBase = "src/test/resources"
+    boolean initDB = true
     ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
     Boolean revalidateSql
     String inputFormat
@@ -47,7 +48,7 @@ class TestConfig {
         return instance
     }
 
-    public List<DatabaseUnderTest> getDatabasesUnderTest() {
+    List<DatabaseUnderTest> getDatabasesUnderTest() {
         if (!databasesConnected) {
             String dbName = System.getProperty("dbName")
             String dbVersion = System.getProperty("dbVersion")
