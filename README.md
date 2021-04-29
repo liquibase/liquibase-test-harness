@@ -90,16 +90,16 @@ If not, you will need to provide the rollback by yourself. To learn more about r
 
 
 ## DiffCommandTest
-This test does next things 
-   * read `src/test/resources/harness-config.yml` and `src/main/resources/liquibase/harness/diff/diffDatabases.yml` to find
+This test executes the following steps: 
+   * Reads `src/test/resources/harness-config.yml` and `src/main/resources/liquibase/harness/diff/diffDatabases.yml` to locate the
     databases that need to be compared
-   * create a diff based on 2 databases (targetDatabase and referenceDatabase) from `diffDatabases.yml`
-   * generate changelog based on diff
-   * apply generated changelog to targetDatabase
-   * check diff between the target and reference databases again.
-   * if some diffs still exists, match them with the expected diff from `diffDatabases.yml`
+   * Creates a diff based on 2 databases (targetDatabase and referenceDatabase) from `diffDatabases.yml`
+   * Generates the changelog based on diff 
+   * Applies the generated changelog to the targetDatabase
+   * Checks the diff between the target and reference databases again
+   * If some diffs still exist, then they are matched with the expected diff from `diffDatabases.yml`
 
-#### Warning: this is destructive test, meaning it will change state of targetDatabase according to referenceDatabase 
+#### Warning: This is a destructive test -- it will alter the state of targetDatabase to match the referenceDatabase. 
 
 ## Running the Tests
 
