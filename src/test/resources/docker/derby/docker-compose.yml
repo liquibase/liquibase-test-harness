@@ -10,4 +10,4 @@ services:
     volumes:
       - "./derby-init.sh:/docker-entrypoint-initdb.d/derby-init.sh"
       - "./ij-inputfile.txt:/docker-entrypoint-initdb.d/ij-inputfile.txt"
-    command: /bin/bash -c "/docker-entrypoint-initdb.d/derby-init.sh && /derby/bin/NetworkServerControl start -h 0.0.0.0 -p 1527"
+    command: /bin/bash -c -x "/docker-entrypoint-initdb.d/derby-init.sh && /derby/bin/NetworkServerControl start -h 0.0.0.0 -p 1527"
