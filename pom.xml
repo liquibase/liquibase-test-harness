@@ -145,6 +145,17 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.14.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>10.14.2.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.athaydes</groupId>
             <artifactId>spock-reports</artifactId>
             <version>1.7.1</version>
