@@ -154,6 +154,7 @@ services:
     volumes:
       - "./H2-init.sql:/docker-entrypoint-initdb.d/test.sql"
 
+#Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected. We recommend commenting out the edb sections to prevent errors when you run `docker-compose up`
   edb-9.5:
     image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-ppas95:latest
     ports:
