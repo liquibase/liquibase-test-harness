@@ -142,5 +142,13 @@ databasesUnderTest:
     url: jdbc:sqlite:./src/test/resources/sqlite/sqlite.db
 
   - name: derby
+    version: 10.12.1.1
+    url: jdbc:derby://localhost:1527/lbcat
+
+  - name: derby
     version: 10.14.2.0
     url: jdbc:derby:./src/test/resources/derby/lbcat
+
+  - name: derby
+    version: 10.15.1.3
+    url: jdbc:derby://localhost:1526/lbcat
