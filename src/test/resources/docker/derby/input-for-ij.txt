@@ -1,5 +1,5 @@
-connect 'jdbc:derby:lbcat;create=true';
-connect 'jdbc:derby:lbcat';
+connect 'jdbc:derby:lbcat;user=lbuser;password=LiquibasPass1;create=true';
+connect 'jdbc:derby:lbcat;user=lbuser;password=LiquibasPass1';
 
 DROP TABLE authors;
 CREATE TABLE authors (
