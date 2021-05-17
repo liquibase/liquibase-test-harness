@@ -195,12 +195,3 @@ services:
       - "5506:5444"
     restart: always
     # no environment or volumes as those were created at image creation
-
-  derby-10.12.1.1:
-    image: opavlova/db-derby
-    ports:
-      - "15271:1527"
-    volumes:
-      - "./derby/derby-10.12.1.1-init.sh:/docker-entrypoint-initdb.d/derby-10.12.1.1-init.sh"
-      - "./derby/input-for-ij.txt:/docker-entrypoint-initdb.d/input-for-ij.txt"
-    command: /bin/bash -c -x "/docker-entrypoint-initdb.d/derby-10.12.1.1-init.sh && /db-derby-10.12.1.1-bin/bin/NetworkServerControl start -h 0.0.0.0 -p 1527"
