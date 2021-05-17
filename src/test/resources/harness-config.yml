@@ -143,4 +143,4 @@ databasesUnderTest:
 
   - name: derby
     version: 10.12.1.1
-    url: jdbc:derby://localhost:1527/lbcat
+    url: jdbc:derby://localhost:15271/lbcat
