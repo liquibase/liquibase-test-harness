@@ -199,7 +199,7 @@ services:
   derby-10.12.1.1:
     image: opavlova/db-derby
     ports:
-      - "1527:1527"
+      - "15271:1527"
     volumes:
       - "./derby/derby-10.12.1.1-init.sh:/docker-entrypoint-initdb.d/derby-10.12.1.1-init.sh"
       - "./derby/input-for-ij.txt:/docker-entrypoint-initdb.d/input-for-ij.txt"
