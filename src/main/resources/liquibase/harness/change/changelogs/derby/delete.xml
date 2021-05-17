@@ -13,6 +13,8 @@
         <delete tableName="testdelete_table">
             <where>test_column='mike was here'</where>
         </delete>
-        <rollback/>
+        <rollback>
+            <dropTable tableName="testdelete_table"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>
