@@ -98,7 +98,8 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-#If you have commented out the EDB sections in your docker-compose file, then we recommend commenting out the EDB sections in this config file as well to prevent false failures
+# Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected.
+# We recommend commenting out the EDB sections in this config file to prevent false failures
   - name: edb
     version: 9.5
     url: jdbc:postgresql://localhost:5501/lbcat
