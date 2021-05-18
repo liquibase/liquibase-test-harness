@@ -6,6 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="oleh" id="1">
+        <!--      H2 doesn't support [AS datatype] so dataType="int" attribute is removed comparing to basic changeLog-->
         <createSequence incrementBy="1"
                         minValue="1"
                         sequenceName="test_sequence"
