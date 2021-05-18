@@ -154,45 +154,50 @@ services:
     volumes:
       - "./H2-init.sql:/docker-entrypoint-initdb.d/test.sql"
 
-#Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected. We recommend commenting out the edb sections to prevent errors when you run `docker-compose up`
-  edb-9.5:
-    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-ppas95:latest
-    ports:
-      - "5501:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
 
-  edb-9.6:
-    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas96:latest
+  crdb-20.2:
+    image: cockroachdb/cockroach:v20.2.0
+    command: start-single-node --insecure
+    expose:
+      - "8080"
+      - "26257"
     ports:
-      - "5502:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
+      - "26257:26257"
+      - "8080:8080"
+    networks:
+      - roachnet
+  crdb-20.2-init:
+    image: cockroachdb/cockroach:v20.2.0
+    networks:
+      - roachnet
+    volumes:
+      - ./setup_db.sh:/setup_db.sh
+    entrypoint: "/bin/bash"
+    command: /setup_db.sh crdb-20.2
+    depends_on:
+      - crdb-20.2
 
-  edb-10:
-    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas10:latest
+  crdb-20.1:
+    image: cockroachdb/cockroach:v20.1.8
+    command: start-single-node --insecure
+    expose:
+      - "8080"
+      - "26257"
     ports:
-      - "5503:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
+      - "26258:26257"
+      - "8081:8080"
+    networks:
+      - roachnet
+  crdb-20.1-init:
+    image: cockroachdb/cockroach:v20.1.8
+    networks:
+      - roachnet
+    volumes:
+      - ./setup_db.sh:/setup_db.sh
+    entrypoint: "/bin/bash"
+    command: /setup_db.sh crdb-20.1
+    depends_on:
+      - crdb-20.1
 
-  edb-11:
-    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas11:latest
-    ports:
-      - "5504:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
-
-  edb-12:
-    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas12:latest
-    ports:
-      - "5505:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
-
-  edb-13:
-    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas13:latest
-    ports:
-      - "5506:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
+networks:
+  roachnet:

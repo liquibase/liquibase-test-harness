@@ -22,9 +22,6 @@ jobs:
         with:
           java-version: '1.8.0'
 
-      - name: Docker login to retrive EDB images from private repo
-        run: docker login "${{ secrets.RT_URL }}" -u "${{ secrets.RT_USER }}" -p "${{ secrets.RT_PWD }}"
-        
       - name: Build test infrastructure
         working-directory: src/test/resources/docker
         run: docker-compose up -d
@@ -82,14 +79,14 @@ jobs:
         with:
           name: mssql-test-results
           path: build/spock-reports
-      
-      - name: EDB Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb test
 
-      - name: Archive EDB test results
+      - name: cockroachDB Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb test
+
+      - name: Archive cockroachdb test results
         uses: actions/upload-artifact@v2
         with:
-          name: edb-test-results
+          name: cockroachdb-test-results
           path: build/spock-reports
 
       - name: Diff Test Run
@@ -105,19 +102,22 @@ jobs:
         working-directory: src/test/resources/docker
         run: docker-compose down --volumes
 
-      - name: Build cockroachDB test infra
+      - name: Docker login to retrive EDB images from private repo
+        run: docker login "${{ secrets.RT_URL }}" -u "${{ secrets.RT_USER }}" -p "${{ secrets.RT_PWD }}"
+
+      - name: Build EDB test infra
         working-directory: src/test/resources/docker
-        run: docker-compose -f docker-compose.cockroachdb.yml up -d
+        run: docker-compose -f docker-compose.edb.yml up -d
 
-      - name: cockroachDB Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb test
+      - name: EDB Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb test
 
-      - name: Tear down cockroachDB test infra
-        working-directory: src/test/resources/docker
-        run: docker-compose -f docker-compose.cockroachdb.yml down --volumes
-
-      - name: Archive cockroachdb test results
+      - name: Archive EDB test results
         uses: actions/upload-artifact@v2
         with:
-          name: cockroachdb-test-results
+          name: edb-test-results
           path: build/spock-reports
+
+      - name: Tear down EDB test infra
+        working-directory: src/test/resources/docker
+        run: docker-compose -f docker-compose.edb.yml down --volumes
