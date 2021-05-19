@@ -16,7 +16,6 @@
 <!--                        startValue="1"/>-->
         <createSequence incrementBy="1"
                         minValue="1"
-                        dataType="int"
                         sequenceName="test_sequence"
                         startValue="1"/>
         <rollback>
