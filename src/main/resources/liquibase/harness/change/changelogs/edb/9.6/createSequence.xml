@@ -6,9 +6,17 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="oleh" id="1">
-<!--        [as datatype] structure isn't working for EDB 9.6, removing {dataType="int"}, hence attribute is removed -->
+<!-- [as datatype] structure isn't working for EDB 9.6 because of liquibase bug https://github.com/liquibase/liquibase/issues/1429,
+ so dataType="int" attribute is removed comparing to basic changeLog.
+ As soon as bug is fixed datatype="int" shouldn't be taken into consideration when generating SQL-->
+<!--        <createSequence incrementBy="1"-->
+<!--                        minValue="1"-->
+<!--                        dataType="int"-->
+<!--                        sequenceName="test_sequence"-->
+<!--                        startValue="1"/>-->
         <createSequence incrementBy="1"
                         minValue="1"
+                        dataType="int"
                         sequenceName="test_sequence"
                         startValue="1"/>
         <rollback>
