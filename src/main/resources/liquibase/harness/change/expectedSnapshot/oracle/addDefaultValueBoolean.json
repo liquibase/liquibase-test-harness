@@ -4,10 +4,8 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "computed": false,
-            "defaultValue": "title_test",
-            "defaultValueConstraintName": "testConstraint",
-            "name": "title",
+            "defaultValue": "1\\!\\{java.math.BigDecimal\\}",
+            "name": "booleanColumn",
             "nullable": true
           }
         }

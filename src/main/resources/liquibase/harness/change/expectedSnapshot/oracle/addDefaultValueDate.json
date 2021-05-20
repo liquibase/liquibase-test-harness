@@ -4,10 +4,8 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "computed": false,
-            "defaultValue": "title_test",
-            "defaultValueConstraintName": "testConstraint",
-            "name": "title",
+            "defaultValue": "TO_DATE\\('2008-02-12 12:34:03', 'YYYY-MM-DD HH24:MI:SS'\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "dateTimeColumn",
             "nullable": true
           }
         }
