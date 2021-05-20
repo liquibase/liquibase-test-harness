@@ -199,5 +199,28 @@ services:
     depends_on:
       - crdb-20.1
 
+  crdb-21.1:
+    image: cockroachdb/cockroach:v21.1.0
+    command: start-single-node --insecure
+    expose:
+      - "8080"
+      - "26257"
+    ports:
+      - "26259:26257"
+      - "8082:8080"
+    networks:
+      - roachnet
+  crdb-21.1-init:
+    image: cockroachdb/cockroach:v21.1.0
+    networks:
+      - roachnet
+    volumes:
+      - ./setup_db.sh:/setup_db.sh
+    entrypoint: "/bin/bash"
+    command: /setup_db.sh crdb-21.1
+    depends_on:
+      - crdb-21.1
+
+
 networks:
   roachnet:
