@@ -1,4 +1,3 @@
-CREATE OR REPLACE PROCEDURE test_procedure
-AS
+CREATE PROCEDURE test_procedure()
 BEGIN
 END;

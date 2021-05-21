@@ -25,7 +25,7 @@ class SnapshotHelpers {
             snapshotCommand.setSchemas(schemaList.toArray(new CatalogAndSchema[schemaList.size()]))
         }
 
-        SnapshotCommand.SnapshotCommandResult result = snapshotCommand.execute()
+        SnapshotCommand.SnapshotCommandResult result = snapshotCommand.run()
         return result.print()
     }
 
