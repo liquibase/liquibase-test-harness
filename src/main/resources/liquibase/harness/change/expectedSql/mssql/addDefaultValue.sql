@@ -1,1 +1,1 @@
-ALTER TABLE posts ADD CONSTRAINT DF_posts_title DEFAULT 'title_test' FOR title
+ALTER TABLE posts ADD CONSTRAINT testConstraint DEFAULT 'title_test' FOR title
