@@ -1,0 +1,16 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "'true'\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "defaultValueConstraintName": "DF_authors_booleanColumn",
+            "name": "booleanColumn",
+            "nullable": true
+          }
+        }
+      ]
+    }
+  }
+}
