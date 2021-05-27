@@ -21,6 +21,7 @@ class SnapshotHelpers {
         SnapshotCommand snapshotCommand = new SnapshotCommand()
         snapshotCommand.setDatabase(database)
         snapshotCommand.setSerializerFormat("json")
+        snapshotCommand.
         if (!schemaList.isEmpty()) {
             snapshotCommand.setSchemas(schemaList.toArray(new CatalogAndSchema[schemaList.size()]))
         }
