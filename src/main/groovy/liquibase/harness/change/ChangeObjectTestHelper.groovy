@@ -36,11 +36,12 @@ class ChangeObjectTestHelper {
         Logger.getLogger(this.class.name).warning("Only " +  TestConfig.instance.inputFormat + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
-        for (DatabaseUnderTest databaseUnderTest : TestConfig.instance.databasesUnderTest) {
+
+        for (DatabaseUnderTest databaseUnderTest : TestConfig.instance.initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,  TestConfig.instance.inputFormat).entrySet
-                    ()) {
-                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
+            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,  TestConfig.instance.inputFormat).entrySet()) {
+                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {2
+
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)

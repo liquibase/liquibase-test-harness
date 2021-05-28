@@ -10,7 +10,8 @@ import liquibase.harness.util.DatabaseConnectionUtil
 import org.yaml.snakeyaml.Yaml
 
 import java.util.logging.Logger
-import java.util.stream.Collectors;
+import java.util.stream.Collectors
+
 
 @ToString
 class TestConfig {
@@ -49,23 +50,27 @@ class TestConfig {
     }
 
     List<DatabaseUnderTest> getDatabasesUnderTest() {
+        String dbName = System.getProperty("dbName")
+        String dbVersion = System.getProperty("dbVersion")
+
+        if (dbName) {
+            this.databasesUnderTest = this.databasesUnderTest.stream()
+                    .filter({ it.name.equalsIgnoreCase(dbName) })
+                    .collect(Collectors.toList())
+        }
+
+        if (dbVersion) {
+            this.databasesUnderTest = this.databasesUnderTest.stream()
+                    .filter({ it.version.equalsIgnoreCase(dbVersion) })
+                    .collect(Collectors.toList())
+        }
+
+        return databasesUnderTest
+    }
+
+    List<DatabaseUnderTest> initializeDatabasesConnection(List<DatabaseUnderTest> databasesUnderTests) {
         if (!databasesConnected) {
-            String dbName = System.getProperty("dbName")
-            String dbVersion = System.getProperty("dbVersion")
-
-            if (dbName) {
-                this.databasesUnderTest = this.databasesUnderTest.stream()
-                        .filter({ it.name.equalsIgnoreCase(dbName) })
-                        .collect(Collectors.toList())
-            }
-
-            if (dbVersion) {
-                this.databasesUnderTest = this.databasesUnderTest.stream()
-                        .filter({ it.version.equalsIgnoreCase(dbVersion) })
-                        .collect(Collectors.toList())
-            }
-
-            for (def databaseUnderTest : this.databasesUnderTest) {
+            for (def databaseUnderTest : databasesUnderTests) {
                 def initThread = new Thread({
                     databaseUnderTest.database = DatabaseConnectionUtil.initializeDatabase(databaseUnderTest.url, databaseUnderTest.username, databaseUnderTest.password)
                     if (databaseUnderTest.database == null) {
@@ -103,18 +108,17 @@ class TestConfig {
                     } else if (databaseUnderTest.name != databaseUnderTest.database.shortName ||
                             !databaseUnderTest.version.startsWith(databaseUnderTest.database.databaseMajorVersion.toString())) {
                         Logger.getLogger(TestConfig.name).severe("Provided database name/majorVersion doesn't match with actual\
-            ${System.getProperty("line.separator")}    provided: ${databaseUnderTest.name} ${databaseUnderTest.version}\
-            ${System.getProperty("line.separator")}    actual: ${databaseUnderTest.database.shortName} \
-            ${databaseUnderTest.database.databaseMajorVersion.toString()}")
+        ${System.getProperty("line.separator")}    provided: ${databaseUnderTest.name} ${databaseUnderTest.version}\
+        ${System.getProperty("line.separator")}    actual: ${databaseUnderTest.database.shortName} \
+        ${databaseUnderTest.database.databaseMajorVersion.toString()}")
                     }
                 })
                 initThread.start()
                 initThread.join()
             }
-            databasesConnected = true
         }
-        return databasesUnderTest
+        databasesConnected = true
 
+        return databasesUnderTests
     }
-
 }

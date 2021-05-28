@@ -62,6 +62,7 @@ class DiffCommandTestHelper {
             List<DatabaseUnderTest> matchingTargetDatabases = TestConfig.instance.databasesUnderTest.stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.targetDatabaseName) })
                     .collect(Collectors.toList())
+            TestConfig.instance.initializeDatabasesConnection(matchingTargetDatabases)
 
             if (matchingTargetDatabases.size() == 1) {
                 targetDatabase = matchingTargetDatabases.get(0)
@@ -82,6 +83,8 @@ class DiffCommandTestHelper {
             List<DatabaseUnderTest> matchingReferenceDatabases = TestConfig.instance.databasesUnderTest.stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.referenceDatabaseName) })
                     .collect(Collectors.toList())
+            TestConfig.instance.initializeDatabasesConnection(matchingReferenceDatabases)
+
             if (matchingReferenceDatabases.size() == 1) {
                 referenceDatabase = matchingReferenceDatabases.get(0)
             } else if (matchingReferenceDatabases.size() > 1 && isNotEmpty(targetToReference.referenceDatabaseVersion)) {

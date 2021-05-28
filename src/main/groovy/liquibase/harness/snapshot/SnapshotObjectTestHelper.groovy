@@ -11,7 +11,7 @@ class SnapshotObjectTestHelper {
         def loader = new GroovyClassLoader()
         def returnList = new ArrayList<TestInput>()
 
-        for (def databaseUnderTest : TestConfig.instance.databasesUnderTest) {
+        for (def databaseUnderTest : TestConfig.instance.initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             Map nameToPathMap = TestUtils.resolveInputFilePaths(databaseUnderTest, baseSnapshotPath, "groovy")
             for (def file : nameToPathMap.values()) {
 
