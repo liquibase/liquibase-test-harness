@@ -57,13 +57,12 @@ class DiffCommandTestHelper {
         List<TargetToReference> targetToReferences = configFileYml.loadAs(testConfig, DiffDatabases.class).references
 
         List<TestInput> inputList = new ArrayList<>()
+        List<DatabaseUnderTest> databasesToConnect = new ArrayList<>()
         for (TargetToReference targetToReference : targetToReferences) {
             DatabaseUnderTest targetDatabase
             List<DatabaseUnderTest> matchingTargetDatabases = TestConfig.instance.databasesUnderTest.stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.targetDatabaseName) })
                     .collect(Collectors.toList())
-            TestConfig.instance.initializeDatabasesConnection(matchingTargetDatabases)
-
             if (matchingTargetDatabases.size() == 1) {
                 targetDatabase = matchingTargetDatabases.get(0)
             } else if (matchingTargetDatabases.size() > 1 && isNotEmpty(targetToReference.targetDatabaseVersion)) {
@@ -78,13 +77,12 @@ class DiffCommandTestHelper {
             } else {
                 throw new IllegalArgumentException(String.format("can't match target DB for diff test name={%s}, version={%s}", targetToReference.targetDatabaseName, targetToReference.targetDatabaseVersion))
             }
+            databasesToConnect.add(targetDatabase)
 
             DatabaseUnderTest referenceDatabase
             List<DatabaseUnderTest> matchingReferenceDatabases = TestConfig.instance.databasesUnderTest.stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.referenceDatabaseName) })
                     .collect(Collectors.toList())
-            TestConfig.instance.initializeDatabasesConnection(matchingReferenceDatabases)
-
             if (matchingReferenceDatabases.size() == 1) {
                 referenceDatabase = matchingReferenceDatabases.get(0)
             } else if (matchingReferenceDatabases.size() > 1 && isNotEmpty(targetToReference.referenceDatabaseVersion)) {
@@ -99,6 +97,7 @@ class DiffCommandTestHelper {
             } else {
                 throw new IllegalArgumentException(String.format("can't match reference DB for diff test name={%s}, version={%s}", targetToReference.referenceDatabaseName, targetToReference.referenceDatabaseVersion))
             }
+            databasesToConnect.add(referenceDatabase)
 
             inputList.add(TestInput.builder()
                     .context(TestConfig.instance.context)
@@ -107,6 +106,7 @@ class DiffCommandTestHelper {
                     .referenceDatabase(referenceDatabase)
                     .build())
         }
+        TestConfig.instance.initializeDatabasesConnection(databasesToConnect)
         return inputList
     }
 
