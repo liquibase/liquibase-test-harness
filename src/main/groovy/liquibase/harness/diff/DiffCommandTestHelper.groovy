@@ -10,6 +10,7 @@ import liquibase.diff.output.DiffOutputControl
 import liquibase.diff.output.changelog.DiffToChangeLog
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.structure.DatabaseObject
 import liquibase.structure.core.Column
 import liquibase.structure.core.ForeignKey
@@ -106,7 +107,8 @@ class DiffCommandTestHelper {
                     .referenceDatabase(referenceDatabase)
                     .build())
         }
-        TestConfig.instance.initializeDatabasesConnection(databasesToConnect)
+        DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
+        databaseConnectionUtil.initializeDatabasesConnection(databasesToConnect)
         return inputList
     }
 
