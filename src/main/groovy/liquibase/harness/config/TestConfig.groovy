@@ -1,12 +1,8 @@
 package liquibase.harness.config
 
 import groovy.transform.ToString
-import liquibase.database.DatabaseFactory
-import liquibase.database.OfflineConnection
-import liquibase.lockservice.LockServiceFactory
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.ResourceAccessor
-import liquibase.harness.util.DatabaseConnectionUtil
 import org.yaml.snakeyaml.Yaml
 
 import java.util.logging.Logger
@@ -25,7 +21,7 @@ class TestConfig {
     String inputFormat
     String context
     List<DatabaseUnderTest> databasesUnderTest
-    private boolean databasesConnected = false
+    boolean databasesConnected = false
 
     TestConfig() {
     }
@@ -66,59 +62,5 @@ class TestConfig {
         }
 
         return databasesUnderTest
-    }
-
-    List<DatabaseUnderTest> initializeDatabasesConnection(List<DatabaseUnderTest> databasesUnderTests) {
-        if (!databasesConnected) {
-            for (def databaseUnderTest : databasesUnderTests) {
-                def initThread = new Thread({
-                    databaseUnderTest.database = DatabaseConnectionUtil.initializeDatabase(databaseUnderTest.url, databaseUnderTest.username, databaseUnderTest.password)
-                    if (databaseUnderTest.database == null) {
-                        Logger.getLogger(TestConfig.name).severe("Cannot connect to $databaseUnderTest.url. Using offline" +
-                                " connection")
-
-                        for (def possibleDatabase : DatabaseFactory.getInstance().getImplementedDatabases()) {
-                            if (possibleDatabase.getDefaultDriver(databaseUnderTest.url) != null) {
-                                println "Database ${possibleDatabase.shortName} accepts $databaseUnderTest.url"
-
-                                databaseUnderTest.database = DatabaseConnectionUtil.initializeDatabase("offline:${possibleDatabase.shortName}", databaseUnderTest.username, null)
-                                break
-                            }
-                        }
-                    } else {
-                        LockServiceFactory.getInstance().getLockService(databaseUnderTest.database).forceReleaseLock()
-                    }
-
-                    databaseUnderTest.database.outputDefaultCatalog = false
-                    databaseUnderTest.database.outputDefaultSchema = false
-
-                    if (databaseUnderTest.name == null) {
-                        databaseUnderTest.name = databaseUnderTest.database.getShortName()
-                        if (databaseUnderTest.database.connection instanceof OfflineConnection) {
-                            databaseUnderTest.name += " ${databaseUnderTest.url}"
-                        } else {
-                            databaseUnderTest.name += " ${databaseUnderTest.database.getDatabaseProductVersion()}"
-                        }
-                    } else if (databaseUnderTest.version == null) {
-                        Logger.getLogger(TestConfig.name)
-                                .warning("Database version is not provided applying version from Database metadata")
-                        Integer minorVersion = databaseUnderTest.database.getDatabaseMinorVersion()
-                        databaseUnderTest.version = databaseUnderTest.database.getDatabaseMajorVersion().toString().concat(
-                                minorVersion ? "." + minorVersion : "")
-                    } else if (databaseUnderTest.name != databaseUnderTest.database.shortName ||
-                            !databaseUnderTest.version.startsWith(databaseUnderTest.database.databaseMajorVersion.toString())) {
-                        Logger.getLogger(TestConfig.name).severe("Provided database name/majorVersion doesn't match with actual\
-        ${System.getProperty("line.separator")}    provided: ${databaseUnderTest.name} ${databaseUnderTest.version}\
-        ${System.getProperty("line.separator")}    actual: ${databaseUnderTest.database.shortName} \
-        ${databaseUnderTest.database.databaseMajorVersion.toString()}")
-                    }
-                })
-                initThread.start()
-                initThread.join()
-            }
-        }
-        databasesConnected = true
-
-        return databasesUnderTests
     }
 }
