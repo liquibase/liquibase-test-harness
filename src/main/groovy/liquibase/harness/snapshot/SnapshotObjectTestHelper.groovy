@@ -2,6 +2,7 @@ package liquibase.harness.snapshot
 
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.TestUtils
 
 class SnapshotObjectTestHelper {
@@ -10,8 +11,9 @@ class SnapshotObjectTestHelper {
     static List<TestInput> buildTestInput() {
         def loader = new GroovyClassLoader()
         def returnList = new ArrayList<TestInput>()
+        DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
 
-        for (def databaseUnderTest : TestConfig.instance.databasesUnderTest) {
+        for (def databaseUnderTest : databaseConnectionUtil.initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             Map nameToPathMap = TestUtils.resolveInputFilePaths(databaseUnderTest, baseSnapshotPath, "groovy")
             for (def file : nameToPathMap.values()) {
 

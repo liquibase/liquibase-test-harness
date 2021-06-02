@@ -5,6 +5,7 @@ import groovy.transform.builder.Builder
 import liquibase.database.Database
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.SnapshotHelpers
 import liquibase.harness.util.TestUtils
 import liquibase.util.StringUtil
@@ -36,11 +37,13 @@ class ChangeObjectTestHelper {
         Logger.getLogger(this.class.name).warning("Only " +  TestConfig.instance.inputFormat + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
-        for (DatabaseUnderTest databaseUnderTest : TestConfig.instance.databasesUnderTest) {
+        DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
+
+        for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil.initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,  TestConfig.instance.inputFormat).entrySet
-                    ()) {
-                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
+            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,  TestConfig.instance.inputFormat).entrySet()) {
+                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {2
+
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)
