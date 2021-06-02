@@ -10,6 +10,7 @@ import liquibase.diff.output.DiffOutputControl
 import liquibase.diff.output.changelog.DiffToChangeLog
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.structure.DatabaseObject
 import liquibase.structure.core.Column
 import liquibase.structure.core.ForeignKey
@@ -57,12 +58,12 @@ class DiffCommandTestHelper {
         List<TargetToReference> targetToReferences = configFileYml.loadAs(testConfig, DiffDatabases.class).references
 
         List<TestInput> inputList = new ArrayList<>()
+        List<DatabaseUnderTest> databasesToConnect = new ArrayList<>()
         for (TargetToReference targetToReference : targetToReferences) {
             DatabaseUnderTest targetDatabase
             List<DatabaseUnderTest> matchingTargetDatabases = TestConfig.instance.databasesUnderTest.stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.targetDatabaseName) })
                     .collect(Collectors.toList())
-
             if (matchingTargetDatabases.size() == 1) {
                 targetDatabase = matchingTargetDatabases.get(0)
             } else if (matchingTargetDatabases.size() > 1 && isNotEmpty(targetToReference.targetDatabaseVersion)) {
@@ -77,6 +78,7 @@ class DiffCommandTestHelper {
             } else {
                 throw new IllegalArgumentException(String.format("can't match target DB for diff test name={%s}, version={%s}", targetToReference.targetDatabaseName, targetToReference.targetDatabaseVersion))
             }
+            databasesToConnect.add(targetDatabase)
 
             DatabaseUnderTest referenceDatabase
             List<DatabaseUnderTest> matchingReferenceDatabases = TestConfig.instance.databasesUnderTest.stream()
@@ -96,6 +98,7 @@ class DiffCommandTestHelper {
             } else {
                 throw new IllegalArgumentException(String.format("can't match reference DB for diff test name={%s}, version={%s}", targetToReference.referenceDatabaseName, targetToReference.referenceDatabaseVersion))
             }
+            databasesToConnect.add(referenceDatabase)
 
             inputList.add(TestInput.builder()
                     .context(TestConfig.instance.context)
@@ -104,6 +107,8 @@ class DiffCommandTestHelper {
                     .referenceDatabase(referenceDatabase)
                     .build())
         }
+        DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
+        databaseConnectionUtil.initializeDatabasesConnection(databasesToConnect)
         return inputList
     }
 

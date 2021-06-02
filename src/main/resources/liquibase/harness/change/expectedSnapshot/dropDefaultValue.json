@@ -5,7 +5,10 @@
         {
           "column": {
             "name": "title",
-            "nullable": false
+            "nullable": false,
+            "type": {
+              "typeName": "varchar"
+            }
           }
         }
       ]
