@@ -151,7 +151,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
+            <artifactId>derbyclient</artifactId>
             <version>10.14.2.0</version>
         </dependency>
         <dependency>
