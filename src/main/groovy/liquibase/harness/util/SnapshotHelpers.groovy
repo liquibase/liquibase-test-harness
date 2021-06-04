@@ -71,8 +71,9 @@ class SnapshotHelpers {
                 for (String key : expectedKeys) {
                     if (actual.has(key)) {
                         if (actual instanceof JSONObject) {
-                            checkArrayContainsObject(expected.getJSONArray(key), actual.getJSONArray
-                                    (key)) ? result.fail(prefix, expected, actual) : result.passed()
+                            checkArrayContainsObject(expected.getJSONArray(key), actual.getJSONArray(key))
+                                    ? result.fail(prefix, expected, actual)
+                                     : result.passed()
                         } else {
                             result.fail(prefix, expected, actual)
                         }
@@ -117,5 +118,4 @@ class SnapshotHelpers {
             }
         }
     }
-
 }

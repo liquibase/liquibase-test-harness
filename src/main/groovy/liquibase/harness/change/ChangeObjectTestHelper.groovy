@@ -25,7 +25,9 @@ class ChangeObjectTestHelper {
         String commandLineChangeObjects = System.getProperty("changeObjects")
         List commandLineChangeObjectList = Collections.emptyList()
         if(commandLineChangeObjects){
-            commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",") ? commandLineChangeObjects.split(",") : commandLineChangeObjects)
+            commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",")
+                    ? commandLineChangeObjects.split(",")
+                    : commandLineChangeObjects)
         }
         if (commandLineInputFormat) {
             if (!supportedChangeLogFormats.contains(commandLineInputFormat)) {
@@ -41,7 +43,7 @@ class ChangeObjectTestHelper {
 
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil.initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,  TestConfig.instance.inputFormat).entrySet()) {
+            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, TestConfig.instance.inputFormat).entrySet()) {
                 if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {2
 
                     inputList.add(TestInput.builder()
@@ -88,7 +90,6 @@ class ChangeObjectTestHelper {
         outputFile.parentFile.mkdirs()
         outputFile.write(generatedSql)
     }
-
 
     @Builder
     @ToString(includeNames=true, includeFields=true, includePackage = false, excludes ='database,password')
