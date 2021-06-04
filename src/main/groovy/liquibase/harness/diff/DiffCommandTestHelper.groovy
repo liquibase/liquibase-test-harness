@@ -175,7 +175,6 @@ class DiffCommandTestHelper {
         return diffResult.getChangedObjects()?.isEmpty() && diffResult.getMissingObjects()?.isEmpty() && diffResult.getUnexpectedObjects()?.isEmpty()
     }
 
-
     @Builder
     static class TestInput {
         String context
