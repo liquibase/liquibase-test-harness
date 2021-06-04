@@ -139,4 +139,7 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | EDB | `9.5, 9.6, 10, 11, 12, 13` |
 | H2 | `1.4.200` |
 | SQLite | `3.34.0` |
+| Apache Derby | `10.14.2.0` |
+
+
 
