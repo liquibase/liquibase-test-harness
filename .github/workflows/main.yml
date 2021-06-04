@@ -89,6 +89,15 @@ jobs:
           name: cockroachdb-test-results
           path: build/spock-reports
 
+      - name: Derby Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=derby -Dmaven.test.failure.ignore=true test
+
+      - name: Archive Derby test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: derby-test-results
+          path: build/spock-reports
+
       - name: Diff Test Run
         run: mvn -Dtest=DiffTest test
 
