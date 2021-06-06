@@ -145,4 +145,4 @@ databasesUnderTest:
 
   - name: derby
     version: 10.14.2.0
-    url: jdbc:derby:./src/test/resources/derby/lbcat;create=true
+    url: jdbc:derby:./src/test/resources/derby/lbcat
