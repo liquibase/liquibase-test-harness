@@ -156,5 +156,4 @@ class DatabaseTestContext {
     DatabaseConnection getConnection(String url, String username, String password) throws Exception {
         return openConnection(url, username, password)
     }
-
 }

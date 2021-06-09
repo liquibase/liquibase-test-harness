@@ -25,7 +25,6 @@ class SnapshotObjectTestHelper {
                             testName: testClass.getName()
                     ))
                 }
-
             }
         }
         return returnList
