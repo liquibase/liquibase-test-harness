@@ -98,6 +98,12 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: mssql
+    version: 2019
+    url: jdbc:sqlserver://localhost:1434;databaseName=lbcat
+    username: lbuser
+    password: LiquibasePass1
+
 # Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected.
 # We recommend commenting out the EDB sections in this config file to prevent false failures
   - name: edb
