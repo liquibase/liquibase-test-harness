@@ -100,5 +100,4 @@ class DatabaseConnectionUtil {
         ChangeLogHistoryServiceFactory.getInstance().resetAll()
         return database
     }
-
 }

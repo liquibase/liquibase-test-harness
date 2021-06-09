@@ -25,7 +25,9 @@ class ChangeObjectTestHelper {
         String commandLineChangeObjects = System.getProperty("changeObjects")
         List commandLineChangeObjectList = Collections.emptyList()
         if(commandLineChangeObjects){
-            commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",") ? commandLineChangeObjects.split(",") : commandLineChangeObjects)
+            commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",")
+                    ? commandLineChangeObjects.split(",")
+                    : commandLineChangeObjects)
         }
         if (commandLineInputFormat) {
             if (!supportedChangeLogFormats.contains(commandLineInputFormat)) {

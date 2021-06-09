@@ -51,7 +51,6 @@ class SnapshotObjectTests extends Specification {
             }
         }
 
-
         where:
         input << buildTestInput()
     }
