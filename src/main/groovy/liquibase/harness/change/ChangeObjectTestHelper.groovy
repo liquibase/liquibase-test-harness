@@ -24,7 +24,7 @@ class ChangeObjectTestHelper {
 
         String commandLineChangeObjects = System.getProperty("changeObjects")
         List commandLineChangeObjectList = Collections.emptyList()
-        if (commandLineChangeObjects){
+        if(commandLineChangeObjects){
             commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",")
                     ? commandLineChangeObjects.split(",")
                     : commandLineChangeObjects)
