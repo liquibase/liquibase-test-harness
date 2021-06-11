@@ -81,7 +81,7 @@ jobs:
           path: build/spock-reports
 
       - name: cockroachDB Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -Dmaven.test.failure.ignore=true test
 
       - name: Archive cockroachdb test results
         uses: actions/upload-artifact@v2
