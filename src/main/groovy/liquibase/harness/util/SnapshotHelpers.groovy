@@ -29,7 +29,6 @@ class SnapshotHelpers {
         return result.print()
     }
 
-
     static class GeneralSnapshotComparator extends DefaultComparator {
         GeneralSnapshotComparator() {
             super(JSONCompareMode.LENIENT)
@@ -73,7 +72,7 @@ class SnapshotHelpers {
                         if (actual instanceof JSONObject) {
                             checkArrayContainsObject(expected.getJSONArray(key), actual.getJSONArray(key))
                                     ? result.fail(prefix, expected, actual)
-                                     : result.passed()
+                                    : result.passed()
                         } else {
                             result.fail(prefix, expected, actual)
                         }
