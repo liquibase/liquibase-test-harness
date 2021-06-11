@@ -24,7 +24,7 @@ class ChangeObjectTestHelper {
 
         String commandLineChangeObjects = System.getProperty("changeObjects")
         List commandLineChangeObjectList = Collections.emptyList()
-        if(commandLineChangeObjects){
+        if (commandLineChangeObjects) {
             commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",")
                     ? commandLineChangeObjects.split(",")
                     : commandLineChangeObjects)
@@ -36,7 +36,7 @@ class ChangeObjectTestHelper {
             TestConfig.instance.inputFormat = commandLineInputFormat
         }
 
-        Logger.getLogger(this.class.name).warning("Only " +  TestConfig.instance.inputFormat + " input files are taken into account for this test run")
+        Logger.getLogger(this.class.name).warning("Only " + TestConfig.instance.inputFormat + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
@@ -44,7 +44,8 @@ class ChangeObjectTestHelper {
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil.initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             def database = databaseUnderTest.database
             for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, TestConfig.instance.inputFormat).entrySet()) {
-                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {2
+                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
+                    2
 
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
@@ -85,10 +86,12 @@ class ChangeObjectTestHelper {
     }
 
     static void saveAsExpectedSql(String generatedSql, TestInput testInput) {
+        if (generatedSql != null) {
         File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/change/expectedSql/" +
                 "${testInput.databaseName}/${testInput.changeObject}.sql" as File
         outputFile.parentFile.mkdirs()
         outputFile.write(generatedSql)
+        }
     }
 
     @Builder
