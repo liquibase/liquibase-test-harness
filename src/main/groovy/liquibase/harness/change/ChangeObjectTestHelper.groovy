@@ -45,8 +45,6 @@ class ChangeObjectTestHelper {
             def database = databaseUnderTest.database
             for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, TestConfig.instance.inputFormat).entrySet()) {
                 if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
-                    2
-
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)

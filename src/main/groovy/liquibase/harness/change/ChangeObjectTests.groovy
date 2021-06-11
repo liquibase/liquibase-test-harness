@@ -68,5 +68,4 @@ class ChangeObjectTests extends Specification {
         where: "test input in next data table"
         testInput << buildTestInput()
     }
-
 }
