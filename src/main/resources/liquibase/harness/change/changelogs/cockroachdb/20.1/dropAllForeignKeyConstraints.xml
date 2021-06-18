@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="as">
+        <createIndex tableName="authors" indexName="authors.id.index">
+            <column name="id"/>
+        </createIndex>
+        <createIndex tableName="posts" indexName="posts.id.index">
+            <column name="id"/>
+        </createIndex>
+        <createIndex tableName="posts" indexName="posts.author_id.index">
+            <column name="author_id"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+    <changeSet id="2" author="as">
+        <addForeignKeyConstraint  baseColumnNames="author_id"
+                                  baseTableName="posts"
+                                  constraintName="fk_posts_authors_test_1"
+                                  referencedColumnNames="id"
+                                  referencedTableName="authors"
+                                  validate="true"/>
+        <addForeignKeyConstraint  baseColumnNames="id"
+                                  baseTableName="posts"
+                                  constraintName="fk_posts_authors_test_2"
+                                  referencedColumnNames="id"
+                                  referencedTableName="authors"
+                                  validate="true"/>
+        <dropAllForeignKeyConstraints baseTableName="posts"/>
+        <rollback/>
+    </changeSet>
+    <changeSet id="3" author="as">
+        <dropIndex tableName="authors" indexName="authors.id.index"/>
+        <dropIndex tableName="posts" indexName="posts.id.index"/>
+        <dropIndex tableName="posts" indexName="posts.author_id.index"/>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

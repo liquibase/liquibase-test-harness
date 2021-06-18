@@ -63,7 +63,7 @@ GO
 
 CREATE TABLE [dbo].[posts](
     [id] [int] NOT NULL,
-    [author_id] [varchar](255) NOT NULL,
+    [author_id] [int] NOT NULL,
     [title] [varchar](255) NULL,
     [description] [varchar](255) NULL,
     [content] [varchar](255) NULL,
