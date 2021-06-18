@@ -8,3 +8,4 @@ bin/
 build/
 .project
 .DS_Store
+./src/test/resources/derby/lbcat
