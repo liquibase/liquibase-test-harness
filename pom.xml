@@ -71,7 +71,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.4.0-local-okushniryk-SNAPSHOT</version>
+            <version>[4.3.0,)</version>
         </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.codehaus.groovy</groupId>
