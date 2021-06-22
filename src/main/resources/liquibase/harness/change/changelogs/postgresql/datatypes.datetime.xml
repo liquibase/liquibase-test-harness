@@ -11,44 +11,44 @@
             <!-- https://www.postgresql.org/docs/12/datatype-datetime.html -->
 
             <!-- VARIABLE -->
-<!--            <column name="timestamp" type="timestamp "/>-->
-<!--            <column name="timestampewtz" type="timestamp with time zone"/>-->
-<!--            <column name="timestamp0" type="timestamp(0)"/>-->
-<!--            <column name="timestampe0wtz" type="timestamp (0) with time zone"/>-->
-<!--            <column name="timestamp1" type="timestamp (1)"/>-->
-<!--            <column name="timestamp1wtz" type="timestamp (1) with time zone"/>-->
-<!--            <column name="timestamp2" type="timestamp (2)"/>-->
-<!--            <column name="timestamp2wtz" type="timestamp (2) with time zone"/>-->
-<!--            <column name="timestamp3" type="timestamp (3)"/>-->
-<!--            <column name="timestamp3wtz" type="timestamp (3) with time zone"/>-->
-<!--            <column name="timestamp4" type="timestamp (4)"/>-->
-<!--            <column name="timestamp4wtz" type="timestamp (4) with time zone"/>-->
-<!--            <column name="timestamp5" type="timestamp (5)"/>-->
-<!--            <column name="timestamp5wtz" type="timestamp (5) with time zone"/>-->
-<!--            <column name="timestamp6" type="timestamp (6)"/>-->
-<!--            <column name="timestamp6wtz" type="timestamp (6) with time zone"/>-->
+            <column name="timestamp" type="timestamp"/>
+            <column name="timestampewtz" type="timestamp with time zone"/>
+            <column name="timestamp0" type="timestamp(0)"/>
+            <column name="timestampe0wtz" type="timestamp (0) with time zone"/>
+            <column name="timestamp1" type="timestamp (1)"/>
+            <column name="timestamp1wtz" type="timestamp (1) with time zone"/>
+            <column name="timestamp2" type="timestamp (2)"/>
+            <column name="timestamp2wtz" type="timestamp (2) with time zone"/>
+            <column name="timestamp3" type="timestamp (3)"/>
+            <column name="timestamp3wtz" type="timestamp (3) with time zone"/>
+            <column name="timestamp4" type="timestamp (4)"/>
+            <column name="timestamp4wtz" type="timestamp (4) with time zone"/>
+            <column name="timestamp5" type="timestamp (5)"/>
+            <column name="timestamp5wtz" type="timestamp (5) with time zone"/>
+            <column name="timestamp6" type="timestamp (6)"/>
+            <column name="timestamp6wtz" type="timestamp (6) with time zone"/>
 
-<!--            <column name="date" type="date"/>-->
+            <column name="date" type="date"/>
 
-<!--            &lt;!&ndash; VARIABLE &ndash;&gt;-->
-<!--            <column name="time" type="time"/>-->
-<!--            <column name="timeewtz" type="time with time zone"/>-->
-<!--            <column name="time0" type="time (0)"/>-->
-<!--            <column name="timee0wtz" type="time (0) with time zone"/>-->
-<!--            <column name="time1" type="time (1)"/>-->
-<!--            <column name="time1wtz" type="time (1) with time zone"/>-->
-<!--            <column name="time2" type="time (2)"/>-->
-<!--            <column name="time2wtz" type="time (2) with time zone"/>-->
-<!--            <column name="time3" type="time (3)"/>-->
-<!--            <column name="time3wtz" type="time (3) with time zone"/>-->
-<!--            <column name="time4" type="time (4)"/>-->
-<!--            <column name="time4wtz" type="time (4) with time zone"/>-->
-<!--            <column name="time5" type="time (5)"/>-->
-<!--            <column name="time5wtz" type="time (5) with time zone"/>-->
-<!--            <column name="time6" type="time (6)"/>-->
-<!--            <column name="time6wtz" type="time (6) with time zone"/>-->
+            <!-- VARIABLE -->
+            <column name="time" type="time"/>
+            <column name="timeewtz" type="time with time zone"/>
+            <column name="time0" type="time (0)"/>
+            <column name="timee0wtz" type="time (0) with time zone"/>
+            <column name="time1" type="time (1)"/>
+            <column name="time1wtz" type="time (1) with time zone"/>
+            <column name="time2" type="time (2)"/>
+            <column name="time2wtz" type="time (2) with time zone"/>
+            <column name="time3" type="time (3)"/>
+            <column name="time3wtz" type="time (3) with time zone"/>
+            <column name="time4" type="time (4)"/>
+            <column name="time4wtz" type="time (4) with time zone"/>
+            <column name="time5" type="time (5)"/>
+            <column name="time5wtz" type="time (5) with time zone"/>
+            <column name="time6" type="time (6)"/>
+            <column name="time6wtz" type="time (6) with time zone"/>
 
-            <!-- VARIABLE WITH FIELD AND P -->
+
             <column name="interval_year" type="interval YEAR" />
             <column name="interval_month" type="interval MONTH" />
             <column name="interval_day" type="interval DAY" />
@@ -63,103 +63,55 @@
             <column name="interval_h2s" type="interval HOUR TO SECOND" />
             <column name="interval_m2s" type="interval MINUTE TO SECOND" />
 
-<!--            <column name="interval_year0" type="interval [ YEAR ] (0)" />-->
-<!--            <column name="interval_month0" type="interval [ MONTH ] (0)" />-->
-<!--            <column name="interval_day0" type="interval [ DAY ] (0)" />-->
-<!--            <column name="interval_hour0" type="interval [ HOUR ] (0)" />-->
-<!--            <column name="interval_minute0" type="interval [ MINUTE ] (0)" />-->
-<!--            <column name="interval_second0" type="interval [ SECOND ] (0)" />-->
-<!--            <column name="interval_y2m0" type="interval [ YEAR TO MONTH ] (0)" />-->
-<!--            <column name="interval_d2h0" type="interval [ DAY TO HOUR ] (0)" />-->
-<!--            <column name="interval_d2m0" type="interval [ DAY TO MINUTE ] (0)" />-->
-<!--            <column name="interval_d2s0" type="interval [ DAY TO SECOND ] (0)" />-->
-<!--            <column name="interval_h2m0" type="interval [ HOUR TO MINUTE ] (0)" />-->
-<!--            <column name="interval_h2s0" type="interval [ HOUR TO SECOND ] (0)" />-->
-<!--            <column name="interval_m2s0" type="interval [ MINUTE TO SECOND ] (0)" />-->
 
-<!--            <column name="interval_year1" type="interval [ YEAR ] (1)" />-->
-<!--            <column name="interval_month1" type="interval [ MONTH ] (1)" />-->
-<!--            <column name="interval_day1" type="interval [ DAY ] (1)" />-->
-<!--            <column name="interval_hour1" type="interval [ HOUR ] (1)" />-->
-<!--            <column name="interval_minute1" type="interval [ MINUTE ] (1)" />-->
-<!--            <column name="interval_second1" type="interval [ SECOND ] (1)" />-->
-<!--            <column name="interval_y2m1" type="interval [ YEAR TO MONTH ] (1)" />-->
-<!--            <column name="interval_d2h1" type="interval [ DAY TO HOUR ] (1)" />-->
-<!--            <column name="interval_d2m1" type="interval [ DAY TO MINUTE ] (1)" />-->
-<!--            <column name="interval_d2s1" type="interval [ DAY TO SECOND ] (1)" />-->
-<!--            <column name="interval_h2m1" type="interval [ HOUR TO MINUTE ] (1)" />-->
-<!--            <column name="interval_h2s1" type="interval [ HOUR TO SECOND ] (1)" />-->
-<!--            <column name="interval_m2s1" type="interval [ MINUTE TO SECOND ] (1)" />-->
+            <column name="interval_y2m1" type="interval YEAR TO MONTH(1)" />
+            <column name="interval_d2h1" type="interval DAY TO HOUR(1)" />
+            <column name="interval_d2m1" type="interval DAY TO MINUTE(1)" />
+            <column name="interval_d2s1" type="interval DAY TO SECOND(1)" />
+            <column name="interval_h2m1" type="interval HOUR TO MINUTE(1)" />
+            <column name="interval_h2s1" type="interval HOUR TO SECOND(1)" />
+            <column name="interval_m2s1" type="interval MINUTE TO SECOND(1)" />
 
-<!--            <column name="interval_year2" type="interval [ YEAR ] (2)" />-->
-<!--            <column name="interval_month2" type="interval [ MONTH ] (2)" />-->
-<!--            <column name="interval_day2" type="interval [ DAY ] (2)" />-->
-<!--            <column name="interval_hour2" type="interval [ HOUR ] (2)" />-->
-<!--            <column name="interval_minute2" type="interval [ MINUTE ] (2)" />-->
-<!--            <column name="interval_second2" type="interval [ SECOND ] (2)" />-->
-<!--            <column name="interval_y2m2" type="interval [ YEAR TO MONTH ] (2)" />-->
-<!--            <column name="interval_d2h2" type="interval [ DAY TO HOUR ] (2)" />-->
-<!--            <column name="interval_d2m2" type="interval [ DAY TO MINUTE ] (2)" />-->
-<!--            <column name="interval_d2s2" type="interval [ DAY TO SECOND ] (2)" />-->
-<!--            <column name="interval_h2m2" type="interval [ HOUR TO MINUTE ] (2)" />-->
-<!--            <column name="interval_h2s2" type="interval [ HOUR TO SECOND ] (2)" />-->
-<!--            <column name="interval_m2s2" type="interval [ MINUTE TO SECOND ] (2)" />-->
+            <column name="interval_y2m2" type="interval YEAR TO MONTH(2)" />
+            <column name="interval_d2h2" type="interval DAY TO HOUR(2)" />
+            <column name="interval_d2m2" type="interval DAY TO MINUTE(2)" />
+            <column name="interval_d2s2" type="interval DAY TO SECOND(2)" />
+            <column name="interval_h2m2" type="interval HOUR TO MINUTE(2)" />
+            <column name="interval_h2s2" type="interval HOUR TO SECOND(2)" />
+            <column name="interval_m2s2" type="interval MINUTE TO SECOND(2)" />
 
-<!--            <column name="interval_year3" type="interval [ YEAR ] (3)" />-->
-<!--            <column name="interval_month3" type="interval [ MONTH ] (3)" />-->
-<!--            <column name="interval_day3" type="interval [ DAY ] (3)" />-->
-<!--            <column name="interval_hour3" type="interval [ HOUR ] (3)" />-->
-<!--            <column name="interval_minute3" type="interval [ MINUTE ] (3)" />-->
-<!--            <column name="interval_second3" type="interval [ SECOND ] (3)" />-->
-<!--            <column name="interval_y2m3" type="interval [ YEAR TO MONTH ] (3)" />-->
-<!--            <column name="interval_d2h3" type="interval [ DAY TO HOUR ] (3)" />-->
-<!--            <column name="interval_d2m3" type="interval [ DAY TO MINUTE ] (3)" />-->
-<!--            <column name="interval_d2s3" type="interval [ DAY TO SECOND ] (3)" />-->
-<!--            <column name="interval_h2m3" type="interval [ HOUR TO MINUTE ] (3)" />-->
-<!--            <column name="interval_h2s3" type="interval [ HOUR TO SECOND ] (3)" />-->
-<!--            <column name="interval_m2s3" type="interval [ MINUTE TO SECOND ] (3)" />-->
+            <column name="interval_y2m3" type="interval YEAR TO MONTH(3)" />
+            <column name="interval_d2h3" type="interval DAY TO HOUR(3)" />
+            <column name="interval_d2m3" type="interval DAY TO MINUTE(3)" />
+            <column name="interval_d2s3" type="interval DAY TO SECOND(3)" />
+            <column name="interval_h2m3" type="interval HOUR TO MINUTE(3)" />
+            <column name="interval_h2s3" type="interval HOUR TO SECOND(3)" />
+            <column name="interval_m2s3" type="interval MINUTE TO SECOND(3)" />
 
-<!--            <column name="interval_year4" type="interval [ YEAR ] (4)" />-->
-<!--            <column name="interval_month4" type="interval [ MONTH ] (4)" />-->
-<!--            <column name="interval_day4" type="interval [ DAY ] (4)" />-->
-<!--            <column name="interval_hour4" type="interval [ HOUR ] (4)" />-->
-<!--            <column name="interval_minute4" type="interval [ MINUTE ] (4)" />-->
-<!--            <column name="interval_second4" type="interval [ SECOND ] (4)" />-->
-<!--            <column name="interval_y2m4" type="interval [ YEAR TO MONTH ] (4)" />-->
-<!--            <column name="interval_d2h4" type="interval [ DAY TO HOUR ] (4)" />-->
-<!--            <column name="interval_d2m4" type="interval [ DAY TO MINUTE ] (4)" />-->
-<!--            <column name="interval_d2s4" type="interval [ DAY TO SECOND ] (4)" />-->
-<!--            <column name="interval_h2m4" type="interval [ HOUR TO MINUTE ] (4)" />-->
-<!--            <column name="interval_h2s4" type="interval [ HOUR TO SECOND ] (4)" />-->
-<!--            <column name="interval_m2s4" type="interval [ MINUTE TO SECOND ] (4)" />-->
+            <column name="interval_y2m4" type="interval YEAR TO MONTH(4)" />
+            <column name="interval_d2h4" type="interval DAY TO HOUR(4)" />
+            <column name="interval_d2m4" type="interval DAY TO MINUTE(4)" />
+            <column name="interval_d2s4" type="interval DAY TO SECOND(4)" />
+            <column name="interval_h2m4" type="interval HOUR TO MINUTE(4)" />
+            <column name="interval_h2s4" type="interval HOUR TO SECOND(4)" />
+            <column name="interval_m2s4" type="interval MINUTE TO SECOND(4)" />
 
-<!--            <column name="interval_year5" type="interval [ YEAR ] (5)" />-->
-<!--            <column name="interval_month5" type="interval [ MONTH ] (5)" />-->
-<!--            <column name="interval_day5" type="interval [ DAY ] (5)" />-->
-<!--            <column name="interval_hour5" type="interval [ HOUR ] (5)" />-->
-<!--            <column name="interval_minute5" type="interval [ MINUTE ] (5)" />-->
-<!--            <column name="interval_second5" type="interval [ SECOND ] (5)" />-->
-<!--            <column name="interval_y2m5" type="interval [ YEAR TO MONTH ] (5)" />-->
-<!--            <column name="interval_d2h5" type="interval [ DAY TO HOUR ] (5)" />-->
-<!--            <column name="interval_d2m5" type="interval [ DAY TO MINUTE ] (5)" />-->
-<!--            <column name="interval_d2s5" type="interval [ DAY TO SECOND ] (5)" />-->
-<!--            <column name="interval_h2m5" type="interval [ HOUR TO MINUTE ] (5)" />-->
-<!--            <column name="interval_h2s5" type="interval [ HOUR TO SECOND ] (5)" />-->
-<!--            <column name="interval_m2s5" type="interval [ MINUTE TO SECOND ] (5)" />-->
+            <column name="interval_y2m5" type="interval YEAR TO MONTH(5)" />
+            <column name="interval_d2h5" type="interval DAY TO HOUR(5)" />
+            <column name="interval_d2m5" type="interval DAY TO MINUTE(5)" />
+            <column name="interval_d2s5" type="interval DAY TO SECOND(5)" />
+            <column name="interval_h2m5" type="interval HOUR TO MINUTE(5)" />
+            <column name="interval_h2s5" type="interval HOUR TO SECOND(5)" />
+            <column name="interval_m2s5" type="interval MINUTE TO SECOND(5)" />
 
-<!--            <column name="interval_year6" type="interval [ YEAR ] (6)" />-->
-<!--            <column name="interval_month6" type="interval [ MONTH ] (6)" />-->
-<!--            <column name="interval_day6" type="interval [ DAY ] (6)" />-->
-<!--            <column name="interval_hour6" type="interval [ HOUR ] (6)" />-->
-<!--            <column name="interval_minute6" type="interval [ MINUTE ] (6)" />-->
-<!--            <column name="interval_second6" type="interval [ SECOND ] (6)" />-->
-<!--            <column name="interval_y2m6" type="interval [ YEAR TO MONTH ] (6)" />-->
-<!--            <column name="interval_d2h6" type="interval [ DAY TO HOUR ] (6)" />-->
-<!--            <column name="interval_d2m6" type="interval [ DAY TO MINUTE ] (6)" />-->
-<!--            <column name="interval_d2s6" type="interval [ DAY TO SECOND ] (6)" />-->
-<!--            <column name="interval_h2m6" type="interval [ HOUR TO MINUTE ] (6)" />-->
-<!--            <column name="interval_h2s6" type="interval [ HOUR TO SECOND ] (6)" />-->
-<!--            <column name="interval_m2s6" type="interval [ MINUTE TO SECOND ] (6)" />-->
+
+            <column name="interval_y2m6" type="interval YEAR TO MONTH(6)" />
+            <column name="interval_d2h6" type="interval DAY TO HOUR(6)" />
+            <column name="interval_d2m6" type="interval DAY TO MINUTE(6)" />
+            <column name="interval_d2s6" type="interval DAY TO SECOND(6)" />
+            <column name="interval_h2m6" type="interval HOUR TO MINUTE(6)" />
+            <column name="interval_h2s6" type="interval HOUR TO SECOND(6)" />
+            <column name="interval_m2s6" type="interval MINUTE TO SECOND(6)" />
 
         </createTable>
     </changeSet>
