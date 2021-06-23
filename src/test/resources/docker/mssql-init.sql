@@ -43,7 +43,7 @@ CREATE TABLE [dbo].[authors](
     [id] [int] NOT NULL,
     [first_name] [varchar](255) NOT NULL,
     [last_name] [varchar](255) NULL,
-    [email] [varchar](255) NULL,
+    [email] [varchar](100) NULL,
     [birthdate] [varchar](255) NULL,
     [added] [datetime] NOT NULL,
     CONSTRAINT [PK_PrimaryKey] PRIMARY KEY ([id])
