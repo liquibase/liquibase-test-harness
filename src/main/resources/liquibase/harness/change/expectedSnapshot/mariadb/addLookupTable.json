@@ -1,0 +1,33 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "posts_details"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "post_date",
+            "nullable": false,
+            "type": {
+              "typeName": "DATE"
+            }
+          }
+        }
+      ],
+      "liquibase.structure.core.ForeignKey": [
+        {
+          "foreignKey": {
+            "deferrable": false,
+            "initiallyDeferred": false,
+            "name": "FK_POSTS_POSTS_DETAILS"
+          }
+        }
+      ]
+    }
+  }
+}
