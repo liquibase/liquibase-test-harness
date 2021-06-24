@@ -18,6 +18,9 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                               referencedColumnNames="id"
                               referencedTableName="authors"
                               validate="true"/>
+    <rollback/>
+</changeSet>
+<changeSet id="2" author="as">
     <dropAllForeignKeyConstraints baseTableName="posts"/>
     <rollback/>
 </changeSet>
