@@ -114,12 +114,16 @@ Wait until the databases start up.
 3) Open `src/test/groovy/liquibase/harness/LiquibaseHarnessSuiteTest.groovy` in your IDE of choice and run it
 
 ## Running from the cmd line with Maven
+Build the project first by running `mvn clean install -DskipTests` 
+
 Execute `mvn test` with the (optional) flags outlined below:
 * `-DinputFormat=xml` or select from the other inputFormats listed in [Types of input files](#types-of-input-files)
 * `-DchangeObjects=createTable,dropTable` flag allows you to run specific changeObjects rather than all. Use comma
  separated lists.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
 * `-DdbVersion` overrides the database version. Works in conjunction with `-DdbName` flag.
+
+To run the test suite itself, you can execute `mvn -Dtest=LiquibaseHarnessSuiteTest test`
 
 ## Cleanup
 
