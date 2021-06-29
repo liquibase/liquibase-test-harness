@@ -30,10 +30,13 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                   referencedColumnNames="id"
                                   referencedTableName="authors"
                                   validate="true"/>
-        <dropAllForeignKeyConstraints baseTableName="posts"/>
         <rollback/>
     </changeSet>
     <changeSet id="3" author="as">
+        <dropAllForeignKeyConstraints baseTableName="posts"/>
+        <rollback/>
+    </changeSet>
+    <changeSet id="4" author="as">
         <dropIndex tableName="authors" indexName="authors.id.index"/>
         <dropIndex tableName="posts" indexName="posts.id.index"/>
         <dropIndex tableName="posts" indexName="posts.author_id.index"/>
