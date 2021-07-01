@@ -4,7 +4,7 @@
 
     <groupId>org.liquibase</groupId>
     <artifactId>liquibase-test-harness</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>Liquibase Test Harness</name>
     <description>Test Harness For Liquibase</description>
     <url>https://github.com/liquibase/liquibase-test-harness</url>
