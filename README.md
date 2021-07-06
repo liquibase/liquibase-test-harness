@@ -137,7 +137,7 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | Postgres |  `9, 9.5, 10, 11, 12, 13` |
 | MySQL | `5.6, 5.7, 8` |
 | MariaDB | `10.3 , 10.5` |
-| SQL Server | `2017` |
+| SQL Server | `2017`, `2019` |
 | Oracle | `18.4.0, 19.9.0` |
 | CockroachDB | `20.1, 20.2` |
 | EDB | `9.5, 9.6, 10, 11, 12, 13` |
