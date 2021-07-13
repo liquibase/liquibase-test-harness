@@ -13,7 +13,7 @@
           "column": {
             "name": "serial",
             "type": {
-              "typeName": "int4"
+              "typeName": "serial"
             }
           }
         },
@@ -21,7 +21,7 @@
           "column": {
             "name": "bigserial",
             "type": {
-              "typeName": "int8"
+              "typeName": "bigserial"
             }
           }
         }
