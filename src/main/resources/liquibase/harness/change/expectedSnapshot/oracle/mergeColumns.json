@@ -1,0 +1,14 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "default_tablespace": true,
+            "name": "full_name_table"
+          }
+        }
+      ]
+    }
+  }
+}
