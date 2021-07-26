@@ -8,7 +8,8 @@
         <setTableRemarks remarks="A Test Remark"
                          tableName="authors"/>
         <rollback>
-            <sql>COMMENT ON TABLE authors IS ''</sql>
+            <setTableRemarks remarks=""
+                             tableName="authors"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
