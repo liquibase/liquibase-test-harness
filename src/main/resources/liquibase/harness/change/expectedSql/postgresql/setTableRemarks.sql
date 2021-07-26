@@ -1,0 +1,1 @@
+COMMENT ON TABLE authors IS 'A Test Remark'
