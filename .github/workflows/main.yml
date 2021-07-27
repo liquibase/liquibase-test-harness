@@ -27,7 +27,7 @@ jobs:
         run: docker-compose up -d
 
       - name: MySQL Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql test
 
       - name: Archive MySQL test results
         uses: actions/upload-artifact@v2
@@ -36,7 +36,7 @@ jobs:
           path: build/spock-reports
 
       - name: MariaDB Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb test
 
       - name: Archive MariaDB test results
         uses: actions/upload-artifact@v2
