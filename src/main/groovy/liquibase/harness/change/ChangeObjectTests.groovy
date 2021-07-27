@@ -9,6 +9,7 @@ import liquibase.harness.util.SnapshotHelpers
 import liquibase.harness.util.TestUtils
 import org.junit.Assert
 import org.junit.Assume
+import org.opentest4j.TestAbortedException
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -27,7 +28,9 @@ class ChangeObjectTests extends Specification {
         List<CatalogAndSchema> catalogAndSchemaList = TestUtils.getCatalogAndSchema(testInput.database, testInput.dbSchema)
 
         and: "skip testcase if it's invalid for this combination of db type and/or version"
-        Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
+        if(expectedSql?.toLowerCase()?.contains("invalid test")){
+            throw new TestAbortedException(expectedSql);
+        }
 
         and: "fail test if snapshot is not provided"
         assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
