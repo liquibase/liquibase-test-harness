@@ -1,0 +1,1 @@
+RENAME COLUMN authors.first_name TO first_name_renameColumn_test
