@@ -44,7 +44,7 @@ class ChangeObjectTestHelper {
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil.initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             def database = databaseUnderTest.database
             for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,  TestConfig.instance.inputFormat).entrySet()) {
-                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {2
+                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
 
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
@@ -65,7 +65,7 @@ class ChangeObjectTestHelper {
     }
 
     /**
-     * Standardizes sql content. Removes line ending differences, and unnessisary leading/trailing whitespace
+     * Standardizes sql content. Removes line ending differences, and unnecessary leading/trailing whitespace
      * @param sql
      * @return
      */
@@ -90,7 +90,6 @@ class ChangeObjectTestHelper {
         outputFile.parentFile.mkdirs()
         outputFile.write(generatedSql)
     }
-
 
     @Builder
     @ToString(includeNames=true, includeFields=true, includePackage = false, excludes ='database,password')
