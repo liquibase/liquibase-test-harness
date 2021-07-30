@@ -8,7 +8,6 @@ import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.SnapshotHelpers
 import liquibase.harness.util.TestUtils
-import liquibase.util.StringUtil
 import org.skyscreamer.jsonassert.JSONAssert
 
 import java.util.logging.Logger
@@ -62,22 +61,6 @@ class ChangeObjectTestHelper {
             }
         }
         return inputList
-    }
-
-    /**
-     * Standardizes sql content. Removes line ending differences, and unnecessary leading/trailing whitespace
-     * @param sql
-     * @return
-     */
-    static String cleanSql(String sql) {
-        if (sql == null) {
-            return null
-        }
-        return StringUtil.trimToNull(sql.replace("\r", "")
-                .replaceAll(/(?m)^--.*/, "") //remove comments
-                .replaceAll(/(?m)^\s+/, "") //remove beginning whitepace per line
-                .replaceAll(/(?m)\s+$/, "") //remove trailing whitespace per line
-        ) //remove trailing whitespace per line
     }
 
     static void snapshotMatchesSpecifiedStructure(String expected, String actual) {

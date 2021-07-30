@@ -6,21 +6,21 @@ import liquibase.util.StreamUtil
 
 class FileUtils {
 
-    static String getFileContent(String changeObject, String databaseName, String version , String expectedFolder,
+    static String getFileContent(String change, String databaseName, String version , String expectedFolder,
                                  String fileExtension) {
         def resourceAccessor = TestConfig.instance.resourceAccessor
 
-        def content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName + "/" + version + "/" + changeObject + fileExtension)
+        def content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName + "/" + version + "/" + change + fileExtension)
         if (content != null) {
             return StreamUtil.readStreamAsString(content)
         }
 
-        content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName + "/" + changeObject + fileExtension)
+        content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName + "/" + change + fileExtension)
         if (content != null) {
             return StreamUtil.readStreamAsString(content)
         }
 
-        content = resourceAccessor.openStream(null, expectedFolder + "/" + changeObject + fileExtension)
+        content = resourceAccessor.openStream(null, expectedFolder + "/" + change + fileExtension)
         if (content != null) {
             return StreamUtil.readStreamAsString(content)
         }
@@ -28,11 +28,13 @@ class FileUtils {
         return null
     }
 
-    static String getExpectedSqlFileContent(String changeObject, String databaseName, String version) {
-        return getFileContent(changeObject, databaseName, version, "liquibase/harness/change/expectedSql", ".sql")
+    static String getExpectedSqlFileContent(String changeObject, String databaseName,
+                                            String version, String expectedFolder) {
+        return getFileContent(changeObject, databaseName, version, expectedFolder, ".sql")
     }
 
-    static String getExpectedSnapshotFileContent(String changeObject, String databaseName, String version) {
-        return getFileContent(changeObject, databaseName, version, "liquibase/harness/change/expectedSnapshot", ".json")
+    static String getExpectedJSONFileContent(String changeObject, String databaseName,
+                                             String version, String expectedFolder) {
+        return getFileContent(changeObject, databaseName, version, expectedFolder, ".json")
     }
 }
