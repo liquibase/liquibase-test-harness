@@ -7,6 +7,7 @@ import org.json.JSONObject
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import java.sql.SQLException
+import java.sql.Timestamp
 
 class JSONUtils {
 
@@ -42,6 +43,8 @@ class JSONUtils {
                     jsonObject.put(column, (Byte) value)
                 } else if (value instanceof byte[]) {
                     jsonObject.put(column, (byte[]) value)
+                } else if (value instanceof Object) {
+                    jsonObject.put(column, value)
                 } else {
                     throw new IllegalArgumentException("Unmappable object type: " + value.getClass())
                 }
