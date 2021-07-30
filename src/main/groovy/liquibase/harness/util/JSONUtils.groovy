@@ -7,7 +7,6 @@ import org.json.JSONObject
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import java.sql.SQLException
-import java.sql.Timestamp
 
 class JSONUtils {
 
