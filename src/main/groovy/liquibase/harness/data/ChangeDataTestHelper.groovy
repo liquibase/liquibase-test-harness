@@ -64,6 +64,13 @@ class ChangeDataTestHelper {
         return inputList
     }
 
+    static void saveAsExpectedSql(String generatedSql, TestInput testInput) {
+        File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/data/expectedSql/" +
+                "${testInput.databaseName}/${testInput.changeData}.sql" as File
+        outputFile.parentFile.mkdirs()
+        outputFile.write(generatedSql)
+    }
+
     @Builder
     @ToString(includeNames=true, includeFields=true, includePackage = false, excludes ='database,password')
     static class TestInput {
