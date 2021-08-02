@@ -75,8 +75,8 @@ class ChangeDataTest extends Specification {
             def statement = connection.createStatement()
             def resultSet = statement.executeQuery(checkingSql)
             def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-            def expectedResultSeJSON = new JSONObject(expectedResultSet)
-            def expectedResultSetArray = expectedResultSeJSON.getJSONArray(testInput.getChangeData())
+            def expectedResultSetJSON = new JSONObject(expectedResultSet)
+            def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
         } catch (Throwable throwable) {
             println "Error executing checking sql. "
