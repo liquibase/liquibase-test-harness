@@ -3,13 +3,13 @@ package liquibase.harness.data
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.TestConfig
-import liquibase.harness.util.JSONUtils
 import org.json.JSONObject
 import org.junit.Assert
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.TestUtils.*
 import static ChangeDataTestHelper.*
@@ -74,11 +74,10 @@ class ChangeDataTest extends Specification {
         try {
             def statement = connection.createStatement()
             def resultSet = statement.executeQuery(checkingSql)
-            def array = JSONUtils.mapResultSetToJSONArray(resultSet)
-            def map = new HashMap()
-            map.put(testInput.changeData, array)
-            def generatedResultSet = new JSONObject(map).toString()
-            assert generatedResultSet == expectedResultSet
+            def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+            def expectedResultSeJSON = new JSONObject(expectedResultSet)
+            def expectedResultSetArray = expectedResultSeJSON.getJSONArray(testInput.getChangeData())
+            assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
         } catch (Throwable throwable) {
             println "Error executing checking sql. "
             throwable.printStackTrace()
