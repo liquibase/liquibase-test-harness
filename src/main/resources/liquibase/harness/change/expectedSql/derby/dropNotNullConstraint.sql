@@ -1,0 +1,2 @@
+ALTER TABLE posts ALTER COLUMN  inserted_date NOT NULL
+ALTER TABLE posts ALTER COLUMN  inserted_date NULL
