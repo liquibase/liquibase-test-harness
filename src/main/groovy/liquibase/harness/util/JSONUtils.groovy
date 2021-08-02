@@ -3,6 +3,9 @@ package liquibase.harness.util
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.skyscreamer.jsonassert.JSONCompare
+import org.skyscreamer.jsonassert.JSONCompareMode
+import org.skyscreamer.jsonassert.JSONCompareResult
 
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
@@ -10,7 +13,6 @@ import java.sql.SQLException
 
 class JSONUtils {
 
-    //TODO:Resolve do(!) ... while issue
     static JSONArray mapResultSetToJSONArray(ResultSet resultSet) throws SQLException, JSONException {
         JSONArray jArray = new JSONArray()
         ResultSetMetaData rsmd = resultSet.getMetaData()
@@ -51,5 +53,27 @@ class JSONUtils {
             jArray.put(jsonObject)
         }
         return jArray
+    }
+
+    static boolean compareJSONArrays(JSONArray jsonArray, JSONArray jsonArrayToCompare) {
+        if (jsonArray.length() != jsonArrayToCompare.length()) {
+            return false
+        }
+        def compareMarker = true
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (!compareMarker) {
+                return false
+            }
+            for (int j = 0; j < jsonArrayToCompare.length(); j++) {
+                JSONObject jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
+                JSONObject jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
+                JSONCompareResult result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.STRICT)
+                if (result.passed()) {
+                    compareMarker = result.passed()
+                    break
+                }
+            }
+        }
+        return compareMarker
     }
 }

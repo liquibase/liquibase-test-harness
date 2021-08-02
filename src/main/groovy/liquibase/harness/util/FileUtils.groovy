@@ -10,12 +10,14 @@ class FileUtils {
                                  String fileExtension) {
         def resourceAccessor = TestConfig.instance.resourceAccessor
 
-        def content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName + "/" + version + "/" + change + fileExtension)
+        def content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName
+                + "/" + version + "/" + change + fileExtension)
         if (content != null) {
             return StreamUtil.readStreamAsString(content)
         }
 
-        content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName + "/" + change + fileExtension)
+        content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName
+                + "/" + change + fileExtension)
         if (content != null) {
             return StreamUtil.readStreamAsString(content)
         }
@@ -24,7 +26,6 @@ class FileUtils {
         if (content != null) {
             return StreamUtil.readStreamAsString(content)
         }
-
         return null
     }
 
