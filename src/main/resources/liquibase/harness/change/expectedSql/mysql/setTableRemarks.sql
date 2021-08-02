@@ -1,0 +1,1 @@
+ALTER TABLE authors COMMENT = 'A Test Remark'
