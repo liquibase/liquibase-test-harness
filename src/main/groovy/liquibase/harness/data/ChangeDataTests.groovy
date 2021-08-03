@@ -14,13 +14,13 @@ import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.TestUtils.*
 import static ChangeDataTestHelper.*
 
-class ChangeDataTest extends Specification {
+class ChangeDataTests extends Specification {
 
     @Unroll
     def "apply #testInput.changeData against #testInput.databaseName, #testInput.version; verify generated query, checking query and obtained result set"() {
 
-        Liquibase liquibase = createLiquibase(testInput.pathToChangeLogFile, testInput.database)
         given: "create Liquibase connection, read expected sql and obtain result set"
+        Liquibase liquibase = createLiquibase(testInput.pathToChangeLogFile, testInput.database)
         String expectedSql = cleanSql(getExpectedSqlFileContent(testInput.changeData,
                 testInput.databaseName, testInput.version, "liquibase/harness/data/expectedSql"))
         String checkingSql = cleanSql(getExpectedSqlFileContent(testInput.changeData,
@@ -46,7 +46,7 @@ class ChangeDataTest extends Specification {
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
-            assert generatedSql == expectedSql: "Expected SQL does not match actual sql. " +
+            assert generatedSql == expectedSql: "Expected SQL does not match generated SQL. " +
                     "Deleting the existing expectedSql file will test that the new SQL works correctly " +
                     "and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
@@ -63,7 +63,7 @@ class ChangeDataTest extends Specification {
         try {
             liquibase.update(testInput.context)
         } catch (Throwable throwable) {
-            println "Error executing sql. If this is expected to be invalid SQL for this database/version, " +
+            println "Error executing SQL. If this is expected to be invalid SQL for this database/version, " +
                     "create an 'expectedSql/${testInput.database.shortName}/${testInput.changeData}.sql' file that starts with " +
                     "'INVALID TEST' and an explanation of why."
             throwable.printStackTrace()
@@ -72,21 +72,19 @@ class ChangeDataTest extends Specification {
 
         then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet, apply rollback"
         try {
-            def statement = connection.createStatement()
-            def resultSet = statement.executeQuery(checkingSql)
-            def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+            def generatedResultSetArray = mapResultSetToJSONArray(connection.createStatement().executeQuery(checkingSql))
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
         } catch (Throwable throwable) {
-            println "Error executing checking sql. "
+            println "Error executing checking SQL. "
             throwable.printStackTrace()
             Assert.fail throwable.message
         }
 
         liquibase.rollback(liquibase.databaseChangeLog.changeSets.size(), testInput.context)
 
-        and: "if expected sql is not provided save generated sql as expected sql"
+        and: "if expected sql is not provided save generated SQL as expected SQL"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             saveAsExpectedSql(generatedSql, testInput)
         }
