@@ -1,0 +1,1 @@
+INSERT INTO posts (id, author_id, title, description, content, inserted_date) VALUES ('1', '6', 'value', 'value', 'value', '2006-10-09')

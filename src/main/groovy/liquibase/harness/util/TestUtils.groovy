@@ -9,6 +9,7 @@ import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.sql.Sql
 import liquibase.sqlgenerator.SqlGeneratorFactory
+import liquibase.util.StringUtil
 
 import java.util.logging.Logger
 
@@ -24,28 +25,11 @@ class TestUtils {
         List<ChangeSet> changeSets = liquibase.databaseChangeLog.changeSets
         List<String> stringList = new ArrayList<>()
         changeSets.each { stringList.addAll(toSql(it, db)) }
-
         return stringList.join(System.lineSeparator())
-    }
-
-    private static List<String> toSql(ChangeSet changeSet, Database db) {
-        return toSql(changeSet.changes, db)
-    }
-
-    private static List<String> toSql(List<? extends Change> changes, Database db) {
-        List<String> stringList = new ArrayList<>()
-        changes.each { stringList.addAll(toSql(it, db)) }
-        return stringList
-    }
-
-    private static List<String> toSql(Change change, Database db) {
-        Sql[] sqls = SqlGeneratorFactory.newInstance().generateSql(change, db)
-        return sqls*.toSql()
     }
 
     static ArrayList<CatalogAndSchema> getCatalogAndSchema(Database database, String dbSchema) {
         List<String> schemaList = parseValuesToList(dbSchema, ",")
-
         List<CatalogAndSchema> finalList = new ArrayList<>()
         schemaList?.each { sch ->
             String[] catSchema = sch.split("\\.")
@@ -61,7 +45,6 @@ class TestUtils {
             }
             finalList.add(new CatalogAndSchema(catalog, schema).customize(database))
         }
-
         return finalList
     }
 
@@ -82,7 +65,6 @@ class TestUtils {
         def returnPaths = new TreeMap<String, String>()
         for (String filePath : TestConfig.instance.resourceAccessor.list(null, basePath, true, true, false)) {
             def validFile = false
-
             //is it a common changelog?
             if (filePath =~ basePath+"/[\\w.]*\\."+inputFormat+"\$") {
                 validFile = true
@@ -93,7 +75,6 @@ class TestUtils {
                 //is it a database-major-version specific changelog?
                 validFile = true
             }
-
             if (validFile) {
                 def fileName = filePath.replaceFirst(".*/", "").replaceFirst("\\.[^.]+\$", "")
                 if (!returnPaths.containsKey(fileName) || returnPaths.get(fileName).length() < filePath.length()) {
@@ -104,7 +85,37 @@ class TestUtils {
 
         Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.name +
                 "/" + database.version + " in "+basePath)
-
         return returnPaths
+    }
+
+    /**
+     * Standardizes sql content. Removes line ending differences, and unnecessary leading/trailing whitespace
+     * @param sql
+     * @return
+     */
+    static String cleanSql(String sql) {
+        if (sql == null) {
+            return null
+        }
+        return StringUtil.trimToNull(sql.replace("\r", "")
+                .replaceAll(/(?m)^--.*/, "") //remove comments
+                .replaceAll(/(?m)^\s+/, "") //remove beginning whitepace per line
+                .replaceAll(/(?m)\s+$/, "") //remove trailing whitespace per line
+        ) //remove trailing whitespace per line
+    }
+
+    private static List<String> toSql(ChangeSet changeSet, Database db) {
+        return toSql(changeSet.changes, db)
+    }
+
+    private static List<String> toSql(List<? extends Change> changes, Database db) {
+        List<String> stringList = new ArrayList<>()
+        changes.each { stringList.addAll(toSql(it, db)) }
+        return stringList
+    }
+
+    private static List<String> toSql(Change change, Database db) {
+        Sql[] sqls = SqlGeneratorFactory.newInstance().generateSql(change, db)
+        return sqls*.toSql()
     }
 }

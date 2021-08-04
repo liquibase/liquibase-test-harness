@@ -1,4 +1,4 @@
-package liquibase.harness.change
+package liquibase.harness.data
 
 import groovy.transform.ToString
 import groovy.transform.builder.Builder
@@ -6,27 +6,25 @@ import liquibase.database.Database
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.harness.util.SnapshotHelpers
 import liquibase.harness.util.TestUtils
-import org.skyscreamer.jsonassert.JSONAssert
 
 import java.util.logging.Logger
 
-class ChangeObjectTestHelper {
+class ChangeDataTestHelper {
 
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
 
-    final static String baseChangelogPath = "liquibase/harness/change/changelogs"
+    final static String baseChangelogPath = "liquibase/harness/data/changelogs"
 
     static List<TestInput> buildTestInput() {
         String commandLineInputFormat = System.getProperty("inputFormat")
 
-        String commandLineChangeObjects = System.getProperty("changeObjects")
-        List commandLineChangeObjectList = Collections.emptyList()
-        if(commandLineChangeObjects){
-            commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",")
-                    ? commandLineChangeObjects.split(",")
-                    : commandLineChangeObjects)
+        String commandLineChangeData = System.getProperty("changeData")
+        List commandLineChangeDataList = Collections.emptyList()
+        if(commandLineChangeData){
+            commandLineChangeDataList = Arrays.asList(commandLineChangeData.contains(",")
+                    ? commandLineChangeData.split(",")
+                    : commandLineChangeData)
         }
         if (commandLineInputFormat) {
             if (!supportedChangeLogFormats.contains(commandLineInputFormat)) {
@@ -35,16 +33,19 @@ class ChangeObjectTestHelper {
             TestConfig.instance.inputFormat = commandLineInputFormat
         }
 
-        Logger.getLogger(this.class.name).warning("Only " +  TestConfig.instance.inputFormat + " input files are taken into account for this test run")
+        Logger.getLogger(this.class.name).warning("Only " + TestConfig.instance.inputFormat
+                + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
 
-        for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil.initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
+        for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
+                .initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,  TestConfig.instance.inputFormat).entrySet()) {
-                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
-
+            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest,
+                    baseChangelogPath,
+                    TestConfig.instance.inputFormat).entrySet()) {
+                if (!commandLineChangeDataList || commandLineChangeDataList.contains(changeLogEntry.key)) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)
@@ -53,7 +54,7 @@ class ChangeObjectTestHelper {
                             .password(databaseUnderTest.password)
                             .version(databaseUnderTest.version)
                             .context(TestConfig.instance.context)
-                            .changeObject(changeLogEntry.key)
+                            .changeData(changeLogEntry.key)
                             .pathToChangeLogFile(changeLogEntry.value)
                             .database(database)
                             .build())
@@ -63,13 +64,9 @@ class ChangeObjectTestHelper {
         return inputList
     }
 
-    static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
-        JSONAssert.assertEquals(expected, actual, new SnapshotHelpers.GeneralSnapshotComparator())
-    }
-
     static void saveAsExpectedSql(String generatedSql, TestInput testInput) {
-        File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/change/expectedSql/" +
-                "${testInput.databaseName}/${testInput.changeObject}.sql" as File
+        File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/data/expectedSql/" +
+                "${testInput.databaseName}/${testInput.changeData}.sql" as File
         outputFile.parentFile.mkdirs()
         outputFile.write(generatedSql)
     }
@@ -84,7 +81,7 @@ class ChangeObjectTestHelper {
         String password
         String version
         String context
-        String changeObject
+        String changeData
         String pathToChangeLogFile
         Database database
     }
