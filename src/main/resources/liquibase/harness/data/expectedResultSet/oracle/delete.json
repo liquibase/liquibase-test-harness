@@ -1,0 +1,52 @@
+{
+  "delete": [
+    {
+      "AUTHOR_ID": 10,
+      "DESCRIPTION": "value",
+      "TITLE": "value",
+      "INSERTED_DATE": "1988-08-10 00:00:00.0",
+      "ID": 100,
+      "CONTENT": "value"
+    },
+    {
+      "AUTHOR_ID": 1,
+      "DESCRIPTION": "voluptatum",
+      "TITLE": "temporibus",
+      "INSERTED_DATE": "2021-05-21 03:22:42.035345",
+      "ID": 1,
+      "CONTENT": "Fugit non et doloribus repudiandae."
+    },
+    {
+      "AUTHOR_ID": 2,
+      "DESCRIPTION": "aut",
+      "TITLE": "ea",
+      "INSERTED_DATE": "2021-05-21 03:22:42.038933",
+      "ID": 2,
+      "CONTENT": "Tempora molestias maiores provident molestiae sint possimus quasi."
+    },
+    {
+      "AUTHOR_ID": 3,
+      "DESCRIPTION": "rerum",
+      "TITLE": "illum",
+      "INSERTED_DATE": "2021-05-21 03:22:42.040054",
+      "ID": 3,
+      "CONTENT": "Delectus recusandae sit officiis dolor."
+    },
+    {
+      "AUTHOR_ID": 4,
+      "DESCRIPTION": "deleniti",
+      "TITLE": "itaque",
+      "INSERTED_DATE": "2021-05-21 03:22:42.041045",
+      "ID": 4,
+      "CONTENT": "Magni nam optio id recusandae."
+    },
+    {
+      "AUTHOR_ID": 5,
+      "DESCRIPTION": "similique",
+      "TITLE": "ad",
+      "INSERTED_DATE": "2021-05-21 03:22:42.041931",
+      "ID": 5,
+      "CONTENT": "Rerum tempore quis ut nesciunt qui excepturi est."
+    }
+  ]
+}
