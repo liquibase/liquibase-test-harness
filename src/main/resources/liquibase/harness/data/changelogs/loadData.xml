@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+<!-- Attribute "usePreparedStatements" is set to false because otherwise we can't validate generated query.
+Reason: Liquibase core class BatchDmlExecutablePreparedStatementGenerator.java doesn't have implementation -->
+    <changeSet id="1" author="as">
+        <loadData file="loadData.csv"
+                  tableName="authors"
+                  commentLineStartsWith="//"
+                  quotchar="'"
+                  relativeToChangelogFile="true"
+                  separator=";"
+                  usePreparedStatements="false">
+        </loadData>
+        <rollback>
+            <delete tableName="authors">
+                <where>id = 6</where>
+            </delete>
+            <delete tableName="authors">
+                <where>id = 7</where>
+            </delete>
+            <delete tableName="authors">
+                <where>id = 8</where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
