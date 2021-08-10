@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+
+  actian-vector-6.0:
+    image: actian/vector:community
+    restart: always
+    ports:
+      - "27832:27832"
+      - "27839:27839"
+      - "44223:44223"
+      - "16902:16902"
+    volumes:
+      - "./ingres-init.sh:/docker-entrypoint-initdb.d/ingres-init.sh"
+    entrypoint: /usr/bin/bash /docker-entrypoint-initdb.d/ingres-init.sh
