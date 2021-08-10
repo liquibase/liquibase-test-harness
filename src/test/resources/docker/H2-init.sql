@@ -21,7 +21,6 @@ CREATE TABLE posts (
                          content text NOT NULL,
                          inserted_date date
 );
-
 INSERT INTO posts VALUES ('1','1','temporibus','voluptatum','Fugit non et doloribus repudiandae.','2015-11-18'),
 ('2','2','ea','aut','Tempora molestias maiores provident molestiae sint possimus quasi.','1975-06-08'),
 ('3','3','illum','rerum','Delectus recusandae sit officiis dolor.','1975-02-25'),
