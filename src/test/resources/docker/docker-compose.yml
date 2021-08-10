@@ -39,7 +39,7 @@ services:
       MYSQL_USER: lbuser
       MYSQL_PASSWORD: LiquibasePass1
     volumes:
-    - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
   postgres-9.5:
     image: postgres:9
@@ -272,5 +272,19 @@ services:
     depends_on:
       - crdb-21.1
 
+  hsqldb-2.3.4:
+    image: datagrip/hsqldb
+    ports:
+      - "9001:9001"
+    environment:
+      HSQLDB_USER: lbuser
+      HSQLDB_PASSWORD: LiquibasePass1
+      HSQLDB_DATABASE_ALIAS: lbcat
+      HSQLDB_DATABASE_HOST: localhost:9001
+    volumes:
+      - "./hsqldb-init.sql:/docker-entrypoint-initdb.d/hsqldb-init.sql"
+      - "./hsqldb.rc:/docker-entrypoint-initdb.d/hsqldb.rc"
+      - "./hsqldb-init.sh:/docker-entrypoint-initdb.d/hsqldb-init.sh"
+      -
 networks:
   roachnet:

@@ -45,4 +45,3 @@ services:
       - "5506:5444"
     restart: always
     # no environment or volumes as those were created at image creation
-
