@@ -170,6 +170,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.firebirdsql.jdbc</groupId>
+            <artifactId>jaybird</artifactId>
+            <version>4.0.3.java11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.firebirdsql.jdbc</groupId>
+            <artifactId>jaybird</artifactId>
+            <version>4.0.3.java8</version>
+        </dependency>
+        <dependency>
             <groupId>com.athaydes</groupId>
             <artifactId>spock-reports</artifactId>
             <version>1.7.1</version>
@@ -276,6 +286,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.0</version>
                 <configuration>
                     <author>false</author>
                     <doctitle>Liquibase Test Harness ${project.version}</doctitle>
