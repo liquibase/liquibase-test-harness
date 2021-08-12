@@ -74,6 +74,12 @@ databasesUnderTest:
     username: C##LIQUIBASE
     password: Secret321
 
+  - name: oracle
+    version: 12.2.0.1
+    url: 'jdbc:oracle:thin:@localhost:1521/PDBORCL'
+    username: DATICAL_ADMIN
+    password: DATICAL_ADMIN_PW
+
   - name: cockroachdb
     version: 20.2
     url: jdbc:postgresql://localhost:26257/lbcat
