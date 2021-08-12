@@ -26,8 +26,8 @@ jobs:
         working-directory: src/test/resources/docker/oracle-artifactory
         run: docker-compose up -d
 
-      - name: EDB Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle test
+      - name: Oracle Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=12.2.0.1 test
 
       - name: Archive oracle test results
         uses: actions/upload-artifact@v2
