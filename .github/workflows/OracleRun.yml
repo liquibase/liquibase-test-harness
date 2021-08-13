@@ -36,5 +36,5 @@ jobs:
           path: build/spock-reports
 
       - name: Tear down oracle test infra
-        working-directory: src/test/resources/docker
+        working-directory: src/test/resources/docker/oracle-artifactory
         run: docker-compose down --volumes
