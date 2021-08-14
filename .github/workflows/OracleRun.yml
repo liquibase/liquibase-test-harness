@@ -26,6 +26,11 @@ jobs:
         working-directory: src/test/resources/docker/oracle-artifactory
         run: docker-compose up -d
 
+      - name: Sleep for 180 seconds
+        uses: whatnick/wait-action@master
+        with:
+          time: '180s'
+
       - name: Oracle Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=12.2.0.1 test
 
