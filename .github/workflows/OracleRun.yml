@@ -33,7 +33,7 @@ jobs:
           time: '180s'
 
       - name: Oracle Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=12.2.0.1 test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=18.3.0 test
 
       - name: Archive oracle test results
         uses: actions/upload-artifact@v2
