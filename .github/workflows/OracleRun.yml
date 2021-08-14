@@ -26,6 +26,7 @@ jobs:
         working-directory: src/test/resources/docker/oracle-artifactory
         run: docker-compose up -d
 
+# Adding sleep to avoid ORA-12514 error when database & listeners are still in the middle of startup
       - name: Sleep for 180 seconds
         uses: whatnick/wait-action@master
         with:
