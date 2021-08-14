@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "\"DATICAL_ADMIN\".\"TEST_SEQUENCE\".\"NEXTVAL\"\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "sequence_referenced_column",
+            "nullable": true,
+            "type": {
+              "typeName": "NUMBER"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

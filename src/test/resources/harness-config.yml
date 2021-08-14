@@ -75,7 +75,7 @@ databasesUnderTest:
     password: Secret321
 
   - name: oracle
-    version: 12.2.0.1
+    version: 18.3.0
     url: 'jdbc:oracle:thin:@localhost:1521/PDBORCL'
     username: DATICAL_ADMIN
     password: DATICAL_ADMIN_PW
