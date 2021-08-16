@@ -1,6 +1,6 @@
 # A Harness of Integration Tests
 
-![Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Test%20Execution/badge.svg)
+![Default Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Default%20Test%20Execution/badge.svg) ![Oracle Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Oracle%20Test%20Execution/badge.svg)
 
 ## Framework
 
