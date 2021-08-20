@@ -70,7 +70,7 @@ databasesUnderTest:
 
   - name: oracle
     version: 18.4.0
-    url: 'jdbc:oracle:thin:@localhost:1521/xe'
+    url: 'jdbc:oracle:thin:@localhost:1522/xe'
     username: C##LIQUIBASE
     password: Secret321
 

@@ -22,8 +22,12 @@ jobs:
       - name: Docker login to retrive Oracle images from private repo
         run: docker login "${{ secrets.RT_URL }}" -u "${{ secrets.RT_USER }}" -p "${{ secrets.RT_PWD }}"
 
-      - name: Build Oracle test infra
+      - name: Build Oracle Artifactory test infra
         working-directory: src/test/resources/docker/oracle-artifactory
+        run: docker-compose up -d
+
+      - name: Build Oracle XE test infra
+        working-directory: src/test/resources/docker/oracle-xe
         run: docker-compose up -d
 
 # Adding sleep to avoid ORA-12514 error when database & listeners are still in the middle of startup
@@ -43,4 +47,18 @@ jobs:
 
       - name: Tear down oracle test infra
         working-directory: src/test/resources/docker/oracle-artifactory
+        run: docker-compose down --volumes
+
+
+      - name: Oracle XE Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=18.4.0 test
+
+      - name: Archive oracle test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: oracle-xe-test-results
+          path: build/spock-reports
+
+      - name: Tear down oracle XE test infra
+        working-directory: src/test/resources/docker/oracle-xe
         run: docker-compose down --volumes
