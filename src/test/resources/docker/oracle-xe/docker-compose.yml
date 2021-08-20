@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+
+  oracle-xe-18.4.0:
+    image: gvenzl/oracle-xe:18.4.0
+    ports:
+        - "1522:1521"
+        - "5500:5500"
+    restart: always
+    environment:
+#        ORACLE_PWD: Secret321
+        ORACLE_PASSWORD: Secret321
+    volumes:
+        - "./startup:/container-entrypoint-initdb.d"
