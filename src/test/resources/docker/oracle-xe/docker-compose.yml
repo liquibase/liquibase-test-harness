@@ -5,7 +5,7 @@ services:
   oracle-xe-18.4.0:
     image: gvenzl/oracle-xe:18.4.0
     ports:
-        - "1521:1521"
+        - "1522:1521"
         - "5500:5500"
     restart: always
     environment:
