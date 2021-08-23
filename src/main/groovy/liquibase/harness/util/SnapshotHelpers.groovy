@@ -1,8 +1,5 @@
 package liquibase.harness.util
 
-import liquibase.CatalogAndSchema
-import liquibase.command.core.SnapshotCommand
-import liquibase.database.Database
 import liquibase.util.StringUtil
 import org.json.JSONArray
 import org.json.JSONException
@@ -16,18 +13,6 @@ import static org.skyscreamer.jsonassert.comparator.JSONCompareUtil.getKeys
 import static org.skyscreamer.jsonassert.comparator.JSONCompareUtil.qualify
 
 class SnapshotHelpers {
-
-    static String getJsonSnapshot(Database database, List<CatalogAndSchema> schemaList) {
-        SnapshotCommand snapshotCommand = new SnapshotCommand()
-        snapshotCommand.setDatabase(database)
-        snapshotCommand.setSerializerFormat("json")
-        if (!schemaList.isEmpty()) {
-            snapshotCommand.setSchemas(schemaList.toArray(new CatalogAndSchema[schemaList.size()]))
-        }
-
-        SnapshotCommand.SnapshotCommandResult result = snapshotCommand.run()
-        return result.print()
-    }
 
     static class GeneralSnapshotComparator extends DefaultComparator {
         GeneralSnapshotComparator() {

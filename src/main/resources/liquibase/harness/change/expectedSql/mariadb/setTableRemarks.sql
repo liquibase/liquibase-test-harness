@@ -1,1 +1,1 @@
-ALTER TABLE authors COMMENT = 'A Test Remark'
+ALTER TABLE lbcat.authors COMMENT = 'A Test Remark'

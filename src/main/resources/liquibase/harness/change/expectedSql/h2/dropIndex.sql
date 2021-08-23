@@ -1,2 +1,2 @@
-CREATE INDEX idx_first_name ON authors(first_name)
-DROP INDEX idx_first_name
+CREATE INDEX PUBLIC.idx_first_name ON PUBLIC.authors(first_name)
+DROP INDEX PUBLIC.idx_first_name

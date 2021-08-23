@@ -1,4 +1,4 @@
 CREATE PROCEDURE test_procedure()
 BEGIN
 END
-DROP PROCEDURE test_procedure
+DROP PROCEDURE lbcat.test_procedure

@@ -65,11 +65,11 @@ class JSONUtils {
                 return false
             }
             for (int j = 0; j < jsonArrayToCompare.length(); j++) {
-                JSONObject jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
-                JSONObject jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
-                JSONCompareResult result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.STRICT)
+                def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
+                def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
+                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.STRICT)
+                compareMarker = result.passed()
                 if (result.passed()) {
-                    compareMarker = result.passed()
                     break
                 }
             }

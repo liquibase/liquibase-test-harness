@@ -1,2 +1,2 @@
-ALTER TABLE posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES authors (id) ON UPDATE RESTRICT ON DELETE CASCADE
-ALTER TABLE posts DROP CONSTRAINT fk_posts_authors_test
+ALTER TABLE public.posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES public.authors (id) ON UPDATE RESTRICT ON DELETE CASCADE
+ALTER TABLE public.posts DROP CONSTRAINT fk_posts_authors_test
