@@ -1,1 +1,1 @@
-CREATE TABLE "datatypes.uuid_test_table" (uuid UUID)
+CREATE TABLE public."datatypes.uuid_test_table" (uuid UUID)
