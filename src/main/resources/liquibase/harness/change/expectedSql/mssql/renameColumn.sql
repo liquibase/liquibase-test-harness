@@ -1,1 +1,10 @@
+USE lbcat
+GO
+UPDATE DATABASECHANGELOGLOCK SET LOCKED = 1, LOCKEDBY = '5CD90139BV (192.168.192.1)', LOCKGRANTED = '2021-08-23T16:40:53.511' WHERE ID = 1 AND LOCKED = 0
+GO
 exec sp_rename 'authors.first_name', 'first_name_renameColumn_test'
+GO
+INSERT INTO DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, DESCRIPTION, COMMENTS, EXECTYPE, CONTEXTS, LABELS, LIQUIBASE, DEPLOYMENT_ID) VALUES ('1', 'oleh', 'liquibase/harness/change/changelogs/renameColumn.xml', GETDATE(), 1, '8:cefa3fc2199a783e6b200bfdcf3e9ddc', 'renameColumn newColumnName=first_name_renameColumn_test, oldColumnName=first_name, tableName=authors', '', 'EXECUTED', NULL, NULL, '4.4.2', '9726054146')
+GO
+UPDATE DATABASECHANGELOGLOCK SET LOCKED = 0, LOCKEDBY = NULL, LOCKGRANTED = NULL WHERE ID = 1
+GO

@@ -1,6 +1,5 @@
 package liquibase.harness.data
 
-import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.TestConfig
 import org.json.JSONObject
@@ -19,30 +18,36 @@ class ChangeDataTests extends Specification {
     @Unroll
     def "apply #testInput.changeData against #testInput.databaseName, #testInput.version; verify generated query, checking query and obtained result set"() {
 
-        given: "create Liquibase connection, read expected sql and obtain result set"
-        Liquibase liquibase = createLiquibase(testInput.pathToChangeLogFile, testInput.database)
-        String expectedSql = cleanSql(getExpectedSqlFileContent(testInput.changeData,
+        given: "read expected sql, checking sql and expected result set, create arguments map for executing command scope"
+        String expectedSql = parseQuery(getExpectedSqlFileContent(testInput.changeData,
                 testInput.databaseName, testInput.version, "liquibase/harness/data/expectedSql"))
-        String checkingSql = cleanSql(getExpectedSqlFileContent(testInput.changeData,
+        String checkingSql = parseQuery(getExpectedSqlFileContent(testInput.changeData,
                 testInput.databaseName, testInput.version, "liquibase/harness/data/checkingSql"))
         String expectedResultSet = getExpectedJSONFileContent(testInput.changeData, testInput.databaseName,
                 testInput.version, "liquibase/harness/data/expectedResultSet")
+        Map<String, Object> argsMap = new HashMap<>()
+        argsMap.put("url", testInput.url)
+        argsMap.put("username", testInput.username)
+        argsMap.put("password", testInput.password)
+        argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
+        argsMap.put("classpath", testInput.database.getDefaultDriver(testInput.url))
+        argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile, testInput.database))
 
         and: "skip testcase if it's invalid for this combination of db type and/or version"
         Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
 
         and: "fail test if expectedResultSet is not provided"
         assert expectedResultSet != null: "No expectedResultSet for ${testInput.changeData} against " +
-                "${testInput.database.shortName} " +
-                "${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
+                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
+                "${testInput.database.databaseMinorVersion}"
 
         and: "fail test if checkingSql is not provided"
         assert checkingSql != null: "No checkingSql for ${testInput.changeData} against " +
-                "${testInput.database.shortName} " +
-                "${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
+                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
+                "${testInput.database.databaseMinorVersion}"
 
-        when: "get sql that is generated for changeset"
-        def generatedSql = cleanSql(toSqlFromLiquibaseChangeSets(liquibase))
+        when: "get sql that is generated for change set"
+        def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
@@ -53,22 +58,12 @@ class ChangeDataTests extends Specification {
                 return //sql is right. Nothing more to test
             }
         }
-
         def connection = testInput.database.getConnection()
-
         assert connection instanceof JdbcConnection: "We cannot verify the following SQL works " +
                 "because the database is offline:\n${generatedSql}"
 
         when: "apply changeSet to DB,"
-        try {
-            liquibase.update(testInput.context)
-        } catch (Throwable throwable) {
-            println "Error executing SQL. If this is expected to be invalid SQL for this database/version, " +
-                    "create an 'expectedSql/${testInput.database.shortName}/${testInput.changeData}.sql' file that starts with " +
-                    "'INVALID TEST' and an explanation of why."
-            throwable.printStackTrace()
-            Assert.fail throwable.message
-        }
+        executeCommandScope("update", argsMap)
 
         then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet, apply rollback"
         try {
@@ -77,12 +72,11 @@ class ChangeDataTests extends Specification {
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
         } catch (Throwable throwable) {
-            println "Error executing checking SQL. "
+            println "Error executing checking SQL."
             throwable.printStackTrace()
             Assert.fail throwable.message
         }
-
-        liquibase.rollback(liquibase.databaseChangeLog.changeSets.size(), testInput.context)
+        executeCommandScope("rollbackCount", argsMap)
 
         and: "if expected sql is not provided save generated SQL as expected SQL"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
@@ -93,3 +87,4 @@ class ChangeDataTests extends Specification {
         testInput << buildTestInput()
     }
 }
+

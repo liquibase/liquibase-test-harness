@@ -1,2 +1,12 @@
+USE lbcat
+GO
+UPDATE DATABASECHANGELOGLOCK SET LOCKED = 1, LOCKEDBY = '5CD90139BV (192.168.192.1)', LOCKGRANTED = '2021-08-23T16:41:02.888' WHERE ID = 1 AND LOCKED = 0
+GO
 CREATE VIEW test_view AS select id, first_name, last_name, email from authors
+GO
 exec sp_rename 'test_view', 'test_view_new'
+GO
+INSERT INTO DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, DESCRIPTION, COMMENTS, EXECTYPE, CONTEXTS, LABELS, LIQUIBASE, DEPLOYMENT_ID) VALUES ('1', 'oleh', 'liquibase/harness/change/changelogs/renameView.xml', GETDATE(), 1, '8:82af04d400ec6922b8ab4fe91b6ef5c6', 'createView viewName=test_view renameView newViewName=test_view_new, oldViewName=test_view', '', 'EXECUTED', NULL, NULL, '4.4.2', '9726063424')
+GO
+UPDATE DATABASECHANGELOGLOCK SET LOCKED = 0, LOCKEDBY = NULL, LOCKGRANTED = NULL WHERE ID = 1
+GO

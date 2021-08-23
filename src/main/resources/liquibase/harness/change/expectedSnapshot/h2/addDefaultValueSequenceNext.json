@@ -4,7 +4,7 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "NEXTVAL\\('test_sequence'\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "defaultValue": "NEXTVAL\\('PUBLIC.test_sequence'\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
             "name": "SEQUENCE_REFERENCED_COLUMN",
             "nullable": true,
             "type": {
