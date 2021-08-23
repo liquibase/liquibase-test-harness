@@ -35,7 +35,7 @@ class ChangeObjectTestHelper {
             TestConfig.instance.inputFormat = commandLineInputFormat
         }
 
-        Logger.getLogger(this.class.name).warning("Only " +  TestConfig.instance.inputFormat + " input files are taken into account for this test run")
+        Logger.getLogger(this.class.name).warning("Only " + TestConfig.instance.inputFormat + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()

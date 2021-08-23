@@ -17,12 +17,14 @@ class SnapshotObjectTests extends Specification {
     @Unroll
     def "Snapshot #input.testName '#input.permutation.setup' on #input.database.name"() {
         when:
-        Assume.assumeFalse("Cannot test against offline database", input.database.database.getConnection() instanceof OfflineConnection)
+        Assume.assumeFalse("Cannot test against offline database", input.database.database.getConnection()
+                instanceof OfflineConnection)
 
         input.database.database.execute([new RawSqlStatement(input.permutation.setup)] as SqlStatement[], null)
         input.database.database.commit()
 
-        def snapshot = SnapshotGeneratorFactory.instance.createSnapshot(new CatalogAndSchema(null, null), input.database.database, new SnapshotControl(input.database.database))
+        def snapshot = SnapshotGeneratorFactory.instance.createSnapshot(new CatalogAndSchema(null, null),
+                input.database.database, new SnapshotControl(input.database.database))
 
         then:
         input.permutation.verify.apply(snapshot) == null

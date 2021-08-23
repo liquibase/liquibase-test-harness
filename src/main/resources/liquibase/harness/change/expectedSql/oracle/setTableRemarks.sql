@@ -1,1 +1,1 @@
-COMMENT ON TABLE authors IS 'A Test Remark'
+COMMENT ON TABLE "C##LIQUIBASE".authors IS 'A Test Remark'

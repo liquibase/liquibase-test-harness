@@ -1,1 +1,1 @@
-ALTER TABLE posts MODIFY title DEFAULT 'title_test'
+ALTER TABLE "C##LIQUIBASE".posts MODIFY title DEFAULT 'title_test'

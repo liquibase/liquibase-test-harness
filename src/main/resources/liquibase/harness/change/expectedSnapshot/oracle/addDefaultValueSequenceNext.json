@@ -4,10 +4,11 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "\"C##LIQUIBASE\".\"TEST_SEQUENCE\".\"NEXTVAL\"\\!\\{liquibase.statement.DatabaseFunction\\}",
-            "name": "sequence_referenced_column",
+            "defaultValue": "\"C##LIQUIBASE\".test_sequence.nextval\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "SEQUENCE_REFERENCED_COLUMN",
             "nullable": true,
             "type": {
+              "dataTypeId": "3\\!\\{java.lang.Integer\\}",
               "typeName": "NUMBER"
             }
           }
