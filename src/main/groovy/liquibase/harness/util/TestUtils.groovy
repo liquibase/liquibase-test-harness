@@ -47,16 +47,18 @@ class TestUtils {
     static parseQuery(String script) {
         if (script) {
             script.replaceAll(/(?m)^--.*/, "") //remove comments
-                    .replaceAll(/(?m)^CREATE TABLE .*\w*.DATABASECHANGELOG.*/, "") //remove create table queries for databasechangelog* tables
-                    .replaceAll(/(?m)^CREATE TABLE .*\w*.databasechangelog.*/, "")
-                    .replaceAll(/(?m)^INSERT INTO .*\w*.DATABASECHANGELOG.*/, "") //remove insert queries for databasechangelog* tables
-                    .replaceAll(/(?m)^INSERT INTO .*\w*.databasechangelog.*/, "")
-                    .replaceAll(/(?m)^UPDATE .*\w*.DATABASECHANGELOG.*/, "") //remove update queries for databasechangelog* tables
-                    .replaceAll(/(?m)^UPDATE .*\w*.databasechangelog.*/, "")
-                    .replaceAll(/(?m)^SET SEARCH_PATH.*/, "") //remove setting schema name for posqtgresql
+                    .replaceAll(/(?m)^CREATE TABLE .*\w*.*DATABASECHANGELOG.*/, "") //remove create table queries for databasechangelog* tables
+                    .replaceAll(/(?m)^CREATE TABLE .*\w*.*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^INSERT INTO .*\w*.*DATABASECHANGELOG.*/, "") //remove insert queries for databasechangelog* tables
+                    .replaceAll(/(?m)^INSERT INTO .*\w*.*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^UPDATE .*\w*.*DATABASECHANGELOG.*/, "") //remove update queries for databasechangelog* tables
+                    .replaceAll(/(?m)^UPDATE .*\w*.*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^SET SEARCH_PATH.*/, "") //specific replacement for Postgres
+                    .replaceAll(/\b(?:GO|USE lbcat)\b/, "") //specific replacement for MSSQL
+                    .replaceAll(";", "")
+                    .replaceAll(/^(?:[\t ]*(?:\r?\n|\r))+/, "") //remove empty lines
                     .replaceAll(/(?m)^\s+/, "") //remove beginning whitespaces per line
                     .replaceAll(/(?m)\s+$/, "") //remove trailing whitespaces per line
-                    .replaceAll(";", "")
         }
     }
 
