@@ -1,0 +1,59 @@
+# Basic workflow with Actions
+
+name: Oracle Test Execution
+on:
+
+  schedule:
+    - cron: '0 8 * * *' # Execute every day at 8am
+  workflow_dispatch:
+
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        plan: [ 18.3.0, 18.4.0 ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '1.8.0'
+
+      - name: Docker login to retrive Oracle images from private repo
+        run: docker login "${{ secrets.RT_URL }}" -u "${{ secrets.RT_USER }}" -p "${{ secrets.RT_PWD }}"
+
+      - name: Build Oracle Artifactory test infra
+        working-directory: src/test/resources/docker/oracle-artifactory
+        run: docker-compose up -d
+
+      - name: Build Oracle XE test infra
+        working-directory: src/test/resources/docker/oracle-xe
+        run: docker-compose up -d
+
+      # Adding sleep to avoid ORA-12514 error when database & listeners are still in the middle of startup
+      - name: Sleep for 180 seconds
+        uses: whatnick/wait-action@master
+        with:
+          time: '180s'
+
+      - name: Oracle ${{ matrix.plan }} Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
+
+      - name: Archive Oracle ${{ matrix.plan }} test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: oracle-${{ matrix.plan }}-test-results
+          path: build/spock-reports
+
+      - name: Tear down Oracle test infra
+        working-directory: src/test/resources/docker/oracle-artifactory
+        run: docker-compose down --volumes
+
+      - name: Tear down Oracle XE test infra
+        working-directory: src/test/resources/docker/oracle-xe
+        run: docker-compose down --volumes
