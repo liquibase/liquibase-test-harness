@@ -1,0 +1,18 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="erz" id="1::createTableForClusteredPK">
+        <createTable tableName="tbl_cluster">
+            <column name="id" type="numeric(4)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="erz" id="2::clusteredPK">
+        <addPrimaryKey clustered="true" columnNames="id" constraintName="pk_clustered" tableName="tbl_cluster"/>
+    </changeSet>
+</databaseChangeLog>
