@@ -1,6 +1,6 @@
 # A Harness of Integration Tests
 
-![Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Test%20Execution/badge.svg)
+![Default Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Default%20Test%20Execution/badge.svg) ![Oracle Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Oracle%20Test%20Execution/badge.svg)
 
 ## Framework
 
@@ -152,7 +152,7 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | MySQL | `5.6, 5.7, 8` |
 | MariaDB | `10.3 , 10.5` |
 | SQL Server | `2017`, `2019` |
-| Oracle | `18.4.0, 19.9.0` |
+| Oracle | `18.3.0, 18.4.0, 19.9.0` |
 | CockroachDB | `20.1, 20.2` |
 | EDB | `9.5, 9.6, 10, 11, 12, 13` |
 | H2 | `1.4.200` |

@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+
+  oracle-ee-18.3.0:
+    image: docker-dev.artifactory.datical.net/datical/oracle-ee:18.3.0-local
+    ports:
+        - "1521:1521"
+    restart: always
+    environment:
+        ORACLE_PWD: Secret321
+    volumes:
+        - "./startup:/opt/oracle/scripts/startup"

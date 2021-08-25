@@ -1,0 +1,3 @@
+INSERT INTO authors (id, first_name, last_name, email, birthdate, added) VALUES (6, 'Adam', 'Gods', 'test1@example.com', DATE('1000-02-27'), TIMESTAMP('2000-02-04 02:32:00'))
+INSERT INTO authors (id, first_name, last_name, email, birthdate, added) VALUES (7, 'Noah', 'Lamekhs', 'test2@example.com', DATE('2000-02-27'), TIMESTAMP('1994-12-10 01:00:00'))
+INSERT INTO authors (id, first_name, last_name, email, birthdate, added) VALUES (8, 'Muhammad', 'Ibn Abdullah', 'test3@example.com', DATE('3000-02-27'), TIMESTAMP('2000-12-10 01:00:00'))
