@@ -1,0 +1,2 @@
+ALTER TABLE public.authors ADD "dateTimeColumn" TIMESTAMP WITHOUT TIME ZONE
+ALTER TABLE public.authors ALTER COLUMN  "dateTimeColumn" SET DEFAULT '2008-02-12 12:34:03'
