@@ -1,1 +1,0 @@
-CREATE TABLE createTableDataTypeText (textCol CLOB)

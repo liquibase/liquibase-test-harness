@@ -1,12 +1,13 @@
 package liquibase.harness.util
 
-import liquibase.Liquibase
 import liquibase.command.CommandScope
-import liquibase.database.Database
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import org.junit.Assert
-
+import org.w3c.dom.NodeList
+import org.xml.sax.SAXException
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.parsers.ParserConfigurationException
 import java.util.logging.Logger
 
 class TestUtils {
@@ -81,9 +82,16 @@ class TestUtils {
         return outputStream
     }
 
-    //TODO: Think of removing usage of Liquibase object
-    static Integer getChangeSetsCount(String pathToChangeLogFile, Database database) {
-        Liquibase liquibase = new Liquibase(pathToChangeLogFile, TestConfig.instance.resourceAccessor, database)
-        return liquibase.databaseChangeLog.changeSets.size()
+    static Integer getChangeSetsCount(String pathToChangeLogFile) {
+        try {
+            def documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+            def document = documentBuilder.parse(new FileInputStream("src/main/resources/" + pathToChangeLogFile))
+            NodeList name = document.getElementsByTagName("changeSet")
+            return name.getLength()
+        } catch (ParserConfigurationException | SAXException | IOException exception) {
+            println("Failed to read from changelog file while getting changesets count!")
+            println(exception)
+        }
+        return 0
     }
 }
