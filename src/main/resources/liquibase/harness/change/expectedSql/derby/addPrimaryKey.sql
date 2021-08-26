@@ -1,1 +1,0 @@
-ALTER TABLE posts ADD CONSTRAINT pk_posts PRIMARY KEY (id)
