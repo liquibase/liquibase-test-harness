@@ -26,7 +26,7 @@ class ChangeObjectTests extends Specification {
         argsMap.put("password", testInput.password)
         argsMap.put("snapshotFormat", "JSON")
         argsMap.put("classpath", testInput.database.getDefaultDriver(testInput.url))
-        argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile, testInput.database))
+        argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
         and: "skip testcase if it's invalid for this combination of db type and/or version"
         Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
@@ -48,7 +48,9 @@ class ChangeObjectTests extends Specification {
                 return //sql is right. Nothing more to test
             }
         }
-        assert testInput.database.getConnection() instanceof JdbcConnection: "We cannot verify the following SQL works " +
+
+        def connection = testInput.database.getConnection()
+        assert connection instanceof JdbcConnection: "We cannot verify the following SQL works " +
                 "because the database is offline:\n${generatedSql}"
 
         when: "apply changeSet to DB"
@@ -62,6 +64,14 @@ class ChangeObjectTests extends Specification {
         and: "if expected sql is not provided save generated sql as expected sql"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             saveAsExpectedSql(generatedSql, testInput)
+        }
+        if (testInput.databaseName == "derby") {
+            try {
+                testInput.database.getConnection().close()
+            } catch (Exception exception) {
+                println("Failed to close JDBC connection. " + exception)
+                println(exception.printStackTrace())
+            }
         }
 
         where: "test input in next data table"
