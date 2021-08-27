@@ -56,10 +56,11 @@ class TestUtils {
                     .replaceAll(/(?m)^UPDATE .*\w*.*databasechangelog.*/, "")
                     .replaceAll(/(?m)^SET SEARCH_PATH.*/, "") //specific replacement for Postgres
                     .replaceAll(/\b(?:GO|USE lbcat)\b/, "") //specific replacement for MSSQL
-                    .replaceAll(";", "")
+                    .replaceAll("(?m);\$", "") // remove semicolon
                     .replaceAll(/^(?:[\t ]*(?:\r?\n|\r))+/, "") //remove empty lines
                     .replaceAll(/(?m)^\s+/, "") //remove beginning whitespaces per line
                     .replaceAll(/(?m)\s+$/, "") //remove trailing whitespaces per line
+                    .replaceAll("\r", "")
         }
     }
 
