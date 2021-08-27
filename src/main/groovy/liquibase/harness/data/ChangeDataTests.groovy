@@ -30,7 +30,6 @@ class ChangeDataTests extends Specification {
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("classpath", testInput.database.getDefaultDriver(testInput.url))
         argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
         and: "skip testcase if it's invalid for this combination of db type and/or version"

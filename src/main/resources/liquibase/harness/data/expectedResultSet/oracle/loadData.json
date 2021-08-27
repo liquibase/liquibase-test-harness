@@ -1,5 +1,5 @@
 {
-  "insert": [
+  "loadData": [
     {
       "AUTHOR_ID": 1,
       "DESCRIPTION": "voluptatum",
@@ -41,12 +41,28 @@
       "CONTENT": "Rerum tempore quis ut nesciunt qui excepturi est."
     },
     {
-      "AUTHOR_ID": 10,
-      "DESCRIPTION": "value",
-      "TITLE": "value",
-      "INSERTED_DATE": "1988-08-10 00:00:00.0",
-      "ID": 10,
-      "CONTENT": "value"
+      "AUTHOR_ID": 1,
+      "DESCRIPTION": "test1@example.com",
+      "TITLE": "Title1",
+      "INSERTED_DATE": "2000-01-01 00:00:00.0",
+      "ID": 6,
+      "CONTENT": "Content1"
+    },
+    {
+      "AUTHOR_ID": 2,
+      "DESCRIPTION": "test2@example.com",
+      "TITLE": "Title2",
+      "INSERTED_DATE": "2000-01-01 00:00:00.0",
+      "ID": 7,
+      "CONTENT": "Content2"
+    },
+    {
+      "AUTHOR_ID": 3,
+      "DESCRIPTION": "test3@example.com",
+      "TITLE": "Title3",
+      "INSERTED_DATE": "2000-01-01 00:00:00.0",
+      "ID": 8,
+      "CONTENT": "Content3"
     }
   ]
 }
