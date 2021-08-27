@@ -1,3 +1,1 @@
-INSERT INTO authors (id, first_name, last_name, email, birthdate, added) VALUES (6, 'Adam', 'Gods', 'test1@example.com', TO_DATE('1000-02-27', 'YYYY-MM-DD'), TO_DATE('2000-02-04 02:32:00', 'YYYY-MM-DD HH24:MI:SS'))
-INSERT INTO authors (id, first_name, last_name, email, birthdate, added) VALUES (7, 'Noah', 'Lamekhs', 'test2@example.com', TO_DATE('2000-02-27', 'YYYY-MM-DD'), TO_DATE('1994-12-10 01:00:00', 'YYYY-MM-DD HH24:MI:SS'))
-INSERT INTO authors (id, first_name, last_name, email, birthdate, added) VALUES (8, 'Muhammad', 'Ibn Abdullah', 'test3@example.com', TO_DATE('3000-02-27', 'YYYY-MM-DD'), TO_DATE('2000-12-10 01:00:00', 'YYYY-MM-DD HH24:MI:SS'))
+INSERT INTO C##LIQUIBASE.posts (id, author_id, title, `description`, content, inserted_date) VALUES (6, 1, 'Title1', 'test1@example.com', 'Content1', '2000-01-01'),(7, 2, 'Title2', 'test2@example.com', 'Content2', '2000-01-01'),(8, 3, 'Title3', 'test3@example.com', 'Content3', '2000-01-01')
