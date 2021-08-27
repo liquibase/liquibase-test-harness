@@ -13,7 +13,7 @@ Reason: Liquibase core class BatchDmlExecutablePreparedStatementGenerator.java d
                   quotchar="'"
                   relativeToChangelogFile="true"
                   separator=";"
-                  usePreparedStatements="true">
+                  usePreparedStatements="false">
             <column name="content" type="string" />
         </loadData>
         <rollback>
