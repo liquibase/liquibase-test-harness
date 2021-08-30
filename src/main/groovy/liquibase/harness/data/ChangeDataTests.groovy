@@ -8,6 +8,9 @@ import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.sql.Connection
+import java.sql.DriverManager
+
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.TestUtils.*
@@ -57,6 +60,13 @@ class ChangeDataTests extends Specification {
                 return //sql is right. Nothing more to test
             }
         }
+        //TODO: Replace connection workaround for mysql and mariadb
+        Connection mysqlConnection
+        if (testInput.databaseName == "mysql" || testInput.databaseName == "mariadb") {
+            mysqlConnection = DriverManager.getConnection(testInput.url + "?" + "user=" + testInput.username + "&"
+                    + "password=" + testInput.password)
+            assert mysqlConnection.isValid(10)
+        }
         def connection = testInput.database.getConnection()
         assert connection instanceof JdbcConnection: "We cannot verify the following SQL works " +
                 "because the database is offline:\n${generatedSql}"
@@ -65,8 +75,15 @@ class ChangeDataTests extends Specification {
         executeCommandScope("update", argsMap)
 
         then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet, apply rollback"
+
         try {
-            def generatedResultSetArray = mapResultSetToJSONArray(connection.createStatement().executeQuery(checkingSql))
+            def resultSet
+            if (testInput.databaseName == "mysql" || testInput.databaseName == "mariadb") {
+                resultSet = mysqlConnection.createStatement().executeQuery(checkingSql)
+            } else {
+                resultSet = connection.createStatement().executeQuery(checkingSql)
+            }
+            def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
@@ -86,4 +103,3 @@ class ChangeDataTests extends Specification {
         testInput << buildTestInput()
     }
 }
-

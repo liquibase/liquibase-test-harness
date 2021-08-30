@@ -5,7 +5,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.skyscreamer.jsonassert.JSONCompare
 import org.skyscreamer.jsonassert.JSONCompareMode
-import org.skyscreamer.jsonassert.JSONCompareResult
 
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
