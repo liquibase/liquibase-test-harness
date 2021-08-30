@@ -13,10 +13,12 @@
             <column name="content" value="value"/>
             <column name="inserted_date" value="10-AUG-88"/>
         </insert>
-        <rollback>
-            <delete tableName="posts">
-                <where>id=100</where>
-            </delete>
-        </rollback>
+        <rollback/>
+    </changeSet>
+    <changeSet id="2" author="as">
+        <delete tableName="posts">
+            <where>id=100</where>
+        </delete>
+        <rollback/>
     </changeSet>
 </databaseChangeLog>
