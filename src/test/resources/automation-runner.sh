@@ -5,12 +5,12 @@ set -ex
 db=$1
 
 if [ $db = "mysql-5.6" ]; then
-  mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql-DdbVersion=5.6 test
+  mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -DdbVersion=5.6 test
   exit 0
 fi
 
 if [ $db = "mysql-5.7" ]; then
-  mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql-DdbVersion=5.7 test
+  mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -DdbVersion=5.7 test
   exit 0
 fi
 
