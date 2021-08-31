@@ -41,20 +41,12 @@
       "CONTENT": "clob15: 'Rerum tempore quis ut nesciunt qui excepturi est.'"
     },
     {
-      "AUTHOR_ID": 6,
-      "DESCRIPTION": "value",
-      "TITLE": "value",
-      "INSERTED_DATE": "2006-10-09",
-      "ID": 100,
-      "CONTENT": "clob16: 'value'"
-    },
-    {
       "AUTHOR_ID": 1,
       "DESCRIPTION": "test1@example.com",
       "TITLE": "Title1",
       "INSERTED_DATE": "2000-01-01",
       "ID": 6,
-      "CONTENT": "clob17: 'Content1'"
+      "CONTENT": "clob16: 'Content1'"
     },
     {
       "AUTHOR_ID": 2,
@@ -62,7 +54,7 @@
       "TITLE": "Title2",
       "INSERTED_DATE": "2000-01-01",
       "ID": 7,
-      "CONTENT": "clob18: 'Content2'"
+      "CONTENT": "clob17: 'Content2'"
     },
     {
       "AUTHOR_ID": 3,
@@ -70,7 +62,7 @@
       "TITLE": "Title3",
       "INSERTED_DATE": "2000-01-01",
       "ID": 8,
-      "CONTENT": "clob19: 'Content3'"
+      "CONTENT": "clob18: 'Content3'"
     }
   ]
 }
