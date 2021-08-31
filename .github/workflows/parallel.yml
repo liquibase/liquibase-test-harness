@@ -18,7 +18,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        database: [ "mysql-5.6", "mysql-8", "postgres-12", "edb-13" ]
+        database: [
+            "mysql-5.6",
+            "mysql-5.7",
+            "mysql-8",
+            "postgres-9.5",
+            "postgres-9",
+            "postgres-10",
+            "postgres-11",
+            "postgres-12",
+            "postgres-13",
+            "mariadb-10.3",
+            "mariadb-10.5",
+            "mssql-2017",
+            "mssql-2019",
+            "H2Database-1.4",
+            "crdb-20.2",
+            "crdb-20.1",
+            "crdb-21.1",
+            "edb-9.5",
+            "edb-9.6",
+            "edb-10",
+            "edb-11",
+            "edb-12",
+            "edb-13"
+        ]
     steps:
       - uses: actions/checkout@v2
 
