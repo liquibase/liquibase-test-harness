@@ -4,7 +4,7 @@ context: testContext
 databasesUnderTest:
   - name: aws-postgresql
     version: 11
-    url: jdbc:postgresql://test-harness.cqj273gwp38i.us-east-1.rds.amazonaws.com:5432/lbcat
+    url: jdbc:postgresql://DBHOST/lbcat
     username: lbuser
     password: LbRootPass1
 
@@ -116,8 +116,8 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-# # Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected.
-# # We recommend commenting out the EDB sections in this config file to prevent false failures
+# Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected.
+# We recommend commenting out the EDB sections in this config file to prevent false failures
   - name: edb
     version: 9.5
     url: jdbc:postgresql://localhost:5501/lbcat
