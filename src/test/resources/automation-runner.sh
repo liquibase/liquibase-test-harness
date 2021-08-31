@@ -70,7 +70,7 @@ if [ $db = "mssql-2019" ]; then
 fi
 
 if [ $db = "H2Database-1.4" ]; then
-  mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=h2 -DdbVersion=1.4 test
+  mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=h2 test
   exit 0
 fi
 
