@@ -54,6 +54,8 @@ class TestUtils {
                     .replaceAll(/(?m)^INSERT INTO .*\w*.*databasechangelog.*/, "")
                     .replaceAll(/(?m)^UPDATE .*\w*.*DATABASECHANGELOG.*/, "") //remove update queries for databasechangelog* tables
                     .replaceAll(/(?m)^UPDATE .*\w*.*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^DELETE FROM .*\w*.*databasechangelog.*/, "") //remove delete queries for databasechangelog* tables
+                    .replaceAll(/(?m)^DELETE FROM .*\w*.*DATABASECHANGELOG.*/, "")
                     .replaceAll(/(?m)^SET SEARCH_PATH.*/, "") //specific replacement for Postgres
                     .replaceAll(/\b(?:GO|USE lbcat)\b/, "") //specific replacement for MSSQL
                     .replaceAll("(?m);\$", "") // remove semicolon
