@@ -109,3 +109,20 @@ jobs:
         with:
           name: aws-rds-postgres-test-results
           path: build/spock-reports
+
+  destroy:
+    runs-on: ubuntu-18.04
+    needs: [setup,test]
+    if: ${{ always() }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Destroy
+        working-directory: src/test/resources/terraform
+        run: terraform destroy -auto-approve
