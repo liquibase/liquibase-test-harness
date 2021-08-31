@@ -4,7 +4,7 @@ name: Default Test Execution
 on:
   # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers
   push:
-    branches: [ main ]
+    branches: [ feature/cicd-titan ]
   pull_request:
     branches: [ main ]
   schedule:
