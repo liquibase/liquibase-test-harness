@@ -10,5 +10,10 @@ if [ $db = "edb-9.5" ] || [ $db = "edb-9.6" ] || [ $db = "edb-10" ] || [ $db = "
   exit 0
 fi
 
+# in memory databases
+if [ $db = "derby" ] || [ $db = "sqlite" ]; then
+  exit 0
+fi
+
 # standard teardown
 docker-compose down --volumes

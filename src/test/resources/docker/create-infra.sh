@@ -17,5 +17,10 @@ if [ $db = "crdb-20.2" ] || [ $db =  "crdb-20.1" ] || [ $db = "crdb-21.1" ]; the
   exit 0
 fi
 
+# in memory databases
+if [ $db = "derby" ] || [ $db = "sqlite" ]; then
+  exit 0
+fi
+
 # standard startup
 docker-compose up -d $db
