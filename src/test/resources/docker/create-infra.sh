@@ -12,6 +12,10 @@ case $db in
     exit 0
     ;;
 
+  "diff")
+    docker-compose up -d postgres-9 postgres-12 mysql-5.7 mysql-8
+    ;;
+
   # crdb also has an init container
   "crdb-20.2"|"crdb-20.1"|"crdb-21.1")
     docker-compose up -d $db ${db}-init
