@@ -4,23 +4,27 @@ set -ex
 
 db=$1
 
-# edb setup requires login to private registry
-if [ $db = "edb-9.5" ] || [ $db = "edb-9.6" ] || [ $db = "edb-10" ] || [ $db = "edb-11" ] || [ $db = "edb-12" ] || [ $db = "edb-13" ]; then
-  docker login $RT_URL -u $RT_USER -p $RT_PWD
-  docker-compose -f docker-compose.edb.yml up -d $db
-  exit 0
-fi
+case $db in
+  # edb setup requires login to private registry
+  "edb-9.5"|"edb-9.6"|"edb-10"|"edb-11"|"edb-12"|"edb-13")
+    docker login $RT_URL -u $RT_USER -p $RT_PWD
+    docker-compose -f docker-compose.edb.yml up -d $db
+    exit 0
+    ;;
 
-# crdb also has an init container
-if [ $db = "crdb-20.2" ] || [ $db =  "crdb-20.1" ] || [ $db = "crdb-21.1" ]; then
-  docker-compose up -d $db ${db}-init
-  exit 0
-fi
+  # crdb also has an init container
+  "crdb-20.2"|"crdb-20.1"|"crdb-21.1")
+    docker-compose up -d $db ${db}-init
+    exit 0
+    ;;
 
-# in memory databases
-if [ $db = "derby" ] || [ $db = "sqlite" ]; then
-  exit 0
-fi
+  # in memory databases
+  "derby"|"sqlite")
+    exit 0
+    ;;
 
-# standard startup
-docker-compose up -d $db
+  # standard startup
+  *)
+    docker-compose up -d $db
+    ;;
+esac
