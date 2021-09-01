@@ -85,5 +85,7 @@ case $db in
   "sqlite" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=sqlite -Dmaven.test.failure.ignore=true test
     ;;
+  "diff")
+    test_command mvn -ntp -Dtest=DiffTest test
 esac
 
