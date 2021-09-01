@@ -68,10 +68,10 @@ jobs:
             "edb-10",
             "edb-11",
             "edb-12",
-            "edb-13"
+            "edb-13",
+            "derby",
+            "sqlite"
         ]
-        #SQLite
-        #Derby
 
     steps:
       - uses: actions/checkout@v2

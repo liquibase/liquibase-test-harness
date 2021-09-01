@@ -118,3 +118,13 @@ if [ $db = "edb-13" ]; then
   mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=13 test
   exit 0
 fi
+
+if [ $db = "derby" ]; then
+  mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=derby test
+  exit 0
+fi
+
+if [ $db = "sqlite" ]; then
+  mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=sqlite -Dmaven.test.failure.ignore=true test
+  exit 0
+fi
