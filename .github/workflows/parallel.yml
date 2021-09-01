@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Diff test infra
         working-directory: src/test/resources/docker
-        run: docker compose up -d postgres-9 postgres-12 mysql-5.7 mysql-8
+        run: docker-compose up -d postgres-9 postgres-12 mysql-5.7 mysql-8
 
       - name: Diff Test Run
         run: mvn -Dtest=DiffTest test
@@ -38,7 +38,7 @@ jobs:
       # GitHub Actions has its own cleanup and this might be redundant
       - name: Tear down Diff test infra
         working-directory: src/test/resources/docker
-        run: docker compose down --volumes
+        run: docker-compose down --volumes
 
   test:
     runs-on: ubuntu-18.04
