@@ -13,7 +13,7 @@ fi
 
 # crdb also has an init container
 if [ $db = "crdb-20.2" ] || [ $db =  "crdb-20.1" ] || [ $db = "crdb-21.1" ]; then
-docker-compose up -d $db ${db}-init
+  docker-compose up -d $db ${db}-init
   exit 0
 fi
 
