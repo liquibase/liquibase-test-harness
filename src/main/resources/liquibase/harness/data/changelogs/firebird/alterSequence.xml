@@ -4,13 +4,15 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet id="1" author="as">
+<!--    This changeType can't be verified by ChangeObjectTest as it require running query for verification -->
+<!--    ChangeDataTest is the one who can do such check -->
+    <changeSet id="1" author="oleh">
         <createSequence sequenceName="test_sequence"/>
         <rollback/>
     </changeSet>
-    <changeSet author="as" id="2" >
-        <alterSequence minValue="10"
-                        sequenceName="test_sequence"/>
+    <changeSet id="2" author="oleh">
+<!--        only minValue and only for alterSequence is supported by firebird as it works differently with sequence than other platforms-->
+        <alterSequence sequenceName="test_sequence" minValue="42"/>
         <rollback>
             <dropSequence sequenceName="test_sequence"/>
         </rollback>
