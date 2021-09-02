@@ -88,6 +88,7 @@ jobs:
         run: |
           TFJSON=$(terraform output -json)
           echo "$TFJSON"
+          echo "{{fromJson($TFJSON).dbHost.value}}"
 
       - name: Create Database Objects
         working-directory: src/test/resources/terraform
