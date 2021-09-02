@@ -91,7 +91,7 @@ jobs:
           TFJSON="${TFJSON//$'\n'/'%0A'}"
           TFJSON="${TFJSON//$'\r'/'%0D'}"
           echo "::set-output name=tfJson::$TFJSON"
-          echo "DBHOST={{fromJson(outputs.tfJson).dbHost.value}}"
+          echo "DBHOST=${{fromJson(outputs.tfJson).dbHost.value}}"
 
       - name: Create Database Objects
         working-directory: src/test/resources/terraform
