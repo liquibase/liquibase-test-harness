@@ -84,13 +84,8 @@ jobs:
 
       - name: Set Database Host URL
         working-directory: src/test/resources/terraform
-        id: get-json
         run: |
-          TFJSON=$(terraform output -json)
-          TFJSON="${TFJSON//'%'/'%25'}"
-          TFJSON="${TFJSON//$'\n'/'%0A'}"
-          TFJSON="${TFJSON//$'\r'/'%0D'}"
-          echo $TFJSON
+          echo DBHOST=$(terraform output -raw dbHost)
 
       - name: Create Database Objects
         working-directory: src/test/resources/terraform
