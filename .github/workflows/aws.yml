@@ -87,7 +87,6 @@ jobs:
         id: get-json
         run: |
           TFJSON=$(terraform output -json)
-          echo "$TFJSON"
           echo "{{fromJson($TFJSON).dbHost.value}}"
 
       - name: Create Database Objects
