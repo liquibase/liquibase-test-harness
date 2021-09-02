@@ -84,10 +84,10 @@ jobs:
 
       - name: Set Database Host URL
         working-directory: src/test/resources/terraform
+        id: get-json
         run: |
           TFJSON=$(terraform output -json)
-          echo "${{ fromJson($TFJSON.dbHost.value) }}"
-          #echo "DBHOST=$(terraform output -json | jq -r '.dbHost.value')" >> $GITHUB_ENV
+          echo "${{ fromJson($TFJSON).dbHost.value }}"
 
       - name: Create Database Objects
         working-directory: src/test/resources/terraform
