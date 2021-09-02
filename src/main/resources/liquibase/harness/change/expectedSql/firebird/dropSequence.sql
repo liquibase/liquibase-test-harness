@@ -1,0 +1,2 @@
+CREATE SEQUENCE test_sequence
+DROP SEQUENCE test_sequence
