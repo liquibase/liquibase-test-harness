@@ -85,7 +85,7 @@ jobs:
       - name: Set Database Host URL
         working-directory: src/test/resources/terraform
         run: |
-          echo DBHOST=$(terraform output -raw dbHost)
+          echo DBHOST=$(terraform output -raw dbHost) >> $GITHUB_ENV
 
       - name: Create Database Objects
         working-directory: src/test/resources/terraform
