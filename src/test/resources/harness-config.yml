@@ -2,6 +2,12 @@ inputFormat: xml
 context: testContext
 
 databasesUnderTest:
+  - name: aws-postgresql
+    version: 11
+    url: jdbc:postgresql://DBHOST/lbcat
+    username: lbuser
+    password: LbRootPass1
+
   - name: postgresql
     version: 13
     url: jdbc:postgresql://localhost:5437/lbcat
