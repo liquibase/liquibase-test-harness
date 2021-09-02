@@ -80,7 +80,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: src/test/resources/terraform
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
       - name: Set Database Host URL
