@@ -87,7 +87,11 @@ jobs:
         id: get-json
         run: |
           TFJSON=$(terraform output -json)
-          echo "{{fromJson($TFJSON).dbHost.value}}"
+          TFJSON="${TFJSON//'%'/'%25'}"
+          TFJSON="${TFJSON//$'\n'/'%0A'}"
+          TFJSON="${TFJSON//$'\r'/'%0D'}"
+          echo "::set-output name=tfJson::$TFJSON"
+          echo "{{fromJson(outputs.tfJson).dbHost.value}}"
 
       - name: Create Database Objects
         working-directory: src/test/resources/terraform
