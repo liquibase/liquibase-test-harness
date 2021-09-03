@@ -90,7 +90,7 @@ jobs:
           path: build/spock-reports
 
       - name: Derby Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=derby -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=derby test
 
       - name: Archive Derby test results
         uses: actions/upload-artifact@v2
