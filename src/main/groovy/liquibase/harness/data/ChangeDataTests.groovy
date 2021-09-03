@@ -10,6 +10,7 @@ import spock.lang.Unroll
 
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.SQLException
 
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
@@ -97,6 +98,14 @@ class ChangeDataTests extends Specification {
         and: "if expected sql is not provided save generated SQL as expected SQL"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             saveAsExpectedSql(generatedSql, testInput)
+        }
+        if (testInput.databaseName == "mysql" || testInput.databaseName == "mariadb") {
+            try {
+                mysqlConnection.close()
+            } catch (SQLException exception) {
+                println("Failed to close jdbc connection!")
+                println(exception.printStackTrace())
+            }
         }
 
         where: "test input in next data table"
