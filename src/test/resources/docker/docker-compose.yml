@@ -39,7 +39,7 @@ services:
       MYSQL_USER: lbuser
       MYSQL_PASSWORD: LiquibasePass1
     volumes:
-      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+    - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
   postgres-9.5:
     image: postgres:9
@@ -168,6 +168,7 @@ services:
     volumes:
       - "./H2-init.sql:/docker-entrypoint-initdb.d/test.sql"
 
+
   crdb-20.2:
     image: cockroachdb/cockroach:v20.2.0
     command: start-single-node --insecure
@@ -234,6 +235,7 @@ services:
     depends_on:
       - crdb-21.1
 
+# TODO remove this as titan should be handling this container
   hsqldb-2.3.4:
     image: datagrip/hsqldb
     ports:

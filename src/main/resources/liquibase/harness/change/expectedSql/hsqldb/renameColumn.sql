@@ -1,0 +1,1 @@
+ALTER TABLE authors ALTER COLUMN first_name RENAME TO first_name_renameColumn_test
