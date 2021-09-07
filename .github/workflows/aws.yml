@@ -89,17 +89,22 @@ jobs:
         working-directory: src/test/resources/terraform
         run: |
           echo 'DBHOST<<EOF' >> $GITHUB_ENV
-          $(terraform output -raw dbHost) >> $GITHUB_ENV
+          terraform output -raw dbHost >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-
-      - uses: liquibase/liquibase-github-action@v3
+          
+      - name: Run 'Liquibase update' in a Docker Container
+        uses: docker://liquibase/liquibase:latest
         with:
-          operation: "update"
-          classpath: "./changelogs"
-          changeLogFile: "postgres.sql"
-          username: "lbuser"
-          password: "LbRootPass1"
-          url: "jdbc:postgresql://${{env.DBHOST}}/lbcat"
+          args: --url="${{env.DBHOST}}" --changeLogFile=./changesets/postgres.sql --username=lbuser --password=LbRootPass1 --logLevel=debug update
+
+      # - uses: liquibase/liquibase-github-action@v3
+      #   with:
+      #     operation: "update"
+      #     classpath: "./changelogs"
+      #     changeLogFile: "postgres.sql"
+      #     username: "lbuser"
+      #     password: "LbRootPass1"
+      #     url: "jdbc:postgresql://${{env.DBHOST}}/lbcat"
 
       # - name: Create Database Objects
       #   working-directory: src/test/resources/terraform
