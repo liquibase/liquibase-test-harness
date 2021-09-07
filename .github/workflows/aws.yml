@@ -89,7 +89,7 @@ jobs:
         working-directory: src/test/resources/terraform
         run: |
           echo 'DBHOST<<EOF' >> $GITHUB_ENV
-          terraform output -raw dbHost >> $GITHUB_ENV
+          $(terraform output -raw dbHost) >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
