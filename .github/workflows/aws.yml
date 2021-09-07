@@ -96,8 +96,8 @@ jobs:
       - uses: liquibase/liquibase-github-action@v3
         with:
           operation: "update"
-          classpath: "src/test/resources/terraform/changelogs"
-          changeLogFile: "postgres.sql"
+          #classpath: "src/test/resources/terraform/changelogs"
+          changeLogFile: "./changelogs/postgres.sql"
           username: "lbuser"
           password: "LbRootPass1"
           url: "jdbc:postgresql://test-harness.cqj273gwp38i.us-east-1.rds.amazonaws.com:5432/lbcat"
