@@ -88,7 +88,7 @@ jobs:
       - name: Set Database Host URL
         working-directory: src/test/resources/terraform
         run: |
-          echo DBHOST=$(terraform output -raw dbHost) >> $GITHUB_ENV
+          echo "DBHOST=$(terraform output -raw dbHost)" >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
         with:
