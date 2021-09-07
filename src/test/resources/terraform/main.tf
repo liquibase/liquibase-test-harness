@@ -5,9 +5,6 @@ data "http" "ip_address" {
     Accept = "text/plain"
   }
 }
-output "my_public_ip" {
-  value = data.http.ip_address.body
-}
 
 # Create the security group granting access to the database with a source of the public IP of the runner
 module "db_postgres_sg" {
@@ -59,9 +56,4 @@ module "db" {
   #storage_encrypted   = true //TODO - determine if we want to encrypt these test databases
   subnet_ids             = module.vpc.public_subnets
   vpc_security_group_ids = [module.db_postgres_sg.security_group_id]
-}
-
-# Output the dbHost URL to use in the harness-config.yml
-output "dbHost" {
-  value = module.db.db_instance_endpoint
 }

@@ -11,6 +11,9 @@ on:
   #   - cron: '0 12 * * *' # Execute every day at noon
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: src/test/resources/terraform
 jobs:
   setup:
     runs-on: ubuntu-18.04
@@ -87,9 +90,18 @@ jobs:
         run: |
           echo DBHOST=$(terraform output -raw dbHost) >> $GITHUB_ENV
 
-      - name: Create Database Objects
-        working-directory: src/test/resources/terraform
-        run: PGPASSWORD=LbRootPass1 psql -v ON_ERROR_STOP=1 --username lbuser --dbname lbcat -h $DBHOST -f postgres-init.sql
+      - uses: liquibase/liquibase-github-action@v3
+        with:
+          operation: 'update'
+          classpath: 'example/changelogs'
+          changeLogFile: 'postgres.sql'
+          username: 'lbuser'
+          password: 'LbRootPass1'
+          url: "jdbc:postgresql://$DBHOST/lbcat"
+
+      # - name: Create Database Objects
+      #   working-directory: src/test/resources/terraform
+      #   run: PGPASSWORD=LbRootPass1 psql -v ON_ERROR_STOP=1 --username lbuser --dbname lbcat -h $DBHOST -f postgres-init.sql
 
   test:
     runs-on: ubuntu-18.04
