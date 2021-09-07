@@ -95,7 +95,7 @@ jobs:
       - uses: liquibase/liquibase-github-action@v3
         with:
           operation: 'update'
-          classpath: 'example/changelogs'
+          classpath: './changelogs'
           changeLogFile: 'postgres.sql'
           username: 'lbuser'
           password: 'LbRootPass1'
