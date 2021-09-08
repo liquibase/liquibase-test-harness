@@ -26,7 +26,7 @@ jobs:
 
       - name: Print Public IP
         run: |
-          echo 'public_ip=${{ steps.ip.outputs.ipv4 }}' >> github.auto.tfvars
+          echo 'public_ip="${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
           cat github.auto.tfvars
 
       - name: Setup Terraform
