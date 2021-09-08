@@ -1,4 +1,4 @@
-# Get Public IP of the host running the Terraform Plan to grant access to the database
+# Get Public IP of the host running the Terraform Plan
 data "http" "ip_address" {
   url = "https://api.ipify.org"
   request_headers = {
@@ -14,7 +14,7 @@ module "db_postgres_sg" {
   description = "Security group for postgres database with port 5432 open to the runner of this plan"
   vpc_id      = module.vpc.vpc_id
 
-  ingress_cidr_blocks = ["${data.http.ip_address.body}/32"]
+  ingress_cidr_blocks = ["${var.public_ip}/32"]
 }
 
 # VPC with only public subnets for the test databases
