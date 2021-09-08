@@ -4,9 +4,11 @@ output "dbEndpoint" {
 }
 output "dbUsername" {
   value = module.db.db_instance_username
+  sensitive = true
 }
 output "dbPassword" {
   value = module.db.db_instance_password
+  sensitive = true
 }
 output "dbPort" {
   value = module.db.db_instance_port
