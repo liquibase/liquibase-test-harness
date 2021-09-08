@@ -3,10 +3,10 @@ output "dbEndpoint" {
   value = module.db.db_instance_endpoint
 }
 output "dbUsername" {
-  value = module.db.db_instance_instance_username
+  value = module.db.db_instance_username
 }
 output "dbPassword" {
-  value = module.db.db_instance_master_password
+  value = module.db.db_instance_password
 }
 output "dbPort" {
   value = module.db.db_instance_port
