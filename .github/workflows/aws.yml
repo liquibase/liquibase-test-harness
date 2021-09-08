@@ -119,7 +119,7 @@ jobs:
       #   run: sed -i "s/DBHOST/${{ env.DBHOST }}/g" harness-config.yml
 
       - name: AWS RDS Postgres Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql test
 
       - name: Archive AWS RDS Postgres Test Results
         uses: actions/upload-artifact@v2
