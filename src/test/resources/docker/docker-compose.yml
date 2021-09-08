@@ -275,7 +275,7 @@ services:
 
 # TODO remove this as titan should be handling this container
   hsqldb-2.3.4:
-    image: datagrip/hsqldb
+    image: blacklabelops/hsqldb
     ports:
       - "9001:9001"
     environment:
@@ -283,10 +283,6 @@ services:
       HSQLDB_PASSWORD: LiquibasePass1
       HSQLDB_DATABASE_ALIAS: lbcat
       HSQLDB_DATABASE_HOST: localhost:9001
-    volumes:
-      - "./hsqldb-init.sql:/docker-entrypoint-initdb.d/hsqldb-init.sql"
-      - "./hsqldb.rc:/docker-entrypoint-initdb.d/hsqldb.rc"
-      - "./hsqldb-init.sh:/docker-entrypoint-initdb.d/hsqldb-init.sh"
-      -
+
 networks:
   roachnet:
