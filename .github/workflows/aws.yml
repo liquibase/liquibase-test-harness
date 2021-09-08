@@ -35,22 +35,18 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Format
-        # working-directory: src/test/resources/terraform
         id: fmt
         run: terraform fmt -check
 
       - name: Terraform Init
-        # working-directory: src/test/resources/terraform
         id: init
         run: terraform init
 
       - name: Terraform Validate
-        # working-directory: src/test/resources/terraform
         id: validate
         run: terraform validate -no-color
 
       - name: Terraform Plan
-        # working-directory: src/test/resources/terraform
         id: plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color
@@ -80,26 +76,18 @@ jobs:
               body: output
             })
       - name: Terraform Plan Status
-        # working-directory: src/test/resources/terraform
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
       - name: Terraform Apply
-        # working-directory: src/test/resources/terraform
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
       - name: Set Database Host URL
-        # working-directory: src/test/resources/terraform
         run: |
           echo 'DBHOST<<EOF' >> $GITHUB_ENV
           terraform output -raw dbHost >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-          
-      # - name: Run 'Liquibase update' in a Docker Container
-      #   uses: docker://liquibase/liquibase:latest
-      #   with:
-      #     args: --url="${{env.DBHOST}}" --changeLogFile=./changesets/postgres.sql --username=lbuser --password=LbRootPass1 --logLevel=debug update
 
       - uses: liquibase/liquibase-github-action@v3
         with:
@@ -109,10 +97,6 @@ jobs:
           username: "lbuser"
           password: "LbRootPass1"
           url: "jdbc:postgresql://test-harness.cqj273gwp38i.us-east-1.rds.amazonaws.com:5432/lbcat"
-
-      # - name: Create Database Objects
-      #   working-directory: src/test/resources/terraform
-      #   run: PGPASSWORD=LbRootPass1 psql -v ON_ERROR_STOP=1 --username lbuser --dbname lbcat -h $DBHOST -f postgres-init.sql
 
   test:
     runs-on: ubuntu-18.04
@@ -124,9 +108,17 @@ jobs:
         with:
           java-version: "1.8.0"
 
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
       - name: Update Harness Config
         working-directory: src/test/resources
-        run: sed -i "s/DBHOST/$DBHOST/g" harness-config.yml
+        run: sed -i "s/DBHOST/${{ env.DBHOST }}/g" harness-config.yml
 
       - name: AWS RDS Postgres Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql -Dmaven.test.failure.ignore=true test
