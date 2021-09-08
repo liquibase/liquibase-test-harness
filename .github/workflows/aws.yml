@@ -26,8 +26,8 @@ jobs:
 
       - name: Print Public IP
         run: |
-          echo ${{ steps.ip.outputs.ipv4 }}
-          echo ${{ steps.ip.outputs.ipv6 }}
+          echo 'public_ip=${{ steps.ip.outputs.ipv4 }}' >> github.auto.tfvars
+          cat github.auto.tfvars
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -53,7 +53,7 @@ jobs:
         working-directory: src/test/resources/terraform
         id: plan
         if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -var 'public_ip=${{ steps.ip.outputs.ipv4 }}'
+        run: terraform plan -no-color
         continue-on-error: true
 
       - uses: actions/github-script@0.9.0
@@ -87,7 +87,7 @@ jobs:
       - name: Terraform Apply
         working-directory: src/test/resources/terraform
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -var 'public_ip=${{ steps.ip.outputs.ipv4 }}'
+        run: terraform apply -auto-approve
 
       - name: Set Database Host URL
         working-directory: src/test/resources/terraform
