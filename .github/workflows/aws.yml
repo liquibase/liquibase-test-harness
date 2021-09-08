@@ -11,12 +11,12 @@ on:
   #   - cron: '0 12 * * *' # Execute every day at noon
   workflow_dispatch:
 
-# defaults:
-  # run:
-  #   working-directory: src/test/resources/terraform
 jobs:
   setup:
     runs-on: ubuntu-18.04
+    defaults:
+      run:
+        working-directory: src/test/resources/terraform
     steps:
       - uses: actions/checkout@v2
 
@@ -35,22 +35,22 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Format
-        working-directory: src/test/resources/terraform
+        # working-directory: src/test/resources/terraform
         id: fmt
         run: terraform fmt -check
 
       - name: Terraform Init
-        working-directory: src/test/resources/terraform
+        # working-directory: src/test/resources/terraform
         id: init
         run: terraform init
 
       - name: Terraform Validate
-        working-directory: src/test/resources/terraform
+        # working-directory: src/test/resources/terraform
         id: validate
         run: terraform validate -no-color
 
       - name: Terraform Plan
-        working-directory: src/test/resources/terraform
+        # working-directory: src/test/resources/terraform
         id: plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color
@@ -80,17 +80,17 @@ jobs:
               body: output
             })
       - name: Terraform Plan Status
-        working-directory: src/test/resources/terraform
+        # working-directory: src/test/resources/terraform
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
       - name: Terraform Apply
-        working-directory: src/test/resources/terraform
+        # working-directory: src/test/resources/terraform
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
       - name: Set Database Host URL
-        working-directory: src/test/resources/terraform
+        # working-directory: src/test/resources/terraform
         run: |
           echo 'DBHOST<<EOF' >> $GITHUB_ENV
           terraform output -raw dbHost >> $GITHUB_ENV
