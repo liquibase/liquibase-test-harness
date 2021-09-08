@@ -104,11 +104,11 @@ jobs:
       - uses: liquibase/liquibase-github-action@v3
         with:
           operation: "update"
-          classpath: "changelogs"
+          classpath: "src/test/resources/terraform/changelogs"
           changeLogFile: "postgres.sql"
           username: "lbuser"
           password: "LbRootPass1"
-          url: "jdbc:postgresql://test-harness.cqj273gwp38i.us-east-1.rds.amazonaws.com:5432/lbcat"
+          url: "jdbc:postgresql://${{ env.DBHOST }}/lbcat"
 
       # - name: Create Database Objects
       #   working-directory: src/test/resources/terraform
