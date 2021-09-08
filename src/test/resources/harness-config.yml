@@ -4,7 +4,7 @@ context: testContext
 databasesUnderTest:
   - name: aws-postgresql
     version: 11
-    url: jdbc:postgresql://DBHOST/lbcat
+    url: jdbc:postgresql://test-harness.cqj273gwp38i.us-east-1.rds.amazonaws.com/lbcat
     username: lbuser
     password: LbRootPass1
 

@@ -114,9 +114,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Update Harness Config
-        working-directory: src/test/resources
-        run: sed -i "s/DBHOST/${{ env.DBHOST }}/g" harness-config.yml
+      # - name: Update Harness Config
+      #   working-directory: src/test/resources
+      #   run: sed -i "s/DBHOST/${{ env.DBHOST }}/g" harness-config.yml
 
       - name: AWS RDS Postgres Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql -Dmaven.test.failure.ignore=true test

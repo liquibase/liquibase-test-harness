@@ -1,11 +1,3 @@
-# Get Public IP of the host running the Terraform Plan
-data "http" "ip_address" {
-  url = "https://api.ipify.org"
-  request_headers = {
-    Accept = "text/plain"
-  }
-}
-
 # Create the security group granting access to the database with a source of the public IP of the runner
 module "db_postgres_sg" {
   source = "terraform-aws-modules/security-group/aws//modules/postgresql"
