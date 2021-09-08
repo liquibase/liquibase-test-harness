@@ -83,9 +83,9 @@ jobs:
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
-      - name: Set Database Host URL
-        run: |
-          echo "DBHOST=$(terraform output -raw dbHost)" >> $GITHUB_ENV
+      # - name: Set Database Host URL
+      #   run: |
+      #     echo "DBHOST=$(terraform output -raw dbHost)" >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
         with:
