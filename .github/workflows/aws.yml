@@ -20,10 +20,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get Public IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Print Public IP
+        run: |
+          echo ${{ steps.ip.outputs.ipv4 }}
+          echo ${{ steps.ip.outputs.ipv6 }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          # terraform_version: 0.13.0:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Format
@@ -45,7 +53,7 @@ jobs:
         working-directory: src/test/resources/terraform
         id: plan
         if: github.event_name == 'pull_request'
-        run: terraform plan -no-color
+        run: terraform plan -no-color -var 'public_ip=${{ steps.ip.outputs.ipv4 }}'
         continue-on-error: true
 
       - uses: actions/github-script@0.9.0
@@ -79,7 +87,7 @@ jobs:
       - name: Terraform Apply
         working-directory: src/test/resources/terraform
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var 'public_ip=${{ steps.ip.outputs.ipv4 }}'
 
       - name: Set Database Host URL
         working-directory: src/test/resources/terraform

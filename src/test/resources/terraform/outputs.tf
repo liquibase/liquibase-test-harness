@@ -1,4 +1,4 @@
-# Get Public IP of the host running the Terraform Plan to grant access to the database
+# Get Public IP of the host running the Terraform Plan
 # output "my_public_ip" {
 #   value = data.http.ip_address.body
 # }
