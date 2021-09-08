@@ -1,4 +1,0 @@
-urlid lbcat
-url jdbc:hsqldb:hsql://localhost:9001/lbcat
-username lbuser
-password LiquibasePass1
