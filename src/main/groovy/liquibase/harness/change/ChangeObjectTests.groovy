@@ -47,9 +47,7 @@ class ChangeObjectTests extends Specification {
                 return //sql is right. Nothing more to test
             }
         }
-
-        def connection = testInput.database.getConnection()
-        assert connection instanceof JdbcConnection: "We cannot verify the following SQL works " +
+        assert testInput.database.getConnection() instanceof JdbcConnection: "We cannot verify the following SQL works " +
                 "because the database is offline:\n${generatedSql}"
 
         when: "apply changeSet to DB"
