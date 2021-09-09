@@ -7,10 +7,10 @@ import org.junit.Assert
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
-
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
+import java.util.logging.Logger
 
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
@@ -61,7 +61,7 @@ class ChangeDataTests extends Specification {
                 return //sql is right. Nothing more to test
             }
         }
-        //TODO: Replace connection workaround for mysql and mariadb
+        //TODO: Replace connection workaround for mysql and mariadb. Ticket DAT-8103
         Connection mysqlConnection
         if (testInput.databaseName == "mysql" || testInput.databaseName == "mariadb") {
             mysqlConnection = DriverManager.getConnection(testInput.url + "?" + "user=" + testInput.username + "&"
@@ -88,10 +88,9 @@ class ChangeDataTests extends Specification {
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
-        } catch (Throwable throwable) {
-            println "Error executing checking SQL."
-            throwable.printStackTrace()
-            Assert.fail throwable.message
+        } catch (Exception exception) {
+            Logger.getLogger(this.class.name).severe("Error executing checking SQL! " + exception.printStackTrace())
+            Assert.fail exception.message
         }
         executeCommandScope("rollbackCount", argsMap)
 
@@ -103,8 +102,7 @@ class ChangeDataTests extends Specification {
             try {
                 mysqlConnection.close()
             } catch (SQLException exception) {
-                println("Failed to close jdbc connection!")
-                println(exception.printStackTrace())
+                Logger.getLogger(this.class.name).severe("Failed to close jdbc connection! " + exception.printStackTrace())
             }
         }
 

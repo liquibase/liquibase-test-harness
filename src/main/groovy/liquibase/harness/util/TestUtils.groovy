@@ -34,7 +34,6 @@ class TestUtils {
                 }
             }
         }
-
         Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.name +
                 "/" + database.version + " in "+basePath)
         return returnPaths
@@ -66,7 +65,7 @@ class TestUtils {
         }
     }
 
-    static OutputStream executeCommandScope(String commandName, Map<String, Object> arguments) {
+    static OutputStream  executeCommandScope(String commandName, Map<String, Object> arguments) {
         def commandScope = new CommandScope(commandName)
         def outputStream = new ByteArrayOutputStream()
         for (Map.Entry<String, Object> entry : arguments) {
@@ -75,12 +74,12 @@ class TestUtils {
         commandScope.setOutput(outputStream)
         try {
             commandScope.execute()
-        } catch (Throwable throwable) {
-            println("Failed to execute command scope for command " + commandScope.getCommand().toString() + ". " + throwable)
-            println("If this is expected to be invalid query for this database/version, create an 'expectedSql.sql' " +
-                    "file that starts with 'INVALID TEST' and an explanation of why.")
-            throwable.printStackTrace()
-            Assert.fail throwable.message
+        } catch (Exception exception) {
+            Logger.getLogger(this.class.name).severe("Failed to execute command scope for command " +
+                    commandScope.getCommand().toString() + ". " + exception.printStackTrace())
+            Logger.getLogger(this.class.name).info("If this is expected to be invalid query for this database/version, " +
+                    "create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.")
+            Assert.fail exception.message
         }
         return outputStream
     }
@@ -92,8 +91,7 @@ class TestUtils {
             NodeList name = document.getElementsByTagName("changeSet")
             return name.getLength()
         } catch (ParserConfigurationException | SAXException | IOException exception) {
-            println("Failed to read from changelog file while getting changesets count!")
-            println(exception)
+            Logger.getLogger(this.class.name).severe("Failed to read from changelog file while getting changesets count! " + exception)
         }
         return 0
     }
