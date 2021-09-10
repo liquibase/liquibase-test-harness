@@ -27,12 +27,14 @@ jobs:
       - name: Print Public IP to tfvars file
         run: |
           echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
+          echo 'postgresVersions = ["11"]' >> github.auto.tfvars
           cat github.auto.tfvars
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          terraform_wrapper: false
 
       - name: Terraform Format
         id: fmt
@@ -75,6 +77,7 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
+
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
@@ -83,9 +86,9 @@ jobs:
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
-      # - name: Set Database Host URL
-      #   run: |
-      #     echo "DBHOST=$(terraform output -raw dbHost)" >> $GITHUB_ENV
+      - name: Set Database Host URL
+        run: |
+          echo "DBENDPOINT=$(terraform output -raw dbEndpoint)" >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
         with:
@@ -94,7 +97,7 @@ jobs:
           changeLogFile: "postgres.sql"
           username: "lbuser"
           password: "LbRootPass1"
-          url: "jdbc:postgresql://test-harness.cqj273gwp38i.us-east-1.rds.amazonaws.com:5432/lbcat"
+          url: "jdbc:postgresql://${{ env.dbEndpoint }}/lbcat"
 
   test:
     runs-on: ubuntu-18.04
@@ -114,9 +117,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # - name: Update Harness Config
-      #   working-directory: src/test/resources
-      #   run: sed -i "s/DBHOST/${{ env.DBHOST }}/g" harness-config.yml
+      - name: Update Harness Config
+        working-directory: src/test/resources
+        run: sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
 
       - name: AWS RDS Postgres Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql test
