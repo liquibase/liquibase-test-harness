@@ -109,7 +109,6 @@ jobs:
           
       - name: Terraform Init
         working-directory: src/test/resources/terraform
-        id: init
         run: terraform init
 
       - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
@@ -151,6 +150,9 @@ jobs:
   # destroy:
   #   runs-on: ubuntu-18.04
   #   needs: [setup,test]
+      # defaults:
+      # run:
+      #   working-directory: src/test/resources/terraform
   #   if: ${{ always() }}
   #   steps:
   #     - uses: actions/checkout@v2
@@ -160,9 +162,6 @@ jobs:
   #         # terraform_version: 0.13.0:
   #         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
   #     - name: Terraform Init
-  #       working-directory: src/test/resources/terraform
-  #       id: init
   #       run: terraform init
   #     - name: Terraform Destroy
-  #       working-directory: src/test/resources/terraform
   #       run: terraform destroy -auto-approve
