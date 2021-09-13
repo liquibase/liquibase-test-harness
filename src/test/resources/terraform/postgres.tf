@@ -26,7 +26,7 @@ module "db_postgres_sg" {
 module "postgres" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 3.0"
-  count   = length(var.postgresVersion)
+  #count   = length(var.postgresVersion)
 
   identifier = "postgres${var.postgresVersion}"
 
