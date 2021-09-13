@@ -96,6 +96,12 @@ jobs:
         with:
           java-version: "1.8.0"
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          terraform_wrapper: false
+          
       - name: Terraform Init
         working-directory: src/test/resources/terraform
         id: init
