@@ -53,3 +53,10 @@ output "dbEndpoint" {
     endpoint.db_instance_id => endpoint.db_instance_endpoint
   }
 }
+
+output "dbVersion" {
+  value = {
+    for endpoint in module.postgres :
+    endpoint.db_instance_id => endpoint.db_instance_endpoint
+  }
+}
