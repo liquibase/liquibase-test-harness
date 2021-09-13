@@ -86,7 +86,22 @@ jobs:
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
-      - name: Set Database Host URL
+  test:
+    runs-on: ubuntu-18.04
+    needs: [setup]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "1.8.0"
+
+      - name: Terraform Init
+        working-directory: src/test/resources/terraform
+        id: init
+        run: terraform init
+
+      - name: Get Database Host URL
         run: |
           echo "DBENDPOINT=$(terraform output -raw dbEndpoint)" >> $GITHUB_ENV
 
@@ -99,15 +114,9 @@ jobs:
           password: "LbRootPass1"
           url: "jdbc:postgresql://${{ env.DBENDPOINT }}/lbcat"
 
-  test:
-    runs-on: ubuntu-18.04
-    needs: [setup]
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-java@v1
-        with:
-          java-version: "1.8.0"
+      - name: Update Harness Config
+        working-directory: src/test/resources
+        run: sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
 
       - name: Cache local Maven repository
         uses: actions/cache@v2
@@ -116,10 +125,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-
-      - name: Update Harness Config
-        working-directory: src/test/resources
-        run: sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
 
       - name: AWS RDS Postgres Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql test
