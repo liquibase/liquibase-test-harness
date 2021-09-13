@@ -27,7 +27,7 @@ jobs:
       - name: Print Public IP to tfvars file
         run: |
           echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
-          echo 'postgresVersion = "11"' >> github.auto.tfvars
+          echo 'postgresVersion = ["10", "11"]' >> github.auto.tfvars
           cat github.auto.tfvars
 
       - name: Setup Terraform
@@ -89,12 +89,16 @@ jobs:
   test:
     runs-on: ubuntu-18.04
     needs: [setup]
+    strategy:
+      fail-fast: false
+      matrix:
+        database: [
+            "postgres-11",
+            "postgres-10"
+        ]
+
     steps:
       - uses: actions/checkout@v2
-
-      # - uses: actions/setup-java@v1
-      #   with:
-      #     java-version: "1.8.0"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -107,10 +111,10 @@ jobs:
         id: init
         run: terraform init
 
-      - name: Get Database Host URL
+      - name: Get ${{ matrix.database }} Database Host URL
         working-directory: src/test/resources/terraform
         run: |
-          echo "DBENDPOINT=$(terraform output -raw dbEndpoint)" >> $GITHUB_ENV
+          echo "DBENDPOINT=$(terraform output -json dbEndpoint | jq -r '."${{ matrix.database }}"')" >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
         with:
@@ -121,9 +125,11 @@ jobs:
           password: "LbRootPass1"
           url: "jdbc:postgresql://${{ env.DBENDPOINT }}/lbcat"
 
-      - name: Update Harness Config
+      - name: Update ${{ matrix.database }} Harness Config
         working-directory: src/test/resources
-        run: sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
+        run: |
+          sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
+          sed -i "s/DBVERSION/${{ env.DBVERSION }}/g" harness-config.yml
 
       - name: Cache local Maven repository
         uses: actions/cache@v2
@@ -133,13 +139,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: AWS RDS Postgres Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql test
+      - name: AWS RDS ${{ matrix.database }} Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql -DdbVersion=${{ menv.DBVERSION }} test
 
-      - name: Archive AWS RDS Postgres Test Results
+      - name: Archive AWS RDS ${{ matrix.database }} Test Results
         uses: actions/upload-artifact@v2
         with:
-          name: aws-rds-postgres-test-results
+          name: aws-rds-${{ matrix.database }}-test-results
           path: build/spock-reports
   # destroy:
   #   runs-on: ubuntu-18.04
