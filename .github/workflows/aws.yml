@@ -27,7 +27,7 @@ jobs:
       - name: Print Public IP to tfvars file
         run: |
           echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
-          echo 'postgresVersions = ["11"]' >> github.auto.tfvars
+          echo 'postgresVersion = "11"' >> github.auto.tfvars
           cat github.auto.tfvars
 
       - name: Setup Terraform
