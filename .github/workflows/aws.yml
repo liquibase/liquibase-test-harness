@@ -93,10 +93,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - database: postgres-11
+          - database: postgres
+            version: 10
+          - database: postgres
             version: 11
-          - database: postgres-12
-            version: 12
 
     steps:
       - uses: actions/checkout@v2
@@ -112,10 +112,10 @@ jobs:
         id: init
         run: terraform init
 
-      - name: Get ${{ matrix.database }} Database Host URL
+      - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
         working-directory: src/test/resources/terraform
         run: |
-          echo "DBENDPOINT=$(terraform output -json dbEndpoint | jq -r '."${{ matrix.database }}"')" >> $GITHUB_ENV
+          echo "DBENDPOINT=$(terraform output -json dbEndpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
         with:
@@ -126,7 +126,7 @@ jobs:
           password: "LbRootPass1"
           url: "jdbc:postgresql://${{ env.DBENDPOINT }}/lbcat"
 
-      - name: Update ${{ matrix.database }} Harness Config
+      - name: Update ${{ matrix.database }}-${{ matrix.version }} Harness Config
         working-directory: src/test/resources
         run: |
           sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
@@ -140,7 +140,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: AWS RDS ${{ matrix.database }} Test Run
+      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
 
       - name: Archive AWS RDS ${{ matrix.database }} Test Results
