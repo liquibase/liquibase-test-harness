@@ -6,7 +6,7 @@ variable "public_ip" {
 
 # Versions of Postgres to create
 variable "postgresVersion" {
-  type        = string
+  type        = list(string)
   description = "Postgres Database Engine Version (example: 11, 11.10, 10)"
 }
 
@@ -26,15 +26,15 @@ module "db_postgres_sg" {
 module "postgres" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 3.0"
-  #count   = length(var.postgresVersion)
+  count   = length(var.postgresVersion)
 
-  identifier = "postgres${var.postgresVersion}"
+  identifier = "postgres-${var.postgresVersion[count.index]}"
 
   engine               = "postgres"
   name                 = "lbcat"
-  family               = "postgres${var.postgresVersion}"
-  major_engine_version = var.postgresVersion
-  engine_version       = var.postgresVersion
+  family               = "postgres${var.postgresVersion[count.index]}"
+  major_engine_version = var.postgresVersion[count.index]
+  engine_version       = var.postgresVersion[count.index]
   instance_class       = "db.t3.micro"
   allocated_storage    = 5
   publicly_accessible  = true
@@ -48,5 +48,8 @@ module "postgres" {
 
 # Output endpoint (host:port)
 output "dbEndpoint" {
-  value = module.postgres.db_instance_endpoint
+  value = {
+    for endpoint in module.postgres :
+    endpoint.db_instance_id => endpoint.db_instance_endpoint
+  }
 }

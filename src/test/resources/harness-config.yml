@@ -3,7 +3,7 @@ context: testContext
 
 databasesUnderTest:
   - name: aws-postgresql
-    version: 11
+    version: DBVERSION
     url: jdbc:postgresql://DBENDPOINT/lbcat
     username: lbuser
     password: LbRootPass1
