@@ -143,10 +143,10 @@ jobs:
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
 
-      - name: Archive AWS RDS ${{ matrix.database }} Test Results
+      - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v2
         with:
-          name: aws-rds-${{ matrix.database }}-test-results
+          name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
           path: build/spock-reports
   # destroy:
   #   runs-on: ubuntu-18.04
