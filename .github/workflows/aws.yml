@@ -20,16 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Get Public IP
-        id: ip
-        uses: haythem/public-ip@v1.2
-
-      - name: Print Public IP to tfvars file
-        run: |
-          echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
-          echo 'postgresVersion = ["10", "11"]' >> github.auto.tfvars
-          cat github.auto.tfvars
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -111,6 +101,18 @@ jobs:
         working-directory: src/test/resources/terraform
         run: terraform init
 
+      - name: Get Public IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Print Public IP to tfvars file
+        run: |
+          echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
+
+      - name: Terraform Apply Security Group Change
+        working-directory: src/test/resources/terraform
+        run: terraform apply --auto-approve
+
       - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
         working-directory: src/test/resources/terraform
         run: |
@@ -147,21 +149,22 @@ jobs:
         with:
           name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
           path: build/spock-reports
-  # destroy:
-  #   runs-on: ubuntu-18.04
-  #   needs: [setup,test]
-      # defaults:
-      # run:
-      #   working-directory: src/test/resources/terraform
-  #   if: ${{ always() }}
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v1
-  #       with:
-  #         # terraform_version: 0.13.0:
-  #         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-  #     - name: Terraform Init
-  #       run: terraform init
-  #     - name: Terraform Destroy
-  #       run: terraform destroy -auto-approve
+
+  destroy:
+    runs-on: ubuntu-18.04
+    needs: [setup,test]
+      defaults:
+      run:
+        working-directory: src/test/resources/terraform
+    if: ${{ always() }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
