@@ -87,6 +87,10 @@ jobs:
             version: 10
           - database: postgres
             version: 11
+          - database: postgres
+            version: 12
+          - database: postgres
+            version: 13          
 
     steps:
       - uses: actions/checkout@v2

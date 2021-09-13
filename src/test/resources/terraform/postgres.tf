@@ -9,7 +9,7 @@ variable "public_ip" {
 variable "postgresVersion" {
   type        = list(string)
   description = "Postgres Database Engine Version (example: 11, 11.10, 10)"
-  default     = ["9.6", "10", "11", "12", "13"]
+  default     = ["10", "11", "12", "13"]
 }
 
 # Create the security group granting access to the database with a source of the public IP of the runner
