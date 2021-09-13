@@ -97,7 +97,7 @@ jobs:
           changeLogFile: "postgres.sql"
           username: "lbuser"
           password: "LbRootPass1"
-          url: "jdbc:postgresql://${{ env.dbEndpoint }}/lbcat"
+          url: "jdbc:postgresql://${{ env.DBENDPOINT }}/lbcat"
 
   test:
     runs-on: ubuntu-18.04
