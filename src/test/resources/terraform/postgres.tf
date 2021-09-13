@@ -28,13 +28,13 @@ module "postgres" {
   version = "~> 3.0"
   count   = length(var.postgresVersion)
 
-  identifier = "postgres${var.postgresVersion[count.index]}"
+  identifier = "postgres${var.postgresVersion}"
 
   engine               = "postgres"
   name                 = "lbcat"
-  family               = "postgres${var.postgresVersion[count.index]}"
-  major_engine_version = var.postgresVersion[count.index]
-  engine_version       = var.postgresVersion[count.index]
+  family               = "postgres${var.postgresVersion}"
+  major_engine_version = var.postgresVersion
+  engine_version       = var.postgresVersion
   instance_class       = "db.t3.micro"
   allocated_storage    = 5
   publicly_accessible  = true
@@ -48,5 +48,5 @@ module "postgres" {
 
 # Output endpoint (host:port)
 output "dbEndpoint" {
-  value = module.postgres.*.db_instance_endpoint
+  value = module.postgres.db_instance_endpoint
 }
