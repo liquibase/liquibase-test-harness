@@ -5,9 +5,9 @@ variable "public_ip" {
 }
 
 # Versions of Postgres to create
-variable "postgresVersions" {
-  type        = list(string)
-  description = "Postgres Database Engine Versions (example: 11, 11.10, 10)"
+variable "postgresVersion" {
+  type        = string
+  description = "Postgres Database Engine Version (example: 11, 11.10, 10)"
 }
 
 # Create the security group granting access to the database with a source of the public IP of the runner
@@ -26,15 +26,15 @@ module "db_postgres_sg" {
 module "postgres" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 3.0"
-  count   = length(var.postgresVersions)
+  count   = length(var.postgresVersion)
 
-  identifier = "postgres${var.postgresVersions[count.index]}"
+  identifier = "postgres${var.postgresVersion[count.index]}"
 
   engine               = "postgres"
   name                 = "lbcat"
-  family               = "postgres${var.postgresVersions[count.index]}"
-  major_engine_version = var.postgresVersions[count.index]
-  engine_version       = var.postgresVersions[count.index]
+  family               = "postgres${var.postgresVersion[count.index]}"
+  major_engine_version = var.postgresVersion[count.index]
+  engine_version       = var.postgresVersion[count.index]
   instance_class       = "db.t3.micro"
   allocated_storage    = 5
   publicly_accessible  = true
