@@ -24,7 +24,6 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-          terraform_wrapper: false
 
       - name: Terraform Format
         id: fmt
@@ -55,12 +54,17 @@ jobs:
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
             <details><summary>Show Plan</summary>
+
             \`\`\`\n
             ${process.env.PLAN}
             \`\`\`
+
             </details>
+
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
