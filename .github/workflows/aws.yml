@@ -1,14 +1,14 @@
-# Basic workflow with Actions
+# Terraform Action to test Cloud Databases with test-harness
 
 name: AWS Cloud Database Test Execution
 on:
   # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers
-  # push:
-  #   branches: [ main ]
-  # pull_request:
-  #   branches: [ main ]
-  # schedule:
-  #   - cron: '0 12 * * *' # Execute every day at noon
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 12 * * *' # Execute every day at noon
   workflow_dispatch:
 
 jobs:
@@ -73,7 +73,7 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
-        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
   test:
@@ -157,20 +157,20 @@ jobs:
           name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
           path: build/spock-reports
 
-  # destroy:
-  #   runs-on: ubuntu-18.04
-  #   needs: [setup,test]
-  #   defaults:
-  #     run:
-  #       working-directory: src/test/resources/terraform
-  #   if: ${{ always() }}
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v1
-  #       with:
-  #         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-  #     - name: Terraform Init
-  #       run: terraform init
-  #     - name: Terraform Destroy
-  #       run: terraform destroy -auto-approve
+  destroy:
+    runs-on: ubuntu-18.04
+    needs: [setup,test]
+    defaults:
+      run:
+        working-directory: src/test/resources/terraform
+    if: ${{ always() }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
