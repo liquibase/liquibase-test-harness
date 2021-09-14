@@ -112,6 +112,7 @@ jobs:
         uses: haythem/public-ip@v1.2
 
       - name: Print Public IP to tfvars file
+        working-directory: src/test/resources/terraform
         run: |
           echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
 
