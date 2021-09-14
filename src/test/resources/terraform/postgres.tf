@@ -2,7 +2,7 @@
 variable "public_ip" {
   type        = string
   description = "Public IP Address to be granted access to database"
-  default     = "0.0.0.0/0"
+  default     = "0.0.0.0"
 }
 
 # Versions of Postgres to create.  Use major-minor instead of major.minor
