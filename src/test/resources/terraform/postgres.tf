@@ -1,4 +1,4 @@
-# Public IP to be granted access to the DB //TODO
+# Public IP to be granted access to the DB
 variable "public_ip" {
   type        = string
   description = "Public IP Address to be granted access to database"
@@ -32,18 +32,17 @@ module "postgres" {
 
   identifier = replace("postgres-${var.postgresVersion[count.index]}", ".", "-") // dots not permitted in identifiers, so replace with hyphen
 
-  engine               = "postgres"
-  name                 = "lbcat"
-  family               = "postgres${var.postgresVersion[count.index]}"
-  major_engine_version = var.postgresVersion[count.index]
-  engine_version       = var.postgresVersion[count.index]
-  instance_class       = "db.t3.micro"
-  allocated_storage    = 5
-  publicly_accessible  = true
-  skip_final_snapshot  = true
-  username             = "lbuser"
-  password             = "LbRootPass1"
-  #storage_encrypted   = true //TODO - determine if we want to encrypt these test databases
+  engine                    = "postgres"
+  name                      = "lbcat"
+  family                    = "postgres${var.postgresVersion[count.index]}"
+  major_engine_version      = var.postgresVersion[count.index]
+  engine_version            = var.postgresVersion[count.index]
+  instance_class            = "db.t3.micro"
+  allocated_storage         = 5
+  publicly_accessible       = true
+  skip_final_snapshot       = true
+  username                  = "lbuser"
+  password                  = "LbRootPass1"
   subnet_ids                = module.vpc.public_subnets
   vpc_security_group_ids    = [module.db_postgres_sg.security_group_id]
   create_db_parameter_group = false
