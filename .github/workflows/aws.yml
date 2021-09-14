@@ -98,7 +98,7 @@ jobs:
           # - database: aws-postgres
           #   version: 13         
           - database: aws-oracle
-            version: 13    
+            version: 12-1, 12-2, 19    
 
     steps:
       - uses: actions/checkout@v2
@@ -138,7 +138,7 @@ jobs:
           changeLogFile: "${{ matrix.database }}.sql"
           username: "lbuser"
           password: "LbRootPass1"
-          url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}/lbcat"
+          url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}:lbcat"
 
       - name: Update ${{ matrix.database }}-${{ matrix.version }} Harness Config
         working-directory: src/test/resources
@@ -163,20 +163,20 @@ jobs:
           name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
           path: build/spock-reports
 
-  destroy:
-    runs-on: ubuntu-18.04
-    needs: [setup,test]
-    defaults:
-      run:
-        working-directory: src/test/resources/terraform
-    if: ${{ always() }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-      - name: Terraform Init
-        run: terraform init
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve
+  # destroy:
+  #   runs-on: ubuntu-18.04
+  #   needs: [setup,test]
+  #   defaults:
+  #     run:
+  #       working-directory: src/test/resources/terraform
+  #   if: ${{ always() }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v1
+  #       with:
+  #         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+  #     - name: Terraform Init
+  #       run: terraform init
+  #     - name: Terraform Destroy
+  #       run: terraform destroy -auto-approve
