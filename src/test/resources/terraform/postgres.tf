@@ -5,11 +5,11 @@ variable "public_ip" {
   default     = "0.0.0.0/0"
 }
 
-# Versions of Postgres to create
+# Versions of Postgres to create.  Use major-minor instead of major.minor
 variable "postgresVersion" {
   type        = list(string)
-  description = "Postgres Database Engine Version (example: 11, 11.10, 10)"
-  default     = ["10", "11", "12", "13"]
+  description = "Postgres Database Engine Version (example: 9-6, 10, 11)"
+  default     = ["9-6", "10", "11", "12", "13"]
 }
 
 # Create the security group granting access to the database with a source of the public IP of the runner
@@ -20,8 +20,8 @@ module "db_postgres_sg" {
   description = "Security group for postgres database with port 5432 open to the runner of this plan"
   vpc_id      = module.vpc.vpc_id
 
-  #ingress_cidr_blocks = ["${var.public_ip}/32"] //TODO: Allow only the runner to access the DB
-  ingress_cidr_blocks = ["0.0.0.0/0"]
+  ingress_cidr_blocks = ["${var.public_ip}/32"]
+  #ingress_cidr_blocks = ["0.0.0.0/0"]
 }
 
 # Create the Postgres RDS Databases 
@@ -30,7 +30,7 @@ module "postgres" {
   version = "~> 3.0"
   count   = length(var.postgresVersion)
 
-  identifier = "postgres-${var.postgresVersion[count.index]}"
+  identifier = replace("postgres-${var.postgresVersion[count.index]}", ".", "-") // dots not permitted in identifiers, so replace with hyphen
 
   engine               = "postgres"
   name                 = "lbcat"
@@ -44,8 +44,10 @@ module "postgres" {
   username             = "lbuser"
   password             = "LbRootPass1"
   #storage_encrypted   = true //TODO - determine if we want to encrypt these test databases
-  subnet_ids             = module.vpc.public_subnets
-  vpc_security_group_ids = [module.db_postgres_sg.security_group_id]
+  subnet_ids                = module.vpc.public_subnets
+  vpc_security_group_ids    = [module.db_postgres_sg.security_group_id]
+  create_db_parameter_group = false
+
 }
 
 # Output endpoint (host:port)
