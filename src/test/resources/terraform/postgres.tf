@@ -5,11 +5,11 @@ variable "public_ip" {
   default     = "0.0.0.0"
 }
 
-# Versions of Postgres to create.  Use major-minor instead of major.minor
+# Versions of Postgres to create. 
 variable "postgresVersion" {
   type        = list(string)
-  description = "Postgres Database Engine Version (example: 9-6, 10, 11)"
-  default     = ["9-6", "10", "11", "12", "13"]
+  description = "Postgres Database Engine Version (example: 9.6, 10, 11)"
+  default     = ["9.6", "10", "11", "12", "13"]
 }
 
 # Create the security group granting access to the database with a source of the public IP of the runner

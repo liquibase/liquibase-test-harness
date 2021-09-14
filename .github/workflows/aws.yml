@@ -84,7 +84,7 @@ jobs:
       matrix:
         include:
           - database: postgres
-            version: 9.6
+            version: 9-6
           - database: postgres
             version: 10
           - database: postgres
