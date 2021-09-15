@@ -1,1 +1,1 @@
-CREATE TABLE lms_create_table_test (lms_test_id INT NULL, lms_test_timestamp timestamp NULL)
+CREATE TABLE lbcat.lms_create_table_test (lms_test_id INT NULL, lms_test_timestamp timestamp NULL)

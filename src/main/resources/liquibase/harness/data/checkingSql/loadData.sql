@@ -1,1 +1,1 @@
-SELECT * FROM authors
+SELECT * FROM posts

@@ -1,2 +1,2 @@
 INVALID TEST
-Postgres9.5 doesn't support stored procedures processing
+-- Postgres9.5 doesn't support stored procedures processing

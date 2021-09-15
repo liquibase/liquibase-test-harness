@@ -1,12 +1,8 @@
 package liquibase.harness.change
 
-import liquibase.CatalogAndSchema
-import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.FileUtils
-import liquibase.harness.util.SnapshotHelpers
-import org.junit.Assert
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -18,25 +14,29 @@ class ChangeObjectTests extends Specification {
 
     @Unroll
     def "apply #testInput.changeObject against #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
-        given: "create Liquibase connection, read expected sql and snapshot files"
-        Liquibase liquibase = createLiquibase(testInput.pathToChangeLogFile, testInput.database)
-        String expectedSql = cleanSql(FileUtils.getExpectedSqlFileContent(
-                    testInput.changeObject, testInput.databaseName, testInput.version,
-                "liquibase/harness/change/expectedSql"))
-        String expectedSnapshot = FileUtils.getExpectedJSONFileContent(
-                testInput.changeObject, testInput.databaseName, testInput.version,
-                "liquibase/harness/change/expectedSnapshot")
-        List<CatalogAndSchema> catalogAndSchemaList = getCatalogAndSchema(testInput.database, testInput.dbSchema)
+        given: "read expected sql and snapshot files, create arguments map for executing command scope"
+        String expectedSql = parseQuery(FileUtils.getExpectedSqlFileContent(testInput.changeObject, testInput.databaseName,
+                testInput.version, "liquibase/harness/change/expectedSql"))
+        String expectedSnapshot = FileUtils.getExpectedJSONFileContent(testInput.changeObject, testInput.databaseName,
+                testInput.version, "liquibase/harness/change/expectedSnapshot")
+        Map<String, Object> argsMap = new HashMap<>()
+        argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
+        argsMap.put("url", testInput.url)
+        argsMap.put("username", testInput.username)
+        argsMap.put("password", testInput.password)
+        argsMap.put("snapshotFormat", "JSON")
+        argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
         and: "skip testcase if it's invalid for this combination of db type and/or version"
         Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
 
         and: "fail test if snapshot is not provided"
         assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against " +
-                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}.${testInput.database.databaseMinorVersion}"
+                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
+                "${testInput.database.databaseMinorVersion}"
 
-        when: "get sql that is generated for changeset"
-        def generatedSql = cleanSql(toSqlFromLiquibaseChangeSets(liquibase))
+        when: "get sql that is generated for change set"
+        def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
@@ -47,26 +47,16 @@ class ChangeObjectTests extends Specification {
                 return //sql is right. Nothing more to test
             }
         }
-
         assert testInput.database.getConnection() instanceof JdbcConnection: "We cannot verify the following SQL works " +
                 "because the database is offline:\n${generatedSql}"
 
         when: "apply changeSet to DB"
-        try {
-            liquibase.update(testInput.context)
-        } catch (Throwable e) {
-            println "Error executing sql. If this is expected to be invalid SQL for this database/version, " +
-                    "create an 'expectedSql/${testInput.database.shortName}/${testInput.changeObject}.sql' file that starts with " +
-                    "'INVALID TEST' and an explanation of why."
-            e.printStackTrace()
-            Assert.fail e.message
-        }
+        executeCommandScope("update", argsMap)
 
         then: "get DB snapshot, rollback changes, check if actual snapshot matches expected snapshot"
-        String jsonSnapshot = SnapshotHelpers.getJsonSnapshot(testInput.database, catalogAndSchemaList)
-        liquibase.rollback(liquibase.databaseChangeLog.changeSets.size(), testInput.context)
-
-        snapshotMatchesSpecifiedStructure(expectedSnapshot, jsonSnapshot)
+        def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
+        snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
+        executeCommandScope("rollbackCount", argsMap)
 
         and: "if expected sql is not provided save generated sql as expected sql"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {

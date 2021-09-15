@@ -1,2 +1,0 @@
-ALTER TABLE posts ALTER title SET DEFAULT 'title_test'
-ALTER TABLE posts ALTER title DROP DEFAULT
