@@ -26,6 +26,7 @@ class ChangeObjectTests extends Specification {
         argsMap.put("password", testInput.password)
         argsMap.put("snapshotFormat", "JSON")
         argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
+        argsMap.put("liquibaseProLicenseKey", System.getenv("LIQUIBASE_PRO_LICENSE_KEY"))
 
         and: "skip testcase if it's invalid for this combination of db type and/or version"
         Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
@@ -34,6 +35,10 @@ class ChangeObjectTests extends Specification {
         assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against " +
                 "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
                 "${testInput.database.databaseMinorVersion}"
+
+        and: "check database under test is online"
+        assert testInput.database.getConnection() instanceof JdbcConnection: "Database ${testInput.databaseName}" +
+                "${testInput.version} is offline!"
 
         when: "get sql that is generated for change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
@@ -47,8 +52,6 @@ class ChangeObjectTests extends Specification {
                 return //sql is right. Nothing more to test
             }
         }
-        assert testInput.database.getConnection() instanceof JdbcConnection: "We cannot verify the following SQL works " +
-                "because the database is offline:\n${generatedSql}"
 
         when: "apply changeSet to DB"
         executeCommandScope("update", argsMap)

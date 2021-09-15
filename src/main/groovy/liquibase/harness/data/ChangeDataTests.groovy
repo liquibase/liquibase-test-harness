@@ -21,7 +21,6 @@ class ChangeDataTests extends Specification {
 
     @Unroll
     def "apply #testInput.changeData against #testInput.databaseName, #testInput.version; verify generated query, checking query and obtained result set"() {
-
         given: "read expected sql, checking sql and expected result set, create arguments map for executing command scope"
         String expectedSql = parseQuery(getExpectedSqlFileContent(testInput.changeData,
                 testInput.databaseName, testInput.version, "liquibase/harness/data/expectedSql"))
