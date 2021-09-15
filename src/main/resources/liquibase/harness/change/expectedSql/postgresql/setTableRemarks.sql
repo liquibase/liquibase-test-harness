@@ -1,1 +1,1 @@
-COMMENT ON TABLE authors IS 'A Test Remark'
+COMMENT ON TABLE public.authors IS 'A Test Remark'

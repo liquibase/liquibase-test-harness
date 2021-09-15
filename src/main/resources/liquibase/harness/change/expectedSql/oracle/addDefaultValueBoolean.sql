@@ -1,2 +1,2 @@
-ALTER TABLE authors ADD booleanColumn NUMBER(1)
-ALTER TABLE authors MODIFY booleanColumn DEFAULT 1
+ALTER TABLE "C##LIQUIBASE".authors ADD booleanColumn NUMBER(1)
+ALTER TABLE "C##LIQUIBASE".authors MODIFY booleanColumn DEFAULT 1

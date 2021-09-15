@@ -1,2 +1,2 @@
-ALTER TABLE authors ADD numericColumn numeric NULL
-ALTER TABLE authors ALTER numericColumn SET DEFAULT 100000000
+ALTER TABLE lbcat.authors ADD numericColumn numeric NULL
+ALTER TABLE lbcat.authors ALTER numericColumn SET DEFAULT 100000000

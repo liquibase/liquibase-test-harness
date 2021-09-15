@@ -1,1 +1,1 @@
-COMMENT ON COLUMN authors.id IS 'A Test Column Remark'
+COMMENT ON COLUMN PUBLIC.authors.id IS 'A Test Column Remark'

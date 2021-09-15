@@ -1,1 +1,1 @@
-CREATE TABLE "datatypes.json_test_table" (json JSON)
+CREATE TABLE public."datatypes.json_test_table" (json JSON)

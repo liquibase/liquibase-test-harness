@@ -8,21 +8,22 @@
 Reason: Liquibase core class BatchDmlExecutablePreparedStatementGenerator.java doesn't have implementation -->
     <changeSet id="1" author="as">
         <loadData file="loadData.csv"
-                  tableName="authors"
+                  tableName="posts"
                   commentLineStartsWith="//"
                   quotchar="'"
                   relativeToChangelogFile="true"
                   separator=";"
                   usePreparedStatements="false">
+            <column name="content" type="string" />
         </loadData>
         <rollback>
-            <delete tableName="authors">
+            <delete tableName="posts">
                 <where>id = 6</where>
             </delete>
-            <delete tableName="authors">
+            <delete tableName="posts">
                 <where>id = 7</where>
             </delete>
-            <delete tableName="authors">
+            <delete tableName="posts">
                 <where>id = 8</where>
             </delete>
         </rollback>
