@@ -1,5 +1,6 @@
 package liquibase.harness.util
 
+import groovy.json.JsonSlurper
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -74,5 +75,15 @@ class JSONUtils {
             }
         }
         return compareMarker
+    }
+
+    static JSONObject getJsonFromResource(String resourceName) {
+        return new JSONObject(FileUtils.getResourceContent(resourceName))
+    }
+
+    static void compareJSONObjects(JSONObject expected, JSONObject actual) {
+        def mapExpected = new JsonSlurper().parseText(expected.toString())
+        def mapActual = new JsonSlurper().parseText(actual.toString())
+        assert mapExpected == mapActual
     }
 }
