@@ -32,7 +32,7 @@ module "oracle" {
   identifier = replace("oracle-${var.oracleVersion[count.index]}", ".", "-") // dots not permitted in identifiers, so replace with hyphen
 
   engine                    = "oracle-ee"
-  name                      = "lbcat"
+  name                      = "LBCAT"
   family                    = "oracle${var.oracleVersion[count.index]}"
   major_engine_version      = var.oracleVersion[count.index]
   engine_version            = var.oracleVersion[count.index]
