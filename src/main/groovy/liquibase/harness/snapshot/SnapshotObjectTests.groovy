@@ -1,57 +1,41 @@
 package liquibase.harness.snapshot
 
-import liquibase.CatalogAndSchema
 import liquibase.database.OfflineConnection
-import liquibase.snapshot.SnapshotControl
-import liquibase.snapshot.SnapshotGeneratorFactory
-import liquibase.statement.SqlStatement
-import liquibase.statement.core.RawSqlStatement
+import org.json.JSONObject
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static SnapshotObjectTestHelper.*
+import static liquibase.harness.util.JSONUtils.*
+import static liquibase.harness.util.TestUtils.*
 
 class SnapshotObjectTests extends Specification {
 
     @Unroll
-    def "Snapshot #input.testName '#input.permutation.setup' on #input.database.name"() {
-        when:
+    def "Update #input.database.name, generate snapshot #input.snapshotObjectName, compare expected to generated snapshot"() {
+        given: "create arguments map for executing command scope, read expected snapshot from file, apply changes to the database under test"
+        def argsMap = new HashMap()
+        argsMap.put("url", input.database.url)
+        argsMap.put("username", input.database.username)
+        argsMap.put("password", input.database.password)
+        argsMap.put("format", "json")
+        argsMap.put("changeLogFile", input.pathToChangelogFile)
+        argsMap.put("count", getChangeSetsCount(input.pathToChangelogFile))
+        def expectedSnapshot = new JSONObject(getJsonFromResource(input.pathToExpectedSnapshotFile))
         Assume.assumeFalse("Cannot test against offline database", input.database.database.getConnection()
                 instanceof OfflineConnection)
+        executeCommandScope("update", argsMap)
 
-        input.database.database.execute([new RawSqlStatement(input.permutation.setup)] as SqlStatement[], null)
-        input.database.database.commit()
+        when: "generate snapshot"
+        def string = executeCommandScope("snapshot", argsMap).toString()
+        def generatedSnapshot = new JSONObject(string)
 
-        def snapshot = SnapshotGeneratorFactory.instance.createSnapshot(new CatalogAndSchema(null, null),
-                input.database.database, new SnapshotControl(input.database.database))
+        then: "compare generated to expected snapshot"
+        compareJSONObjects(expectedSnapshot, generatedSnapshot)
 
-        then:
-        input.permutation.verify.apply(snapshot) == null
-
-        cleanup:
-        if (!(input.database.database.getConnection() instanceof OfflineConnection)) {
-            def cleanupSql = input.permutation.cleanup
-            def generatedCleanup = false
-            if (cleanupSql == null) {
-                if (input.permutation.setup.toLowerCase().startsWith("create ")) {
-                    def splitSetup = input.permutation.setup.split("\\s+")
-                    cleanupSql = "drop ${splitSetup[1]} ${splitSetup[2]}"
-                    generatedCleanup = true
-                }
-            }
-            assert cleanupSql != null: "No cleanup config specified and one cannot be auto-generated"
-            try {
-                input.database.database.execute([new RawSqlStatement(cleanupSql)] as SqlStatement[], null)
-                input.database.database.commit()
-            } catch (Throwable e) {
-                if (generatedCleanup) {
-                    throw new RuntimeException("Cannot execute generated cleanup statement $cleanupSql: $e.message. You may need to specify a 'cleanup' block", e)
-                } else {
-                    throw new RuntimeException("Cannot execute specified cleanup statement $cleanupSql: $e.message", e)
-                }
-            }
-        }
+        cleanup: "rollback changes from database under test"
+        executeCommandScope("rollbackCount", argsMap)
 
         where:
         input << buildTestInput()
