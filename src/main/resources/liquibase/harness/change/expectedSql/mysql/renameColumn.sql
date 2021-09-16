@@ -1,1 +1,0 @@
-ALTER TABLE authors CHANGE first_name first_name_renameColumn_test VARCHAR(50) NOT NULL

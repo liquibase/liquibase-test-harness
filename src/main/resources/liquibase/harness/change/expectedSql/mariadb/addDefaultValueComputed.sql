@@ -1,1 +1,1 @@
-ALTER TABLE posts ALTER inserted_date SET DEFAULT NOW()
+ALTER TABLE lbcat.posts ALTER inserted_date SET DEFAULT NOW()

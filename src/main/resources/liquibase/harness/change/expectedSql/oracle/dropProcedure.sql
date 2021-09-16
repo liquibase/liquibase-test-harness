@@ -1,5 +1,6 @@
 CREATE OR REPLACE PROCEDURE test_procedure
 AS
 BEGIN
-END;
-DROP PROCEDURE test_procedure
+END
+/
+DROP PROCEDURE "C##LIQUIBASE".test_procedure

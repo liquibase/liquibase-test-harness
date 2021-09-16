@@ -1,1 +1,1 @@
-ALTER TABLE authors MODIFY COLUMN id INT COMMENT 'A Test Column Remark'
+ALTER TABLE lbcat.authors MODIFY COLUMN id INT COMMENT 'A Test Column Remark'

@@ -86,3 +86,4 @@ class ChangeDataTestHelper {
         Database database
     }
 }
+

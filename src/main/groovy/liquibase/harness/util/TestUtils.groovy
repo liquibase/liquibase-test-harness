@@ -1,64 +1,16 @@
 package liquibase.harness.util
 
-import liquibase.CatalogAndSchema
-import liquibase.Liquibase
-import liquibase.change.Change
-import liquibase.changelog.ChangeSet
-import liquibase.database.Database
+import liquibase.command.CommandScope
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
-import liquibase.sql.Sql
-import liquibase.sqlgenerator.SqlGeneratorFactory
-import liquibase.util.StringUtil
-
+import org.junit.Assert
+import org.w3c.dom.NodeList
+import org.xml.sax.SAXException
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.parsers.ParserConfigurationException
 import java.util.logging.Logger
 
 class TestUtils {
-
-    static Liquibase createLiquibase(String pathToFile, Database database) {
-        database.resetInternalState()
-        return new Liquibase(pathToFile, TestConfig.instance.resourceAccessor, database)
-    }
-
-    static String toSqlFromLiquibaseChangeSets(Liquibase liquibase) {
-        Database db = liquibase.database
-        List<ChangeSet> changeSets = liquibase.databaseChangeLog.changeSets
-        List<String> stringList = new ArrayList<>()
-        changeSets.each { stringList.addAll(toSql(it, db)) }
-        return stringList.join(System.lineSeparator())
-    }
-
-    static ArrayList<CatalogAndSchema> getCatalogAndSchema(Database database, String dbSchema) {
-        List<String> schemaList = parseValuesToList(dbSchema, ",")
-        List<CatalogAndSchema> finalList = new ArrayList<>()
-        schemaList?.each { sch ->
-            String[] catSchema = sch.split("\\.")
-            String catalog, schema
-            if (catSchema.length == 2) {
-                catalog = catSchema[0]?.trim()
-                schema = catSchema[1]?.trim()
-            } else if (catSchema.length == 1) {
-                catalog = null
-                schema = catSchema[0]?.trim()
-            } else {
-                return finalList
-            }
-            finalList.add(new CatalogAndSchema(catalog, schema).customize(database))
-        }
-        return finalList
-    }
-
-    static List<String> parseValuesToList(String str, String regex = null) {
-        List<String> returnList = new ArrayList<>()
-        if (str) {
-            if (regex == null) {
-                returnList.add(str)
-                return returnList
-            }
-            return str?.split(regex)*.trim()
-        }
-        return returnList
-    }
 
     static SortedMap<String, String> resolveInputFilePaths(DatabaseUnderTest database, String basePath, String inputFormat) {
         inputFormat = inputFormat ?: ""
@@ -82,40 +34,65 @@ class TestUtils {
                 }
             }
         }
-
         Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.name +
                 "/" + database.version + " in "+basePath)
         return returnPaths
     }
 
     /**
-     * Standardizes sql content. Removes line ending differences, and unnecessary leading/trailing whitespace
-     * @param sql
+     * Standardizes sql content. Parses 'clean' queries from database update sql script.
+     * @param script
      * @return
      */
-    static String cleanSql(String sql) {
-        if (sql == null) {
-            return null
+    static parseQuery(String script) {
+        if (script) {
+            script.replaceAll(/(?m)^--.*/, "") //remove comments
+                    .replaceAll(/(?m)^CREATE TABLE .*\w*.*DATABASECHANGELOG.*/, "") //remove create table queries for databasechangelog* tables
+                    .replaceAll(/(?m)^CREATE TABLE .*\w*.*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^INSERT INTO .*\w*.*DATABASECHANGELOG.*/, "") //remove insert queries for databasechangelog* tables
+                    .replaceAll(/(?m)^INSERT INTO .*\w*.*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^UPDATE .*\w*.*DATABASECHANGELOG.*/, "") //remove update queries for databasechangelog* tables
+                    .replaceAll(/(?m)^UPDATE .*\w*.*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^DELETE FROM .*\w*.*databasechangelog.*/, "") //remove delete queries for databasechangelog* tables
+                    .replaceAll(/(?m)^DELETE FROM .*\w*.*DATABASECHANGELOG.*/, "")
+                    .replaceAll(/(?m)^SET SEARCH_PATH.*/, "") //specific replacement for Postgres
+                    .replaceAll(/\b(?:GO|USE lbcat)\b/, "") //specific replacement for MSSQL
+                    .replaceAll("(?m);\$", "") // remove semicolon
+                    .replaceAll(/^(?:[\t ]*(?:\r?\n|\r))+/, "") //remove empty lines
+                    .replaceAll(/(?m)^\s+/, "") //remove beginning whitespaces per line
+                    .replaceAll(/(?m)\s+$/, "") //remove trailing whitespaces per line
+                    .replaceAll("\r", "")
         }
-        return StringUtil.trimToNull(sql.replace("\r", "")
-                .replaceAll(/(?m)^--.*/, "") //remove comments
-                .replaceAll(/(?m)^\s+/, "") //remove beginning whitepace per line
-                .replaceAll(/(?m)\s+$/, "") //remove trailing whitespace per line
-        ) //remove trailing whitespace per line
     }
 
-    private static List<String> toSql(ChangeSet changeSet, Database db) {
-        return toSql(changeSet.changes, db)
+    static OutputStream  executeCommandScope(String commandName, Map<String, Object> arguments) {
+        def commandScope = new CommandScope(commandName)
+        def outputStream = new ByteArrayOutputStream()
+        for (Map.Entry<String, Object> entry : arguments) {
+            commandScope.addArgumentValue(entry.getKey(), entry.getValue())
+        }
+        commandScope.setOutput(outputStream)
+        try {
+            commandScope.execute()
+        } catch (Exception exception) {
+            Logger.getLogger(this.class.name).severe("Failed to execute command scope for command " +
+                    commandScope.getCommand().toString() + ". " + exception.printStackTrace())
+            Logger.getLogger(this.class.name).info("If this is expected to be invalid query for this database/version, " +
+                    "create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.")
+            Assert.fail exception.message
+        }
+        return outputStream
     }
 
-    private static List<String> toSql(List<? extends Change> changes, Database db) {
-        List<String> stringList = new ArrayList<>()
-        changes.each { stringList.addAll(toSql(it, db)) }
-        return stringList
-    }
-
-    private static List<String> toSql(Change change, Database db) {
-        Sql[] sqls = SqlGeneratorFactory.newInstance().generateSql(change, db)
-        return sqls*.toSql()
+    static Integer getChangeSetsCount(String pathToChangeLogFile) {
+        try {
+            def documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+            def document = documentBuilder.parse(new FileInputStream("src/main/resources/" + pathToChangeLogFile))
+            NodeList name = document.getElementsByTagName("changeSet")
+            return name.getLength()
+        } catch (ParserConfigurationException | SAXException | IOException exception) {
+            Logger.getLogger(this.class.name).severe("Failed to read from changelog file while getting changesets count! " + exception)
+        }
+        return 0
     }
 }

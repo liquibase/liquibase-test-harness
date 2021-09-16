@@ -1,1 +1,0 @@
-ALTER TABLE posts ALTER COLUMN  inserted_date NOT NULL

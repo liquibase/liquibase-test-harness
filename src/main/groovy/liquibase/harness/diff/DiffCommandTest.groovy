@@ -65,5 +65,4 @@ class DiffCommandTest extends Specification {
         where:
         testInput << buildTestInput()
     }
-
 }
