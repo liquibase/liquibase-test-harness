@@ -1,5 +1,5 @@
--- This script will setup the AWS RDS Postgres database objects used by test-harness
-
+--liquibase formatted sql
+--changeset liquibase:1
 DROP TABLE IF EXISTS authors;
 CREATE TABLE authors (
   id SERIAL,

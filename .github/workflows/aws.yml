@@ -1,50 +1,43 @@
-# Basic workflow with Actions
+# Terraform Action to test Cloud Databases with test-harness
 
 name: AWS Cloud Database Test Execution
 on:
   # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers
-  # push:
-  #   branches: [ main ]
-  # pull_request:
-  #   branches: [ main ]
-  # schedule:
-  #   - cron: '0 12 * * *' # Execute every day at noon
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 12 * * *' # Execute every day at noon
   workflow_dispatch:
-
 
 jobs:
   setup:
     runs-on: ubuntu-18.04
+    defaults:
+      run:
+        working-directory: src/test/resources/terraform
     steps:
       - uses: actions/checkout@v2
-
-      - uses: actions/setup-java@v1
-        with:
-          java-version: '1.8.0'
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          # terraform_version: 0.13.0:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Format
-        working-directory: src/test/resources/terraform
         id: fmt
-        run: terraform fmt -check
+        run: terraform fmt
 
       - name: Terraform Init
-        working-directory: src/test/resources/terraform
         id: init
         run: terraform init
-      
+
       - name: Terraform Validate
-        working-directory: src/test/resources/terraform
         id: validate
         run: terraform validate -no-color
 
       - name: Terraform Plan
-        working-directory: src/test/resources/terraform
         id: plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color
@@ -61,68 +54,127 @@ jobs:
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
             <details><summary>Show Plan</summary>
+
             \`\`\`\n
             ${process.env.PLAN}
             \`\`\`
+
             </details>
+
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: output
             })
+
       - name: Terraform Plan Status
-        working-directory: src/test/resources/terraform
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
       - name: Terraform Apply
-        working-directory: src/test/resources/terraform
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
-
-      - name: Set Database Host URL
-        working-directory: src/test/resources/terraform
-        run: echo "DBHOST=$(terraform output -json | jq -r '.dbHost.value')" >> $GITHUB_ENV
-
-      - name: Create Database Objects
-        working-directory: src/test/resources/terraform
-        run: PGPASSWORD=LbRootPass1 psql -v ON_ERROR_STOP=1 --username lbuser --dbname lbcat -h $DBHOST -f postgres-init.sql
 
   test:
     runs-on: ubuntu-18.04
     needs: [setup]
-    steps:
-      - uses: actions/checkout@v2
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - database: postgres
+            version: 9-6
+          - database: postgres
+            version: 10
+          - database: postgres
+            version: 11
+          - database: postgres
+            version: 12
+          - database: postgres
+            version: 13          
 
-      - name: Update Harness Config
-        working-directory: src/test/resources
-        run: sed -i "s/DBHOST/$DBHOST/g" harness-config.yml
-
-      - name: AWS RDS Postgres Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql -Dmaven.test.failure.ignore=true test
-
-      - name: Archive AWS RDS Postgres Test Results
-        uses: actions/upload-artifact@v2
-        with:
-          name: aws-rds-postgres-test-results
-          path: build/spock-reports
-
-  destroy:
-    runs-on: ubuntu-18.04
-    needs: [setup,test]
-    if: ${{ always() }}
     steps:
       - uses: actions/checkout@v2
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          # terraform_version: 0.13.0:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-      - name: Terraform Destroy
+          terraform_wrapper: false
+          
+      - name: Terraform Init
         working-directory: src/test/resources/terraform
+        run: terraform init
+
+      - name: Get Public IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Print Public IP to tfvars file
+        working-directory: src/test/resources/terraform
+        run: |
+          echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
+
+      - name: Terraform Apply Security Group Change
+        working-directory: src/test/resources/terraform
+        run: terraform apply --auto-approve
+
+      - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
+        working-directory: src/test/resources/terraform
+        run: |
+          echo "DBENDPOINT=$(terraform output -json dbEndpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
+
+      - uses: liquibase/liquibase-github-action@v3
+        with:
+          operation: "update"
+          classpath: "src/test/resources/terraform/changelogs"
+          changeLogFile: "postgres.sql"
+          username: "lbuser"
+          password: "LbRootPass1"
+          url: "jdbc:postgresql://${{ env.DBENDPOINT }}/lbcat"
+
+      - name: Update ${{ matrix.database }}-${{ matrix.version }} Harness Config
+        working-directory: src/test/resources
+        run: |
+          sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
+          sed -i "s/DBVERSION/${{ matrix.version }}/g" harness-config.yml
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
+
+      - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
+          path: build/spock-reports
+
+  destroy:
+    runs-on: ubuntu-18.04
+    needs: [setup,test]
+    defaults:
+      run:
+        working-directory: src/test/resources/terraform
+    if: ${{ always() }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Destroy
         run: terraform destroy -auto-approve
