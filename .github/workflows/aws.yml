@@ -98,7 +98,11 @@ jobs:
           # - database: aws-postgres
           #   version: 13         
           - database: aws-oracle
-            version: [12-1, 12-2, 19]
+            version: 12-1
+          - database: aws-oracle
+            version: 12-2
+          - database: aws-oracle
+            version: 19
 
     steps:
       - uses: actions/checkout@v2
