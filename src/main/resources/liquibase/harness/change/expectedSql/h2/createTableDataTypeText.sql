@@ -1,1 +1,1 @@
-CREATE TABLE createTableDataTypeText (textCol CLOB)
+CREATE TABLE PUBLIC.createTableDataTypeText (textCol CLOB)

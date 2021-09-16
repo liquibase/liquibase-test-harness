@@ -20,22 +20,22 @@ case $db in
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -DdbVersion=8 test
     ;;
   "postgres-9.5" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=9.5 -Dmaven.test.failure.ignore=true test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=9.5 test
     ;;
   "postgres-9" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=9 -Dmaven.test.failure.ignore=true test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=9 test
     ;;
   "postgres-10" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=10 -Dmaven.test.failure.ignore=true test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=10 test
     ;;
   "postgres-11" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=11 -Dmaven.test.failure.ignore=true test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=11 test
     ;;
   "postgres-12" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=12 -Dmaven.test.failure.ignore=true test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=12 test
     ;;
   "postgres-13" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=13 -Dmaven.test.failure.ignore=true test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=13 test
     ;;
   "mariadb-10.3" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -DdbVersion=10.3 test
@@ -80,7 +80,7 @@ case $db in
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=13 test
     ;;
   "derby" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=derby test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=derby -Dmaven.test.failure.ignore=true test
     ;;
   "sqlite" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=sqlite -Dmaven.test.failure.ignore=true test

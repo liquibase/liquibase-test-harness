@@ -1,1 +1,1 @@
-COMMENT ON COLUMN authors.id IS 'A Test Column Remark'
+COMMENT ON COLUMN "C##LIQUIBASE".authors.id IS 'A Test Column Remark'

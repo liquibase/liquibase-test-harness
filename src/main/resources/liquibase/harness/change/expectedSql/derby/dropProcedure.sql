@@ -1,5 +1,0 @@
-CREATE PROCEDURE test_procedure()
-LANGUAGE JAVA
-PARAMETER STYLE JAVA
-EXTERNAL NAME 'testClass.testMethod'
-DROP PROCEDURE test_procedure

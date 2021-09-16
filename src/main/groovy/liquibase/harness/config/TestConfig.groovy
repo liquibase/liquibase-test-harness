@@ -4,7 +4,6 @@ import groovy.transform.ToString
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.ResourceAccessor
 import org.yaml.snakeyaml.Yaml
-
 import java.util.logging.Logger
 import java.util.stream.Collectors
 
@@ -41,7 +40,6 @@ class TestConfig {
             }
             Logger.getLogger(TestConfig.name).info("Revalidate SQL: ${instance.revalidateSql}")
         }
-
         return instance
     }
 
@@ -60,7 +58,6 @@ class TestConfig {
                     .filter({ it.version.equalsIgnoreCase(dbVersion) })
                     .collect(Collectors.toList())
         }
-
         return databasesUnderTest
     }
 }

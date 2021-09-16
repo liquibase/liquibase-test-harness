@@ -1,6 +1,6 @@
 CREATE OR REPLACE PROCEDURE test_procedure()
 AS $$
 BEGIN
-END;
+END
 $$
-DROP PROCEDURE test_procedure
+DROP PROCEDURE public.test_procedure
