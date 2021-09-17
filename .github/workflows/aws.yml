@@ -97,10 +97,10 @@ jobs:
           #   version: 12
           # - database: aws-postgres
           #   version: 13         
-          - database: aws-oracle
-            version: 12-1
-          - database: aws-oracle
-            version: 12-2
+          # - database: aws-oracle
+          #   version: 12-1
+          # - database: aws-oracle
+          #   version: 12-2
           - database: aws-oracle
             version: 19
 
@@ -135,13 +135,24 @@ jobs:
           echo "DBENDPOINT=$(terraform output -json dbEndpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
+        if: (${{ matrix.database }} == "aws-oracle")
         with:
           operation: "update"
           classpath: "src/test/resources/terraform/changelogs"
-          changeLogFile: "${{ matrix.database }}.sql"
+          changeLogFile: "aws-oracle.sql"
           username: "lbuser"
           password: "LbRootPass1"
           url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}:lbcat"
+
+      - uses: liquibase/liquibase-github-action@v3
+        if: (${{ matrix.database }} == "aws-postgres")
+        with:
+          operation: "update"
+          classpath: "src/test/resources/terraform/changelogs"
+          changeLogFile: "aws-postgres.sql"
+          username: "lbuser"
+          password: "LbRootPass1"
+          url: "jdbc:postgresql://${{ env.DBENDPOINT }}/lbcat"
 
       - name: Update ${{ matrix.database }}-${{ matrix.version }} Harness Config
         working-directory: src/test/resources
