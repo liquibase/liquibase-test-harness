@@ -101,7 +101,7 @@ jobs:
           #   version: 12-1
           # - database: aws-oracle
           #   version: 12-2
-          - database: aws-oracle
+          - database: oracle
             version: 19
 
     steps:
@@ -132,7 +132,7 @@ jobs:
       - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
         working-directory: src/test/resources/terraform
         run: |
-          echo "DBENDPOINT=$(terraform output -json dbEndpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
+          echo "DBENDPOINT=$(terraform output -json ${{ matrix.database }}Endpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
         if: (${{ matrix.database }} == "aws-oracle")
