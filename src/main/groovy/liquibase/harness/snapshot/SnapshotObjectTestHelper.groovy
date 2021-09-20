@@ -9,8 +9,10 @@ import java.util.logging.Logger
 
 class SnapshotObjectTestHelper {
 
-    final static String baseChangelogPath = "liquibase/harness/snapshot/changelog"
-    final static String baseExpectedSnapshotPath = "/liquibase/harness/snapshot/expectedSnapshot"
+    final static String baseSnapshotPath = "liquibase/harness/snapshot/"
+    final static String inputSqlPath = "${baseSnapshotPath}inputSql"
+    final static String cleanupSqlPath = "${baseSnapshotPath}cleanupSql"
+    final static String expectedSnapshotPath = "${baseSnapshotPath}expectedSnapshot"
 
     static List<TestInput> buildTestInput() {
         String commandLineSnapshotObjects = System.getProperty("snapshotObjects")
@@ -29,14 +31,14 @@ class SnapshotObjectTestHelper {
 
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
-            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,
-                    TestConfig.instance.inputFormat).entrySet()) {
+            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, inputSqlPath, "sql").entrySet()) {
                 if (!commandLineSnapshotObjectList || commandLineSnapshotObjectList.contains(changeLogEntry.key)) {
                     inputList.add(TestInput.builder()
                             .database(databaseUnderTest)
                             .snapshotObjectName(changeLogEntry.key)
-                            .pathToChangelogFile(changeLogEntry.value)
-                            .pathToExpectedSnapshotFile("${baseExpectedSnapshotPath}/${changeLogEntry.key}.json")
+                            .pathToInputSql("/${changeLogEntry.value}")
+                            .pathToCleanupSql("/${cleanupSqlPath}/${changeLogEntry.key}.sql")
+                            .pathToExpectedSnapshotFile("/${expectedSnapshotPath}/${changeLogEntry.key}.json")
                             .build())
                 }
             }
@@ -48,7 +50,8 @@ class SnapshotObjectTestHelper {
     static class TestInput {
         DatabaseUnderTest database
         String snapshotObjectName
-        String pathToChangelogFile
+        String pathToInputSql
+        String pathToCleanupSql
         String pathToExpectedSnapshotFile
     }
 }

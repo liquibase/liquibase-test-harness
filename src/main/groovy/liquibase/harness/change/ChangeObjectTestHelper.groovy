@@ -6,9 +6,7 @@ import liquibase.database.Database
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.harness.util.SnapshotHelpers
 import liquibase.harness.util.FileUtils
-import org.skyscreamer.jsonassert.JSONAssert
 import java.util.logging.Logger
 
 class ChangeObjectTestHelper {
@@ -60,10 +58,6 @@ class ChangeObjectTestHelper {
             }
         }
         return inputList
-    }
-
-    static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
-        JSONAssert.assertEquals(expected, actual, new SnapshotHelpers.GeneralSnapshotComparator())
     }
 
     static void saveAsExpectedSql(String generatedSql, TestInput testInput) {

@@ -7,6 +7,7 @@ import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
 import static liquibase.harness.util.TestUtils.*
 import static ChangeObjectTestHelper.*
 
