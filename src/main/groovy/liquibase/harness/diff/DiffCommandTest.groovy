@@ -26,7 +26,7 @@ class DiffCommandTest extends Specification {
         argsMap.put("referencePassword", testInput.referenceDatabase.password)
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
         argsMap.put("format", "json")
-        argsMap.put("liquibaseProLicenseKey", getLicenseKey())
+        argsMap.put("liquibaseProLicenseKey", System.getenv("LICENSE"))
         def expectedDiff = getJsonFromResource(getExpectedDiffPath(testInput))
         assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection : "Target database " +
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"

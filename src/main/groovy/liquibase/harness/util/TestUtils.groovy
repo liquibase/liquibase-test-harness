@@ -67,12 +67,4 @@ class TestUtils {
         }
         return 0
     }
-
-    static String getLicenseKey() {
-        if (System.getenv("LICENSE")) {
-            Logger.getLogger(this.class.name).info("Found License Key!")
-            return System.getenv("LICENSE")
-        }
-        return null
-    }
 }
