@@ -1,1 +1,1 @@
-ALTER TABLE posts ALTER COLUMN  title SET DEFAULT 'title_test'
+ALTER TABLE PUBLIC.posts ALTER COLUMN  title SET DEFAULT 'title_test'
