@@ -72,7 +72,7 @@ class DiffCommandTestHelper {
             databasesToConnect.add(referenceDatabase)
 
             inputList.add(TestInput.builder()
-                    .pathToChangelogFile("src/test/resources/liquibase/harness/diff/" +
+                    .pathToChangelogFile("src/main/resources/liquibase/harness/diff/generatedChangelog/" +
                             "${referenceDatabase.name}${referenceDatabase.version}_to_" +
                             "${targetDatabase.name}${targetDatabase.version}.xml")
                     .targetDatabase(targetDatabase)

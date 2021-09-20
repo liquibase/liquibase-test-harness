@@ -16,7 +16,7 @@ class DiffCommandTest extends Specification {
 
     @Unroll
     def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version, verify no significant diffs"() {
-        given: "create arguments map for executing command scope, read expected diff from file, generate diff changelog"
+        given: "create arguments map for executing command scope, read expected diff from file"
         def argsMap = new HashMap()
         argsMap.put("url", testInput.targetDatabase.url)
         argsMap.put("username", testInput.targetDatabase.username)
@@ -32,9 +32,9 @@ class DiffCommandTest extends Specification {
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"
         assert testInput.referenceDatabase.database.getConnection() instanceof JdbcConnection : "Reference database " +
                 "${testInput.referenceDatabase.name}${testInput.referenceDatabase.version} is offline!"
-        executeCommandScope("diffChangelog", argsMap)
 
-        when: "apply changes from generated changelog to target database"
+        when: "generate diff changelog, apply changes from generated changelog to target database"
+        executeCommandScope("diffChangelog", argsMap)
         executeCommandScope("update", argsMap)
 
         then: "compare expected diff to generated diff"
