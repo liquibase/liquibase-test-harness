@@ -16,8 +16,10 @@ import static liquibase.util.StringUtil.isNotEmpty
 
 class DiffCommandTestHelper {
 
+    final static String baseDiffPath = "/liquibase/harness/diff/"
+
     static List<TestInput> buildTestInput() {
-        InputStream testConfig = DiffCommandTestHelper.class.getResourceAsStream("/liquibase/harness/diff/diffDatabases.yml")
+        InputStream testConfig = DiffCommandTestHelper.class.getResourceAsStream("${baseDiffPath}diffDatabases.yml")
         assert testConfig != null : "Cannot find diffDatabases.yml in classpath"
 
         Yaml configFileYml = new Yaml()
@@ -72,7 +74,7 @@ class DiffCommandTestHelper {
             databasesToConnect.add(referenceDatabase)
 
             inputList.add(TestInput.builder()
-                    .pathToChangelogFile("src/main/resources/liquibase/harness/diff/" +
+                    .pathToChangelogFile("src/main/resources${baseDiffPath}" +
                             "${referenceDatabase.name}${referenceDatabase.version}_to_" +
                             "${targetDatabase.name}${targetDatabase.version}.xml")
                     .targetDatabase(targetDatabase)
@@ -85,7 +87,7 @@ class DiffCommandTestHelper {
     }
 
     static String getExpectedDiffPath(TestInput testInput) {
-        return "/liquibase/harness/diff/expectedDiff/${testInput.referenceDatabase.name}${testInput.referenceDatabase.version}_to_" +
+        return "${baseDiffPath}expectedDiff/${testInput.referenceDatabase.name}${testInput.referenceDatabase.version}_to_" +
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version}.json"
     }
 

@@ -1,6 +1,6 @@
 -- Creating PDB pdborcl
 ALTER SESSION SET PDB_FILE_NAME_CONVERT='/opt/oracle/oradata/ORCLCDB/pdbseed', '/opt/oracle/oradata/ORCLCDB/pdborcl', '/opt/oracle/oradata/ORCLCDB/pdbseed/system01.dbf', '/opt/oracle/oradata/ORCLCDB/pdborcl/system01.dbf';
-CREATE PLUGGABLE DATABASE pdborcl ADMIN USER DATICAL_ADMIN IDENTIFIED BY DATICAL_ADMIN_PW;
+CREATE PLUGGABLE DATABASE pdborcl ADMIN USER C##LIQUIBASE IDENTIFIED BY Secret321;
 ALTER PLUGGABLE DATABASE pdborcl OPEN READ WRITE;
 ALTER PLUGGABLE DATABASE pdborcl SAVE STATE;
 

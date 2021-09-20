@@ -74,7 +74,8 @@ class DatabaseTestContext {
             }
 
             if (connection instanceof JdbcConnection && connection.getUnderlyingConnection().isClosed()) {
-                connectionsByUrl.put(url, DatabaseFactory.getInstance().openConnection(url, username, password, null, new ClassLoaderResourceAccessor()))
+                connectionsByUrl.put(url, DatabaseFactory.getInstance().openConnection(url, username, password,
+                        null, new ClassLoaderResourceAccessor()))
             }
             return connection
         }
