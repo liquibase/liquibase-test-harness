@@ -71,8 +71,8 @@ class TestUtils {
     static String getLicenseKey() {
         if (System.getenv("LIQUIBASE_PRO_LICENSE_KEY")) {
             return System.getenv("LIQUIBASE_PRO_LICENSE_KEY")
-        } else if (System.getenv("LICENSE_KEY")) {
-            System.getenv("LICENSE_KEY")
+        } else if (System.getenv("secrets.LICENSE_KEY")) {
+            System.getenv("secrets.LICENSE_KEY")
         }
         return null
     }
