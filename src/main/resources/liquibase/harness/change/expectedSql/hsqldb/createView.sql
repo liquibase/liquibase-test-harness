@@ -1,1 +1,1 @@
-CREATE VIEW test_view AS select id, first_name, last_name, email from authors
+CREATE VIEW PUBLIC.test_view AS select id, first_name, last_name, email from authors
