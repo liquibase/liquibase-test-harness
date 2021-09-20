@@ -1,6 +1,5 @@
 package liquibase.harness.util
 
-import liquibase.Scope
 import liquibase.changelog.ChangeLogHistoryServiceFactory
 import liquibase.database.Database
 import liquibase.database.DatabaseConnection
@@ -10,11 +9,12 @@ import liquibase.exception.DatabaseException
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.lockservice.LockServiceFactory
-import liquibase.logging.Logger
 import liquibase.snapshot.SnapshotGeneratorFactory
+import liquibase.statement.SqlStatement
+import liquibase.statement.core.RawSqlStatement
+import java.util.logging.Logger
 
 class DatabaseConnectionUtil {
-    private static Logger logger = Scope.getCurrentScope().getLog(getClass())
 
     static Database initializeDatabase(String url, String username, String password) {
         try {
@@ -24,26 +24,28 @@ class DatabaseConnectionUtil {
             }
             return TestConfig.instance.initDB ? init(database) : database
         }
-        catch (Exception e) {
-            logger.severe("Unable to initialize database connection: ${e.getMessage()}", e)
+        catch (Exception exception) {
+            Logger.getLogger(this.class.name).severe("Unable to initialize database connection: ${exception.getMessage()} " +
+                    exception)
             return null
         }
     }
 
-    List<DatabaseUnderTest> initializeDatabasesConnection(List<DatabaseUnderTest> databasesUnderTests) {
+    static List<DatabaseUnderTest> initializeDatabasesConnection(List<DatabaseUnderTest> databasesUnderTests) {
         if (!TestConfig.instance.databasesConnected) {
             for (def databaseUnderTest : databasesUnderTests) {
                 def initThread = new Thread({
-                    databaseUnderTest.database = initializeDatabase(databaseUnderTest.url, databaseUnderTest.username, databaseUnderTest.password)
+                    databaseUnderTest.database = initializeDatabase(databaseUnderTest.url, databaseUnderTest.username,
+                            databaseUnderTest.password)
                     if (databaseUnderTest.database == null) {
-                        java.util.logging.Logger.getLogger(TestConfig.name).severe("Cannot connect to $databaseUnderTest.url. Using offline" +
-                                " connection")
-
+                        Logger.getLogger(this.class.name).severe("Cannot connect to $databaseUnderTest.url. " +
+                                "Using offline connection")
                         for (def possibleDatabase : DatabaseFactory.getInstance().getImplementedDatabases()) {
                             if (possibleDatabase.getDefaultDriver(databaseUnderTest.url) != null) {
                                 println "Database ${possibleDatabase.shortName} accepts $databaseUnderTest.url"
 
-                                databaseUnderTest.database = initializeDatabase("offline:${possibleDatabase.shortName}", databaseUnderTest.username, null)
+                                databaseUnderTest.database = initializeDatabase("offline:${possibleDatabase.shortName}",
+                                        databaseUnderTest.username, null)
                                 break
                             }
                         }
@@ -62,14 +64,14 @@ class DatabaseConnectionUtil {
                             databaseUnderTest.name += " ${databaseUnderTest.database.getDatabaseProductVersion()}"
                         }
                     } else if (databaseUnderTest.version == null) {
-                        java.util.logging.Logger.getLogger(TestConfig.name)
-                                .warning("Database version is not provided applying version from Database metadata")
+                        Logger.getLogger(this.class.name).warning("Database version is not provided applying " +
+                                "version from Database metadata")
                         Integer minorVersion = databaseUnderTest.database.getDatabaseMinorVersion()
                         databaseUnderTest.version = databaseUnderTest.database.getDatabaseMajorVersion().toString().concat(
                                 minorVersion ? "." + minorVersion : "")
                     } else if (databaseUnderTest.name != databaseUnderTest.database.shortName ||
                             !databaseUnderTest.version.startsWith(databaseUnderTest.database.databaseMajorVersion.toString())) {
-                        java.util.logging.Logger.getLogger(TestConfig.name).severe("Provided database name/majorVersion doesn't match with actual\
+                        Logger.getLogger(this.class.name).severe("Provided database name/majorVersion doesn't match with actual\
         ${System.getProperty("line.separator")}    provided: ${databaseUnderTest.name} ${databaseUnderTest.version}\
         ${System.getProperty("line.separator")}    actual: ${databaseUnderTest.database.shortName} \
         ${databaseUnderTest.database.databaseMajorVersion.toString()}")
@@ -99,5 +101,16 @@ class DatabaseConnectionUtil {
         LockServiceFactory.getInstance().getLockService(database).init()
         ChangeLogHistoryServiceFactory.getInstance().resetAll()
         return database
+    }
+
+    static void executeQuery(String pathToSql, Database database) {
+        String query = FileUtils.getResourceContent(pathToSql)
+        try {
+            database.execute([new RawSqlStatement(query)] as SqlStatement[], null)
+            database.commit()
+        } catch (Exception exception)  {
+            Logger.getLogger(this.class.name).severe("Failed to execute query " + query + " " + exception.message +
+                    exception.printStackTrace())
+        }
     }
 }

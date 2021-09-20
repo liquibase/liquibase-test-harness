@@ -94,7 +94,7 @@ class DiffCommandTestHelper {
      */
     static JSONObject createDiffToCompare(OutputStream diffOutput) {
         def generatedDiff = new JSONObject(diffOutput.toString().replaceAll("!!int", ""))
-                .getJSONObject("diff")// Replacement because of bug in diff --format=json generation
+                .getJSONObject("diff")// Replacement because of a bug in diff --format=json generation
         def diffToCompare = new JSONObject()
         def arrays = ["missingObjects", "unexpectedObjects", "changedObjects"]
         def objects = ["missingObject", "unexpectedObject", "changedObject"]
