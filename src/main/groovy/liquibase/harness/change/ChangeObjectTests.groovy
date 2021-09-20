@@ -27,7 +27,7 @@ class ChangeObjectTests extends Specification {
         argsMap.put("password", testInput.password)
         argsMap.put("snapshotFormat", "JSON")
         argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
-        argsMap.put("liquibaseProLicenseKey", getLicenseKey())
+        argsMap.put("liquibaseProLicenseKey", System.getenv("LICENSE"))
 
         and: "skip testcase if it's invalid for this combination of db type and/or version"
         Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
