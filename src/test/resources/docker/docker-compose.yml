@@ -273,16 +273,17 @@ services:
     depends_on:
       - crdb-21.1
 
-# TODO remove this as titan should be handling this container
-  hsqldb-2.3.4:
-    image: blacklabelops/hsqldb
-    ports:
-      - "9001:9001"
-    environment:
-      HSQLDB_USER: lbuser
-      HSQLDB_PASSWORD: LiquibasePass1
-      HSQLDB_DATABASE_ALIAS: lbcat
-      HSQLDB_DATABASE_HOST: localhost:9001
+# Titan (https://titan-data.io) is managing this image for our CI/CD process. If you want to run it locally you'll have to
+#  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data
+#  hsqldb-2.3.4:
+#    image: blacklabelops/hsqldb
+#    ports:
+#      - "9001:9001"
+#    environment:
+#      HSQLDB_USER: lbuser
+#      HSQLDB_PASSWORD: LiquibasePass1
+#      HSQLDB_DATABASE_ALIAS: lbcat
+#      HSQLDB_DATABASE_HOST: localhost:9001
 
 networks:
   roachnet:
