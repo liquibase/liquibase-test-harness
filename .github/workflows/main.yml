@@ -61,6 +61,7 @@ jobs:
           RT_URL: ${{ secrets.RT_URL }}
           RT_USER: ${{ secrets.RT_USER }}
           RT_PWD: ${{ secrets.RT_PWD }}
+          LICENSE: ${{ secrets.LICENSE_KEY }}
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}
