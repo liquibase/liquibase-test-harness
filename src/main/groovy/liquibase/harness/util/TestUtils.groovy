@@ -72,7 +72,7 @@ class TestUtils {
         if (System.getenv("LIQUIBASE_PRO_LICENSE_KEY")) {
             return System.getenv("LIQUIBASE_PRO_LICENSE_KEY")
         } else if (System.getenv("secrets.LICENSE_KEY")) {
-            System.getenv("secrets.LICENSE_KEY")
+            System.getenv("LICENSE")
         }
         return null
     }
