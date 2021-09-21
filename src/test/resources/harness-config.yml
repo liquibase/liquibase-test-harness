@@ -83,8 +83,8 @@ databasesUnderTest:
   - name: oracle
     version: 18.3.0
     url: 'jdbc:oracle:thin:@localhost:1521/PDBORCL'
-    username: DATICAL_ADMIN
-    password: DATICAL_ADMIN_PW
+    username: C##LIQUIBASE
+    password: Secret321
 
   - name: cockroachdb
     version: 20.2
