@@ -65,7 +65,7 @@ jobs:
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}
         env:
-          LICENSE: ${{ secrets.LICENSE_KEY }}
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@v2
