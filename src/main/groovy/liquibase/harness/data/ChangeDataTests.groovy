@@ -26,8 +26,8 @@ class ChangeDataTests extends Specification {
                 testInput.databaseName, testInput.version, "liquibase/harness/data/expectedSql"))
         String checkingSql = parseQuery(getExpectedSqlFileContent(testInput.changeData,
                 testInput.databaseName, testInput.version, "liquibase/harness/data/checkingSql"))
-        String expectedResultSet = getExpectedJSONFileContent(testInput.changeData, testInput.databaseName,
-                testInput.version, "liquibase/harness/data/expectedResultSet")
+        JSONObject expectedResultSet =  new JSONObject(getExpectedJSONFileContent(testInput.changeData, testInput.databaseName,
+                testInput.version, "liquibase/harness/data/expectedResultSet"))
         Map<String, Object> argsMap = new HashMap<>()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
@@ -75,7 +75,6 @@ class ChangeDataTests extends Specification {
         executeCommandScope("update", argsMap)
 
         then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet, apply rollback"
-
         try {
             def resultSet
             if (testInput.databaseName == "mysql" || testInput.databaseName == "mariadb") {
@@ -83,10 +82,9 @@ class ChangeDataTests extends Specification {
             } else {
                 resultSet = connection.createStatement().executeQuery(checkingSql)
             }
-            def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-            def expectedResultSetJSON = new JSONObject(expectedResultSet)
-            def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
-            assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
+            def generatedResultSet = new JSONObject()
+            generatedResultSet.put(testInput.changeData, mapResultSetToJSONArray(resultSet))
+            compareJSONObjects(generatedResultSet, expectedResultSet)
         } catch (Exception exception) {
             Logger.getLogger(this.class.name).severe("Error executing checking SQL! " + exception.printStackTrace())
             Assert.fail exception.message
