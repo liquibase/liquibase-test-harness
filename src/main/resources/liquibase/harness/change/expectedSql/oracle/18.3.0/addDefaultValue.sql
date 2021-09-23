@@ -1,0 +1,1 @@
+ALTER TABLE DATICAL_ADMIN.posts MODIFY title DEFAULT 'title_test'
