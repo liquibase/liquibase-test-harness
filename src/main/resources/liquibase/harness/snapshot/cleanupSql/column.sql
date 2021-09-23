@@ -1,1 +1,1 @@
-drop table snapshot_test_column;
+drop table snapshot_test_column

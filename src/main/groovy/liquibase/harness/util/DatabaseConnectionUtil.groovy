@@ -12,6 +12,8 @@ import liquibase.lockservice.LockServiceFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
 import liquibase.statement.SqlStatement
 import liquibase.statement.core.RawSqlStatement
+import org.junit.Assert
+
 import java.util.logging.Logger
 
 class DatabaseConnectionUtil {
@@ -109,8 +111,9 @@ class DatabaseConnectionUtil {
             database.execute([new RawSqlStatement(query)] as SqlStatement[], null)
             database.commit()
         } catch (Exception exception)  {
-            Logger.getLogger(this.class.name).severe("Failed to execute query " + query + " " + exception.message +
+            Logger.getLogger(this.class.name).severe("Failed to execute query " + query + " " +
                     exception.printStackTrace())
+            Assert.fail exception.message
         }
     }
 }
