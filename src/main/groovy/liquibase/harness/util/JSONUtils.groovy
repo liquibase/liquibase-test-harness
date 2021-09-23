@@ -4,6 +4,9 @@ import groovy.json.JsonSlurper
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.skyscreamer.jsonassert.JSONCompare
+import org.skyscreamer.jsonassert.JSONCompareMode
+
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import java.sql.SQLException
@@ -50,6 +53,28 @@ class JSONUtils {
             jArray.put(jsonObject)
         }
         return jArray
+    }
+
+    static boolean compareJSONArrays(JSONArray jsonArray, JSONArray jsonArrayToCompare) {
+        if (jsonArray.length() != jsonArrayToCompare.length()) {
+            return false
+        }
+        def compareMarker = true
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (!compareMarker) {
+                return false
+            }
+            for (int j = 0; j < jsonArrayToCompare.length(); j++) {
+                def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
+                def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
+                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.STRICT)
+                compareMarker = result.passed()
+                if (result.passed()) {
+                    break
+                }
+            }
+        }
+        return compareMarker
     }
 
     static JSONObject getJsonFromResource(String resourceName) {

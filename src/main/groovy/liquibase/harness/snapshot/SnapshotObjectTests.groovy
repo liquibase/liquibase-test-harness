@@ -17,25 +17,27 @@ class SnapshotObjectTests extends Specification {
     def "Execute inputSql against #input.database.name #input.database.version, generate snapshot #input.snapshotObjectName, compare to expected snapshot"() {
         given: "create arguments map for executing command scope, read expected snapshot from file, apply changes to the database under test"
         def argsMap = new HashMap()
-        argsMap.put("url", input.database.url)
-        argsMap.put("username", input.database.username)
-        argsMap.put("password", input.database.password)
+        argsMap.put("url", testInput.database.url)
+        argsMap.put("username", testInput.database.username)
+        argsMap.put("password", testInput.database.password)
         argsMap.put("snapshotFormat", "json")
-        def expectedSnapshot = getResourceContent(input.pathToExpectedSnapshotFile)
-        Assume.assumeFalse("Cannot test against offline database", input.database.database.getConnection()
+        def expectedSnapshot = getResourceContent(testInput.pathToExpectedSnapshotFile)
+        Assume.assumeFalse("Cannot test against offline database", testInput.database.database.getConnection()
                 instanceof OfflineConnection)
+        assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.snapshotObjectName} against " +
+                "${testInput.database.name}${testInput.database.version}"
 
         when: "execute inputSql, generate snapshot"
-        executeQuery(input.pathToInputSql, input.database.database)
+        executeQuery(testInput.pathToInputSql, testInput.database.database)
         def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
 
         then: "compare generated to expected snapshot"
         snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
 
         cleanup: "execute cleanupSql"
-        executeQuery(input.pathToCleanupSql, input.database.database)
+        executeQuery(testInput.pathToCleanupSql, testInput.database.database)
 
         where:
-        input << buildTestInput()
+        testInput << buildTestInput()
     }
 }
