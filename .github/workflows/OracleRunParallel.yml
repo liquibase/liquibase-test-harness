@@ -1,6 +1,6 @@
 # Basic workflow with Actions
 
-name: Oracle Parallel Test Execution
+name: Oracle EE Test Execution
 on:
 
   schedule:
