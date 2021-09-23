@@ -53,13 +53,13 @@ case $db in
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=h2 test
     ;;
   "crdb-20.2" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=20.2 test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=20.2 -Dmaven.test.failure.ignore=true test
     ;;
   "crdb-20.1" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=20.1 test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=20.1 -Dmaven.test.failure.ignore=true test
     ;;
   "crdb-21.1" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.1 test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.1 -Dmaven.test.failure.ignore=true test
     ;;
   "edb-9.5" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=9.5 test
