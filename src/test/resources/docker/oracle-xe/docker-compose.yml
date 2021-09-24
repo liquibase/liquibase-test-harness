@@ -9,7 +9,6 @@ services:
         - "5500:5500"
     restart: always
     environment:
-#        ORACLE_PWD: Secret321
         ORACLE_PASSWORD: Secret321
     volumes:
         - "./startup:/container-entrypoint-initdb.d"
