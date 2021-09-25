@@ -27,10 +27,7 @@ class SnapshotObjectTestHelper {
                 + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
-        DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
-
-        for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
-                .initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
+        for (DatabaseUnderTest databaseUnderTest: new DatabaseConnectionUtil().initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, inputSqlPath, "sql").entrySet()) {
                 if (!commandLineSnapshotObjectList || commandLineSnapshotObjectList.contains(changeLogEntry.key)) {
                     inputList.add(TestInput.builder()

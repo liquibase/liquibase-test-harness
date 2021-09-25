@@ -65,7 +65,11 @@ class ChangeDataTestHelper {
         File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/data/expectedSql/" +
                 "${testInput.databaseName}/${testInput.changeData}.sql" as File
         outputFile.parentFile.mkdirs()
-        outputFile.write(generatedSql)
+        try {
+            outputFile.write(generatedSql)
+        } catch(IOException exception) {
+            Logger.getLogger(this.class.name).warning("Failed to save generated sql file! " + exception.message)
+        }
     }
 
     @Builder

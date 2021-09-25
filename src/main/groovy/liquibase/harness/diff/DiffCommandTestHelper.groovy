@@ -22,13 +22,10 @@ class DiffCommandTestHelper {
         InputStream testConfig = DiffCommandTestHelper.class.getResourceAsStream("${baseDiffPath}diffDatabases.yml")
         assert testConfig != null : "Cannot find diffDatabases.yml in classpath"
 
-        Yaml configFileYml = new Yaml()
-        List<TargetToReference> targetToReferences = configFileYml.loadAs(testConfig, DiffDatabases.class).references
         List<TestInput> inputList = new ArrayList<>()
         List<DatabaseUnderTest> databasesToConnect = new ArrayList<>()
 
-        for (TargetToReference targetToReference : targetToReferences) {
-
+        for (TargetToReference targetToReference : new Yaml().loadAs(testConfig, DiffDatabases.class).references) {
             DatabaseUnderTest targetDatabase
             List<DatabaseUnderTest> matchingTargetDatabases = TestConfig.instance.databasesUnderTest.stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.targetDatabaseName) })
@@ -42,8 +39,7 @@ class DiffCommandTestHelper {
                         .orElseThrow({ ->
                             new IllegalArgumentException(
                                     String.format("Versions in harness-config.yml don't match to targetDatabaseVersion=%s " +
-                                            "provided in diffDatabases.yml",
-                                            targetToReference.targetDatabaseVersion))
+                                            "provided in diffDatabases.yml", targetToReference.targetDatabaseVersion))
                         })
             } else {
                 throw new IllegalArgumentException(String.format("can't match target DB for diff test name={%s}, version={%s}",
@@ -81,14 +77,13 @@ class DiffCommandTestHelper {
                     .referenceDatabase(referenceDatabase)
                     .build())
         }
-        DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
-        databaseConnectionUtil.initializeDatabasesConnection(databasesToConnect)
+        new DatabaseConnectionUtil().initializeDatabasesConnection(databasesToConnect)
         return inputList
     }
 
     static String getExpectedDiffPath(TestInput testInput) {
-        return "${baseDiffPath}expectedDiff/${testInput.referenceDatabase.name}${testInput.referenceDatabase.version}_to_" +
-                "${testInput.targetDatabase.name}${testInput.targetDatabase.version}.json"
+        return "${baseDiffPath}expectedDiff/${testInput.referenceDatabase.name}${testInput.referenceDatabase.version}" +
+                "_to_${testInput.targetDatabase.name}${testInput.targetDatabase.version}.json"
     }
 
     /** This method creates diffToCompare without JSONObjects referenced to databasechangelog* tables
@@ -129,7 +124,8 @@ class DiffCommandTestHelper {
             TestUtils.executeCommandScope("rollbackCount", argsMap)
         } catch (LiquibaseException exception) {
             Logger.getLogger(this.class.name).warning("Failed to rollback changes from generated diff changelog! " +
-                    "State of the target database will remain changed! \n" + exception.message + "\n" + exception.printStackTrace())
+                    "State of the target database will remain changed! \n" + exception.message + "\n" +
+                    exception.printStackTrace())
         }
     }
 

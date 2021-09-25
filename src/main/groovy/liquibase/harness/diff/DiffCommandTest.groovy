@@ -10,14 +10,14 @@ import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
 
 /**
- * Warning: this test might be destructive, meaning it may change the state of targetDatabase according to referenceDatabase
+ * Warning! This test might be destructive, meaning it may change the state of targetDatabase according to referenceDatabase
  */
 class DiffCommandTest extends Specification {
 
     @Unroll
-    def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version, verify no significant diffs"() {
+    def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version"() {
         given: "create arguments map for executing command scope, read expected diff from file"
-        def argsMap = new HashMap()
+        def argsMap = new HashMap<String, Object>()
         argsMap.put("url", testInput.targetDatabase.url)
         argsMap.put("username", testInput.targetDatabase.username)
         argsMap.put("password", testInput.targetDatabase.password)
