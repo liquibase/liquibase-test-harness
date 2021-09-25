@@ -2,11 +2,11 @@ package liquibase.harness.change
 
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.TestConfig
-import liquibase.harness.util.FileUtils
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
 import static liquibase.harness.util.TestUtils.*
 import static ChangeObjectTestHelper.*
@@ -14,13 +14,13 @@ import static ChangeObjectTestHelper.*
 class ChangeObjectTests extends Specification {
 
     @Unroll
-    def "apply #testInput.changeObject against #testInput.databaseName #testInput.version; verify generated SQL and DB snapshot"() {
+    def "apply #testInput.changeObject against #testInput.databaseName #testInput.version"() {
         given: "read expected sql and snapshot files, create arguments map for executing command scope"
-        String expectedSql = parseQuery(FileUtils.getExpectedSqlFileContent(testInput.changeObject, testInput.databaseName,
-                testInput.version, "liquibase/harness/change/expectedSql"))
-        String expectedSnapshot = FileUtils.getExpectedJSONFileContent(testInput.changeObject, testInput.databaseName,
-                testInput.version, "liquibase/harness/change/expectedSnapshot")
-        Map<String, Object> argsMap = new HashMap<>()
+        def expectedSql = parseQuery(getSqlFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
+                "liquibase/harness/change/expectedSql"))
+        def expectedSnapshot = getJSONFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
+                "liquibase/harness/change/expectedSnapshot")
+        def argsMap = new HashMap<String, Object>()
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
@@ -32,22 +32,21 @@ class ChangeObjectTests extends Specification {
         Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
 
         and: "fail test if snapshot is not provided"
-        assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against " +
-                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
+        assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against" +
+                " ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
                 "${testInput.database.databaseMinorVersion}"
 
         and: "check database under test is online"
         assert testInput.database.getConnection() instanceof JdbcConnection: "Database ${testInput.databaseName}" +
                 "${testInput.version} is offline!"
 
-        when: "get sql that is generated for change set"
+        when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
-            assert generatedSql == expectedSql: "Expected SQL does not match actual sql. " +
-                    "Deleting the existing expectedSql file will test that the new SQL works correctly " +
-                    "and will auto-generate a new version if it passes"
+            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
+                    " will test that new sql works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
             }
@@ -56,7 +55,7 @@ class ChangeObjectTests extends Specification {
         when: "apply changeSet to DB"
         executeCommandScope("update", argsMap)
 
-        then: "get DB snapshot, rollback changes, check if actual snapshot matches expected snapshot"
+        then: "get DB snapshot, check if actual snapshot matches expected snapshot, rollback changes"
         def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
         snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
         executeCommandScope("rollbackCount", argsMap)

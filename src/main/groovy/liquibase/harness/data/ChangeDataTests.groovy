@@ -7,7 +7,6 @@ import org.junit.Assert
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
-import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
 import java.util.logging.Logger
@@ -20,15 +19,15 @@ import static ChangeDataTestHelper.*
 class ChangeDataTests extends Specification {
 
     @Unroll
-    def "apply #testInput.changeData against #testInput.databaseName, #testInput.version; verify generated query, checking query and obtained result set"() {
+    def "apply #testInput.changeData against #testInput.databaseName #testInput.version"() {
         given: "read expected sql, checking sql and expected result set, create arguments map for executing command scope"
-        String expectedSql = parseQuery(getExpectedSqlFileContent(testInput.changeData,
-                testInput.databaseName, testInput.version, "liquibase/harness/data/expectedSql"))
-        String checkingSql = parseQuery(getExpectedSqlFileContent(testInput.changeData,
-                testInput.databaseName, testInput.version, "liquibase/harness/data/checkingSql"))
-        String expectedResultSet = getExpectedJSONFileContent(testInput.changeData, testInput.databaseName,
-                testInput.version, "liquibase/harness/data/expectedResultSet")
-        Map<String, Object> argsMap = new HashMap<>()
+        def expectedSql = parseQuery(getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version,
+                "liquibase/harness/data/expectedSql"))
+        def checkingSql = parseQuery(getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version,
+                "liquibase/harness/data/checkingSql"))
+        def expectedResultSet = getJSONFileContent(testInput.changeData, testInput.databaseName, testInput.version,
+                "liquibase/harness/data/expectedResultSet")
+        def argsMap = new HashMap<String, Object>()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
@@ -48,28 +47,27 @@ class ChangeDataTests extends Specification {
                 "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
                 "${testInput.database.databaseMinorVersion}"
 
-        when: "get sql that is generated for change set"
+        when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
-            assert generatedSql == expectedSql: "Expected SQL does not match generated SQL. " +
-                    "Deleting the existing expectedSql file will test that the new SQL works correctly " +
-                    "and will auto-generate a new version if it passes"
+            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
+                    " will test that new sql works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
             }
         }
         //TODO: Replace connection workaround for mysql and mariadb. Ticket DAT-8103
-        Connection mysqlConnection
+        def mysqlConnection
         if (testInput.databaseName == "mysql" || testInput.databaseName == "mariadb") {
             mysqlConnection = DriverManager.getConnection(testInput.url + "?" + "user=" + testInput.username + "&"
                     + "password=" + testInput.password)
             assert mysqlConnection.isValid(10)
         }
         def connection = testInput.database.getConnection()
-        assert connection instanceof JdbcConnection: "We cannot verify the following SQL works " +
-                "because the database is offline:\n${generatedSql}"
+        assert connection instanceof JdbcConnection: "We cannot verify the following SQL works because the database " +
+                "is offline:\n${generatedSql}"
 
         when: "apply changeSet to DB,"
         executeCommandScope("update", argsMap)
@@ -88,12 +86,12 @@ class ChangeDataTests extends Specification {
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
         } catch (Exception exception) {
-            Logger.getLogger(this.class.name).severe("Error executing checking SQL! " + exception.printStackTrace())
+            Logger.getLogger(this.class.name).severe("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
         }
         executeCommandScope("rollbackCount", argsMap)
 
-        and: "if expected sql is not provided save generated SQL as expected SQL"
+        and: "if expected sql is not provided save generated sql as expected sql"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             saveAsExpectedSql(generatedSql, testInput)
         }
@@ -101,7 +99,7 @@ class ChangeDataTests extends Specification {
             try {
                 mysqlConnection.close()
             } catch (SQLException exception) {
-                Logger.getLogger(this.class.name).severe("Failed to close jdbc connection! " + exception.printStackTrace())
+                Logger.getLogger(this.class.name).severe("Failed to close jdbc connection! " + exception.message)
             }
         }
 

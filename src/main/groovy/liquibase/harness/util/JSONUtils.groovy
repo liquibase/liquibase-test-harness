@@ -6,7 +6,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.skyscreamer.jsonassert.JSONCompare
 import org.skyscreamer.jsonassert.JSONCompareMode
-
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import java.sql.SQLException
@@ -67,7 +66,7 @@ class JSONUtils {
             for (int j = 0; j < jsonArrayToCompare.length(); j++) {
                 def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
                 def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
-                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.STRICT)
+                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.NON_EXTENSIBLE)
                 compareMarker = result.passed()
                 if (result.passed()) {
                     break

@@ -14,9 +14,10 @@ import static liquibase.harness.util.DatabaseConnectionUtil.executeQuery
 class SnapshotObjectTests extends Specification {
 
     @Unroll
-    def "Execute inputSql against #input.database.name #input.database.version, generate snapshot #input.snapshotObjectName, compare to expected snapshot"() {
-        given: "create arguments map for executing command scope, read expected snapshot from file, apply changes to the database under test"
-        def argsMap = new HashMap()
+    def "Apply #input.snapshotObjectName against #input.database.name #input.database.version"() {
+        given: "create arguments map for executing command scope, read expected snapshot from file, " +
+                "apply changes to the database under test"
+        def argsMap = new HashMap<String, Object>()
         argsMap.put("url", testInput.database.url)
         argsMap.put("username", testInput.database.username)
         argsMap.put("password", testInput.database.password)

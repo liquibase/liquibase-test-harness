@@ -3,7 +3,6 @@ package liquibase.harness.util
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.util.StreamUtil
-
 import java.nio.charset.StandardCharsets
 import java.util.logging.Logger
 import java.util.stream.Collectors
@@ -61,13 +60,13 @@ class FileUtils {
         return null
     }
 
-    static String getExpectedSqlFileContent(String changeObject, String databaseName,
-                                            String version, String expectedFolder) {
+    static String getSqlFileContent(String changeObject, String databaseName,
+                                    String version, String expectedFolder) {
         return getFileContent(changeObject, databaseName, version, expectedFolder, ".sql")
     }
 
-    static String getExpectedJSONFileContent(String changeObject, String databaseName,
-                                             String version, String expectedFolder) {
+    static String getJSONFileContent(String changeObject, String databaseName,
+                                     String version, String expectedFolder) {
         return getFileContent(changeObject, databaseName, version, expectedFolder, ".json")
     }
 
