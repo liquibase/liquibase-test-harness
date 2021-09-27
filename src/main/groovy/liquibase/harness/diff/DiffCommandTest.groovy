@@ -1,6 +1,7 @@
 package liquibase.harness.diff
 
 import liquibase.database.jvm.JdbcConnection
+import org.json.JSONObject
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -17,7 +18,7 @@ class DiffCommandTest extends Specification {
     @Unroll
     def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version"() {
         given: "create arguments map for executing command scope, read expected diff from file"
-        def argsMap = new HashMap<String, Object>()
+        Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.targetDatabase.url)
         argsMap.put("username", testInput.targetDatabase.username)
         argsMap.put("password", testInput.targetDatabase.password)
@@ -26,7 +27,7 @@ class DiffCommandTest extends Specification {
         argsMap.put("referencePassword", testInput.referenceDatabase.password)
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
         argsMap.put("format", "json")
-        def expectedDiff = getJsonFromResource(getExpectedDiffPath(testInput))
+        JSONObject expectedDiff = getJsonFromResource(getExpectedDiffPath(testInput))
         assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection : "Target database " +
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"
         assert testInput.referenceDatabase.database.getConnection() instanceof JdbcConnection : "Reference database " +

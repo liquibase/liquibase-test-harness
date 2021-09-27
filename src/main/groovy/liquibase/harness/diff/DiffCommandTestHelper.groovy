@@ -95,7 +95,7 @@ class DiffCommandTestHelper {
         def diffToCompare = new JSONObject()
         def arrays = ["missingObjects", "unexpectedObjects", "changedObjects"]
         def objects = ["missingObject", "unexpectedObject", "changedObject"]
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < arrays.size(); i++) {
             if (generatedDiff.has(arrays[i])) {
                 def generatedDiffObjects = generatedDiff.getJSONArray(arrays[i])
                 def diffToCompareObjects = new JSONArray()
