@@ -17,12 +17,12 @@ class SnapshotObjectTests extends Specification {
     def "Apply #input.snapshotObjectName against #input.database.name #input.database.version"() {
         given: "create arguments map for executing command scope, read expected snapshot from file, " +
                 "apply changes to the database under test"
-        def argsMap = new HashMap<String, Object>()
+        Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.database.url)
         argsMap.put("username", testInput.database.username)
         argsMap.put("password", testInput.database.password)
         argsMap.put("snapshotFormat", "json")
-        def expectedSnapshot = getResourceContent(testInput.pathToExpectedSnapshotFile)
+        String expectedSnapshot = getResourceContent(testInput.pathToExpectedSnapshotFile)
         Assume.assumeFalse("Cannot test against offline database", testInput.database.database.getConnection()
                 instanceof OfflineConnection)
         assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.snapshotObjectName} against " +

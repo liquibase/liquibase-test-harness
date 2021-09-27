@@ -8,7 +8,7 @@ import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.harness.config.DatabaseUnderTest
 import spock.lang.Specification
 
-class TestUtilsTest extends Specification {
+class FileUtilsTest extends Specification {
 
     def "getInputFilesPaths"() {
         final String baseChangelogPath = "liquibase/harness/change/changelogs"
@@ -38,8 +38,8 @@ class TestUtilsTest extends Specification {
         databaseUnderTestOracle.version = "18.4.0"
 
         when:
-        def changeLogPathsMySqlXmlFormat = TestUtils.resolveInputFilePaths(databaseUnderTestMySQL, baseChangelogPath, "xml")
-        def changeLogPathsMySql = TestUtils.resolveInputFilePaths(databaseUnderTestMySQL, baseChangelogPath, "sql")
+        def changeLogPathsMySqlXmlFormat = FileUtils.resolveInputFilePaths(databaseUnderTestMySQL, baseChangelogPath, "xml")
+        def changeLogPathsMySql = FileUtils.resolveInputFilePaths(databaseUnderTestMySQL, baseChangelogPath, "sql")
 
         then:
         changeLogPathsMySqlXmlFormat["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
@@ -51,8 +51,8 @@ class TestUtilsTest extends Specification {
 
 
         when:
-        def changeLogPathsPostgreSql = TestUtils.resolveInputFilePaths(databaseUnderTestPostgre, baseChangelogPath, "xml")
-        def snapshotPathsPostgreSql = TestUtils.resolveInputFilePaths(databaseUnderTestPostgre, baseSnapshotPath, "groovy")
+        def changeLogPathsPostgreSql = FileUtils.resolveInputFilePaths(databaseUnderTestPostgre, baseChangelogPath, "xml")
+        def snapshotPathsPostgreSql = FileUtils.resolveInputFilePaths(databaseUnderTestPostgre, baseSnapshotPath, "groovy")
 
         then:
         changeLogPathsPostgreSql["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
@@ -64,8 +64,8 @@ class TestUtilsTest extends Specification {
 
 
         when:
-        def changeLogPathsOracle = TestUtils.resolveInputFilePaths(databaseUnderTestOracle, baseChangelogPath, "xml")
-        def snapshotPathsOracle = TestUtils.resolveInputFilePaths(databaseUnderTestOracle, baseSnapshotPath, "groovy")
+        def changeLogPathsOracle = FileUtils.resolveInputFilePaths(databaseUnderTestOracle, baseChangelogPath, "xml")
+        def snapshotPathsOracle = FileUtils.resolveInputFilePaths(databaseUnderTestOracle, baseSnapshotPath, "groovy")
 
         then:
         changeLogPathsOracle["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
