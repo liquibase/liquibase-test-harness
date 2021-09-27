@@ -55,15 +55,17 @@ class ChangeObjectTests extends Specification {
         when: "apply changeSet to DB"
         executeCommandScope("update", argsMap)
 
-        then: "get DB snapshot, check if actual snapshot matches expected snapshot, rollback changes"
+        then: "get DB snapshot, check if actual snapshot matches expected snapshot"
         def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
         snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
-        executeCommandScope("rollbackCount", argsMap)
 
         and: "if expected sql is not provided save generated sql as expected sql"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             saveAsExpectedSql(generatedSql, testInput)
         }
+
+        cleanup: "rollback changes"
+        executeCommandScope("rollbackCount", argsMap)
 
         where: "test input in next data table"
         testInput << buildTestInput()
