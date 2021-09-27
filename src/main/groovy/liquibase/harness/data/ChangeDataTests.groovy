@@ -72,7 +72,7 @@ class ChangeDataTests extends Specification {
         when: "apply changeSet to DB,"
         executeCommandScope("update", argsMap)
 
-        then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet, apply rollback"
+        then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet"
 
         try {
             def resultSet
@@ -89,7 +89,6 @@ class ChangeDataTests extends Specification {
             Logger.getLogger(this.class.name).severe("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
         }
-        executeCommandScope("rollbackCount", argsMap)
 
         and: "if expected sql is not provided save generated sql as expected sql"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
@@ -102,6 +101,9 @@ class ChangeDataTests extends Specification {
                 Logger.getLogger(this.class.name).severe("Failed to close jdbc connection! " + exception.message)
             }
         }
+
+        cleanup: "rollback changes"
+        executeCommandScope("rollbackCount", argsMap)
 
         where: "test input in next data table"
         testInput << buildTestInput()
