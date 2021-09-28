@@ -4,8 +4,8 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "\"DATICAL_ADMIN\".\"TEST_SEQUENCE\".\"NEXTVAL\"\\!\\{liquibase.statement.DatabaseFunction\\}",
-            "name": "sequence_referenced_column",
+            "defaultValue": "DATICAL_ADMIN.test_sequence.nextval\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "SEQUENCE_REFERENCED_COLUMN",
             "nullable": true,
             "type": {
               "typeName": "NUMBER"

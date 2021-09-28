@@ -1,59 +1,44 @@
 package liquibase.harness.snapshot
 
-import liquibase.CatalogAndSchema
 import liquibase.database.OfflineConnection
-import liquibase.snapshot.SnapshotControl
-import liquibase.snapshot.SnapshotGeneratorFactory
-import liquibase.statement.SqlStatement
-import liquibase.statement.core.RawSqlStatement
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static SnapshotObjectTestHelper.*
+import static SnapshotObjectTestHelper.buildTestInput
+import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
+import static liquibase.harness.util.FileUtils.getResourceContent
+import static liquibase.harness.util.TestUtils.executeCommandScope
+import static liquibase.harness.util.DatabaseConnectionUtil.executeQuery
 
 class SnapshotObjectTests extends Specification {
 
     @Unroll
-    def "Snapshot #input.testName '#input.permutation.setup' on #input.database.name"() {
-        when:
-        Assume.assumeFalse("Cannot test against offline database", input.database.database.getConnection()
+    def "Apply #input.snapshotObjectName against #input.database.name #input.database.version"() {
+        given: "create arguments map for executing command scope, read expected snapshot from file, " +
+                "apply changes to the database under test"
+        Map<String, Object> argsMap = new HashMap()
+        argsMap.put("url", testInput.database.url)
+        argsMap.put("username", testInput.database.username)
+        argsMap.put("password", testInput.database.password)
+        argsMap.put("snapshotFormat", "json")
+        String expectedSnapshot = getResourceContent(testInput.pathToExpectedSnapshotFile)
+        Assume.assumeFalse("Cannot test against offline database", testInput.database.database.getConnection()
                 instanceof OfflineConnection)
+        assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.snapshotObjectName} against " +
+                "${testInput.database.name}${testInput.database.version}"
 
-        input.database.database.execute([new RawSqlStatement(input.permutation.setup)] as SqlStatement[], null)
-        input.database.database.commit()
+        when: "execute inputSql, generate snapshot"
+        executeQuery(testInput.pathToInputSql, testInput.database.database)
+        def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
 
-        def snapshot = SnapshotGeneratorFactory.instance.createSnapshot(new CatalogAndSchema(null, null),
-                input.database.database, new SnapshotControl(input.database.database))
+        then: "compare generated to expected snapshot"
+        snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
 
-        then:
-        input.permutation.verify.apply(snapshot) == null
-
-        cleanup:
-        if (!(input.database.database.getConnection() instanceof OfflineConnection)) {
-            def cleanupSql = input.permutation.cleanup
-            def generatedCleanup = false
-            if (cleanupSql == null) {
-                if (input.permutation.setup.toLowerCase().startsWith("create ")) {
-                    def splitSetup = input.permutation.setup.split("\\s+")
-                    cleanupSql = "drop ${splitSetup[1]} ${splitSetup[2]}"
-                    generatedCleanup = true
-                }
-            }
-            assert cleanupSql != null: "No cleanup config specified and one cannot be auto-generated"
-            try {
-                input.database.database.execute([new RawSqlStatement(cleanupSql)] as SqlStatement[], null)
-                input.database.database.commit()
-            } catch (Throwable e) {
-                if (generatedCleanup) {
-                    throw new RuntimeException("Cannot execute generated cleanup statement $cleanupSql: $e.message. You may need to specify a 'cleanup' block", e)
-                } else {
-                    throw new RuntimeException("Cannot execute specified cleanup statement $cleanupSql: $e.message", e)
-                }
-            }
-        }
+        cleanup: "execute cleanupSql"
+        executeQuery(testInput.pathToCleanupSql, testInput.database.database)
 
         where:
-        input << buildTestInput()
+        testInput << buildTestInput()
     }
 }
