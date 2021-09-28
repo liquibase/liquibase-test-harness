@@ -153,7 +153,7 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | MariaDB | `10.3 , 10.5` |
 | SQL Server | `2017`, `2019` |
 | Oracle | `18.3.0, 18.4.0, 19.9.0` |
-| CockroachDB | `20.1, 20.2` |
+| CockroachDB | `20.1, 20.2, 21.1` |
 | EDB | `9.5, 9.6, 10, 11, 12, 13` |
 | H2 | `1.4.200` |
 | SQLite | `3.34.0` |
