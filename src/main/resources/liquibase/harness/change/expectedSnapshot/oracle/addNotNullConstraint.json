@@ -5,9 +5,10 @@
         {
           "column": {
             "name": "inserted_date",
+            "notNullConstraintName": "TEST_NOTNULL",
             "nullable": false,
             "type": {
-              "typeName": "TIMESTAMP(6)"
+              "typeName": "DATE"
             }
           }
         }

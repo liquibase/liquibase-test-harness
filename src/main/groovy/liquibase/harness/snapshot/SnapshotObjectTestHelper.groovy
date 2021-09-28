@@ -1,38 +1,54 @@
 package liquibase.harness.snapshot
 
+import groovy.transform.builder.Builder
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.harness.util.TestUtils
+import liquibase.harness.util.FileUtils
+import java.util.logging.Logger
 
 class SnapshotObjectTestHelper {
-    final static String baseSnapshotPath = "liquibase/harness/snapshot"
+
+    final static String baseSnapshotPath = "liquibase/harness/snapshot/"
+    final static String inputSqlPath = "${baseSnapshotPath}inputSql"
+    final static String cleanupSqlPath = "${baseSnapshotPath}cleanupSql"
+    final static String expectedSnapshotPath = "${baseSnapshotPath}expectedSnapshot"
 
     static List<TestInput> buildTestInput() {
-        def loader = new GroovyClassLoader()
-        def returnList = new ArrayList<TestInput>()
-        DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
+        String commandLineSnapshotObjects = System.getProperty("snapshotObjects")
+        List commandLineSnapshotObjectList = Collections.emptyList()
+        if (commandLineSnapshotObjects) {
+            commandLineSnapshotObjectList = Arrays.asList(commandLineSnapshotObjects.contains(",")
+                    ? commandLineSnapshotObjects.split(",")
+                    : commandLineSnapshotObjects)
+        }
 
-        for (def databaseUnderTest : databaseConnectionUtil.initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
-            Map nameToPathMap = TestUtils.resolveInputFilePaths(databaseUnderTest, baseSnapshotPath, "groovy")
-            for (def file : nameToPathMap.values()) {
+        Logger.getLogger(this.class.name).warning("Only " + TestConfig.instance.inputFormat
+                + " input files are taken into account for this test run")
 
-                def testClass = loader.parseClass(new InputStreamReader(TestConfig.getInstance().resourceAccessor.openStream(null, file)), file)
-                for (def testConfig : (Collection<SnapshotTest.TestConfig>) ((Script) testClass.newInstance()).run()) {
-                    returnList.add(new TestInput(
-                            database: databaseUnderTest,
-                            permutation: testConfig,
-                            testName: testClass.getName()
-                    ))
+        List<TestInput> inputList = new ArrayList<>()
+        for (DatabaseUnderTest databaseUnderTest: new DatabaseConnectionUtil().initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
+            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, inputSqlPath, "sql").entrySet()) {
+                if (!commandLineSnapshotObjectList || commandLineSnapshotObjectList.contains(changeLogEntry.key)) {
+                    inputList.add(TestInput.builder()
+                            .database(databaseUnderTest)
+                            .snapshotObjectName(changeLogEntry.key)
+                            .pathToInputSql("/${changeLogEntry.value}")
+                            .pathToCleanupSql("/${cleanupSqlPath}/${changeLogEntry.key}.sql")
+                            .pathToExpectedSnapshotFile("/${expectedSnapshotPath}/${changeLogEntry.key}.json")
+                            .build())
                 }
             }
         }
-        return returnList
+        return inputList
     }
 
+    @Builder
     static class TestInput {
         DatabaseUnderTest database
-        SnapshotTest.TestConfig permutation
-        String testName
+        String snapshotObjectName
+        String pathToInputSql
+        String pathToCleanupSql
+        String pathToExpectedSnapshotFile
     }
 }

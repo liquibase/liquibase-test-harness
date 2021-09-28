@@ -1,0 +1,23 @@
+{
+  "changedObjects": [
+    {
+      "changedObject": {
+        "name": "added",
+        "type": "column",
+        "relationName": "authors",
+        "schemaName": "public",
+        "catalogName": "lbcat",
+        "differences": [
+          {
+            "difference": {
+              "comparedValue": "now()",
+              "field": "defaultValue",
+              "message": "defaultValue changed from 'CURRENT_TIMESTAMP' to 'now()'",
+              "referenceValue": "CURRENT_TIMESTAMP"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -8,59 +8,13 @@ references:
     targetDatabaseVersion: 9
     referenceDatabaseName: postgresql
     referenceDatabaseVersion: 12
-    expectedDiffs:
-      missingObjects:
-      unexpectedObjects:
-      changedObjects:
-        - diffName: "public.authors.added"
-          diffs:
-            defaultValue: "defaultValue changed from 'CURRENT_TIMESTAMP' to 'now()'"
-        - diffName: "public.posts.id"
-          diffs:
-            defaultValue: "defaultValue changed from 'nextval('posts_id_seq'::regclass)' to 'null'"
-            type: "type changed from 'serial' to 'int4'"
-        - diffName: "public.authors.id"
-          diffs:
-            defaultValue: "defaultValue changed from 'nextval('authors_id_seq'::regclass)' to 'null'"
-            type: "type changed from 'serial' to 'int4'"
-
 
   - targetDatabaseName: mysql
     targetDatabaseVersion: 5.7
     referenceDatabaseName: mysql
     referenceDatabaseVersion: 8
-    expectedDiffs:
-      missingObjects:
-      unexpectedObjects:
-      changedObjects:
-
 
   - targetDatabaseName: postgresql
     targetDatabaseVersion: 9
     referenceDatabaseName: mysql
     referenceDatabaseVersion: 8
-    expectedDiffs:
-      missingObjects:
-      unexpectedObjects:
-      changedObjects:
-        - diffName: "lbcat.posts.id"
-          diffs:
-            type: "type changed from 'INT(10)' to 'int4'"
-        - diffName: "lbcat.authors.id"
-          diffs:
-            type: "type changed from 'INT(10)' to 'int4'"
-        - diffName: "lbcat.posts.content"
-          diffs:
-            type: "type changed from 'TEXT(65535)' to 'text'"
-        - diffName: "lbcat.posts.author_id"
-          diffs:
-            type: "type changed from 'INT(10)' to 'int4'"
-        - diffName: "lbcat.posts.inserted_date"
-          diffs:
-            type: "type changed from 'DATE(10)' to 'date'"
-        - diffName: "lbcat.authors.added"
-          diffs:
-            defaultValue: "defaultValue changed from 'CURRENT_TIMESTAMP' to 'now()'"
-        - diffName: "lbcat.authors.birthdate"
-          diffs:
-            type: "type changed from 'DATE(10)' to 'date'"

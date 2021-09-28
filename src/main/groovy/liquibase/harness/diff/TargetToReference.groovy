@@ -5,5 +5,4 @@ class TargetToReference {
     String targetDatabaseVersion
     String referenceDatabaseName
     String referenceDatabaseVersion
-    ExpectedDiffs expectedDiffs
 }

@@ -6,19 +6,16 @@ import liquibase.database.Database
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.harness.util.TestUtils
-
+import liquibase.harness.util.FileUtils
 import java.util.logging.Logger
 
 class ChangeDataTestHelper {
 
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
-
     final static String baseChangelogPath = "liquibase/harness/data/changelogs"
 
     static List<TestInput> buildTestInput() {
         String commandLineInputFormat = System.getProperty("inputFormat")
-
         String commandLineChangeData = System.getProperty("changeData")
         List commandLineChangeDataList = Collections.emptyList()
         if(commandLineChangeData){
@@ -42,7 +39,7 @@ class ChangeDataTestHelper {
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : TestUtils.resolveInputFilePaths(databaseUnderTest,
+            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest,
                     baseChangelogPath,
                     TestConfig.instance.inputFormat).entrySet()) {
                 if (!commandLineChangeDataList || commandLineChangeDataList.contains(changeLogEntry.key)) {
@@ -68,7 +65,11 @@ class ChangeDataTestHelper {
         File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/data/expectedSql/" +
                 "${testInput.databaseName}/${testInput.changeData}.sql" as File
         outputFile.parentFile.mkdirs()
-        outputFile.write(generatedSql)
+        try {
+            outputFile.write(generatedSql)
+        } catch(IOException exception) {
+            Logger.getLogger(this.class.name).warning("Failed to save generated sql file! " + exception.message)
+        }
     }
 
     @Builder
@@ -86,4 +87,3 @@ class ChangeDataTestHelper {
         Database database
     }
 }
-

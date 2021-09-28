@@ -9,7 +9,6 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.exception.DatabaseException
 import liquibase.listener.SqlListener
 import liquibase.resource.ClassLoaderResourceAccessor
-
 import java.sql.SQLException
 
 class DatabaseTestContext {
@@ -18,7 +17,6 @@ class DatabaseTestContext {
     private static DatabaseTestContext instance = new DatabaseTestContext()
     private Map<String, DatabaseConnection> connectionsByUrl = new HashMap<>()
     private Map<String, Boolean> connectionsAttempted = new HashMap<>()
-
 
     static DatabaseTestContext getInstance() {
         return instance
@@ -43,7 +41,8 @@ class DatabaseTestContext {
             // Close the JDBC connection
             databaseConnection.getUnderlyingConnection().close()
         } catch (SQLException e) {
-            Scope.getCurrentScope().getLog(DatabaseTestContext.class).warning("Could not close the following connection: " + databaseConnection.getURL(), e)
+            Scope.getCurrentScope().getLog(DatabaseTestContext.class).warning("Could not close the following connection: "
+                    + databaseConnection.getURL(), e)
         }
     }
 
@@ -74,7 +73,8 @@ class DatabaseTestContext {
             }
 
             if (connection instanceof JdbcConnection && connection.getUnderlyingConnection().isClosed()) {
-                connectionsByUrl.put(url, DatabaseFactory.getInstance().openConnection(url, username, password, null, new ClassLoaderResourceAccessor()))
+                connectionsByUrl.put(url, DatabaseFactory.getInstance().openConnection(url, username, password,
+                        null, new ClassLoaderResourceAccessor()))
             }
             return connection
         }
@@ -97,7 +97,8 @@ class DatabaseTestContext {
             }
         }
 
-        DatabaseConnection connection = DatabaseFactory.getInstance().openConnection(url, username, password, null, new ClassLoaderResourceAccessor())
+        DatabaseConnection connection = DatabaseFactory.getInstance().openConnection(url, username, password,
+                null, new ClassLoaderResourceAccessor())
         if (connection == null) {
             return null
         }

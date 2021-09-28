@@ -146,7 +146,6 @@ services:
       - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
     entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
 
-
   mssql-2019:
     container_name: sql-server-db-2019
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -167,7 +166,6 @@ services:
       - "1523:9092"
     volumes:
       - "./H2-init.sql:/docker-entrypoint-initdb.d/test.sql"
-
 
   crdb-20.2:
     image: cockroachdb/cockroach:v20.2.0
@@ -234,7 +232,6 @@ services:
     command: /setup_db.sh crdb-21.1
     depends_on:
       - crdb-21.1
-
 
 networks:
   roachnet:
