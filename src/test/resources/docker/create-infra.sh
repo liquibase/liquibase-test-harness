@@ -27,6 +27,14 @@ case $db in
     exit 0
     ;;
 
+  # titan run databases
+  "hsqldb"|"firebird")
+    ../titan-installer.sh 0.5.3
+    docker ps
+    titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/$db
+    exit 0
+    ;;
+
   # standard startup
   *)
     docker-compose up -d $db
