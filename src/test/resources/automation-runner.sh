@@ -87,5 +87,9 @@ case $db in
     ;;
   "diff")
     test_command mvn -ntp -Dtest=DiffTest test
+    ;;
+  "hsqldb")
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=hsqldb test
+    ;;
 esac
 
