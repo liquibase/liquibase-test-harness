@@ -206,7 +206,6 @@ services:
     volumes:
       - "./H2-init.sql:/docker-entrypoint-initdb.d/test.sql"
 
-
   crdb-20.2:
     image: cockroachdb/cockroach:v20.2.0
     command: start-single-node --insecure
