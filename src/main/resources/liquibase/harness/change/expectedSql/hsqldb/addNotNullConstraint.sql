@@ -1,0 +1,1 @@
+ALTER TABLE PUBLIC.posts ALTER COLUMN inserted_date SET NOT NULL

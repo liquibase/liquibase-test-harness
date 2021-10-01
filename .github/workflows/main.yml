@@ -47,7 +47,8 @@ jobs:
             "edb-13",
             "derby",
             "sqlite",
-            "diff"
+            "diff",
+            "hsqldb"
         ]
 
     steps:
