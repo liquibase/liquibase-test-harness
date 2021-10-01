@@ -16,17 +16,22 @@ For instance, you may wish to run against a database running in the cloud or a n
 
 
 ## Running tests against docker containers managed by Titan
-Here in Liquibase we use [Titan](https://titan-data.io/) to manage containers that require additional configurations
-in contrast to just running docker container from DockerHub image.
-Some images have their own init scripts, so we can't run our script that populate test DB with data during container start.
-Fortunately Titan allow us to make container snapshot at any moment, push this snapshot to some common place like AWS S3 bucket
-and with a single Titan command pull and start container from that snapshot. 
+* Here at Liquibase we use [Titan](https://github.com/titan-data/titan) to manage containers that require additional configurations
+instead of running docker containers based on images from DockerHub.
+  * Some images have their own init scripts that execute on start up, which means we cannot run our own init scripts to populate the test databases with data during container start up.
+  * However Titan allows users to make container snapshots at any given moment of time, then push this snapshot to a staging area like an AWS S3 bucket.
+Then with a single Titan command, users can pull and start container from that stored snapshot. 
 
-If you want to run container with DB up and ready just like we do - install titan, add path to it's executive to your environment variables,
-run `titan install` and `titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/{DbName}` from your Terminal.
-It will pull the image and run container from snapshot with already properly initialized DB.
-More information about installing Titan you can find on a website.
+* So if you want to run a container with the database up and ready just like we do here with the test-harness - 
+  * Install Titan
+  * Add the path to it's executable to your environment variables
+  * Run `titan install` and `titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/{DbName}` from your Terminal.
+    * Titan will pull the image and startup the container from the snapshot with already initialized database.
 
-If that sounds too complicated, or you don't want to install Titan for some reason, you can uncomment section in 
-`src/test/resources/docker/docker-compose.yml` that is corresponding to platform you are interested in, connect to DB, copy and paste 
-SQL statements from `src/test/resources/docker{DnName}-init.sql`. And here you do - now you can run tests against this platform
+For more information about installing Titan, please go the website above.
+
+* But if all this sounds too complicated, or if you prefer not to install Titan: 
+  * You can uncomment the section in `src/test/resources/docker/docker-compose.yml` which corresponds to the platform you are interested in
+  * Connect to the database 
+  * Copy and paste the SQL statements from `src/test/resources/docker{DnName}-init.sql`. 
+  * And now you can run tests against this platform
