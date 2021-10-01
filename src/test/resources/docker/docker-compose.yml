@@ -107,6 +107,19 @@ services:
     volumes:
       - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
+  mariadb-10.2:
+    image: mariadb:10.2
+    ports:
+      - "33068:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+
   mariadb-10.3:
     image: mariadb:10.3
     ports:
@@ -120,10 +133,36 @@ services:
     volumes:
       - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
 
+  mariadb-10.4:
+    image: mariadb:10.4
+    ports:
+      - "33067:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+
   mariadb-10.5:
     image: mariadb:10.5
     ports:
       - "33066:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+
+  mariadb-10.6:
+    image: mariadb:10.6
+    ports:
+      - "33069:3306"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: LbRootPass1
