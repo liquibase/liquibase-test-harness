@@ -28,15 +28,15 @@ class ChangeObjectTests extends Specification {
         argsMap.put("snapshotFormat", "JSON")
         argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
-        and: "skip testcase if it's invalid for this combination of db type and/or version"
+        when: "skip testcase if it's invalid for this combination of db type and/or version"
         Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
 
-        and: "fail test if snapshot is not provided"
+        when: "fail test if snapshot is not provided"
         assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against" +
                 " ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
                 "${testInput.database.databaseMinorVersion}"
 
-        and: "check database under test is online"
+        when: "check database under test is online"
         assert testInput.database.getConnection() instanceof JdbcConnection: "Database ${testInput.databaseName}" +
                 "${testInput.version} is offline!"
 

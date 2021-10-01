@@ -1,0 +1,9 @@
+inputFormat: xml
+context: TestConfigTest
+
+databasesUnderTest:
+  - name: test
+    version: test
+    url: jdbc:postgresql://test/lbcat
+    username: test
+    password: test
