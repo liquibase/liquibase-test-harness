@@ -14,7 +14,7 @@ class TestConfig {
     String outputResourcesBase = "src/test/resources"
     Boolean initDB = true
     ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
-    Boolean revalidateSql
+    Boolean revalidateSql = true
     String inputFormat
     String context
     List<DatabaseUnderTest> databasesUnderTest
@@ -26,14 +26,13 @@ class TestConfig {
     static TestConfig getInstance() {
         if (instance == null) {
             Yaml configFileYml = new Yaml()
-            def testConfig = TestConfig.class.getResourceAsStream("/harness-config.yml")
+            String testConfigPath = System.getProperty("configFile")?:"/harness-config.yml"
+            def testConfig = TestConfig.class.getResourceAsStream(testConfigPath)
             assert testConfig != null : "Cannot find harness-config.yml in classpath"
 
             instance = configFileYml.loadAs(testConfig, TestConfig.class)
 
-            if (System.getProperty("revalidateSql") == null) {
-                instance.revalidateSql = true
-            } else {
+            if (System.getProperty("revalidateSql") != null) {
                 instance.revalidateSql = Boolean.valueOf(System.getProperty("revalidateSql"))
             }
             Logger.getLogger(TestConfig.name).info("Revalidate SQL: ${instance.revalidateSql}")
