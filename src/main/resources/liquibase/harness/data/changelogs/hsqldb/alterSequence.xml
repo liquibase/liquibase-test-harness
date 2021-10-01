@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <!-- HSQLDB doesn't support minValue and dataType attributes for createSequence-->
+    <changeSet id="1" author="as">
+        <createSequence incrementBy="1"
+                        sequenceName="test_sequence"
+                        startValue="1"/>
+        <rollback/>
+    </changeSet>
+    <!-- HSQLDB doesn't support dataType, incrementBy, maxValue attributes for alterSequence-->
+    <changeSet author="as" id="2" >
+        <alterSequence  cacheSize="371717"
+                        cycle="true"
+                        minValue="42"
+                        sequenceName="test_sequence"/>
+        <rollback>
+            <dropSequence sequenceName="test_sequence"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

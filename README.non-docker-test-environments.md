@@ -14,3 +14,24 @@ For instance, you may wish to run against a database running in the cloud or a n
         1. You will need to manually execute the sql scripts from the `postgres-init.sh` (located at `src/test/resources/docker/postgres-init.sh`)
         script, so that the database is pre-populated with the test database objects.
 
+
+## Running tests against docker containers managed by Titan
+* Here at Liquibase we use [Titan](https://github.com/titan-data/titan) to manage containers that require additional configurations
+instead of running docker containers based on images from DockerHub.
+  * Some images have their own init scripts that execute on start up, which means we cannot run our own init scripts to populate the test databases with data during container start up.
+  * However Titan allows users to make container snapshots at any given moment of time, then push this snapshot to a staging area like an AWS S3 bucket.
+Then with a single Titan command, users can pull and start container from that stored snapshot. 
+
+* So if you want to run a container with the database up and ready just like we do here with the test-harness - 
+  * Install Titan
+  * Add the path to it's executable to your environment variables
+  * Run `titan install` and `titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/{DbName}` from your Terminal.
+    * Titan will pull the image and startup the container from the snapshot with already initialized database.
+
+For more information about installing Titan, please go the website above.
+
+* But if all this sounds too complicated, or if you prefer not to install Titan: 
+  * You can uncomment the section in `src/test/resources/docker/docker-compose.yml` which corresponds to the platform you are interested in
+  * Connect to the database 
+  * Copy and paste the SQL statements from `src/test/resources/docker{DnName}-init.sql`. 
+  * And now you can run tests against this platform

@@ -1,0 +1,2 @@
+ALTER TABLE PUBLIC.authors ADD numericColumn numeric
+ALTER TABLE PUBLIC.authors ALTER COLUMN  numericColumn SET DEFAULT 100000000

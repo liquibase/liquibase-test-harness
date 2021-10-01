@@ -1,0 +1,1 @@
+call NEXT VALUE FOR test_sequence;
