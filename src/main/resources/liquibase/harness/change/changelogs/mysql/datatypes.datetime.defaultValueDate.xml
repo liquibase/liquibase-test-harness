@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <!-- MySQL Date and Time Data Type Syntax: https://dev.mysql.com/doc/refman/8.0/en/date-and-time-type-syntax.html -->
+    <changeSet  author="Liquibase User" id="dateTimePrecision" dbms="mysql" labels="lb-679">
+        <createTable tableName="table_datetime">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="p0" type="DATETIME(0)" defaultValueDate="CURRENT_TIMESTAMP(0)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p1" type="DATETIME(1)" defaultValueDate="CURRENT_TIMESTAMP(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p2" type="DATETIME(2)" defaultValueDate="CURRENT_TIMESTAMP(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p3" type="DATETIME(3)" defaultValueDate="CURRENT_TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p4" type="DATETIME(4)" defaultValueDate="CURRENT_TIMESTAMP(4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p5" type="DATETIME(5)" defaultValueDate="CURRENT_TIMESTAMP(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p6" type="DATETIME(6)" defaultValueDate="CURRENT_TIMESTAMP(6)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet  author="Liquibase User" id="timestampPrecision" dbms="mysql" labels="lb-679">
+        <createTable tableName="table_timestamp">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="p0" type="TIMESTAMP(0)" defaultValueDate="CURRENT_TIMESTAMP(0)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p1" type="TIMESTAMP(1)" defaultValueDate="CURRENT_TIMESTAMP(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p2" type="TIMESTAMP(2)" defaultValueDate="CURRENT_TIMESTAMP(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p3" type="TIMESTAMP(3)" defaultValueDate="CURRENT_TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p4" type="TIMESTAMP(4)" defaultValueDate="CURRENT_TIMESTAMP(4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p5" type="TIMESTAMP(5)" defaultValueDate="CURRENT_TIMESTAMP(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="p6" type="TIMESTAMP(6)" defaultValueDate="CURRENT_TIMESTAMP(6)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
