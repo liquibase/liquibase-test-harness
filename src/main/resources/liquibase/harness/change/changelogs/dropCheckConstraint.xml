@@ -4,12 +4,18 @@
         xmlns:pro="http://www.liquibase.org/xml/ns/pro"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet  id="1" author="as">
-        <pro:dropCheckConstraint  catalogName="cat"
-                                  constraintName="const_name"
-                                  schemaName="public"
-                                  tableName="person"/>
+        <pro:addCheckConstraint constraintName="test_check_constraint"
+                                disabled="false"
+                                tableName="posts"
+                                validate="true">id > 0</pro:addCheckConstraint>
+        <rollback/>
+    </changeSet>
+    <changeSet  author="as" id="2" >
+        <pro:dropCheckConstraint tableName="posts"
+                                 constraintName="test_check_constraint">
+        </pro:dropCheckConstraint>
         <rollback/>
     </changeSet>
 </databaseChangeLog>
