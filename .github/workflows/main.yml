@@ -49,6 +49,7 @@ jobs:
             "sqlite",
             "diff",
             "hsqldb"
+#            "firebird"  -- firebird is ignored until https://github.com/liquibase/liquibase/pull/1970 is merged and released
         ]
 
     steps:
