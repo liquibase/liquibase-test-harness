@@ -1,0 +1,23 @@
+inputFormat: xml
+context: TestConfigTest
+
+databasesUnderTest:
+  - name: first
+    version: 1
+    url: jdbc:postgresql://test/lbcat
+    username: test1
+    password: test1
+
+  - name: second
+    version: 2
+    prefix: titan
+    url: jdbc:postgresql://test/lbcat
+    username: test2
+    password: test2
+
+  - name: third
+    version: 3
+    prefix: titan
+    url: jdbc:postgresql://test/lbcat
+    username: test3
+    password: test3

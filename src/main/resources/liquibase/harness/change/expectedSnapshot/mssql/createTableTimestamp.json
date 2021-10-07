@@ -16,7 +16,7 @@
           "column": {
             "name": "lms_test_timestamp",
             "type": {
-              "typeName": "datetime"
+              "typeName": "datetime2"
             }
           }
         }

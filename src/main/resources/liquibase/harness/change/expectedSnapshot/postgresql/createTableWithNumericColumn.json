@@ -1,0 +1,15 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "type": {
+              "columnSize": "131089\\!\\{java.lang.Integer\\}"
+            }
+          }
+        }]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet  author="as" id="1">
+        <pro:createTrigger disabled="false"
+                           encoding="UTF-8"
+                           scope="test"
+                           tableName="posts"
+                           triggerName="test_trigger">CREATE OR REPLACE TRIGGER test_trigger BEFORE INSERT ON posts BEGIN END;
+        </pro:createTrigger>
+        <rollback>
+            <pro:dropTrigger triggerName="test_trigger"
+                             tableName="posts"/>
+        </rollback>
+    </changeSet>
+    <changeSet author="as" id="2">
+        <pro:renameTrigger oldTriggerName="test_trigger"
+                           newTriggerName="test_trigger_renamed"
+                           tableName="posts"/>
+    </changeSet>
+</databaseChangeLog>

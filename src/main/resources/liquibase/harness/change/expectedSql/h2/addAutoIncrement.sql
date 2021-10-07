@@ -1,0 +1,2 @@
+CREATE TABLE PUBLIC.autoincrement_test (intColumn INT NOT NULL, dateColumn date, CONSTRAINT PK_AUTOINCREMENT_TEST PRIMARY KEY (intColumn))
+ALTER TABLE PUBLIC.autoincrement_test ALTER COLUMN intColumn int AUTO_INCREMENT (100)

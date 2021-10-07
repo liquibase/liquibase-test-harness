@@ -30,12 +30,16 @@ class SnapshotObjectTestHelper {
         for (DatabaseUnderTest databaseUnderTest: new DatabaseConnectionUtil().initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
             for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, inputSqlPath, "sql").entrySet()) {
                 if (!commandLineSnapshotObjectList || commandLineSnapshotObjectList.contains(changeLogEntry.key)) {
+
+                    String pathToCleanupSQL = FileUtils.resolveInputFilePaths(databaseUnderTest, cleanupSqlPath, "sql").get(changeLogEntry.key);
+                    String pathToExpectedSnapshot = FileUtils.resolveInputFilePaths(databaseUnderTest, expectedSnapshotPath, "json").get(changeLogEntry.key);
+
                     inputList.add(TestInput.builder()
                             .database(databaseUnderTest)
                             .snapshotObjectName(changeLogEntry.key)
                             .pathToInputSql("/${changeLogEntry.value}")
-                            .pathToCleanupSql("/${cleanupSqlPath}/${changeLogEntry.key}.sql")
-                            .pathToExpectedSnapshotFile("/${expectedSnapshotPath}/${changeLogEntry.key}.json")
+                            .pathToCleanupSql("/${pathToCleanupSQL}")
+                            .pathToExpectedSnapshotFile("/${pathToExpectedSnapshot}")
                             .build())
                 }
             }

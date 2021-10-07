@@ -7,7 +7,7 @@ db=$1
 case $db in
   # edb setup requires login to private registry
   "edb-9.5"|"edb-9.6"|"edb-10"|"edb-11"|"edb-12"|"edb-13")
-    docker login $RT_URL -u $RT_USER -p $RT_PWD
+    docker login $ARTIFACTORY_URL -u $ARTIFACTORY_USER -p $ARTIFACTORY_TOKEN
     docker-compose -f docker-compose.edb.yml up -d $db
     exit 0
     ;;
@@ -17,7 +17,7 @@ case $db in
     ;;
 
   # crdb also has an init container
-  "crdb-20.2"|"crdb-20.1"|"crdb-21.1")
+  "crdb-20.2"|"crdb-20.1"|"crdb-21.1"|"crdb-21.2")
     docker-compose up -d $db ${db}-init
     exit 0
     ;;
@@ -28,7 +28,7 @@ case $db in
     ;;
 
   # titan run databases
-  "hsqldb"|"firebird")
+  "hsqldb-2.4"|"hsqldb-2.5"|"firebird-3"|"firebird-4")
     ../titan-installer.sh 0.5.3
     docker ps
     titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/$db
