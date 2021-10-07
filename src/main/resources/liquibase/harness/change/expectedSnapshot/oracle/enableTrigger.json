@@ -1,0 +1,20 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.trigger.Trigger": [
+        {
+          "trigger": {
+            "actionType": "PL/SQL     ",
+            "baseObjectType": "TABLE",
+            "body": "CREATE OR REPLACE TRIGGER test_trigger BEFORE INSERT ON posts BEGIN END;",
+            "disabled": false,
+            "name": "TEST_TRIGGER",
+            "tableName": "POSTS",
+            "triggerType": "BEFORE STATEMENT",
+            "triggeringEvent": "INSERT",
+            "valid": false
+          }
+        }]
+    }
+  }
+}

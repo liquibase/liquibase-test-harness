@@ -1,42 +1,34 @@
-# Public IP to be granted access to the DB
-variable "public_ip" {
-  type        = string
-  description = "Public IP Address to be granted access to database"
-  default     = "0.0.0.0"
-}
-
-# Versions of Postgres to create. 
-variable "postgresVersion" {
+# Versions of Postgresql to create. 
+variable "postgresqlVersion" {
   type        = list(string)
-  description = "Postgres Database Engine Version (example: 9.6, 10, 11)"
+  description = "Postgresql Database Engine Version (example: 9.6, 10, 11)"
   default     = ["9.6", "10", "11", "12", "13"]
 }
 
 # Create the security group granting access to the database with a source of the public IP of the runner
-module "db_postgres_sg" {
+module "db_postgresql_sg" {
   source = "terraform-aws-modules/security-group/aws//modules/postgresql"
 
-  name        = "postgres db"
-  description = "Security group for postgres database with port 5432 open to the runner of this plan"
+  name        = "postgresql db"
+  description = "Security group for postgresql database with port 5432 open to the runner of this plan"
   vpc_id      = module.vpc.vpc_id
 
-  ingress_cidr_blocks = ["${var.public_ip}/32"]
-  #ingress_cidr_blocks = ["0.0.0.0/0"]
+  ingress_cidr_blocks = ["0.0.0.0/0"]
 }
 
-# Create the Postgres RDS Databases 
-module "postgres" {
+# Create the Postgresql RDS Databases 
+module "postgresql" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 3.0"
-  count   = length(var.postgresVersion)
+  count   = length(var.postgresqlVersion)
 
-  identifier = replace("postgres-${var.postgresVersion[count.index]}", ".", "-") // dots not permitted in identifiers, so replace with hyphen
+  identifier = replace("postgresql-${var.postgresqlVersion[count.index]}", ".", "-") // dots not permitted in identifiers, so replace with hyphen
 
   engine                    = "postgres"
   name                      = "lbcat"
-  family                    = "postgres${var.postgresVersion[count.index]}"
-  major_engine_version      = var.postgresVersion[count.index]
-  engine_version            = var.postgresVersion[count.index]
+  family                    = "postgres${var.postgresqlVersion[count.index]}"
+  major_engine_version      = var.postgresqlVersion[count.index]
+  engine_version            = var.postgresqlVersion[count.index]
   instance_class            = "db.t3.micro"
   allocated_storage         = 5
   publicly_accessible       = true
@@ -44,15 +36,15 @@ module "postgres" {
   username                  = "lbuser"
   password                  = "LbRootPass1"
   subnet_ids                = module.vpc.public_subnets
-  vpc_security_group_ids    = [module.db_postgres_sg.security_group_id]
+  vpc_security_group_ids    = [module.db_postgresql_sg.security_group_id]
   create_db_parameter_group = false
 
 }
 
 # Output endpoint (host:port)
-output "dbEndpoint" {
+output "postgresqlEndpoint" {
   value = {
-    for endpoint in module.postgres :
+    for endpoint in module.postgresql :
     endpoint.db_instance_id => endpoint.db_instance_endpoint
   }
 }

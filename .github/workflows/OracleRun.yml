@@ -3,8 +3,8 @@
 name: Oracle Test Execution
 on:
 
-  schedule:
-    - cron: '0 8 * * *' # Execute every day at 8am
+  # schedule:
+  #  - cron: '0 8 * * *' # Execute every day at 8am
   workflow_dispatch:
 
 
@@ -20,7 +20,7 @@ jobs:
 
 
       - name: Docker login to retrive Oracle images from private repo
-        run: docker login "${{ secrets.RT_URL }}" -u "${{ secrets.RT_USER }}" -p "${{ secrets.RT_PWD }}"
+        run: docker login "${{ secrets.ARTIFACTORY_URL }}" -u "${{ secrets.ARTIFACTORY_USER }}" -p "${{ secrets.ARTIFACTORY_TOKEN }}"
 
       - name: Build Oracle Artifactory test infra
         working-directory: src/test/resources/docker/oracle-artifactory
@@ -38,6 +38,8 @@ jobs:
 
       - name: Oracle Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=18.3.0 test
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
       - name: Archive oracle test results
         uses: actions/upload-artifact@v2
@@ -52,6 +54,8 @@ jobs:
 
       - name: Oracle XE Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=18.4.0 test
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
       - name: Archive oracle test results
         uses: actions/upload-artifact@v2

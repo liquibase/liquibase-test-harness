@@ -1,0 +1,1 @@
+ALTER TABLE "LTHUSER".posts ALTER COLUMN  title SET DEFAULT 'title_test'

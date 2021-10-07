@@ -1,6 +1,6 @@
 # A Harness of Integration Tests
 
-![Default Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Default%20Test%20Execution/badge.svg) ![Oracle Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Oracle%20Test%20Execution/badge.svg)
+![Default Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Default%20Test%20Execution/badge.svg) ![Oracle Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Oracle%20Parallel%20Test%20Execution/badge.svg)
 
 ## Framework
 
@@ -84,11 +84,11 @@ To change it to another format, like 'sql' for instance, specify `-DinputFormat=
 If not, you will need to provide the rollback by yourself. To learn more about rollbacks read [Rolling back changesets](https://docs.liquibase.com/workflows/liquibase-community/using-rollback.html) article.
 2) Go to `src/main/resources/liquibase/harness/change/expectedSql` and add the expected generated SQL. 
  - You will need to add this under the database specific folder.
- - NOTE: If your changeset will generate multiple SQL statements, you should add each SQL statement as a separate line. (See `renameTable.sql` in the postgres folder for an example.)
+ - NOTE: If your changeSet will generate multiple SQL statements, you should add each SQL statement as a separate line. (See `renameTable.sql` in the postgres folder for an example.)
  - If you would like to test another DB type, please add the requisite folder.
 3) Go to `src/main/resources/liquibase/harness/change/expectedSnapshot` and add the expected DB Snapshot results.
   - To verify the absence of an object in a snapshot (such as with drop* commands) add `"_noMatch": true,` to that tree level where the missing object should be verified.
-  See [dropSequence.json](src/test/resources/expectedSnapshot/postgresql/dropSequence.json) as an example.
+  See [dropSequence.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/dropSequence.json) as an example.
   - You will need to add this under the database specific folder.
   - If you would like to test another DB type, please add the requisite folder.
 4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (You can also choose to run `BaseTestHarnessSuite`, or `LiquibaseHarnessSuiteTest` -- at present they all work the same).
@@ -134,6 +134,8 @@ Execute `mvn test` with the (optional) flags outlined below:
 * `-DchangeObjects=createTable,dropTable` flag allows you to run specific changeObjects rather than all. Use comma
  separated lists.
 * `-DchangeData=insert,delete` flag that allows to run specific changeData through ChangeDataTests. Use comma separated list
+* `-DconfigFile=customConfigFile.yml` enables to override default config file which is(`src/test/resources/harness-config.yml`)
+* `-Dprefix=docker` filters database from config file by some common platform identifier. E.g. all AWS based platforms, all Titan managed platforms, all from default docker file.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
 * `-DdbVersion` overrides the database version. Works in conjunction with `-DdbName` flag.
 
@@ -150,7 +152,7 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | ----------- | ----------- |
 | Postgres |  `9, 9.5, 10, 11, 12, 13` |
 | MySQL | `5.6, 5.7, 8` |
-| MariaDB | `10.3 , 10.5` |
+| MariaDB | `10.2, 10.3 , 10.4, 10.5, 10.6` |
 | SQL Server | `2017`, `2019` |
 | Oracle | `18.3.0, 18.4.0, 19.9.0` |
 | CockroachDB | `20.1, 20.2, 21.1` |
@@ -158,6 +160,7 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | H2 | `1.4.200` |
 | SQLite | `3.34.0` |
 | Apache Derby | `10.14.2.0` |
-
+| Firebird | `2.5` |
+| HSQLDB | `2.3.4`, `2.5` |
 
 

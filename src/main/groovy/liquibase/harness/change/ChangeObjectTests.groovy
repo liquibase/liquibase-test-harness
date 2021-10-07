@@ -20,6 +20,7 @@ class ChangeObjectTests extends Specification {
                 "liquibase/harness/change/expectedSql"))
         String expectedSnapshot = getJSONFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
                 "liquibase/harness/change/expectedSnapshot")
+        boolean shouldRunChangeSet
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("url", testInput.url)
@@ -28,24 +29,29 @@ class ChangeObjectTests extends Specification {
         argsMap.put("snapshotFormat", "JSON")
         argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
-        and: "skip testcase if it's invalid for this combination of db type and/or version"
-        Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
+        and: "ignore testcase if it's invalid for this combination of db type and/or version"
+        shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
+        Assume.assumeTrue(expectedSql, shouldRunChangeSet)
 
         and: "fail test if snapshot is not provided"
-        assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against" +
+        shouldRunChangeSet = expectedSnapshot != null
+        assert shouldRunChangeSet: "No expectedSnapshot for ${testInput.changeObject} against" +
                 " ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
                 "${testInput.database.databaseMinorVersion}"
 
         and: "check database under test is online"
-        assert testInput.database.getConnection() instanceof JdbcConnection: "Database ${testInput.databaseName}" +
-                "${testInput.version} is offline!"
+        shouldRunChangeSet =  testInput.database.getConnection() instanceof JdbcConnection
+        assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
-            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
+            //TODO form nice error message to see expected and actual SQL in logs and remove 2 times in comparison for
+            // boolean flag and for assert
+            shouldRunChangeSet = generatedSql == expectedSql
+            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. "+" Deleting expectedSql file" +
                     " will test that new sql works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
@@ -60,12 +66,14 @@ class ChangeObjectTests extends Specification {
         snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
 
         and: "if expected sql is not provided save generated sql as expected sql"
-        if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
+        if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql") && !generatedSql.isEmpty()) {
             saveAsExpectedSql(generatedSql, testInput)
         }
 
-        cleanup: "rollback changes"
-        executeCommandScope("rollbackCount", argsMap)
+        cleanup: "rollback changes if we ran changeSet"
+        if (shouldRunChangeSet) {
+            executeCommandScope("rollbackCount", argsMap)
+        }
 
         where: "test input in next data table"
         testInput << buildTestInput()

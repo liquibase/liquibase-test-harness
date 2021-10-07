@@ -8,12 +8,11 @@
         <!--Liquibase community doesn't support snapshot generation for procedures thus
             expectedSnapshot file will be empty for this change type-->
     <changeSet author="as" id="1">
-        <createProcedure
-                comments="test procedure"
-                encoding="UTF-8"
-                path="createProcedure.txt"
-                relativeToChangelogFile="true"
-                procedureName="test_procedure">
+        <createProcedure comments="test procedure"
+                        encoding="UTF-8"
+                        path="createProcedure.txt"
+                        relativeToChangelogFile="true"
+                        procedureName="test_procedure">
         </createProcedure>
         <dropProcedure procedureName="test_procedure"/>
         <rollback/>

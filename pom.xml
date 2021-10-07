@@ -4,7 +4,7 @@
 
     <groupId>org.liquibase</groupId>
     <artifactId>liquibase-test-harness</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <name>Liquibase Test Harness</name>
     <description>Test Harness For Liquibase</description>
     <url>https://github.com/liquibase/liquibase-test-harness</url>
@@ -179,6 +179,20 @@
             <artifactId>jaybird</artifactId>
             <version>4.0.3.java8</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.ibm.db2</groupId>
+            <artifactId>jcc</artifactId>
+            <version>11.5.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.db2</groupId>
+            <artifactId>db2-z-licence</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/drivers/db2/db2jcc_license_cisuz.jar</systemPath>
+        </dependency>
+
         <dependency>
             <groupId>com.athaydes</groupId>
             <artifactId>spock-reports</artifactId>

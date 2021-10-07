@@ -6,11 +6,10 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="oleh" id="1">
-        <addPrimaryKey
-                columnNames="id"
-                constraintName="pk_posts"
-                tableName="posts"
-                validate="true"/>
+        <addPrimaryKey columnNames="id"
+                        constraintName="pk_posts"
+                        tableName="posts"
+                        validate="true"/>
         <dropPrimaryKey tableName="posts" constraintName="pk_posts"/>
         <rollback/>
     </changeSet>

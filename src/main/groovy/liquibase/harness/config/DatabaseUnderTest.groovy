@@ -5,6 +5,7 @@ import liquibase.database.Database
 class DatabaseUnderTest {
     Database database
     String version
+    String prefix
     String name
     String username
     String password

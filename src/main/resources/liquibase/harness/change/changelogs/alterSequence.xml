@@ -10,7 +10,9 @@
                         minValue="1"
                         sequenceName="test_sequence"
                         startValue="1"/>
-        <rollback/>
+        <rollback>
+            <dropSequence sequenceName="test_sequence"/>
+        </rollback>
     </changeSet>
     <changeSet author="as" id="2" >
         <alterSequence  cacheSize="371717"
@@ -20,8 +22,6 @@
                         maxValue="371717"
                         minValue="1"
                         sequenceName="test_sequence"/>
-        <rollback>
-            <dropSequence sequenceName="test_sequence"/>
-        </rollback>
+        <rollback/>
     </changeSet>
 </databaseChangeLog>

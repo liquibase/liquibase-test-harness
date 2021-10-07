@@ -28,6 +28,7 @@ jobs:
             "postgres-11",
             "postgres-12",
             "postgres-13",
+            "postgres-14",
             "mariadb-10.2",
             "mariadb-10.3",
             "mariadb-10.4",
@@ -39,6 +40,7 @@ jobs:
             "crdb-20.2",
             "crdb-20.1",
             "crdb-21.1",
+            "crdb-21.2",
             "edb-9.5",
             "edb-9.6",
             "edb-10",
@@ -48,8 +50,10 @@ jobs:
             "derby",
             "sqlite",
             "diff",
-            "hsqldb"
-#            "firebird"  -- firebird is ignored until https://github.com/liquibase/liquibase/pull/1970 is merged and released
+            "hsqldb-2.4",
+            "hsqldb-2.5"
+#            "firebird-3",  -- firebird is ignored until https://github.com/liquibase/liquibase/pull/1970 is merged and released
+#            "firebird-4"
         ]
 
     steps:
@@ -63,9 +67,9 @@ jobs:
         working-directory: src/test/resources/docker
         run: ./create-infra.sh ${{ matrix.database }}
         env:
-          RT_URL: ${{ secrets.RT_URL }}
-          RT_USER: ${{ secrets.RT_USER }}
-          RT_PWD: ${{ secrets.RT_PWD }}
+          ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
+          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}

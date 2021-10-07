@@ -2,11 +2,7 @@
 
 name: AWS Cloud Database Test Execution
 on:
-  # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
     - cron: '0 12 * * *' # Execute every day at noon
   workflow_dispatch:
@@ -77,7 +73,6 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
   test:
@@ -87,20 +82,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - database: postgres
+          - database: postgresql
             version: 9-6
-          - database: postgres
+          - database: postgresql
             version: 10
-          - database: postgres
+          - database: postgresql
             version: 11
-          - database: postgres
+          - database: postgresql
             version: 12
-          - database: postgres
-            version: 13          
+          - database: postgresql
+            version: 13         
+          - database: oracle
+            version: 12-1
+          - database: oracle
+            version: 12-2
+          - database: oracle
+            version: 19
 
     steps:
       - uses: actions/checkout@v2
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -111,25 +111,23 @@ jobs:
         working-directory: src/test/resources/terraform
         run: terraform init
 
-      - name: Get Public IP
-        id: ip
-        uses: haythem/public-ip@v1.2
-
-      - name: Print Public IP to tfvars file
-        working-directory: src/test/resources/terraform
-        run: |
-          echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
-
-      - name: Terraform Apply Security Group Change
-        working-directory: src/test/resources/terraform
-        run: terraform apply --auto-approve
-
       - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
         working-directory: src/test/resources/terraform
         run: |
-          echo "DBENDPOINT=$(terraform output -json dbEndpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
+          echo "DBENDPOINT=$(terraform output -json ${{ matrix.database }}Endpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
+        if: ${{ matrix.database == 'oracle' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/terraform/changelogs"
+          changeLogFile: "oracle.sql"
+          username: "lbuser"
+          password: "LbRootPass1"
+          url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}:lbcat"
+
+      - uses: liquibase/liquibase-github-action@v3
+        if: ${{ matrix.database == 'postgresql' }}
         with:
           operation: "update"
           classpath: "src/test/resources/terraform/changelogs"
@@ -153,7 +151,9 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-postgresql -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=aws -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v2

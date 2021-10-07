@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "CURRENT SQLID",
+            "name": "DEFAULT_VALUE_COMPUTED_TEST",
+            "nullable": true,
+            "type": {
+              "typeName": "VARCHAR"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

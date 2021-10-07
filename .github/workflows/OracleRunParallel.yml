@@ -25,7 +25,7 @@ jobs:
           java-version: '1.8.0'
 
       - name: Docker login to retrive Oracle images from private repo
-        run: docker login "${{ secrets.RT_URL }}" -u "${{ secrets.RT_USER }}" -p "${{ secrets.RT_PWD }}"
+        run: docker login "${{ secrets.ARTIFACTORY_URL }}" -u "${{ secrets.ARTIFACTORY_USER }}" -p "${{ secrets.ARTIFACTORY_TOKEN }}"
 
       - name: Build Oracle Artifactory test infra
         working-directory: src/test/resources/docker/oracle-artifactory
@@ -43,6 +43,8 @@ jobs:
 
       - name: Oracle ${{ matrix.plan }} Test Run
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
       - name: Archive Oracle ${{ matrix.plan }} test results
         uses: actions/upload-artifact@v2
