@@ -272,8 +272,9 @@ services:
     depends_on:
       - crdb-21.1
 
-# Titan (https://titan-data.io) is managing this image for our CI/CD process. If you want to run it locally you'll have to
+# Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data
+
 #  hsqldb-2.3.4:
 #    image: blacklabelops/hsqldb
 #    ports:
@@ -283,6 +284,16 @@ services:
 #      HSQLDB_PASSWORD: LiquibasePass1
 #      HSQLDB_DATABASE_ALIAS: lbcat
 #      HSQLDB_DATABASE_HOST: localhost:9001
+
+#  firebird:
+#    image: jacobalberty/firebird:v4.0
+#    ports:
+#      - "3050:3050"
+#    environment:
+#      ISC_PASSWORD: LbRootPass1
+#      FIREBIRD_DATABASE: lbcat
+#      FIREBIRD_USER: lbuser
+#      FIREBIRD_PASSWORD: LiquibasePass1
 
 networks:
   roachnet:

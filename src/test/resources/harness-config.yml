@@ -187,3 +187,8 @@ databasesUnderTest:
     url: jdbc:hsqldb:hsql://localhost:9001/lbcat
     username: lbuser
     password: LiquibasePass1
+
+  - name: firebird
+    url: jdbc:firebirdsql://localhost:3050/lbcat
+    username: lbuser
+    password: LiquibasePass1
