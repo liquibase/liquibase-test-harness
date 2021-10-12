@@ -28,12 +28,27 @@ case $db in
     ;;
 
   # titan run databases
-  "hsqldb-2.4"|"hsqldb-2.5"|"firebird-3"|"firebird-4")
+  "hsqldb-2.4"|"firebird-4")
     ../titan-installer.sh 0.5.3
     docker ps
     titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/$db
     exit 0
     ;;
+
+    # titan run databases, for some platforms that have few versions we need to remap ports, as default is occupied by one of them
+    "hsqldb-2.5")
+      ../titan-installer.sh 0.5.3
+      docker ps
+      titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/$db -P -- -p 9002:9001
+      exit 0
+      ;;
+
+    "firebird-3")
+      ../titan-installer.sh 0.5.3
+      docker ps
+      titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/$db -P -- -p 3051:3050
+      exit 0
+      ;;
 
   # standard startup
   *)
