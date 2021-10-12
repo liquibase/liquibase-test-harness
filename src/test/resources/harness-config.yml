@@ -184,13 +184,13 @@ databasesUnderTest:
     url: jdbc:derby:./src/test/resources/derby/lbcat
 
   - name: hsqldb
-    version: 2.4.0
+    version: 2.4
     url: jdbc:hsqldb:hsql://localhost:9001/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: hsqldb
-    version: 2.5.0
+    version: 2.5
     url: jdbc:hsqldb:hsql://localhost:9002/lbcat
     username: lbuser
     password: LiquibasePass1
