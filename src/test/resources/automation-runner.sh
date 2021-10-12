@@ -97,8 +97,17 @@ case $db in
   "diff")
     test_command mvn -ntp -Dtest=DiffTest test
     ;;
-  "hsqldb")
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=hsqldb test
+  "hsqldb-2.4")
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=hsqldb -DdbVersion=2.4 test
+    ;;
+  "hsqldb-2.5")
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=hsqldb -DdbVersion=2.5 test
+    ;;
+  "firebird-3")
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=firebird -DdbVersion=3 test
+    ;;
+  "firebird-4")
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=firebird -DdbVersion=4 test
     ;;
 esac
 
