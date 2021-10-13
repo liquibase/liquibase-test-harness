@@ -1,4 +1,4 @@
 INVALID TEST
 
-enableCheckConstraint is not supported for MariaDB
+disableCheckConstraint is not supported for MariaDB
 --https://docs.liquibase.com/change-types/pro/disable-check-constraint.html
