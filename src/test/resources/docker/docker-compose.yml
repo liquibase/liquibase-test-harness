@@ -275,6 +275,8 @@ services:
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data
 
+# Warning! Remap ports here and in harness-config.yml if you want to run two versions of these platforms simultaneously
+
 #  hsqldb-2.4.0:
 #    image: blacklabelops/hsqldb:latest
 #    ports:
@@ -288,14 +290,15 @@ services:
 #  hsqldb-2.5.0:
 #    image: mitchtalmadge/hsqldb:2.5.0
 #    ports:
-#      - "9002:9001"
+#      - "9001:9001"
 #    environment:
 #      HSQLDB_USER: lbuser
 #      HSQLDB_PASSWORD: LiquibasePass1
 #      HSQLDB_DATABASE_ALIAS: lbcat
 #      HSQLDB_DATABASE_HOST: localhost
 
-#
+# Warning! Remap ports here and in harness-config.yml if you want to run two versions of these platforms simultaneously
+
 #  firebird-3:
 #    image: jacobalberty/firebird:v3.0.7
 #    ports:
