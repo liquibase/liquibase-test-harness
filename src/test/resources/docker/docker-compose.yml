@@ -273,7 +273,7 @@ services:
       - crdb-21.1
 
   crdb-21.2:
-    image: cockroachdb/cockroach:v21.2.0
+    image: cockroachdb/cockroach-unstable:v21.2.0-beta.4
     command: start-single-node --insecure
     expose:
       - "8080"
