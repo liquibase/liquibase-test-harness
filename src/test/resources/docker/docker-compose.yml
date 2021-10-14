@@ -294,7 +294,6 @@ services:
     depends_on:
       - crdb-21.2
 
-
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data
 
