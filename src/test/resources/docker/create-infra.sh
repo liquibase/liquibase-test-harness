@@ -17,7 +17,7 @@ case $db in
     ;;
 
   # crdb also has an init container
-  "crdb-20.2"|"crdb-20.1"|"crdb-21.1")
+  "crdb-20.2"|"crdb-20.1"|"crdb-21.1|crdb-21.2")
     docker-compose up -d $db ${db}-init
     exit 0
     ;;
