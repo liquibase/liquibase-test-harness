@@ -50,7 +50,7 @@ For more information about installing Titan, please go the website above.
 * Commit changes `titan commit -m "data loaded" hsqldb-2.5`.
 * Make sure you have write access to folder in S3 bucket and your AWS cli credentials are configured. For our case it's `test-harness-titan-configs` bucket with `hsqldb-2.5` folder.
 * Add remote, for our case it's `titan remote add s3://test-harness-titan-configs/hsqldb-2.5 hsqldb-2.5`.
-* Run `titan log hsqldb-2.5` to get commit id
-* Run `titan push -c c3be54d46da94dcd80c3fdbcae5a4494 hsqldb-2.5`. c3be54d46da94dcd80c3fdbcae5a4494 is commit hash provided by `log` command.
+* Run `titan push hsqldb-2.5`. It will push the latest commit to s3 bucket.
 * Verify two files and one folder with archives is present in s3 bucket.
+* Objects in the bucket need to be made public so `s3web` will work for public datasets.
 * Run `titan clone s3://test-harness-titan-configs/hsqldb-2.5 -n hsqldb-2.5` to pull image snapshot and run controlled container on other machine, use port remapping (`-P -- -p 9002:9001` similar to `titan run`) if needed.
