@@ -122,6 +122,12 @@ databasesUnderTest:
     username: lbuser
     password:
 
+  - name: cockroachdb
+    version: 21.2
+    url: jdbc:postgresql://localhost:26260/lbcat
+    username: lbuser
+    password:
+
   - name: mssql
     version: 2017
     url: jdbc:sqlserver://localhost:1433;databaseName=lbcat
