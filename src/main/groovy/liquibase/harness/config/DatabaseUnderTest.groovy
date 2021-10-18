@@ -1,6 +1,6 @@
 package liquibase.harness.config
 
-import liquibase.database.Database;
+import liquibase.database.Database
 
 class DatabaseUnderTest {
     Database database

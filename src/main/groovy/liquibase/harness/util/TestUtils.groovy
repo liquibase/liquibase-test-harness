@@ -1,8 +1,6 @@
 package liquibase.harness.util
 
 import liquibase.command.CommandScope
-import liquibase.harness.config.DatabaseUnderTest
-import liquibase.harness.config.TestConfig
 import org.junit.Assert
 import org.w3c.dom.NodeList
 import org.xml.sax.SAXException
@@ -11,33 +9,6 @@ import javax.xml.parsers.ParserConfigurationException
 import java.util.logging.Logger
 
 class TestUtils {
-
-    static SortedMap<String, String> resolveInputFilePaths(DatabaseUnderTest database, String basePath, String inputFormat) {
-        inputFormat = inputFormat ?: ""
-        def returnPaths = new TreeMap<String, String>()
-        for (String filePath : TestConfig.instance.resourceAccessor.list(null, basePath, true, true, false)) {
-            def validFile = false
-            //is it a common changelog?
-            if (filePath =~ basePath+"/[\\w.]*\\."+inputFormat+"\$") {
-                validFile = true
-            } else if (filePath =~ basePath+"/${database.name}/[\\w.]*\\.${inputFormat}\$") {
-                //is it a database-specific changelog?
-                validFile = true
-            } else if (filePath =~ basePath+"/${database.name}/${database.version}/[\\w.]*\\.${inputFormat}\$") {
-                //is it a database-major-version specific changelog?
-                validFile = true
-            }
-            if (validFile) {
-                def fileName = filePath.replaceFirst(".*/", "").replaceFirst("\\.[^.]+\$", "")
-                if (!returnPaths.containsKey(fileName) || returnPaths.get(fileName).length() < filePath.length()) {
-                    returnPaths.put(fileName, filePath)
-                }
-            }
-        }
-        Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.name +
-                "/" + database.version + " in "+basePath)
-        return returnPaths
-    }
 
     /**
      * Standardizes sql content. Parses 'clean' queries from database update sql script.
@@ -91,7 +62,8 @@ class TestUtils {
             NodeList name = document.getElementsByTagName("changeSet")
             return name.getLength()
         } catch (ParserConfigurationException | SAXException | IOException exception) {
-            Logger.getLogger(this.class.name).severe("Failed to read from changelog file while getting changesets count! " + exception)
+            Logger.getLogger(this.class.name).severe("Failed to read from changelog file while getting changesets count! " +
+                    exception)
         }
         return 0
     }

@@ -1,65 +1,31 @@
 package liquibase.harness.diff
 
-
 import groovy.transform.builder.Builder
-import liquibase.diff.DiffResult
-import liquibase.diff.Difference
-import liquibase.diff.ObjectDifferences
-import liquibase.diff.compare.CompareControl
-import liquibase.diff.output.DiffOutputControl
-import liquibase.diff.output.changelog.DiffToChangeLog
+import liquibase.exception.LiquibaseException
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.structure.DatabaseObject
-import liquibase.structure.core.Column
-import liquibase.structure.core.ForeignKey
-import liquibase.structure.core.Index
-import liquibase.structure.core.PrimaryKey
-import liquibase.structure.core.Table
-import liquibase.structure.core.Sequence
-import liquibase.structure.core.UniqueConstraint
-import liquibase.structure.core.View
+import liquibase.harness.util.TestUtils
+import org.json.JSONArray
+import org.json.JSONObject
 import org.yaml.snakeyaml.Yaml
-
+import java.util.logging.Logger
 import java.util.stream.Collectors
 
 import static liquibase.util.StringUtil.isNotEmpty
 
 class DiffCommandTestHelper {
 
-    static CompareControl buildCompareControl() {
-        CompareControl compareControl
-        Set<Class<? extends DatabaseObject>> typesToInclude = new HashSet<Class<? extends DatabaseObject>>()
-        typesToInclude.add(Table.class)
-        typesToInclude.add(Column.class)
-        typesToInclude.add(PrimaryKey.class)
-        typesToInclude.add(ForeignKey.class)
-        typesToInclude.add(UniqueConstraint.class)
-        typesToInclude.add(Sequence.class)
-        typesToInclude.add(View.class)
-        compareControl = new CompareControl(typesToInclude)
-        compareControl.addSuppressedField(Table.class, "remarks")
-        compareControl.addSuppressedField(Column.class, "remarks")
-        compareControl.addSuppressedField(Column.class, "certainDataType")
-        compareControl.addSuppressedField(Column.class, "autoIncrementInformation")
-        compareControl.addSuppressedField(ForeignKey.class, "deleteRule")
-        compareControl.addSuppressedField(ForeignKey.class, "updateRule")
-        compareControl.addSuppressedField(Index.class, "unique")
-        return compareControl
-    }
+    final static String baseDiffPath = "/liquibase/harness/diff/"
 
     static List<TestInput> buildTestInput() {
-
-        Yaml configFileYml = new Yaml()
-        InputStream testConfig = DiffCommandTestHelper.class.getResourceAsStream("/liquibase/harness/diff/diffDatabases.yml")
-        assert testConfig != null: "Cannot find diffDatabases.yml in classpath"
-
-        List<TargetToReference> targetToReferences = configFileYml.loadAs(testConfig, DiffDatabases.class).references
+        InputStream testConfig = DiffCommandTestHelper.class.getResourceAsStream("${baseDiffPath}diffDatabases.yml")
+        assert testConfig != null : "Cannot find diffDatabases.yml in classpath"
 
         List<TestInput> inputList = new ArrayList<>()
         List<DatabaseUnderTest> databasesToConnect = new ArrayList<>()
-        for (TargetToReference targetToReference : targetToReferences) {
+
+        for (TargetToReference targetToReference : new Yaml().loadAs(testConfig, DiffDatabases.class).references) {
             DatabaseUnderTest targetDatabase
             List<DatabaseUnderTest> matchingTargetDatabases = TestConfig.instance.databasesUnderTest.stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.targetDatabaseName) })
@@ -72,11 +38,12 @@ class DiffCommandTestHelper {
                         .findFirst()
                         .orElseThrow({ ->
                             new IllegalArgumentException(
-                                    String.format("Versions in harness-config.yml don't match with targetDatabaseVersion=%s provided in diffDatabases.yml",
-                                            targetToReference.targetDatabaseVersion))
+                                    String.format("Versions in harness-config.yml don't match to targetDatabaseVersion=%s " +
+                                            "provided in diffDatabases.yml", targetToReference.targetDatabaseVersion))
                         })
             } else {
-                throw new IllegalArgumentException(String.format("can't match target DB for diff test name={%s}, version={%s}", targetToReference.targetDatabaseName, targetToReference.targetDatabaseVersion))
+                throw new IllegalArgumentException(String.format("can't match target DB for diff test name={%s}, version={%s}",
+                        targetToReference.targetDatabaseName, targetToReference.targetDatabaseVersion))
             }
             databasesToConnect.add(targetDatabase)
 
@@ -88,99 +55,84 @@ class DiffCommandTestHelper {
                 referenceDatabase = matchingReferenceDatabases.get(0)
             } else if (matchingReferenceDatabases.size() > 1 && isNotEmpty(targetToReference.referenceDatabaseVersion)) {
                 referenceDatabase = matchingReferenceDatabases.stream()
-                        .filter({ it -> targetToReference.referenceDatabaseVersion.equalsIgnoreCase(it.version) })
+                        .filter({it -> targetToReference.referenceDatabaseVersion.equalsIgnoreCase(it.version)})
                         .findFirst()
                         .orElseThrow({ ->
                             new IllegalArgumentException(
-                                    String.format("Versions in harness-config.yml don't match with referenceDatabaseVersion=%s provided in diffDatabases.yml",
+                                    String.format("Versions in harness-config.yml don't match with referenceDatabaseVersion=%s " +
+                                            "provided in diffDatabases.yml",
                                             targetToReference.referenceDatabaseVersion))
                         })
             } else {
-                throw new IllegalArgumentException(String.format("can't match reference DB for diff test name={%s}, version={%s}", targetToReference.referenceDatabaseName, targetToReference.referenceDatabaseVersion))
+                throw new IllegalArgumentException(String.format("can't match reference DB for diff test name={%s}, version={%s}",
+                        targetToReference.referenceDatabaseName, targetToReference.referenceDatabaseVersion))
             }
             databasesToConnect.add(referenceDatabase)
 
             inputList.add(TestInput.builder()
-                    .context(TestConfig.instance.context)
-                    .expectedDiffs(targetToReference.expectedDiffs)
+                    .pathToChangelogFile("src/main/resources${baseDiffPath}" +
+                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
+                            "${targetDatabase.name}${targetDatabase.version}.xml")
                     .targetDatabase(targetDatabase)
                     .referenceDatabase(referenceDatabase)
                     .build())
         }
-        DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
-        databaseConnectionUtil.initializeDatabasesConnection(databasesToConnect)
+        new DatabaseConnectionUtil().initializeDatabasesConnection(databasesToConnect)
         return inputList
     }
 
-    static String toChangeLog(DiffResult diffResult) throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream()
-        PrintStream printStream = new PrintStream(out, true, "UTF-8")
-        DiffOutputControl diffOutputControl = new DiffOutputControl()
-        diffOutputControl.setIncludeCatalog(false)
-        diffOutputControl.setIncludeSchema(false)
-        DiffToChangeLog diffToChangeLog = new DiffToChangeLog(diffResult,
-                diffOutputControl)
-        diffToChangeLog.print(printStream)
-        printStream.close()
-        return out.toString("UTF-8")
+    static String getExpectedDiffPath(TestInput testInput) {
+        return "${baseDiffPath}expectedDiff/${testInput.referenceDatabase.name}${testInput.referenceDatabase.version}" +
+                "_to_${testInput.targetDatabase.name}${testInput.targetDatabase.version}.json"
     }
 
-    static void removeExpectedDiffs(ExpectedDiffs expectedDiffs, DiffResult diffResult) {
-        removeUnexpectedObjects(diffResult.getUnexpectedObjects(), expectedDiffs.unexpectedObjects)
-        removeMissingObjects(diffResult.getMissingObjects(), expectedDiffs.missingObjects)
-        removeChangedObjects(diffResult.getChangedObjects(), expectedDiffs.changedObjects)
-
-    }
-
-    static void removeChangedObjects(Map<DatabaseObject, ObjectDifferences> diffResultMap, List<HarnessObjectDifference> expectedChangedObjects) {
-        diffResultMap.entrySet().removeIf({ entry -> entry.key.toString().toUpperCase().contains("DATABASECHANGELOG") })
-        diffResultMap.entrySet().removeIf({ entry ->
-            doesKeyMatches(entry, expectedChangedObjects)
-        })
-
-    }
-
-    static boolean doesKeyMatches(Map.Entry<DatabaseObject, ObjectDifferences> entry, List<HarnessObjectDifference> changedObjects) {
-        for (HarnessObjectDifference changedObject : changedObjects) {
-            if (entry.key.toString().equalsIgnoreCase(changedObject.diffName))
-                return matchDifferences(entry, changedObject)
+    /** This method creates diffToCompare without JSONObjects referenced to databasechangelog* tables
+     because --excludeObjects flag doesn't work with --format=json extension for 'diff' command
+     */
+    static JSONObject createDiffToCompare(OutputStream diffOutput) {
+        def generatedDiff = new JSONObject(diffOutput.toString().replaceAll("!!int", ""))
+                .getJSONObject("diff")// Replacement because of a bug in diff --format=json generation
+        def diffToCompare = new JSONObject()
+        def arrays = ["missingObjects", "unexpectedObjects", "changedObjects"]
+        def objects = ["missingObject", "unexpectedObject", "changedObject"]
+        for (int i = 0; i < arrays.size(); i++) {
+            if (generatedDiff.has(arrays[i])) {
+                def generatedDiffObjects = generatedDiff.getJSONArray(arrays[i])
+                def diffToCompareObjects = new JSONArray()
+                for (int j = 0; j < generatedDiffObjects.length(); j++) {
+                    def object = generatedDiffObjects.getJSONObject(j).getJSONObject(objects[i])
+                    if (object.has("name") && object.getString("name")
+                            .toLowerCase().contains("databasechangelog")
+                            || object.has("relationName") && object.getString("relationName")
+                            .toLowerCase().contains("databasechangelog")) {
+                        continue
+                    }
+                    def checkedObject = new JSONObject()
+                    checkedObject.put(objects[i], object)
+                    diffToCompareObjects.put(checkedObject)
+                }
+                if (diffToCompareObjects.length() > 0) {
+                    diffToCompare.put(arrays[i], diffToCompareObjects)
+                }
+            }
         }
-        return false
+        return diffToCompare
     }
 
-    static boolean matchDifferences(Map.Entry<DatabaseObject, ObjectDifferences> entry, HarnessObjectDifference harnessObjectDifference) {
-        if (entry.value.differences.size() != harnessObjectDifference.diffs.size()) {
-            return false
+    static void tryToRollbackDiff(Map argsMap) {
+        try {
+            TestUtils.executeCommandScope("rollbackCount", argsMap)
+        } catch (LiquibaseException exception) {
+            Logger.getLogger(this.class.name).warning("Failed to rollback changes from generated diff changelog! " +
+                    "State of the target database will remain changed! \n" + exception.message + "\n" +
+                    exception.printStackTrace())
         }
-        Map<String, String> transformedObjectDiffMap = new HashMap<>()
-        for (Difference difference : entry.value.differences) {
-            transformedObjectDiffMap.put(difference.field, difference.message)
-        }
-        return transformedObjectDiffMap == harnessObjectDifference.diffs
-    }
-
-    static void removeMissingObjects(Set<? extends DatabaseObject> diffResultMissingObjects, List<String> missingObjectsFromFile) {
-        diffResultMissingObjects.removeIf({ object -> object.toString().toUpperCase().contains("DATABASECHANGELOG") })
-        diffResultMissingObjects.removeIf({ object -> missingObjectsFromFile?.contains(object.toString()) })
-    }
-
-    static void removeUnexpectedObjects(Set<? extends DatabaseObject> diffResultUnexpectedObjects, List<String> unexpectedObjectsFromFile) {
-        diffResultUnexpectedObjects.removeIf({ object -> object.toString().toUpperCase().contains("DATABASECHANGELOG") })
-        //TODO figure out why null safe isn't working here
-        // diffResultUnexpectedObjects.removeIf({ object -> unexpectedObjectsFromFile?.contains(object.toString()) })
-        diffResultUnexpectedObjects.removeIf({ object -> unexpectedObjectsFromFile != null && unexpectedObjectsFromFile.contains(object.toString()) })
-    }
-
-    static boolean diffsAbsent(DiffResult diffResult) {
-        return diffResult.getChangedObjects()?.isEmpty() && diffResult.getMissingObjects()?.isEmpty() && diffResult.getUnexpectedObjects()?.isEmpty()
     }
 
     @Builder
     static class TestInput {
-        String context
-        ExpectedDiffs expectedDiffs
+        String pathToChangelogFile
         DatabaseUnderTest referenceDatabase
         DatabaseUnderTest targetDatabase
     }
-
 }

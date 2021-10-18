@@ -1,0 +1,15 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.checkconstraint.CheckConstraint": [
+        {
+          "checkConstraint": {
+            "body": "([id]>(0))",
+            "disabled": true,
+            "name": "test_check_constraint"
+          }
+        }
+      ]
+    }
+  }
+}

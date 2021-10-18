@@ -1,0 +1,1 @@
+CREATE TABLE DATICAL_ADMIN.createTableDataTypeText (textCol CLOB)

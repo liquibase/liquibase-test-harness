@@ -1,11 +1,11 @@
 package liquibase.harness.util
 
+import groovy.json.JsonSlurper
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.skyscreamer.jsonassert.JSONCompare
 import org.skyscreamer.jsonassert.JSONCompareMode
-
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import java.sql.SQLException
@@ -66,7 +66,7 @@ class JSONUtils {
             for (int j = 0; j < jsonArrayToCompare.length(); j++) {
                 def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
                 def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
-                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.STRICT)
+                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.NON_EXTENSIBLE)
                 compareMarker = result.passed()
                 if (result.passed()) {
                     break
@@ -74,5 +74,15 @@ class JSONUtils {
             }
         }
         return compareMarker
+    }
+
+    static JSONObject getJsonFromResource(String resourceName) {
+        return new JSONObject(FileUtils.getResourceContent(resourceName))
+    }
+
+    static void compareJSONObjects(JSONObject expected, JSONObject actual) {
+        def mapExpected = new JsonSlurper().parseText(expected.toString())
+        def mapActual = new JsonSlurper().parseText(actual.toString())
+        assert mapExpected == mapActual
     }
 }

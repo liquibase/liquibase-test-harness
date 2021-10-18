@@ -1,0 +1,3 @@
+CREATE SEQUENCE DATICAL_ADMIN.test_sequence START WITH 1 INCREMENT BY 1 MINVALUE 1
+ALTER TABLE DATICAL_ADMIN.authors ADD sequence_referenced_column NUMBER
+ALTER TABLE DATICAL_ADMIN.authors MODIFY sequence_referenced_column DEFAULT DATICAL_ADMIN.test_sequence.nextval

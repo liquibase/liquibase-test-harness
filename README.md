@@ -21,7 +21,7 @@ The general pattern is that for each directory containing configuration files:
 - Files directly in that root apply to all databases. Example: `liquibase/harness/change/changelogs`
 - Files in a subdirectory named for the database type apply to only that type of database. Example: `liquibase/harness/change/changelogs/mysql`
 - Files in a subdirectory with a version apply only to this version of the database. Example: `liquibase/harness/change/changelogs/mysql/8`
-##### Note: The version folder name should be match exactly with the DB version provided in `harness-config.yml` file. We do not split this to major/minor/path subversion folders currently.
+##### Note: The version folder name should be match exactly with the DB version provided in `harness-config.yml` file. We do not split this to major/minor/patch subversion folders currently.
 
 At each level in that hierarchy, new configurations can be added and/or can override configurations from a lower level. 
 
@@ -112,7 +112,7 @@ This test executes the following steps:
    * Generates the changelog based on diff 
    * Applies the generated changelog to the targetDatabase
    * Checks the diff between the target and reference databases again
-   * If some diffs still exist, then they are matched with the expected diff from `diffDatabases.yml`
+   * If some diffs still exist, then they are matched with the expected diff from `liquibase/harness/diff/expectedDiff` folder
 
 #### Warning: This is a destructive test -- it will alter the state of targetDatabase to match the referenceDatabase. 
 
@@ -150,14 +150,15 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | ----------- | ----------- |
 | Postgres |  `9, 9.5, 10, 11, 12, 13` |
 | MySQL | `5.6, 5.7, 8` |
-| MariaDB | `10.3 , 10.5` |
+| MariaDB | `10.2, 10.3 , 10.4, 10.5, 10.6` |
 | SQL Server | `2017`, `2019` |
 | Oracle | `18.3.0, 18.4.0, 19.9.0` |
-| CockroachDB | `20.1, 20.2` |
+| CockroachDB | `20.1, 20.2, 21.1` |
 | EDB | `9.5, 9.6, 10, 11, 12, 13` |
 | H2 | `1.4.200` |
 | SQLite | `3.34.0` |
 | Apache Derby | `10.14.2.0` |
-
+| Firebird | `2.5` |
+| HSQLDB | `2.3.4` |
 
 

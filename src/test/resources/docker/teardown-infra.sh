@@ -16,6 +16,12 @@ case $db in
     exit 0
     ;;
 
+  # titan run databases
+  "hsqldb"|"firebird")
+    titan uninstall -f
+    exit 0
+    ;;
+
   # standard teardown
   *)
     docker-compose down --volumes
