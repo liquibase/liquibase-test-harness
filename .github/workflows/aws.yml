@@ -77,7 +77,6 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
-        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
   test:
@@ -115,19 +114,6 @@ jobs:
       - name: Terraform Init
         working-directory: src/test/resources/terraform
         run: terraform init
-
-      # - name: Get Public IP
-      #   id: ip
-      #   uses: haythem/public-ip@v1.2
-
-      # - name: Print Public IP to tfvars file
-      #   working-directory: src/test/resources/terraform
-      #   run: |
-      #     echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
-
-      # - name: Terraform Apply Security Group Change
-      #   working-directory: src/test/resources/terraform
-      #   run: terraform apply --auto-approve
 
       - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
         working-directory: src/test/resources/terraform
@@ -169,6 +155,8 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
@@ -177,20 +165,20 @@ jobs:
           name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
           path: build/spock-reports
 
-  # destroy:
-  #   runs-on: ubuntu-18.04
-  #   needs: [setup,test]
-  #   defaults:
-  #     run:
-  #       working-directory: src/test/resources/terraform
-  #   if: ${{ always() }}
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v1
-  #       with:
-  #         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-  #     - name: Terraform Init
-  #       run: terraform init
-  #     - name: Terraform Destroy
-  #       run: terraform destroy -auto-approve
+  destroy:
+    runs-on: ubuntu-18.04
+    needs: [setup,test]
+    defaults:
+      run:
+        working-directory: src/test/resources/terraform
+    if: ${{ always() }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve

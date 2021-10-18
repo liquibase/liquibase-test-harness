@@ -13,7 +13,6 @@ module "db_postgres_sg" {
   description = "Security group for postgres database with port 5432 open to the runner of this plan"
   vpc_id      = module.vpc.vpc_id
 
-  #ingress_cidr_blocks = ["${var.public_ip}/32"]
   ingress_cidr_blocks = ["0.0.0.0/0"]
 }
 
