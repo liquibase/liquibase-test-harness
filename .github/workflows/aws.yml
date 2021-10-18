@@ -125,9 +125,9 @@ jobs:
       #   run: |
       #     echo 'public_ip = "${{ steps.ip.outputs.ipv4 }}"' >> github.auto.tfvars
 
-      - name: Terraform Apply Security Group Change
-        working-directory: src/test/resources/terraform
-        run: terraform apply --auto-approve
+      # - name: Terraform Apply Security Group Change
+      #   working-directory: src/test/resources/terraform
+      #   run: terraform apply --auto-approve
 
       - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
         working-directory: src/test/resources/terraform
