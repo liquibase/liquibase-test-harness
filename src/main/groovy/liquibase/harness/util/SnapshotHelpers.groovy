@@ -4,6 +4,7 @@ import liquibase.util.StringUtil
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.skyscreamer.jsonassert.JSONAssert
 import org.skyscreamer.jsonassert.JSONCompareMode
 import org.skyscreamer.jsonassert.JSONCompareResult
 import org.skyscreamer.jsonassert.comparator.DefaultComparator
@@ -13,6 +14,10 @@ import static org.skyscreamer.jsonassert.comparator.JSONCompareUtil.getKeys
 import static org.skyscreamer.jsonassert.comparator.JSONCompareUtil.qualify
 
 class SnapshotHelpers {
+
+    static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
+        JSONAssert.assertEquals(expected, actual, new GeneralSnapshotComparator())
+    }
 
     static class GeneralSnapshotComparator extends DefaultComparator {
         GeneralSnapshotComparator() {

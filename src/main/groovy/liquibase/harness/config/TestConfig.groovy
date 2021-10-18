@@ -7,20 +7,18 @@ import org.yaml.snakeyaml.Yaml
 import java.util.logging.Logger
 import java.util.stream.Collectors
 
-
 @ToString
 class TestConfig {
 
     private static TestConfig instance
-
     String outputResourcesBase = "src/test/resources"
-    boolean initDB = true
+    Boolean initDB = true
     ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
     Boolean revalidateSql
     String inputFormat
     String context
     List<DatabaseUnderTest> databasesUnderTest
-    boolean databasesConnected = false
+    Boolean databasesConnected = false
 
     TestConfig() {
     }
