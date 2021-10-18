@@ -135,7 +135,7 @@ jobs:
           echo "DBENDPOINT=$(terraform output -json ${{ matrix.database }}Endpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
 
       - uses: liquibase/liquibase-github-action@v3
-        if: (${{ matrix.database }} == "oracle")
+        if: ${{ matrix.database == 'oracle' }}
         with:
           operation: "update"
           classpath: "src/test/resources/terraform/changelogs"
@@ -145,7 +145,7 @@ jobs:
           url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}:lbcat"
 
       - uses: liquibase/liquibase-github-action@v3
-        if: (${{ matrix.database }} == "postgres")
+        if: ${{ matrix.database == 'postgres' }}
         with:
           operation: "update"
           classpath: "src/test/resources/terraform/changelogs"
