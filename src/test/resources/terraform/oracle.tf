@@ -13,7 +13,6 @@ module "db_oracle_sg" {
   description = "Security group for oracle database with port 1521 open to the runner of this plan"
   vpc_id      = module.vpc.vpc_id
 
-  #ingress_cidr_blocks = ["${var.public_ip}/32"]
   ingress_cidr_blocks = ["0.0.0.0/0"]
 }
 
