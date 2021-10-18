@@ -169,7 +169,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v2
