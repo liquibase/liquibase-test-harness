@@ -87,16 +87,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - database: aws-postgres
-          #   version: 9-6
-          # - database: aws-postgres
-          #   version: 10
-          # - database: aws-postgres
-          #   version: 11
-          # - database: aws-postgres
-          #   version: 12
-          # - database: aws-postgres
-          #   version: 13         
+          - database: postgres
+            version: 9-6
+          - database: postgres
+            version: 10
+          - database: postgres
+            version: 11
+          - database: postgres
+            version: 12
+          - database: postgres
+            version: 13         
           - database: oracle
             version: 12-1
           - database: oracle
