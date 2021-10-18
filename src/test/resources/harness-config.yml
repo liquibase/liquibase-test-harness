@@ -10,7 +10,7 @@ databasesUnderTest:
 
   - name: aws-oracle
     version: DBVERSION
-    url: jdbc:oracle:thin:@DBENDPOINT:1521/lbcat
+    url: jdbc:oracle:thin:@DBENDPOINT/lbcat
     username: lbuser
     password: LbRootPass1
 
