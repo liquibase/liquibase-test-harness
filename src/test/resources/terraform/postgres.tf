@@ -1,10 +1,3 @@
-# Public IP to be granted access to the DB
-variable "public_ip" {
-  type        = string
-  description = "Public IP Address to be granted access to database"
-  default     = "0.0.0.0"
-}
-
 # Versions of Postgres to create. 
 variable "postgresVersion" {
   type        = list(string)
