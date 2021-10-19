@@ -18,5 +18,6 @@
     <changeSet author="as" id="2">
         <pro:dropTrigger triggerName="test_trigger"
                          tableName="posts"/>
+        <rollback/>
     </changeSet>
 </databaseChangeLog>
