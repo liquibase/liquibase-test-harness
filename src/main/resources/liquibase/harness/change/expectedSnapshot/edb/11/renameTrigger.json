@@ -1,0 +1,16 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.trigger.Trigger": [
+        {
+          "trigger": {
+            "body": "CREATE TRIGGER test_trigger_renamed BEFORE INSERT ON public.posts FOR EACH ROW EXECUTE PROCEDURE test_function()",
+            "disabled": false,
+            "name": "test_trigger_renamed",
+            "tableName": "posts",
+            "valid": true
+          }
+        }]
+    }
+  }
+}

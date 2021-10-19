@@ -12,11 +12,13 @@
                            scope="test"
                            tableName="posts"
                            triggerName="test_trigger">CREATE TRIGGER test_trigger BEFORE UPDATE ON posts
-                                                            FOR EACH ROW BEGIN END;
+            FOR EACH ROW BEGIN END;
         </pro:createTrigger>
-        <rollback>
-            <pro:dropTrigger triggerName="test_trigger"
-                             tableName="posts"/>
-        </rollback>
+        <rollback/>
+    </changeSet>
+    <changeSet author="as" id="2">
+        <pro:dropTrigger triggerName="test_trigger"
+                         tableName="posts"/>
+        <rollback/>
     </changeSet>
 </databaseChangeLog>
