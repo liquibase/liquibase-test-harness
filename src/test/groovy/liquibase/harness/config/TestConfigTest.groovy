@@ -7,11 +7,13 @@ class TestConfigTest extends Specification {
         when: "system properties override default path to configFile and revalidateSql property"
         System.setProperty("configFile", "/self/test-config.yml")
         System.setProperty("revalidateSql", "false")
+        System.setProperty("prefix", "titan")
         TestConfig overriddenTestConfig = TestConfig.getInstance()
 
-        then: "this values should be used"
+        then: "values based on env variables should be used"
         overriddenTestConfig.context == "TestConfigTest"
         overriddenTestConfig.revalidateSql == false
+        overriddenTestConfig.databasesUnderTest.size() == 2
     }
 
 }
