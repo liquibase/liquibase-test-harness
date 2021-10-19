@@ -1,4 +1,4 @@
-package liquibase.harness.change;
+package liquibase.harness.change.changelogs.h2;
 
 import org.h2.tools.TriggerAdapter;
 
