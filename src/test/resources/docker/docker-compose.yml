@@ -39,7 +39,7 @@ services:
       MYSQL_USER: lbuser
       MYSQL_PASSWORD: LiquibasePass1
     volumes:
-    - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+    - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql8-init.sql"
 
   postgres-9.5:
     image: postgres:9
