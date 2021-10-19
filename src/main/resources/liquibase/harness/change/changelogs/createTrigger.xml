@@ -11,10 +11,9 @@
                 encoding="UTF-8"
                 procedureName="test_function">CREATE OR REPLACE FUNCTION test_function()
                                                     RETURNS trigger
-                                                    SET SCHEMA 'public'
                                                     AS $$
                                                         BEGIN
-                                                            RAISE NOTICE 'Canned Spam in a frying pan: ick';
+                                                            RAISE NOTICE 'Test trigger function created';
                                                             RETURN NEW;
                                                         END;
                                                     $$
@@ -29,7 +28,7 @@
                            encoding="UTF-8"
                            scope="test"
                            tableName="posts"
-                           triggerName="test_trigge12121r">CREATE TRIGGER test_trigger
+                           triggerName="test_trigger">CREATE TRIGGER test_trigger
                                                         BEFORE INSERT ON posts
                                                         FOR EACH ROW EXECUTE PROCEDURE test_function();
         </pro:createTrigger>
