@@ -3,12 +3,14 @@ context: testContext
 
 databasesUnderTest:
   - name: aws-postgres
+    prefix: aws
     version: DBVERSION
     url: jdbc:postgresql://DBENDPOINT/lbcat
     username: lbuser
     password: LbRootPass1
 
   - name: aws-oracle
+    prefix: aws
     version: DBVERSION
     url: jdbc:oracle:thin:@DBENDPOINT/lbcat
     username: lbuser
@@ -198,25 +200,29 @@ databasesUnderTest:
   # change ports if you want to run 2 versions of these platforms simultaneously
   - name: hsqldb
     version: 2.4
+    prefix: titan
     url: jdbc:hsqldb:hsql://localhost:9001/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: hsqldb
     version: 2.5
+    prefix: titan
     url: jdbc:hsqldb:hsql://localhost:9001/lbcat
     username: lbuser
     password: LiquibasePass1
 
-  # change ports if you want to run 2 versions of these platforms simultaneously
+#  change ports if you want to run 2 versions of these platforms simultaneously
   - name: firebird
     version: 3
+    prefix: titan
     url: jdbc:firebirdsql://localhost:3050/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: firebird
     version: 4
+    prefix: titan
     url: jdbc:firebirdsql://localhost:3050/lbcat
     username: lbuser
     password: LiquibasePass1
