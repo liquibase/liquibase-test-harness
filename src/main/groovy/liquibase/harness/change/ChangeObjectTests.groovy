@@ -28,21 +28,20 @@ class ChangeObjectTests extends Specification {
         argsMap.put("snapshotFormat", "JSON")
         argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
-//        and: "skip testcase if it's invalid for this combination of db type and/or version"
-        when: "if testcase is invalid for this combination of db type and/or version"
-        then: "skip testcase"
-        Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
+        and: "skip testcase if it's invalid for this combination of db type and/or version"
+        boolean runTest = expectedSql == null || !expectedSql.toLowerCase().contains("invalid test")
+        Assume.assumeTrue(expectedSql, runTest)
 
-//        and: "fail test if snapshot is not provided"
-        when: "if snapshot is not provided"
-        then: "fail test"
+        and: "fail test if snapshot is not provided"
+//        when: "if snapshot is not provided"
+//        then: "fail test"
         assert expectedSnapshot != null: "No expectedSnapshot for ${testInput.changeObject} against" +
                 " ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
                 "${testInput.database.databaseMinorVersion}"
 
-//        and: "check database under test is online"
-        when: "check database under test is offline"
-        then: "fail test"
+        and: "check database under test is online"
+//        when: "check database under test is offline"
+//        then: "fail test"
         assert testInput.database.getConnection() instanceof JdbcConnection: "Database ${testInput.databaseName}" +
                 "${testInput.version} is offline!"
 
@@ -71,10 +70,9 @@ class ChangeObjectTests extends Specification {
         }
 
         cleanup: "rollback changes"
-//        if (argsMap) {
-//            executeCommandScope("rollbackCount", argsMap)
-//        }
-        executeCommandScope("rollbackCount", argsMap)
+        if (runTest && testInput.database.getConnection() instanceof JdbcConnection) {
+            executeCommandScope("rollbackCount", argsMap)
+        }
 
         where: "test input in next data table"
         testInput << buildTestInput()
