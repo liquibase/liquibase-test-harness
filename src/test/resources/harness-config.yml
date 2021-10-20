@@ -8,6 +8,12 @@ databasesUnderTest:
     username: lbuser
     password: LbRootPass1
 
+  - name: aws-oracle
+    version: DBVERSION
+    url: jdbc:oracle:thin:@DBENDPOINT:lbcat
+    username: lbuser
+    password: LbRootPass1
+
   - name: postgresql
     version: 13
     url: jdbc:postgresql://localhost:5437/lbcat
