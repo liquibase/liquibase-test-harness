@@ -2,15 +2,9 @@ inputFormat: xml
 context: testContext
 
 databasesUnderTest:
-  - name: aws-postgres
+  - name: aws-postgresql
     version: DBVERSION
     url: jdbc:postgresql://DBENDPOINT/lbcat
-    username: lbuser
-    password: LbRootPass1
-
-  - name: aws-oracle
-    version: DBVERSION
-    url: jdbc:oracle:thin:@DBENDPOINT/lbcat
     username: lbuser
     password: LbRootPass1
 
