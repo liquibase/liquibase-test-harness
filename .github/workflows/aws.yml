@@ -2,12 +2,7 @@
 
 name: AWS Cloud Database Test Execution
 on:
-  # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers.
-  # Disable push and pr triggers for now
-  # push:
-  #   branches: [ main ]
-  # pull_request:
-  #   branches: [ main ]
+  # Triggers the workflow on a daily schedule. Also allows for manual triggers.
   schedule:
     - cron: '0 12 * * *' # Execute every day at noon
   workflow_dispatch:
