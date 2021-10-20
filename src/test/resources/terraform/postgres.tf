@@ -1,10 +1,3 @@
-# Public IP to be granted access to the DB
-variable "public_ip" {
-  type        = string
-  description = "Public IP Address to be granted access to database"
-  default     = "0.0.0.0"
-}
-
 # Versions of Postgres to create. 
 variable "postgresVersion" {
   type        = list(string)
@@ -20,8 +13,7 @@ module "db_postgres_sg" {
   description = "Security group for postgres database with port 5432 open to the runner of this plan"
   vpc_id      = module.vpc.vpc_id
 
-  ingress_cidr_blocks = ["${var.public_ip}/32"]
-  #ingress_cidr_blocks = ["0.0.0.0/0"]
+  ingress_cidr_blocks = ["0.0.0.0/0"]
 }
 
 # Create the Postgres RDS Databases 
@@ -50,7 +42,7 @@ module "postgres" {
 }
 
 # Output endpoint (host:port)
-output "dbEndpoint" {
+output "postgresEndpoint" {
   value = {
     for endpoint in module.postgres :
     endpoint.db_instance_id => endpoint.db_instance_endpoint
