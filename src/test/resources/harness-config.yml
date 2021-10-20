@@ -2,7 +2,7 @@ inputFormat: xml
 context: testContext
 
 databasesUnderTest:
-  - name: aws-postgres
+  - name: aws-postgresql
     version: DBVERSION
     url: jdbc:postgresql://DBENDPOINT/lbcat
     username: lbuser
