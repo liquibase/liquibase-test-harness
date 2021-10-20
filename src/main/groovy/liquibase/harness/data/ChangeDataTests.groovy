@@ -25,6 +25,7 @@ class ChangeDataTests extends Specification {
                 "liquibase/harness/data/checkingSql"))
         String expectedResultSet = getJSONFileContent(testInput.changeData, testInput.databaseName, testInput.version,
                 "liquibase/harness/data/expectedResultSet")
+        boolean shouldRunChangeSet
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
@@ -32,34 +33,39 @@ class ChangeDataTests extends Specification {
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
-        and: "skip testcase if it's invalid for this combination of db type and/or version"
-        Assume.assumeTrue(expectedSql, expectedSql == null || !expectedSql.toLowerCase().contains("invalid test"))
+        and: "ignore testcase if it's invalid for this combination of db type and/or version"
+        shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
+        Assume.assumeTrue(expectedSql, shouldRunChangeSet)
 
         and: "fail test if expectedResultSet is not provided"
-        assert expectedResultSet != null: "No expectedResultSet for ${testInput.changeData} against " +
+        shouldRunChangeSet = expectedResultSet != null
+        assert shouldRunChangeSet: "No expectedResultSet for ${testInput.changeData} against " +
                 "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
                 "${testInput.database.databaseMinorVersion}"
 
         and: "fail test if checkingSql is not provided"
-        assert checkingSql != null: "No checkingSql for ${testInput.changeData} against " +
+        shouldRunChangeSet = checkingSql != null
+        assert shouldRunChangeSet: "No checkingSql for ${testInput.changeData} against " +
                 "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
                 "${testInput.database.databaseMinorVersion}"
+
+        and: "check database under test is online"
+        def connection = testInput.database.getConnection()
+        shouldRunChangeSet = connection instanceof JdbcConnection
+        assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
-            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
+            shouldRunChangeSet = generatedSql == expectedSql
+            assert shouldRunChangeSet: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
                     " will test that new sql works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
             }
         }
-
-        def connection = testInput.database.getConnection()
-        assert connection instanceof JdbcConnection: "We cannot verify the following SQL works because the database " +
-                "is offline:\n${generatedSql}"
 
         when: "apply changeSet to DB,"
         executeCommandScope("update", argsMap)
@@ -67,7 +73,7 @@ class ChangeDataTests extends Specification {
         then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet"
 
         try {
-            def resultSet = connection.createStatement().executeQuery(checkingSql)
+            def resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkingSql)
             connection.commit()
 
             def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
@@ -85,7 +91,9 @@ class ChangeDataTests extends Specification {
         }
 
         cleanup: "rollback changes"
-        executeCommandScope("rollbackCount", argsMap)
+        if (shouldRunChangeSet) {
+            executeCommandScope("rollbackCount", argsMap)
+        }
 
         where: "test input in next data table"
         testInput << buildTestInput()

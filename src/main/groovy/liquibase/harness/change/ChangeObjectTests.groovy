@@ -30,7 +30,7 @@ class ChangeObjectTests extends Specification {
         argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
-        shouldRunChangeSet = expectedSql == null || !expectedSql.toLowerCase().contains("invalid test")
+        shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
         Assume.assumeTrue(expectedSql, shouldRunChangeSet)
 
         and: "fail test if snapshot is not provided"
@@ -48,7 +48,8 @@ class ChangeObjectTests extends Specification {
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
-            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
+            shouldRunChangeSet = generatedSql == expectedSql
+            assert shouldRunChangeSet: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
                     " will test that new sql works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
