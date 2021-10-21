@@ -70,6 +70,9 @@ case $db in
   "crdb-21.1" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.1 -Dmaven.test.failure.ignore=true test
     ;;
+  "crdb-21.2" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.2 -Dmaven.test.failure.ignore=true test
+    ;;
   "edb-9.5" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=9.5 test
     ;;
@@ -97,8 +100,17 @@ case $db in
   "diff")
     test_command mvn -ntp -Dtest=DiffTest test
     ;;
-  "hsqldb")
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=hsqldb test
+  "hsqldb-2.4")
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=hsqldb -DdbVersion=2.4 test
+    ;;
+  "hsqldb-2.5")
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=hsqldb -DdbVersion=2.5 test
+    ;;
+  "firebird-3")
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=firebird -DdbVersion=3 test
+    ;;
+  "firebird-4")
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=firebird -DdbVersion=4 test
     ;;
 esac
 

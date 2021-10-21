@@ -2,9 +2,15 @@ inputFormat: xml
 context: testContext
 
 databasesUnderTest:
-  - name: aws-postgresql
+  - name: aws-postgres
     version: DBVERSION
     url: jdbc:postgresql://DBENDPOINT/lbcat
+    username: lbuser
+    password: LbRootPass1
+
+  - name: aws-oracle
+    version: DBVERSION
+    url: jdbc:oracle:thin:@DBENDPOINT/lbcat
     username: lbuser
     password: LbRootPass1
 
@@ -122,6 +128,12 @@ databasesUnderTest:
     username: lbuser
     password:
 
+  - name: cockroachdb
+    version: 21.2
+    url: jdbc:postgresql://localhost:26260/lbcat
+    username: lbuser
+    password:
+
   - name: mssql
     version: 2017
     url: jdbc:sqlserver://localhost:1433;databaseName=lbcat
@@ -183,12 +195,28 @@ databasesUnderTest:
     version: 10.14.2.0
     url: jdbc:derby:./src/test/resources/derby/lbcat
 
+  # change ports if you want to run 2 versions of these platforms simultaneously
   - name: hsqldb
+    version: 2.4
     url: jdbc:hsqldb:hsql://localhost:9001/lbcat
     username: lbuser
     password: LiquibasePass1
 
+  - name: hsqldb
+    version: 2.5
+    url: jdbc:hsqldb:hsql://localhost:9001/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  # change ports if you want to run 2 versions of these platforms simultaneously
   - name: firebird
+    version: 3
+    url: jdbc:firebirdsql://localhost:3050/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: firebird
+    version: 4
     url: jdbc:firebirdsql://localhost:3050/lbcat
     username: lbuser
     password: LiquibasePass1

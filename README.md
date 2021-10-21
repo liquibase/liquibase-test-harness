@@ -150,7 +150,7 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | ----------- | ----------- |
 | Postgres |  `9, 9.5, 10, 11, 12, 13` |
 | MySQL | `5.6, 5.7, 8` |
-| MariaDB | `10.3 , 10.5` |
+| MariaDB | `10.2, 10.3 , 10.4, 10.5, 10.6` |
 | SQL Server | `2017`, `2019` |
 | Oracle | `18.3.0, 18.4.0, 19.9.0` |
 | CockroachDB | `20.1, 20.2, 21.1` |
@@ -158,6 +158,7 @@ gracefully and to allow the tests to start from a clean slate on the next run.
 | H2 | `1.4.200` |
 | SQLite | `3.34.0` |
 | Apache Derby | `10.14.2.0` |
-
+| Firebird | `2.5` |
+| HSQLDB | `2.3.4` |
 
 
