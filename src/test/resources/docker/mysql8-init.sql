@@ -1,5 +1,4 @@
 GRANT ALL PRIVILEGES ON lbcat.* TO 'lbuser'@'%';
-GRANT SUPER ON *.* TO 'lbuser'@'%';
 
 DROP TABLE IF EXISTS `authors`;
 CREATE TABLE `authors` (
