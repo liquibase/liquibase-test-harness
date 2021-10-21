@@ -135,7 +135,7 @@ Execute `mvn test` with the (optional) flags outlined below:
  separated lists.
 * `-DchangeData=insert,delete` flag that allows to run specific changeData through ChangeDataTests. Use comma separated list
 * `-DconfigFile=customConfigFile.yml` enables to override default config file which is(`src/test/resources/harness-config.yml`)
-* `-Dprefix=aws` filters database from config file by some common platform identifier. E.g. all AWS based platforms, all Titan managed platforms.
+* `-Dprefix=docker` filters database from config file by some common platform identifier. E.g. all AWS based platforms, all Titan managed platforms, all from default docker file.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
 * `-DdbVersion` overrides the database version. Works in conjunction with `-DdbName` flag.
 

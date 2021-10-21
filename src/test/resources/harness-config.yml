@@ -216,7 +216,7 @@ databasesUnderTest:
     prefix: local
     url: jdbc:h2:tcp://localhost:1523/test
 
-  - name:
+  - name: sqlite
     prefix: local
     version: 3.34.0
     url: jdbc:sqlite:./src/test/resources/sqlite/sqlite.db
