@@ -7,8 +7,6 @@ import org.junit.Assert
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
-import java.sql.DriverManager
-import java.sql.SQLException
 import java.util.logging.Logger
 
 import static liquibase.harness.util.JSONUtils.*
@@ -58,13 +56,7 @@ class ChangeDataTests extends Specification {
                 return //sql is right. Nothing more to test
             }
         }
-        //TODO: Replace connection workaround for mysql and mariadb. Ticket DAT-8103
-        def mysqlConnection
-        if (testInput.databaseName == "mysql" || testInput.databaseName == "mariadb") {
-            mysqlConnection = DriverManager.getConnection(testInput.url + "?" + "user=" + testInput.username + "&"
-                    + "password=" + testInput.password)
-            assert mysqlConnection.isValid(10)
-        }
+
         def connection = testInput.database.getConnection()
         assert connection instanceof JdbcConnection: "We cannot verify the following SQL works because the database " +
                 "is offline:\n${generatedSql}"
@@ -75,12 +67,9 @@ class ChangeDataTests extends Specification {
         then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet"
 
         try {
-            def resultSet
-            if (testInput.databaseName == "mysql" || testInput.databaseName == "mariadb") {
-                resultSet = mysqlConnection.createStatement().executeQuery(checkingSql)
-            } else {
-                resultSet = connection.createStatement().executeQuery(checkingSql)
-            }
+            def resultSet = connection.createStatement().executeQuery(checkingSql)
+            connection.commit()
+
             def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
@@ -93,13 +82,6 @@ class ChangeDataTests extends Specification {
         and: "if expected sql is not provided save generated sql as expected sql"
         if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
             saveAsExpectedSql(generatedSql, testInput)
-        }
-        if (testInput.databaseName == "mysql" || testInput.databaseName == "mariadb") {
-            try {
-                mysqlConnection.close()
-            } catch (SQLException exception) {
-                Logger.getLogger(this.class.name).severe("Failed to close jdbc connection! " + exception.message)
-            }
         }
 
         cleanup: "rollback changes"
