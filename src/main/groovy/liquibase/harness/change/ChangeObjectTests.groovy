@@ -64,7 +64,7 @@ class ChangeObjectTests extends Specification {
         snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
 
         and: "if expected sql is not provided save generated sql as expected sql"
-        if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
+        if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql") && !generatedSql.isEmpty()) {
             saveAsExpectedSql(generatedSql, testInput)
         }
 

@@ -86,7 +86,7 @@ class ChangeDataTests extends Specification {
         }
 
         and: "if expected sql is not provided save generated sql as expected sql"
-        if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
+        if (expectedSql == null && !testInput.pathToChangeLogFile.endsWith(".sql") !generatedSql.isEmpty()) {
             saveAsExpectedSql(generatedSql, testInput)
         }
 
