@@ -1,0 +1,17 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.trigger.Trigger": [
+        {
+          "trigger": {
+            "body": "CREATE TRIGGER test_trigger ON posts AFTER UPDATE AS RAISERROR ('error', 1, 1)",
+            "disabled": false,
+            "name": "test_trigger_renamed",
+            "tableName": "posts",
+            "usesQuotedIdentifier": true,
+            "valid": true
+          }
+        }]
+    }
+  }
+}
