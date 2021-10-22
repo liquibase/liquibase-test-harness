@@ -48,8 +48,10 @@ class ChangeObjectTests extends Specification {
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
+            //TODO form nice error message to see expected and actual SQL in logs and remove 2 times in comparison for
+            // boolean flag and for assert
             shouldRunChangeSet = generatedSql == expectedSql
-            assert shouldRunChangeSet: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
+            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. "+" Deleting expectedSql file" +
                     " will test that new sql works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
