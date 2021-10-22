@@ -66,9 +66,9 @@ jobs:
         working-directory: src/test/resources/docker
         run: ./create-infra.sh ${{ matrix.database }}
         env:
-          RT_URL: ${{ secrets.RT_URL }}
-          RT_USER: ${{ secrets.RT_USER }}
-          RT_PWD: ${{ secrets.RT_PWD }}
+          ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
+          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}
