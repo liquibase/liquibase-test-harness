@@ -82,15 +82,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - database: postgres
+          - database: postgresql
             version: 9-6
-          - database: postgres
+          - database: postgresql
             version: 10
-          - database: postgres
+          - database: postgresql
             version: 11
-          - database: postgres
+          - database: postgresql
             version: 12
-          - database: postgres
+          - database: postgresql
             version: 13         
           - database: oracle
             version: 12-1
@@ -127,7 +127,7 @@ jobs:
           url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}:lbcat"
 
       - uses: liquibase/liquibase-github-action@v3
-        if: ${{ matrix.database == 'postgres' }}
+        if: ${{ matrix.database == 'postgresql' }}
         with:
           operation: "update"
           classpath: "src/test/resources/terraform/changelogs"
