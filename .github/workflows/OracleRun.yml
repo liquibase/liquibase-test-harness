@@ -3,7 +3,7 @@
 name: Oracle Test Execution
 on:
 
-  schedule:
+  # schedule:
   #  - cron: '0 8 * * *' # Execute every day at 8am
   workflow_dispatch:
 
