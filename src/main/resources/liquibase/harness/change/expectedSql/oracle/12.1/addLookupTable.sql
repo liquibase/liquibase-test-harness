@@ -1,0 +1,3 @@
+CREATE TABLE LBUSER.authors_data AS SELECT DISTINCT email AS authors_email FROM LBUSER.authors WHERE email IS NOT NULL
+ALTER TABLE LBUSER.authors_data ADD PRIMARY KEY (authors_email)
+ALTER TABLE LBUSER.authors ADD CONSTRAINT FK_AUTHORS_AUTHORS_DATA FOREIGN KEY (email) REFERENCES LBUSER.authors_data (authors_email)

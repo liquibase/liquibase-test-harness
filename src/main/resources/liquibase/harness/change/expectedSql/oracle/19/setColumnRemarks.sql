@@ -1,0 +1,1 @@
+COMMENT ON COLUMN LBUSER.authors.id IS 'A Test Column Remark'
