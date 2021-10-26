@@ -43,7 +43,7 @@ class TestConfig {
     List<DatabaseUnderTest> getDatabasesUnderTest() {
         String dbName = System.getProperty("dbName")
         String dbVersion = System.getProperty("dbVersion")
-        String platformPrefix = System.getProperty("prefix");
+        String platformPrefix = System.getProperty("prefix")
         if (platformPrefix) {
             this.databasesUnderTest = this.databasesUnderTest.stream()
                     .filter({ platformPrefix.equalsIgnoreCase(it.prefix) })
@@ -57,9 +57,16 @@ class TestConfig {
 
         if (dbVersion) {
             this.databasesUnderTest = this.databasesUnderTest.stream()
-                    .filter({ it.version.equalsIgnoreCase(dbVersion) })
+                    .filter({ it.version.equalsIgnoreCase(adjustVersionSeparator(dbVersion)) })
                     .collect(Collectors.toList())
         }
         return databasesUnderTest
+    }
+
+    /**
+     * Replace dash for major/minor version separator for AWS test runs
+     */
+    private static String adjustVersionSeparator(String version) {
+        return version.replaceAll("-", ".")
     }
 }
