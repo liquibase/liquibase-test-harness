@@ -42,7 +42,7 @@ module "postgres" {
 }
 
 # Output endpoint (host:port)
-output "postgresEndpoint" {
+output "postgresqlEndpoint" {
   value = {
     for endpoint in module.postgres :
     endpoint.db_instance_id => endpoint.db_instance_endpoint
