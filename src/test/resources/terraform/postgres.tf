@@ -24,9 +24,9 @@ module "postgresql" {
 
   identifier = replace("postgresql-${var.postgresqlVersion[count.index]}", ".", "-") // dots not permitted in identifiers, so replace with hyphen
 
-  engine                    = "postgresql"
+  engine                    = "postgres"
   name                      = "lbcat"
-  family                    = "postgresql${var.postgresqlVersion[count.index]}"
+  family                    = "postgres${var.postgresqlVersion[count.index]}"
   major_engine_version      = var.postgresqlVersion[count.index]
   engine_version            = var.postgresqlVersion[count.index]
   instance_class            = "db.t3.micro"
