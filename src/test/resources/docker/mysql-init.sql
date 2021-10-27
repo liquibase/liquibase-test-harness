@@ -1,4 +1,8 @@
-GRANT ALL PRIVILEGES ON lbcat.* TO 'lbuser'@'%';
+GRANT SUPER ON *.* TO 'lbuser'@'%';
+GRANT ALL PRIVILEGES ON lbcat.* TO 'lbuser'@'%' WITH GRANT OPTION;
+GRANT PROCESS ON *.* TO 'lbuser'@'%';
+SET GLOBAL log_bin_trust_function_creators = 1;
+FLUSH PRIVILEGES;
 
 DROP TABLE IF EXISTS `authors`;
 CREATE TABLE `authors` (
