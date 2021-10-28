@@ -1,1 +1,1 @@
-create table snapshot_test_table (snapshot_table_test_int_column int, snapshot_table_test_varchar_column varchar(10))
+create table snapshot_test_table (snapshot_table_test_int int, snapshot_table_test_varchar varchar(10))

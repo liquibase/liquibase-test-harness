@@ -11,12 +11,12 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "snapshot_table_test_int_column"
+            "name": "snapshot_table_test_int"
           }
         },
         {
           "column": {
-            "name": "snapshot_table_test_varchar_column"
+            "name": "snapshot_table_test_varchar"
           }
         }
       ]
