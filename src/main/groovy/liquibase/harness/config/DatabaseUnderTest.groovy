@@ -1,9 +1,7 @@
 package liquibase.harness.config
 
-import groovy.transform.ToString
 import liquibase.database.Database
 
-@ToString
 class DatabaseUnderTest {
     Database database
     String version
