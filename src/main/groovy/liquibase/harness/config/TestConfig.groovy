@@ -60,6 +60,7 @@ class TestConfig {
                     .filter({ it.version.equalsIgnoreCase(adjustVersionSeparator(dbVersion)) })
                     .collect(Collectors.toList())
         }
+        Logger.getLogger(this.class.name).info("Databases under test: " + databasesUnderTest.toString())
         return databasesUnderTest
     }
 
