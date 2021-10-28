@@ -82,15 +82,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - database: postgres
+          - database: postgresql
             version: 9-6
-          - database: postgres
+          - database: postgresql
             version: 10
-          - database: postgres
+          - database: postgresql
             version: 11
-          - database: postgres
+          - database: postgresql
             version: 12
-          - database: postgres
+          - database: postgresql
             version: 13         
           - database: oracle
             version: 12-1
@@ -127,7 +127,7 @@ jobs:
           url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}:lbcat"
 
       - uses: liquibase/liquibase-github-action@v3
-        if: ${{ matrix.database == 'postgres' }}
+        if: ${{ matrix.database == 'postgresql' }}
         with:
           operation: "update"
           classpath: "src/test/resources/terraform/changelogs"
@@ -153,7 +153,7 @@ jobs:
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=aws-${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=aws -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v2
