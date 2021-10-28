@@ -60,14 +60,14 @@ class TestConfig {
                     .filter({ it.version.equalsIgnoreCase(dbVersion) })
                     .collect(Collectors.toList())
         }
-        databasesUnderTest = databasesUnderTest.stream().map({adjustAWSVersion(it)}).collect(Collectors.toList())
-        Logger.getLogger(TestConfig.name).info("Databases Under test: " + databasesUnderTest.toString())
-        return databasesUnderTest
+        this.databasesUnderTest = this.databasesUnderTest.stream().map({adjustAWSVersion(it)}).collect(Collectors.toList())
+        Logger.getLogger(TestConfig.name).info("Databases Under test: " + this.databasesUnderTest.toString())
+        return this.databasesUnderTest
     }
 
     private static DatabaseUnderTest adjustAWSVersion(DatabaseUnderTest databaseUnderTest) {
         if (databaseUnderTest.version?.contains("-")) {
-            databaseUnderTest.version.replaceAll("-", ".")
+            databaseUnderTest.version = databaseUnderTest.version.replaceAll("-", ".")
         }
         return databaseUnderTest
     }
