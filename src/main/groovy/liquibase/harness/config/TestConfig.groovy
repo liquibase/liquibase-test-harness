@@ -44,6 +44,7 @@ class TestConfig {
         String dbName = System.getProperty("dbName")
         String dbVersion = System.getProperty("dbVersion")
         String platformPrefix = System.getProperty("prefix")
+        Logger.getLogger(this.class.name).info("DB name = " + dbName + " DB version = " + dbVersion + " Prefix = " + platformPrefix + " Databases under test " + databasesUnderTest.toString())
         if (platformPrefix) {
             this.databasesUnderTest = this.databasesUnderTest.stream()
                     .filter({ platformPrefix.equalsIgnoreCase(it.prefix) })
