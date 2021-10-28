@@ -64,7 +64,7 @@ class TestConfig {
     }
 
     private static DatabaseUnderTest adjustAWSVersion(DatabaseUnderTest databaseUnderTest) {
-        if (databaseUnderTest.version.contains("-")) {
+        if (databaseUnderTest.version?.contains("-")) {
             databaseUnderTest.version.replaceAll("-", ".")
         }
         return databaseUnderTest
