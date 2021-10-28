@@ -61,13 +61,6 @@ class TestConfig {
                     .filter({ it.version.equalsIgnoreCase(dbVersion) })
                     .collect(Collectors.toList())
         }
-        return databasesUnderTest
-    }
-
-    /**
-     * Replace dash for major/minor version separator for AWS test runs
-     */
-    private static String adjustVersionSeparator(String version) {
-        return version.replaceAll("-", ".")
+        return databasesUnderTest.stream().forEach({it.version.replaceAll("-", ".")})
     }
 }
