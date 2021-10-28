@@ -60,7 +60,9 @@ class TestConfig {
                     .filter({ it.version.equalsIgnoreCase(dbVersion) })
                     .collect(Collectors.toList())
         }
-        return databasesUnderTest.stream().map({adjustAWSVersion(it)}).collect(Collectors.toList())
+        databasesUnderTest = databasesUnderTest.stream().map({adjustAWSVersion(it)}).collect(Collectors.toList())
+        Logger.getLogger(TestConfig.name).info("Databases Under test: " + databasesUnderTest.toString())
+        return databasesUnderTest
     }
 
     private static DatabaseUnderTest adjustAWSVersion(DatabaseUnderTest databaseUnderTest) {
