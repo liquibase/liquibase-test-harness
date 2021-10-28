@@ -43,7 +43,7 @@ class TestConfig {
     List<DatabaseUnderTest> getDatabasesUnderTest() {
         String dbName = System.getProperty("dbName")
         String dbVersion = System.getProperty("dbVersion")
-        String platformPrefix = System.getProperty("prefix");
+        String platformPrefix = System.getProperty("prefix")
         if (platformPrefix) {
             this.databasesUnderTest = this.databasesUnderTest.stream()
                     .filter({ platformPrefix.equalsIgnoreCase(it.prefix) })
@@ -60,6 +60,13 @@ class TestConfig {
                     .filter({ it.version.equalsIgnoreCase(dbVersion) })
                     .collect(Collectors.toList())
         }
-        return databasesUnderTest
+        return databasesUnderTest.stream().map({adjustAWSVersion(it)}).collect(Collectors.toList())
+    }
+
+    private static DatabaseUnderTest adjustAWSVersion(DatabaseUnderTest databaseUnderTest) {
+        if (databaseUnderTest.version?.contains("-")) {
+            databaseUnderTest.version.replaceAll("-", ".")
+        }
+        return databaseUnderTest
     }
 }
