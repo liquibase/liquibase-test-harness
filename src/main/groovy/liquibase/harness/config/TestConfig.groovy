@@ -57,10 +57,9 @@ class TestConfig {
 
         if (dbVersion) {
             this.databasesUnderTest = this.databasesUnderTest.stream()
-                    .filter({ it.version.equalsIgnoreCase(adjustVersionSeparator(dbVersion)) })
+                    .filter({ it.version.equalsIgnoreCase(dbVersion) })
                     .collect(Collectors.toList())
         }
-        Logger.getLogger(this.class.name).info("Databases under test: " + databasesUnderTest.toString())
         return databasesUnderTest
     }
 
