@@ -57,8 +57,8 @@ class TestConfig {
 
         if (dbVersion) {
             this.databasesUnderTest = this.databasesUnderTest.stream()
-                    .filter({ it.version.equalsIgnoreCase(dbVersion)
-                    || it.version.equalsIgnoreCase(adjustVersionSeparator(dbVersion))})
+                    .filter({ it.version.equalsIgnoreCase(dbVersion) ||
+                            it.version.equalsIgnoreCase(adjustVersionSeparator(dbVersion))})
                     .collect(Collectors.toList())
         }
         this.databasesUnderTest = this.databasesUnderTest.stream()
