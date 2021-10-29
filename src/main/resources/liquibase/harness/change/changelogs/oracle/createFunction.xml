@@ -8,15 +8,7 @@
     <changeSet author="as" id="1">
         <pro:createFunction
                 encoding="UTF-8"
-                functionName="test_function">CREATE OR REPLACE FUNCTION test_function()
-                                            RETURNS trigger
-                                            AS $$
-                                            BEGIN
-                                            RAISE NOTICE 'Test function created';
-                                            RETURN NEW;
-                                            END;
-                                            $$
-                                            LANGUAGE plpgsql;
+                functionName="test_function">CREATE FUNCTION test_function(id IN NUMBER) RETURN VARCHAR2 AS BEGIN RETURN '2'; END;
         </pro:createFunction>
         <rollback>
             <pro:dropFunction functionName="test_function"/>
