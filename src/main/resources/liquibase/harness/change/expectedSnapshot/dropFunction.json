@@ -1,6 +1,7 @@
 {
   "snapshot": {
     "objects": {
+      "_noMatch": true,
       "com.datical.liquibase.ext.storedlogic.function.Function": [
         {
           "function": {

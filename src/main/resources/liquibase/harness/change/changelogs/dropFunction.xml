@@ -18,8 +18,10 @@
                                             $$
                                             LANGUAGE plpgsql;
         </pro:createFunction>
-        <rollback>
-            <pro:dropFunction functionName="test_function"/>
-        </rollback>
+        <rollback/>
+    </changeSet>
+    <changeSet author="as" id="2">
+        <pro:dropFunction functionName="test_function"/>
+        <rollback/>
     </changeSet>
 </databaseChangeLog>
