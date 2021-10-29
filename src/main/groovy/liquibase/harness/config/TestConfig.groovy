@@ -57,18 +57,26 @@ class TestConfig {
 
         if (dbVersion) {
             this.databasesUnderTest = this.databasesUnderTest.stream()
-                    .filter({ it.version.equalsIgnoreCase(dbVersion) })
+                    .filter({ it.version.equalsIgnoreCase(dbVersion)
+                    || it.version.equalsIgnoreCase(adjustVersionSeparator(dbVersion))})
                     .collect(Collectors.toList())
         }
-        this.databasesUnderTest = this.databasesUnderTest.stream().map({adjustAWSVersion(it)}).collect(Collectors.toList())
+        this.databasesUnderTest = this.databasesUnderTest.stream()
+                .map({adjustAWSVersion(it)})
+                .collect(Collectors.toList())
         Logger.getLogger(TestConfig.name).info("Databases Under test: " + this.databasesUnderTest.toString())
         return this.databasesUnderTest
     }
 
     private static DatabaseUnderTest adjustAWSVersion(DatabaseUnderTest databaseUnderTest) {
         if (databaseUnderTest.version?.contains("-")) {
-            databaseUnderTest.version = databaseUnderTest.version.replaceAll("-", ".")
+            databaseUnderTest.version = adjustVersionSeparator(databaseUnderTest.version)
         }
         return databaseUnderTest
+    }
+
+    private static String adjustVersionSeparator(String version) {
+        String adjustedVersion = version.replaceAll("-", ".")
+        return adjustedVersion
     }
 }
