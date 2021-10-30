@@ -1,0 +1,15 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "com.datical.liquibase.ext.storedlogic.function.Function": [
+        {
+          "function": {
+            "body": "CREATE OR REPLACE FUNCTION test_function(id IN NUMBER) RETURN VARCHAR2 AS BEGIN RETURN '2'; END;",
+            "name": "TEST_FUNCTION",
+            "valid": true
+          }
+        }]
+    }
+  }
+}
