@@ -1,1 +1,1 @@
-CREATE TABLE lms_create_table_test (lms_test_id int, lms_test_timestamp datetime)
+CREATE TABLE lms_create_table_test (lms_test_id int, lms_test_timestamp datetime2)
