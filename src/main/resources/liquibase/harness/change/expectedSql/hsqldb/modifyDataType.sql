@@ -1,2 +1,2 @@
-CREATE TABLE public.modify_data_type_test ("intColumn" INTEGER, "dateColumn" date)
-ALTER TABLE public.modify_data_type_test ALTER COLUMN "intColumn" TYPE VARCHAR(50) USING ("intColumn"::VARCHAR(50))
+CREATE TABLE PUBLIC.modify_data_type_test (intColumn INT, dateColumn date)
+ALTER TABLE PUBLIC.modify_data_type_test ALTER COLUMN intColumn VARCHAR(50)
