@@ -37,7 +37,7 @@ class ChangeDataTestHelper {
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
 
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
-                .initializeDatabasesConnection(TestConfig.instance.databasesUnderTest)) {
+                .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
             def database = databaseUnderTest.database
             for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest,
                     baseChangelogPath,
