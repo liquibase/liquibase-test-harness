@@ -1,3 +1,4 @@
+# This file is used by TestConfigTest for verifying test-harness own logic
 inputFormat: xml
 context: TestConfigTest
 
