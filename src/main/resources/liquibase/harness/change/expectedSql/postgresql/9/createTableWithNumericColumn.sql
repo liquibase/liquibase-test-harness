@@ -1,0 +1,1 @@
+CREATE TABLE public.contacts (id SERIAL NOT NULL, name VARCHAR(100), phones TEXT[], po_box NUMERIC[], CONSTRAINT contacts_pkey PRIMARY KEY (id))
