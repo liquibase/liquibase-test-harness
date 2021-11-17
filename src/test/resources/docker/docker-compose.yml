@@ -107,6 +107,17 @@ services:
     volumes:
       - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
+  postgres-14:
+    image: postgres:14
+    ports:
+      - "5438:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: LbRootPass1
+      POSTGRES_DB: lbcat
+    volumes:
+      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
+
   mariadb-10.2:
     image: mariadb:10.2
     ports:
@@ -331,7 +342,7 @@ services:
 #      FIREBIRD_DATABASE: lbcat
 #      FIREBIRD_USER: lbuser
 #      FIREBIRD_PASSWORD: LiquibasePass1
-
+#
 #  firebird-4:
 #    image: jacobalberty/firebird:v4.0
 #    ports:

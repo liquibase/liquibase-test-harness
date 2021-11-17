@@ -18,6 +18,13 @@ databasesUnderTest:
 
   - name: postgresql
     prefix: docker
+    version: 14
+    url: jdbc:postgresql://localhost:5438/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
+    prefix: docker
     version: 13
     url: jdbc:postgresql://localhost:5437/lbcat
     username: lbuser
