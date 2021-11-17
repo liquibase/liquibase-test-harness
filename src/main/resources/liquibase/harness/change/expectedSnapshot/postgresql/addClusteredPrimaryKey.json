@@ -1,0 +1,39 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "id",
+            "nullable": false,
+            "type": {
+              "typeName": "numeric"
+            }
+          }
+        }]
+    ,
+      "liquibase.structure.core.Index": [
+        {
+          "index": {
+            "clustered": true,
+            "name": "pk_clustered",
+            "unique": true
+          }
+        }]
+    ,
+      "liquibase.structure.core.PrimaryKey": [
+        {
+          "primaryKey": {
+            "name": "pk_clustered"
+          }
+        }]
+    ,
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "tbl_cluster"
+          }
+        }]
+    }
+  }
+}
