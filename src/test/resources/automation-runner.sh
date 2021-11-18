@@ -37,6 +37,9 @@ case $db in
   "postgres-13" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=13 test
     ;;
+  "postgres-14" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=14 test
+    ;;
   "mariadb-10.2" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -DdbVersion=10.2 test
     ;;

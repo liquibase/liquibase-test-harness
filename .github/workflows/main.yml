@@ -28,6 +28,7 @@ jobs:
             "postgres-11",
             "postgres-12",
             "postgres-13",
+            "postgres-14",
             "mariadb-10.2",
             "mariadb-10.3",
             "mariadb-10.4",
