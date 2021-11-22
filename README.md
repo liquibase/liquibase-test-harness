@@ -2,6 +2,23 @@
 
 ![Default Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Default%20Test%20Execution/badge.svg) ![Oracle Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Oracle%20Parallel%20Test%20Execution/badge.svg)
 
+## Test-Harness Support Matrix
+
+| Database | Versions Tested|
+| ----------- | ----------- |
+| Postgres |  `9, 9.5, 10, 11, 12, 13, 14` |
+| MySQL | `5.6, 5.7, 8` |
+| MariaDB | `10.2, 10.3 , 10.4, 10.5, 10.6` |
+| SQL Server | `2017`, `2019` |
+| Oracle | `18.3.0, 18.4.0, 19.9.0, 21.3.0` |
+| CockroachDB | `20.1, 20.2, 21.1` |
+| EDB | `9.5, 9.6, 10, 11, 12, 13` |
+| H2 | `1.4.200` |
+| SQLite | `3.34.0` |
+| Apache Derby | `10.14.2.0` |
+| Firebird | `2.5` |
+| HSQLDB | `2.3.4`, `2.5` |
+
 ## Framework
 
 The test harness consists of a variety of standard tests to ensure the database-specific interactions within Liquibase work against specific 
@@ -145,22 +162,5 @@ To run the test suite itself, you can execute `mvn -Dtest=LiquibaseHarnessSuiteT
 
 When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
 gracefully and to allow the tests to start from a clean slate on the next run.
-
-## Test-Harness Support Matrix
-
-| Database | Versions Tested|
-| ----------- | ----------- |
-| Postgres |  `9, 9.5, 10, 11, 12, 13` |
-| MySQL | `5.6, 5.7, 8` |
-| MariaDB | `10.2, 10.3 , 10.4, 10.5, 10.6` |
-| SQL Server | `2017`, `2019` |
-| Oracle | `18.3.0, 18.4.0, 19.9.0` |
-| CockroachDB | `20.1, 20.2, 21.1` |
-| EDB | `9.5, 9.6, 10, 11, 12, 13` |
-| H2 | `1.4.200` |
-| SQLite | `3.34.0` |
-| Apache Derby | `10.14.2.0` |
-| Firebird | `2.5` |
-| HSQLDB | `2.3.4`, `2.5` |
 
 
