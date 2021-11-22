@@ -133,6 +133,12 @@ databasesUnderTest:
     username: DATICAL_ADMIN
     password: DATICAL_ADMIN_PW
 
+  - name: oracle
+    version: 21.3.0
+    url: 'jdbc:oracle:thin:@localhost:1523/xe'
+    username: C##LIQUIBASE
+    password: Secret321
+
   - name: cockroachdb
     prefix: docker
     version: 20.2
