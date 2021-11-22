@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [ 18.3.0, 18.4.0 ]
+        plan: [ 18.3.0, 18.4.0, 21.3.0 ]
 
     steps:
       - uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
           time: '180s'
 
       - name: Oracle ${{ matrix.plan }} Test Run
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
+        run: mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
