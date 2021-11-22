@@ -12,3 +12,15 @@ services:
         ORACLE_PASSWORD: Secret321
     volumes:
         - "./startup:/container-entrypoint-initdb.d"
+
+
+  oracle-xe-21.3.0:
+    image: gvenzl/oracle-xe:21.3.0-full
+    ports:
+      - "1523:1521"
+      - "5503:5500"
+    restart: always
+    environment:
+      ORACLE_PASSWORD: Secret321
+    volumes:
+      - "./startup:/container-entrypoint-initdb.d"
