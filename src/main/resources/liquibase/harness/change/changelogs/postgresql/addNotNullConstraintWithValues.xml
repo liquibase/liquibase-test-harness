@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+http://www.liquibase.org/xml/ns/dbchangelog-ext/vacuum http://www.liquibase.org/xml/ns/dbchangelog-ext/vacuum-1.0.xsd">
+
+    <changeSet author="Liquibase User" id="1::createTable">
+        <createTable tableName="lb45">
+            <column name="name" type="CHAR(20)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet  author="liquibase-docs"  id="1::insertData">
+        <insert tableName="lb45">
+            <column name="name"  value="marcel"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet author="Liquibase User" id="2::addColumn">
+        <addColumn tableName="lb45">
+            <column name="columnWithInitialValue" type="int8" valueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
