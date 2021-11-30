@@ -77,6 +77,7 @@ class SnapshotHelpers {
                     if (actual.has(key)) {
                         Object actualValue = actual.get(key)
                         compareValues(qualify(prefix, key), expectedValue, actualValue, result)
+
                     } else {
                         result.missing(prefix, key)
                     }
@@ -91,19 +92,21 @@ class SnapshotHelpers {
             while (iterator.hasNext()) {
                 String expectedArrayName = iterator.next()
                 JSONObject innerOne = expectedOuter.get(expectedArrayName) as JSONObject
-                String expectedPropertyName = innerOne.names().get(0)
-                String expectedPropertyValue = innerOne.get(innerOne.names().get(0) as String)
-                boolean found = false
-                for (int i = 0; i < actual.length(); i++) {
-                    JSONObject actualObjectOuter = actual.get(i) as JSONObject
-                    JSONObject actualArray = actualObjectOuter.get(expectedArrayName) as JSONObject
-                    String actualPropertyValue = actualArray.get(expectedPropertyName)
-                    if (actualPropertyValue == expectedPropertyValue) {
-                        found = true
-                        break
+                int objectsMatched = 0
+                for (int i = 0; i < innerOne.names().length(); i++) {
+                    String expectedPropertyName = innerOne.names().get(i)
+                    String expectedPropertyValue = innerOne.get(innerOne.names().get(i) as String)
+                    for (int j = 0; j < actual.length(); j++) {
+                        JSONObject actualObjectOuter = actual.get(j) as JSONObject
+                        JSONObject actualArray = actualObjectOuter.get(expectedArrayName) as JSONObject
+                        String actualPropertyValue = actualArray.get(expectedPropertyName)
+                        if (actualPropertyValue.equalsIgnoreCase(expectedPropertyValue)) {
+                            objectsMatched++
+//                            break
+                        }
                     }
                 }
-                return found
+                return objectsMatched == innerOne.names().length()
             }
         }
     }
