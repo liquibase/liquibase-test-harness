@@ -5,6 +5,7 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
+            "name": "po_box",
             "type": {
               "columnSize": "131089\\!\\{java.lang.Integer\\}"
             }
