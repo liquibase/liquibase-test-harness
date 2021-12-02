@@ -88,7 +88,9 @@ If not, you will need to provide the rollback by yourself. To learn more about r
  - If you would like to test another DB type, please add the requisite folder.
 3) Go to `src/main/resources/liquibase/harness/change/expectedSnapshot` and add the expected DB Snapshot results.
   - To verify the absence of an object in a snapshot (such as with drop* commands) add `"_noMatch": true,` to that tree level where the missing object should be verified.
-  See [dropSequence.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/dropSequence.json) as an example.
+  See [dropSequence.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/dropSequence.json) as an example. 
+Also `_noMatchField` can be used to say which exact property should be missing or different for particular database object (Column, Table etc.) 
+see [createTableWithNumericColumn.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/createTableWithNumericColumn.json)
   - You will need to add this under the database specific folder.
   - If you would like to test another DB type, please add the requisite folder.
 4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (You can also choose to run `BaseTestHarnessSuite`, or `LiquibaseHarnessSuiteTest` -- at present they all work the same).

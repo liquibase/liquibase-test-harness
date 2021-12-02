@@ -61,8 +61,8 @@ class SnapshotHelpers {
                 for (String key : expectedKeys) {
                     if (actual.has(key)) {
                         if (actual instanceof JSONObject) {
-                            if(expected.has("noMatchField")){
-                                    checkObjects(expected.getJSONArray(key), actual.getJSONArray(key),  expected.remove("noMatchField").toString())
+                            if(expected.has("_noMatchField")){
+                                    checkObjects(expected.getJSONArray(key), actual.getJSONArray(key),  expected.remove("_noMatchField").toString())
                                             ? result.passed()
                                             : result.fail(prefix, expected, actual)
                             }
