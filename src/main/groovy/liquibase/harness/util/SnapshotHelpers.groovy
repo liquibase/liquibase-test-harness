@@ -109,19 +109,15 @@ class SnapshotHelpers {
                         String expectedPropertyName = innerOne.names().get(j)
                         Object expectedPropertyValue = innerOne.get(innerOne.names().get(j))
                         String innerExpectedPropertyName
-                        String innerExpectedPropertyValue
                         if (expectedPropertyValue instanceof JSONObject){
-                            //We are not deep enough
+                            //We are not deep enough, go one level deeper
                             JSONObject expectedPropertyValueAsJson = (JSONObject) expectedPropertyValue
                             innerExpectedPropertyName = expectedPropertyValueAsJson.names().get(0)
-                            innerExpectedPropertyValue = expectedPropertyValueAsJson.get(innerExpectedPropertyName)
                             expectedPropertyValue = expectedPropertyValueAsJson.get(innerExpectedPropertyName)
-//                            expectedPropertyValue = innerExpectedPropertyName+":"+innerExpectedPropertyValue
                         }
                         expectedPropertyValue = (expectedPropertyValue as String).replaceAll("\\\\", "")
                         JSONObject actualObjectOuter = actual.get(i) as JSONObject
                         JSONObject actualArray = actualObjectOuter.get(expectedArrayName) as JSONObject
-//                        String actualPropertyValue = actualArray.get(expectedPropertyName)
                         Object actualPropertyValue = actualArray.get(expectedPropertyName)
                         if(actualPropertyValue instanceof JSONObject){
                             actualPropertyValue = ((JSONObject) actualPropertyValue).opt(innerExpectedPropertyName as String)
