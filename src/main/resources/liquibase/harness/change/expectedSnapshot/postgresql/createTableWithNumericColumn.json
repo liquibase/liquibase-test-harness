@@ -2,6 +2,7 @@
   "snapshot": {
     "objects": {
       "_noMatch": true,
+      "noMatchField": "type",
       "liquibase.structure.core.Column": [
         {
           "column": {
