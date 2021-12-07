@@ -9,7 +9,7 @@
             "maxValue": "371717\\!\\{java.math.BigInteger\\}",
             "minValue": "1\\!\\{java.math.BigInteger\\}",
             "startValue": "1\\!\\{java.math.BigInteger\\}",
-            "willCycle": false
+            "willCycle": true
           }
         }
       ]
