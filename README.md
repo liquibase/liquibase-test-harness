@@ -106,7 +106,7 @@ If not, you will need to provide the rollback by yourself. To learn more about r
 3) Go to `src/main/resources/liquibase/harness/change/expectedSnapshot` and add the expected DB Snapshot results.
   - To verify the absence of an object in a snapshot (such as with drop* commands) add `"_noMatch": true,` to that tree level where the missing object should be verified.
   See [dropSequence.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/dropSequence.json) as an example. 
-Also `_noMatchField` can be used to say which exact property should be missing or different for particular database object (Column, Table etc.) 
+Additionally the `_noMatchField` parameter can be used to define the exact property which should be absent or different for that particular database object (for example Column, Table etc.) 
 see [createTableWithNumericColumn.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/createTableWithNumericColumn.json)
   - You will need to add this under the database specific folder.
   - If you would like to test another DB type, please add the requisite folder.
