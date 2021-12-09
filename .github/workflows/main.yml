@@ -51,9 +51,9 @@ jobs:
             "sqlite",
             "diff",
             "hsqldb-2.4",
-            "hsqldb-2.5"
-#            "firebird-3",  -- firebird is ignored until https://github.com/liquibase/liquibase/pull/1970 is merged and released
-#            "firebird-4"
+            "hsqldb-2.5",
+            "firebird-3",
+            "firebird-4"
         ]
 
     steps:

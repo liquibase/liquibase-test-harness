@@ -4,6 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <!--    This changeType can't be verified by ChangeObjectTest as it require running query for verification -->
+    <!--    ChangeDataTest is the one who can do such check -->
     <!-- HSQLDB doesn't support minValue and dataType attributes for createSequence-->
     <changeSet id="1" author="as">
         <createSequence incrementBy="1"
