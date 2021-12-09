@@ -1,0 +1,2 @@
+CREATE TABLE lbcat.test_table (pk_column BIGINT AUTO_INCREMENT NOT NULL, CONSTRAINT test_pk PRIMARY KEY (pk_column))
+ALTER TABLE lbcat.test_table MODIFY COLUMN pk_column BIGINT COMMENT 'Internal identifier of test_table'
