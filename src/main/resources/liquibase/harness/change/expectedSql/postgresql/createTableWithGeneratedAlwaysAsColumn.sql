@@ -1,0 +1,1 @@
+CREATE TABLE public.test_table (id INTEGER, test_value numeric, default_computed_value INTEGER GENERATED ALWAYS AS (test_value / 2) STORED)
