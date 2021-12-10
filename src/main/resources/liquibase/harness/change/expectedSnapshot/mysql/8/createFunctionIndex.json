@@ -1,0 +1,20 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Index": [
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "computed": true,
+                  "name": "lower(`first_name`)"
+                }
+              }]
+            ,
+            "name": "idx_lb2160"
+          }
+      }]
+    }
+  }
+}
