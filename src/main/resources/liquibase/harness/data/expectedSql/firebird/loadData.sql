@@ -1,3 +1,3 @@
-INSERT INTO authors (id, first_name, last_name, email, birthdate, added) VALUES (6, 'Adam', 'Gods', 'test1@example.com', '1000-02-27', '2000-02-04 02:32:00')
-INSERT INTO authors (id, first_name, last_name, email, birthdate, added) VALUES (7, 'Noah', 'Lamekhs', 'test2@example.com', '2000-02-27', '1994-12-10 01:00:00')
-INSERT INTO authors (id, first_name, last_name, email, birthdate, added) VALUES (8, 'Muhammad', 'Ibn Abdullah', 'test3@example.com', '3000-02-27', '2000-12-10 01:00:00')
+INSERT INTO posts (id, author_id, title, description, content, inserted_date) VALUES (6, 1, 'Title1', 'test1@example.com', 'Content1', '2000-01-01')
+INSERT INTO posts (id, author_id, title, description, content, inserted_date) VALUES (7, 2, 'Title2', 'test2@example.com', 'Content2', '2000-01-01')
+INSERT INTO posts (id, author_id, title, description, content, inserted_date) VALUES (8, 3, 'Title3', 'test3@example.com', 'Content3', '2000-01-01')
