@@ -1,0 +1,1 @@
+create view test_view as select id, first_name, last_name, email from authors

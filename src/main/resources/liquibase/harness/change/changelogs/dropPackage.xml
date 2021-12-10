@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="as">
+        <pro:createPackage encoding="UTF-8"
+                           packageName="test_package">CREATE OR REPLACE FUNCTION test_function()
+                                                        RETURNS trigger
+                                                        AS $$
+                                                        BEGIN
+                                                        RAISE NOTICE 'Test function created';
+                                                        RETURN NEW;
+                                                        END;
+                                                        $$
+                                                        LANGUAGE plpgsql;</pro:createPackage>
+        <rollback/>
+    </changeSet>
+    <changeSet id="2" author="as">
+        <pro:dropPackage packageName="test_package"/>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>
