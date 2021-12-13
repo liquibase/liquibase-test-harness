@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="r2">
+        <createTable tableName="datatypes.string_test_table">
+
+		    <!-- STRING TYPES -->
+		    <!-- https://dev.mysql.com/doc/refman/8.0/en/string-type-syntax.html -->
+
+            <!-- ENUM and SET are not supported yet -->
+
+            <column name="char0" type="char(0))"/>
+            <column name="char1" type="char(1))"/>
+            <column name="char10" type="char(10)"/>
+            <column name="char100" type="char(100)"/>
+            <column name="char255" type="char(255)"/>
+
+            <column name="varchar0" type="varchar(0))"/>
+            <column name="varchar1" type="varchar(1))"/>
+            <column name="varchar10" type="varchar(10)"/>
+            <column name="varchar100" type="varchar(100)"/>
+            <column name="varchar1000" type="varchar(1000)"/>
+            <column name="varchar10000" type="varchar(10000)"/>
+
+            <column name="binary0" type="binary(0))"/>
+            <column name="binary1" type="binary(1))"/>
+            <column name="binary10" type="binary(10)"/>
+            <column name="binary100" type="binary(100)"/>
+            <column name="binary255" type="binary(255)"/>
+
+            <column name="varbinary0" type="varbinary(0))"/>
+            <column name="varbinary1" type="varbinary(1))"/>
+            <column name="varbinary10" type="varbinary(10)"/>
+            <column name="varbinary100" type="varbinary(100)"/>
+            <column name="varbinary1000" type="varbinary(1000)"/>
+            <column name="varbinary10000" type="varbinary(10000)"/>
+
+            <column name="tinyblob" type="tinyblob"/>
+            <column name="blob" type="blob"/>
+            <column name="mediumblob" type="mediumblob"/>
+            <column name="longblob" type="longblob"/>
+
+            <column name="tinytext" type="tinytext"/>
+            <column name="text" type="text"/>
+            <column name="mediumtext" type="mediumtext"/>
+            <column name="longtext" type="longtext"/>
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

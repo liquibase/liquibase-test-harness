@@ -1,0 +1,146 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "table_datetime"
+          }
+        },
+        {
+          "table": {
+            "name": "table_timestamp"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p0",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p0",
+            "type": {
+              "typeName": "TIMESTAMP"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(1\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p1",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(1\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p1",
+            "type": {
+              "typeName": "TIMESTAMP"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(2\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p2",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(2\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p2",
+            "type": {
+              "typeName": "TIMESTAMP"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(3\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p3",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(3\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p3",
+            "type": {
+              "typeName": "TIMESTAMP"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(4\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p4",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(4\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p4",
+            "type": {
+              "typeName": "TIMESTAMP"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(5\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p5",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(5\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p5",
+            "type": {
+              "typeName": "TIMESTAMP"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(6\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p6",
+            "type": {
+              "typeName": "DATETIME"
+            }
+          }
+        },
+        {
+          "column": {
+            "defaultValue": "CURRENT_TIMESTAMP\\(6\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "p6",
+            "type": {
+              "typeName": "TIMESTAMP"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
