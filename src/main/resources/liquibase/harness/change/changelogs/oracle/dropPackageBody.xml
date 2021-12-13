@@ -22,9 +22,11 @@
                                                                     BEGIN END test_procedure;
                                                                     END test_package;
         </pro:createPackageBody>
-    <rollback>
+    <rollback/>
+    </changeSet>
+    <changeSet author="as" id="3">
         <pro:dropPackageBody packageBodyName="test_package"/>
         <pro:dropPackage packageName="test_package"/>
-    </rollback>
+        <rollback/>
     </changeSet>
 </databaseChangeLog>

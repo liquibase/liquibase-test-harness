@@ -8,7 +8,7 @@
 
     <changeSet  author="as" id="1">
         <pro:createPackage encoding="UTF-8"
-                           packageName="test_package">CREATE PACKAGE test_package AS
+                           packageName="test_package">CREATE OR REPLACE PACKAGE test_package AS
                                                       PROCEDURE test_procedure;
                                                       END test_package;</pro:createPackage>
         <rollback/>
