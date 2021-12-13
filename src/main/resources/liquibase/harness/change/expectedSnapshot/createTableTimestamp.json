@@ -12,7 +12,9 @@
         {
           "column": {
             "name": "lms_test_id"
-          },
+          }
+        },
+        {
           "column": {
             "name": "lms_test_timestamp",
             "type": {
