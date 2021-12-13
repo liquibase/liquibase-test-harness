@@ -7,8 +7,8 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet  author="as" id="1">
-        <pro:createPackage encoding="UTF-8"
-                           packageName="test_package">CREATE VIEW PUBLIC.test_view AS select id, first_name, last_name, email from authors</pro:createPackage>
+        <pro:createPackageBody encoding="UTF-8"
+                           packageBodyName="test_package_body">CREATE VIEW PUBLIC.test_view AS select id, first_name, last_name, email from authors</pro:createPackageBody>
         <rollback>
             <pro:dropView viewName="test_view"/>
         </rollback>
