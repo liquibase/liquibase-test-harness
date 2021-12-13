@@ -42,7 +42,7 @@ services:
     - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
   postgres-9.5:
-    image: postgres:9
+    image: postgres:9.5
     ports:
       - "5432:5432"
     restart: always
