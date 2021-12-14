@@ -1,6 +1,7 @@
 GRANT SUPER ON *.* TO 'lbuser'@'%';
 GRANT ALL PRIVILEGES ON lbcat.* TO 'lbuser'@'%' WITH GRANT OPTION;
 GRANT PROCESS ON *.* TO 'lbuser'@'%';
+SET GLOBAL pxc_strict_mode=DISABLED;
 SET GLOBAL log_bin_trust_function_creators = 1;
 FLUSH PRIVILEGES;
 
@@ -23,12 +24,13 @@ INSERT INTO `authors` VALUES ('1','Eileen','Lubowitz','ppaucek@example.org','199
 
 DROP TABLE IF EXISTS `posts`;
 CREATE TABLE `posts` (
-                         `id` int(11) NOT NULL,
+                         `id` int(11) NOT NULL AUTO_INCREMENT,
                          `author_id` int(11) NOT NULL,
                          `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
                          `description` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
                          `content` text COLLATE utf8_unicode_ci NOT NULL,
-                         `inserted_date` date
+                         `inserted_date` date,
+                         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `posts` VALUES ('1','1','temporibus','voluptatum','Fugit non et doloribus repudiandae.','2015-11-18'),

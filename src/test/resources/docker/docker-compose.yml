@@ -55,7 +55,7 @@ services:
       MYSQL_PASSWORD: LiquibasePass1
       CLUSTER_NAME: cluster1
     volumes:
-      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+      - "./mysql-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-init.sql"
 
   percona-xtradb-cluster-8.0:
     image: percona/percona-xtradb-cluster:8.0
@@ -71,7 +71,7 @@ services:
       MYSQL_PASSWORD: LiquibasePass1
       CLUSTER_NAME: cluster1
     volumes:
-      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+      - "./mysql-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-init.sql"
 
   postgres-9.5:
     image: postgres:9
