@@ -4,6 +4,38 @@ GRANT PROCESS ON *.* TO 'lbuser'@'%';
 SET GLOBAL log_bin_trust_function_creators = 1;
 FLUSH PRIVILEGES;
 
+-- Percona XtraDB Cluster requires a primary key on all tables. https://github.com/liquibase/liquibase/issues/2271
+
+--  Create Database Lock Table
+DROP TABLE IF EXISTS `DATABASECHANGELOGLOCK`;
+CREATE TABLE `DATABASECHANGELOGLOCK` (
+                            ID INT NOT NULL,
+                            `LOCKED` BIT(1) NOT NULL,
+                            LOCKGRANTED datetime NULL,
+                            LOCKEDBY VARCHAR(255) NULL,
+                            PRIMARY KEY (ID)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--  Create Database Change Log Table
+DROP TABLE IF EXISTS `DATABASECHANGELOG`;
+CREATE TABLE `DATABASECHANGELOG` (
+                          `ID` varchar(255) NOT NULL,
+                          `AUTHOR` varchar(255) NOT NULL,
+                          `FILENAME` varchar(255) NOT NULL,
+                          `DATEEXECUTED` datetime NOT NULL,
+                          `ORDEREXECUTED` int NOT NULL,
+                          `EXECTYPE` varchar(10) NOT NULL,
+                          `MD5SUM` varchar(35) DEFAULT NULL,
+                          `DESCRIPTION` varchar(255) DEFAULT NULL,
+                          `COMMENTS` varchar(255) DEFAULT NULL,
+                          `TAG` varchar(255) DEFAULT NULL,
+                          `LIQUIBASE` varchar(20) DEFAULT NULL,
+                          `CONTEXTS` varchar(255) DEFAULT NULL,
+                          `LABELS` varchar(255) DEFAULT NULL,
+                          `DEPLOYMENT_ID` varchar(10) DEFAULT NULL,
+                          PRIMARY KEY (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 DROP TABLE IF EXISTS `authors`;
 CREATE TABLE `authors` (
                            `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -23,12 +55,13 @@ INSERT INTO `authors` VALUES ('1','Eileen','Lubowitz','ppaucek@example.org','199
 
 DROP TABLE IF EXISTS `posts`;
 CREATE TABLE `posts` (
-                         `id` int(11) NOT NULL,
+                         `id` int(11) NOT NULL AUTO_INCREMENT,
                          `author_id` int(11) NOT NULL,
                          `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
                          `description` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
                          `content` text COLLATE utf8_unicode_ci NOT NULL,
-                         `inserted_date` date
+                         `inserted_date` date,
+                         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `posts` VALUES ('1','1','temporibus','voluptatum','Fugit non et doloribus repudiandae.','2015-11-18'),
