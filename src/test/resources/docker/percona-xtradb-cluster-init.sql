@@ -34,7 +34,7 @@ CREATE TABLE `DATABASECHANGELOG` (
                           `LABELS` varchar(255) DEFAULT NULL,
                           `DEPLOYMENT_ID` varchar(10) DEFAULT NULL,
                           PRIMARY KEY (ID)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `authors`;
 CREATE TABLE `authors` (
