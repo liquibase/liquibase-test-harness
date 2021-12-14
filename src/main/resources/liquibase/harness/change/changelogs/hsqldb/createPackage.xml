@@ -8,11 +8,9 @@
 
     <changeSet  author="as" id="1">
         <pro:createPackage encoding="UTF-8"
-                           packageName="test_package">CREATE PROCEDURE test_procedure(firstname VARCHAR(50), lastname VARCHAR(50), email VARCHAR(50))
-            MODIFIES SQL DATA
-            INSERT INTO AUTHORS VALUES (DEFAULT, firstname, lastname, email, null, CURRENT_TIMESTAMP);</pro:createPackage>
+                           packageName="test_package">CREATE VIEW test_view AS select id, first_name, last_name, email from authors</pro:createPackage>
         <rollback>
-            <dropProcedure procedureName="test_procedure"/>
+            <dropView viewName="test_view"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
