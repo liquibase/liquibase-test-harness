@@ -1,0 +1,1 @@
+CREATE ALIAS "LTHUSER".test_synonym FOR "LTHUSER"."authors"
