@@ -90,13 +90,13 @@ databasesUnderTest:
     version: 5.7
     url: jdbc:mysql://localhost:33070/lbcat
     username: lbuser
-    passwoard: LiquibasePass1
+    password: LiquibasePass1
 
   - name: percona-xtradb-cluster
     version: 8.0
     url: jdbc:mysql://localhost:33071/lbcat
     username: lbuser
-    passwoard: LiquibasePass1
+    password: LiquibasePass1
 
   - name: mariadb
     prefix: docker
