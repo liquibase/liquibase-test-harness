@@ -1,3 +1,3 @@
 INVALID TEST
 
--- mysql doesn't support sequences 
+-- Liquibase doesn't support alterSequence change type for MySQL
