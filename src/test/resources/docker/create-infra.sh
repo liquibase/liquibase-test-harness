@@ -5,6 +5,13 @@ set -ex
 db=$1
 
 case $db in
+
+  # percona xtradb cluster needs a bit more time to start
+  "percona-xtradb-cluster-5.7"|"percona-xtradb-cluster-8.0" )
+    docker-compose up -d $db
+    sleep 180
+    ;;
+
   # edb setup requires login to private registry
   "edb-9.5"|"edb-9.6"|"edb-10"|"edb-11"|"edb-12"|"edb-13")
     docker login $ARTIFACTORY_URL -u $ARTIFACTORY_USER -p $ARTIFACTORY_TOKEN
