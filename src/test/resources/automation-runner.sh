@@ -19,6 +19,12 @@ case $db in
   "mysql-8" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -DdbVersion=8 test
     ;;
+  "percona-xtradb-cluster-5.7" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=percona-xtradb-cluster -DdbVersion=5.7 test
+    ;;
+  "percona-xtradb-cluster-8.0" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=percona-xtradb-cluster -DdbVersion=8.0 test
+    ;;
   "postgres-9.5" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=9.5 test
     ;;
