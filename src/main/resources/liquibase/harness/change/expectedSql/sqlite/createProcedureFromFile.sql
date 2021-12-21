@@ -1,2 +1,5 @@
 INVALID TEST
-SQLite doesn't support stored procedures processing
+
+SQLite does not support stored procedures processing
+
+-- See https://docs.liquibase.com/change-types/community/create-procedure.html

@@ -1,0 +1,31 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "lms_create_table_test"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "lms_test_id",
+            "type": {
+              "typeName": "INTEGER"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "lms_test_timestamp",
+            "type": {
+              "typeName": "TEXT"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
