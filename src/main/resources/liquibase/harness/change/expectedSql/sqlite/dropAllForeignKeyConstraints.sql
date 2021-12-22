@@ -1,2 +1,3 @@
 INVALID TEST
---Liquibase doesn't support this changeType for SQLite
+
+Liquibase does not support dropAllForeignKeyConstraints changeType for SQLite
