@@ -33,7 +33,7 @@ CREATE TABLE `DATABASECHANGELOG` (
                           `CONTEXTS` varchar(255) DEFAULT NULL,
                           `LABELS` varchar(255) DEFAULT NULL,
                           `DEPLOYMENT_ID` varchar(10) DEFAULT NULL,
-                          PRIMARY KEY (ID)
+                          PRIMARY KEY (ID, AUTHOR, FILENAME)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `authors`;
