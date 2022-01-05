@@ -1,0 +1,2 @@
+ALTER TABLE LBUSER.authors ADD booleanColumn NUMBER(1)
+ALTER TABLE LBUSER.authors MODIFY booleanColumn DEFAULT 1

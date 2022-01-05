@@ -13,7 +13,7 @@ class TestConfigTest extends Specification {
         then: "values based on env variables should be used"
         overriddenTestConfig.context == "TestConfigTest"
         overriddenTestConfig.revalidateSql == false
-        overriddenTestConfig.databasesUnderTest.size() == 2
+        overriddenTestConfig.getFilteredDatabasesUnderTest().size() == 2
     }
 
 }

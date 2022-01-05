@@ -1,0 +1,1 @@
+CREATE TABLE public.serial_test_table (serial SERIAL, bigserial BIGSERIAL)

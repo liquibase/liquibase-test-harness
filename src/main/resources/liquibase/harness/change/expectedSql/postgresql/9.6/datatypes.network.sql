@@ -1,0 +1,1 @@
+CREATE TABLE public."datatypes.network_test_table" (cidr CIDR, inet INET, macaddr MACADDR)

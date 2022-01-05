@@ -40,33 +40,24 @@ class TestConfig {
         return instance
     }
 
-    List<DatabaseUnderTest> getDatabasesUnderTest() {
+    List<DatabaseUnderTest> getFilteredDatabasesUnderTest() {
         String dbName = System.getProperty("dbName")
-        String dbVersion = System.getProperty("dbVersion")
+        String dbVersion = System.getProperty("dbVersion")?.replaceAll("-", ".")
         String platformPrefix = System.getProperty("prefix")
+        databasesUnderTest.forEach({ it -> it.version = it.version?.replaceAll("-", ".") })
+
         if (platformPrefix) {
-            this.databasesUnderTest = this.databasesUnderTest.stream()
-                    .filter({ platformPrefix.equalsIgnoreCase(it.prefix) })
-                    .collect(Collectors.toList())
+            databasesUnderTest = databasesUnderTest.findAll { platformPrefix.equalsIgnoreCase(it.prefix)}
         }
         if (dbName) {
-            this.databasesUnderTest = this.databasesUnderTest.stream()
-                    .filter({ it.name.equalsIgnoreCase(dbName) })
-                    .collect(Collectors.toList())
+            databasesUnderTest = databasesUnderTest.findAll { it.name.equalsIgnoreCase(dbName)}
         }
 
         if (dbVersion) {
-            this.databasesUnderTest = this.databasesUnderTest.stream()
-                    .filter({ it.version.equalsIgnoreCase(dbVersion) })
-                    .collect(Collectors.toList())
+            databasesUnderTest = databasesUnderTest.findAll {it.version.equalsIgnoreCase(dbVersion)}
         }
-        return databasesUnderTest.stream().map({adjustAWSVersion(it)}).collect(Collectors.toList())
+        Logger.getLogger(TestConfig.name).info("Databases Under test: " + databasesUnderTest.toString())
+        return databasesUnderTest
     }
 
-    private static DatabaseUnderTest adjustAWSVersion(DatabaseUnderTest databaseUnderTest) {
-        if (databaseUnderTest.version?.contains("-")) {
-            databaseUnderTest.version.replaceAll("-", ".")
-        }
-        return databaseUnderTest
-    }
 }
