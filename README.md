@@ -17,7 +17,7 @@
 | H2 | `1.4.200` |
 | SQLite | `3.34.0` |
 | Apache Derby | `10.14.2.0` |
-| Firebird | `2.5` |
+| Firebird | `3.0, 4.0` |
 | HSQLDB | `2.3.4`, `2.5` |
 
 ## Framework
