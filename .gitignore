@@ -9,4 +9,5 @@ build/
 .project
 .DS_Store
 src/test/resources/derby/lbcat/*
+src/test/resources/sqlite/*
 derby.log
