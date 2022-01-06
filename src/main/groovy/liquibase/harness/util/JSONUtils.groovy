@@ -19,6 +19,7 @@ class JSONUtils {
         while (resultSet.next()) {
             JSONObject jsonObject = new JSONObject()
             for (int index = 1; index <= columnCount; index++) {
+                rsmd.getColumnType(index)
                 String column = rsmd.getColumnName(index)
                  Object value = resultSet.getObject(column)
                 if (value == null) {
