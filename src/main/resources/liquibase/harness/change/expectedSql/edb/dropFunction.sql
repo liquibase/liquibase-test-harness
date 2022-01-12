@@ -1,4 +1,4 @@
-ALTER SESSION SET SEARCH_PATH=public
+NEW\nEND\n$$\nLANGUAGE plpgsql\nDROP FUNCTION public.test_function
 CREATE OR REPLACE FUNCTION public.test_function()
 RETURNS trigger
 AS $$
