@@ -48,6 +48,7 @@ class TestUtils {
             commandScope.execute()
         } catch (Exception exception) {
             if (exception instanceof CommandExecutionException && exception.toString().contains("is not available in SQL output mode")) {
+                //Here we check whether updateSql command throws specific exception and skip it (updateSql doesn't work for SQLite for some change types)
                 return outputStream
             }
             Logger.getLogger(this.class.name).severe("Failed to execute command scope for command " +
