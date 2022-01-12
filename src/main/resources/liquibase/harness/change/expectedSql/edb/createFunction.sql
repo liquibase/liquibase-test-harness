@@ -1,4 +1,3 @@
-NEW\nEND\n$$\nLANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION public.test_function()
 RETURNS trigger
 AS $$
