@@ -239,7 +239,7 @@ databasesUnderTest:
 
   - name: edb
     prefix: docker
-    version: 13
+    version: 14
     url: jdbc:postgresql://localhost:5507/lbcat
     username: lbuser
     password: LiquibasePass1
