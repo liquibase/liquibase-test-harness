@@ -237,6 +237,13 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: edb
+    prefix: docker
+    version: 14
+    url: jdbc:postgresql://localhost:5507/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
   - name: h2
     prefix: local
     url: jdbc:h2:tcp://localhost:1523/test
