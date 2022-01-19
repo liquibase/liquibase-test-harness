@@ -100,6 +100,9 @@ case $db in
   "edb-13" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=13 test
     ;;
+  "edb-14" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=14 test
+    ;;
   "derby" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=derby -Dmaven.test.failure.ignore=true test
     ;;

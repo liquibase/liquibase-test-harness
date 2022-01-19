@@ -49,6 +49,7 @@ jobs:
             "edb-11",
             "edb-12",
             "edb-13",
+            "edb-14",
             "derby",
             "sqlite",
             "diff",
