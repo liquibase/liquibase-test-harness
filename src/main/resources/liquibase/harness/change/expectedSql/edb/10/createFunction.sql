@@ -8,4 +8,3 @@ RETURN NEW
 END
 $$
 LANGUAGE plpgsql
-DROP FUNCTION public.test_function()
