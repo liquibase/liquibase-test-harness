@@ -1,3 +1,3 @@
 INVALID TEST
 
--- H2 doesn't support stored procedures processing
+H2 doesn't support stored procedures processing

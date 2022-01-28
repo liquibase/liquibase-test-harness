@@ -241,13 +241,13 @@ services:
       - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
     entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
 
-  H2Database-1.4:
-    image: buildo/h2database
+  H2Database-2.0:
+    image: oscarfonts/h2:2.0.204
     restart: always
     ports:
-      - "1523:9092"
+      - "1523:1521"
     volumes:
-      - "./H2-init.sql:/docker-entrypoint-initdb.d/test.sql"
+      - "../H2:/opt/h2-data"
 
   crdb-20.2:
     image: cockroachdb/cockroach:v20.2.0
