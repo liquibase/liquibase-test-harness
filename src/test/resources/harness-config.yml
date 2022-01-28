@@ -245,13 +245,8 @@ databasesUnderTest:
     password: LiquibasePass1
 
   - name: h2
-    prefix: docker
-    url: jdbc:h2:tcp://localhost:1523/lbcat
-
-# we don't normally work with embedded DB from project folder not to screw it up and recreate each time
-#  - name: h2
-#    prefix: local
-#    url: jdbc:h2:file:./src/test/resources/H2/lbcat
+    prefix: local
+    url: jdbc:h2:file:./src/test/resources/H2/lbcat
 
   - name: sqlite
     prefix: local
