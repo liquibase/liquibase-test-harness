@@ -30,7 +30,7 @@ case $db in
     ;;
 
   # in memory databases
-  "derby"|"sqlite")
+  "derby"|"sqlite"|"H2Database-2.1")
     exit 0
     ;;
 
