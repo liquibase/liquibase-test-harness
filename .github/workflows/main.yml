@@ -38,7 +38,7 @@ jobs:
             "mariadb-10.6",
             "mssql-2017",
             "mssql-2019",
-            "H2Database-2.0",
+            "H2Database-2.1",
             "crdb-20.2",
             "crdb-20.1",
             "crdb-21.1",
