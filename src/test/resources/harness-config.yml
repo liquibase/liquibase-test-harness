@@ -246,7 +246,7 @@ databasesUnderTest:
 
   - name: h2
     prefix: local
-    url: jdbc:h2:tcp://localhost:1523/test
+    url: jdbc:h2:file:./src/test/resources/H2/lbcat
 
   - name: sqlite
     prefix: local
