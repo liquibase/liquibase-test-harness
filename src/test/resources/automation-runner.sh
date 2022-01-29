@@ -67,7 +67,7 @@ case $db in
   "mssql-2019" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -DdbVersion=2019 test
     ;;
-  "H2Database-1.4" )
+  "H2Database-2.1" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=h2 test
     ;;
   "crdb-20.2" )
