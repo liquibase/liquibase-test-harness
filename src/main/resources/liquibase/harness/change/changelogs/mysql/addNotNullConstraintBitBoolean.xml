@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <!--Test is aimed specifically at BIT and BOOLEAN datatypes.
+        https://datical.atlassian.net/browse/LB-2187 -->
+    <changeSet id="1" author="lb2187">
+        <createTable tableName="test_table">
+            <column name="id" type="int"/>
+            <column name="bit_col" type="BIT(1)"/>
+            <column name="boolean_col" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="lb2187">
+        <insert tableName="test_table">
+            <column name="id" valueNumeric="1"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="test-bit" author="lb2187">
+        <addNotNullConstraint tableName="test_table" columnName="bit_col" defaultNullValue="1" columnDataType="BIT(1)"/>
+    </changeSet>
+
+    <changeSet id="test-bool" author="lb2187">
+        <addNotNullConstraint tableName="test_table" columnName="boolean_col" defaultNullValue="true" columnDataType="BOOLEAN"/>
+    </changeSet>
+</databaseChangeLog>
