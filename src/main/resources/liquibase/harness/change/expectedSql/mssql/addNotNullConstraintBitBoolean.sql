@@ -1,4 +1,3 @@
-USE master
 CREATE TABLE test_table (id int, bit_col bit, boolean_col bit)
 INSERT INTO test_table (id) VALUES (1)
 UPDATE test_table SET bit_col = 1 WHERE bit_col IS NULL
