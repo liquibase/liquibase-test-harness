@@ -41,8 +41,40 @@ services:
     volumes:
     - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
+  percona-xtradb-cluster-5.7:
+    image: percona/percona-xtradb-cluster:5.7
+    ports:
+      - "33070:3306"
+    networks:
+      - cluster1_net
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+      CLUSTER_NAME: cluster1
+    volumes:
+      - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
+
+  percona-xtradb-cluster-8.0:
+    image: percona/percona-xtradb-cluster:8.0
+    ports:
+      - "33071:3306"
+    networks:
+      - cluster1_net
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+      CLUSTER_NAME: cluster1
+    volumes:
+      - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
+
   postgres-9.5:
-    image: postgres:9
+    image: postgres:9.5
     ports:
       - "5432:5432"
     restart: always
@@ -209,14 +241,6 @@ services:
       - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
     entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
 
-  H2Database-1.4:
-    image: buildo/h2database
-    restart: always
-    ports:
-      - "1523:9092"
-    volumes:
-      - "./H2-init.sql:/docker-entrypoint-initdb.d/test.sql"
-
   crdb-20.2:
     image: cockroachdb/cockroach:v20.2.0
     command: start-single-node --insecure
@@ -355,3 +379,4 @@ services:
 
 networks:
   roachnet:
+  cluster1_net:

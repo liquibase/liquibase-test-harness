@@ -9,7 +9,7 @@
             select id, first_name, last_name, email from authors
         </createView>
         <rollback>
-            <dropView viewName="test_view"></dropView>
+            <dropView viewName="test_view"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

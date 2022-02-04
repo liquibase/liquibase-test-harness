@@ -1,6 +1,7 @@
 package liquibase.harness.util
 
 import liquibase.command.CommandScope
+import liquibase.exception.CommandExecutionException
 import org.junit.Assert
 import org.w3c.dom.NodeList
 import org.xml.sax.SAXException
@@ -46,6 +47,10 @@ class TestUtils {
         try {
             commandScope.execute()
         } catch (Exception exception) {
+            if (exception instanceof CommandExecutionException && exception.toString().contains("is not available in SQL output mode")) {
+                //Here we check whether updateSql command throws specific exception and skip it (updateSql doesn't work for SQLite for some change types)
+                return outputStream
+            }
             Logger.getLogger(this.class.name).severe("Failed to execute command scope for command " +
                     commandScope.getCommand().toString() + ". " + exception.printStackTrace())
             Logger.getLogger(this.class.name).info("If this is expected to be invalid query for this database/version, " +

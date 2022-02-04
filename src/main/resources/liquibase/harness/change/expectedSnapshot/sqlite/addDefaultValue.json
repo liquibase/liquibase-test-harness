@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "varchar_test",
+            "name": "varcharColumn",
+            "nullable": true,
+            "type": {
+              "typeName": "VARCHAR(255)"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

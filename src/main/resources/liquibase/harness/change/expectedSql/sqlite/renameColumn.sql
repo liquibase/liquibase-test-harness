@@ -1,5 +1,5 @@
 INVALID TEST
 
-Liquibase Core does not support renaming columns for Sqlite
+Liquibase does not support renameColumn for Sqlite
 
-See https://docs.liquibase.com/change-types/community/rename-column.html
+-- See https://docs.liquibase.com/change-types/rename-column.html

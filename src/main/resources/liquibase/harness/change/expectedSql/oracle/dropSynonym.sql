@@ -1,0 +1,2 @@
+CREATE OR REPLACE PUBLIC SYNONYM test_synonym FOR "C##LIQUIBASE".authors
+DROP PUBLIC SYNONYM test_synonym

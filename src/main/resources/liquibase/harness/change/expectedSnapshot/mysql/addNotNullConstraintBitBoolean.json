@@ -1,0 +1,26 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "bit_col",
+            "nullable": false,
+            "type": {
+              "typeName": "BIT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "boolean_col",
+            "nullable": false,
+            "type": {
+              "typeName": "BIT"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -10,7 +10,8 @@
             "tableName": "posts",
             "valid": true
           }
-        }]
+        }
+      ]
     }
   }
 }
