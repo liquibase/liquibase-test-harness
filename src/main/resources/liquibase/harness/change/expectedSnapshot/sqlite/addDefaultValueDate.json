@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "1975-02-25\\!\\{java.sql.Date\\}",
+            "name": "dateColumn",
+            "nullable": true,
+            "type": {
+              "typeName": "DATE"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

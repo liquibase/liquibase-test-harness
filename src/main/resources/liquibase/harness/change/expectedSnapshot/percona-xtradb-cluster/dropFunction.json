@@ -1,0 +1,14 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "com.datical.liquibase.ext.storedlogic.function.Function": [
+        {
+          "function": {
+            "body": "CREATE FUNCTION `test_function`() RETURNS varchar(20) CHARSET latin1\nBEGIN\n                                                RETURN 'Hello';\n                                                END",
+            "name": "test_function"
+          }
+        }]
+    }
+  }
+}

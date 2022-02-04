@@ -7,7 +7,8 @@
           "primaryKey": {
             "name": "pk_posts"
           }
-        }]
+        }
+      ]
     }
   }
 }

@@ -1,0 +1,14 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.databasepackage.DatabasePackageBody": [
+        {
+          "databasePackageBody": {
+            "body": "CREATE OR REPLACE PACKAGE BODY test_package\n                                                                    IS\n                                                                    PROCEDURE test_procedure IS\n                                                                    BEGIN END test_procedure;\n                                                                    END test_package;",
+            "name": "TEST_PACKAGE",
+            "valid": false
+          }
+        }]
+    }
+  }
+}
