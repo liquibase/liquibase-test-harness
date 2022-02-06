@@ -19,6 +19,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - run:  | 
+               sudo rm -rf /usr/share/dotnet
+               sudo rm -rf /opt/ghc
+               sudo rm -rf "/usr/local/share/boost"
+               sudo rm -rf "$AGENT_TOOLSDIRECTORY" 
 
       - uses: actions/setup-java@v1
         with:
