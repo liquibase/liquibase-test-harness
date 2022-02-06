@@ -34,6 +34,7 @@ jobs:
             "mariadb-10.4",
             "mariadb-10.5",
             "mariadb-10.6",
+            "mariadb-10.7",
             "mssql-2017",
             "mssql-2019",
             "H2Database-1.4",
