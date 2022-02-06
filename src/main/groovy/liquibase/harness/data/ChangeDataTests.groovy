@@ -76,9 +76,8 @@ class ChangeDataTests extends Specification {
 
         try {
             def resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkingSql)
-            connection.commit()
-
             def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+            connection.commit()
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)

@@ -10,10 +10,10 @@
                 encoding="UTF-8"
                 replaceIfExists="true"
                 functionName="test_function">CREATE FUNCTION test_function()
-                                                RETURNS VARCHAR(20)
-                                                BEGIN
-                                                RETURN 'Hello';
-                                                END
+                                            RETURNS VARCHAR(20)
+                                            BEGIN
+                                            RETURN 'Hello';
+                                            END
         </pro:createFunction>
         <rollback>
             <pro:dropFunction functionName="test_function"/>

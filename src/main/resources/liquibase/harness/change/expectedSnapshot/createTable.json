@@ -12,7 +12,9 @@
         {
           "column": {
             "name": "test_id"
-          },
+          }
+        },
+        {
           "column": {
             "name": "test_column"
           }

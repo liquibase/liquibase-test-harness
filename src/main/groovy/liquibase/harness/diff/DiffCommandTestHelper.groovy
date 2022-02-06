@@ -27,7 +27,7 @@ class DiffCommandTestHelper {
 
         for (TargetToReference targetToReference : new Yaml().loadAs(testConfig, DiffDatabases.class).references) {
             DatabaseUnderTest targetDatabase
-            List<DatabaseUnderTest> matchingTargetDatabases = TestConfig.instance.databasesUnderTest.stream()
+            List<DatabaseUnderTest> matchingTargetDatabases = TestConfig.instance.getFilteredDatabasesUnderTest().stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.targetDatabaseName) })
                     .collect(Collectors.toList())
             if (matchingTargetDatabases.size() == 1) {
@@ -48,7 +48,7 @@ class DiffCommandTestHelper {
             databasesToConnect.add(targetDatabase)
 
             DatabaseUnderTest referenceDatabase
-            List<DatabaseUnderTest> matchingReferenceDatabases = TestConfig.instance.databasesUnderTest.stream()
+            List<DatabaseUnderTest> matchingReferenceDatabases = TestConfig.instance.getFilteredDatabasesUnderTest().stream()
                     .filter({ it -> it.name.equalsIgnoreCase(targetToReference.referenceDatabaseName) })
                     .collect(Collectors.toList())
             if (matchingReferenceDatabases.size() == 1) {

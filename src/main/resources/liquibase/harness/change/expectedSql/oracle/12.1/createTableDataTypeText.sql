@@ -1,0 +1,1 @@
+CREATE TABLE LBUSER.createTableDataTypeText (textCol CLOB)

@@ -6,7 +6,7 @@ db=$1
 
 case $db in
   # edb sspecific teardown
-  "edb-9.5"|"edb-9.6"|"edb-10"|"edb-11"|"edb-12"|"edb-13")
+  "edb-9.5"|"edb-9.6"|"edb-10"|"edb-11"|"edb-12"|"edb-13"|"edb-14")
     docker-compose -f docker-compose.edb.yml down --volumes
     exit 0
     ;;
