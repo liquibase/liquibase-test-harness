@@ -1,0 +1,10 @@
+{
+  "databaseChangelogLockTest": [
+    {
+      "LOCKGRANTED": "",
+      "LOCKED": false,
+      "LOCKEDBY": "",
+      "ID": 1
+    }
+  ]
+}

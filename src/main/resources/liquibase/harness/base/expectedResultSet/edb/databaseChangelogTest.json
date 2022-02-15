@@ -1,30 +1,30 @@
 {
   "databaseChangelogTest": [
     {
-      "EXECTYPE": "EXECUTED",
-      "ORDEREXECUTED": 1,
-      "COMMENTS": "",
-      "AUTHOR": "as",
-      "MD5SUM": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
-      "CONTEXTS": "",
-      "DESCRIPTION": "sql",
-      "ID": "1",
-      "TAG": "",
-      "LABELS": "",
-      "FILENAME": "liquibase\/harness\/base\/changelogs\/databaseChangelogLockTest.sql"
+      "comments": "",
+      "author": "as",
+      "orderexecuted": 1,
+      "description": "sql",
+      "contexts": "",
+      "exectype": "EXECUTED",
+      "labels": "",
+      "filename": "liquibase\/harness\/base\/changelogs\/databaseChangelogLockTest.sql",
+      "md5sum": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
+      "id": "1",
+      "tag": ""
     },
     {
-      "EXECTYPE": "EXECUTED",
-      "ORDEREXECUTED": 2,
-      "COMMENTS": "",
-      "AUTHOR": "as",
-      "MD5SUM": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
-      "CONTEXTS": "",
-      "DESCRIPTION": "sql",
-      "ID": "1",
-      "TAG": "",
-      "LABELS": "",
-      "FILENAME": "liquibase\/harness\/base\/changelogs\/databaseChangelogTest.sql"
+      "comments": "",
+      "author": "as",
+      "orderexecuted": 2,
+      "description": "sql",
+      "contexts": "",
+      "exectype": "EXECUTED",
+      "labels": "",
+      "filename": "liquibase\/harness\/base\/changelogs\/databaseChangelogTest.sql",
+      "md5sum": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
+      "id": "1",
+      "tag": ""
     }
   ]
 }
