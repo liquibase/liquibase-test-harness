@@ -1,1 +1,1 @@
-SELECT * FROM databasechangeloglock;
+SELECT * FROM DATABASECHANGELOGLOCK;
