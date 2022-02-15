@@ -1,1 +1,1 @@
-SELECT * FROM databasechangelog;
+SELECT * FROM DATABASECHANGELOG;
