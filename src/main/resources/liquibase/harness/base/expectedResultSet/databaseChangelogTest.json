@@ -11,7 +11,7 @@
       "filename": "liquibase\/harness\/base\/changelogs\/databaseChangelogLockTest.sql",
       "md5sum": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
       "id": "1",
-      "tag": "",
+      "tag": ""
     },
     {
       "comments": "",
@@ -24,7 +24,7 @@
       "filename": "liquibase\/harness\/base\/changelogs\/databaseChangelogTest.sql",
       "md5sum": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
       "id": "1",
-      "tag": "",
+      "tag": ""
     }
   ]
 }
