@@ -1,10 +1,10 @@
 {
   "databaseChangelogLockTest": [
     {
-      "LOCKGRANTED": "",
-      "LOCKED": false,
-      "LOCKEDBY": "",
-      "ID": 1
+      "lockedby": "",
+      "id": 1,
+      "locked": false,
+      "lockgranted": ""
     }
   ]
 }
