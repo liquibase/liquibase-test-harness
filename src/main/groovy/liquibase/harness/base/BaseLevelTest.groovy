@@ -64,14 +64,14 @@ class BaseLevelTest extends Specification {
             Assert.fail exception.message
         }
 
-        /*cleanup: "rollback changes if we ran changeSet"
+        cleanup: "rollback changes if we ran changeSet"
         try {
             ((JdbcConnection) connection).createStatement().execute(cleanupSql)
             connection.commit()
         } catch (SQLException exception) {
             Logger.getLogger(this.class.name).severe("Error executing cleanup sql! " + exception.printStackTrace())
             Assert.fail exception.message
-        }*/
+        }
 
         where: "test input in next data table"
         testInput << buildTestInput()
