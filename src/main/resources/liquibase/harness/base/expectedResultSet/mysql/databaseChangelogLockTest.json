@@ -1,3 +1,10 @@
 {
-  "databaseChangelogLockTest": [{"LOCKGRANTED":"","LOCKED":false,"LOCKEDBY":"","ID":1}]
+  "databaseChangelogLockTest": [
+    {
+      "LOCKGRANTED": "",
+      "LOCKED": false,
+      "LOCKEDBY": "",
+      "ID": 1
+    }
+  ]
 }
