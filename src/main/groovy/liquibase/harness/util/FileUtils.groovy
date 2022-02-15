@@ -60,14 +60,14 @@ class FileUtils {
         return null
     }
 
-    static String getSqlFileContent(String changeObject, String databaseName,
+    static String getSqlFileContent(String change, String databaseName,
                                     String version, String expectedFolder) {
-        return getFileContent(changeObject, databaseName, version, expectedFolder, ".sql")
+        return getFileContent(change, databaseName, version, expectedFolder, ".sql")
     }
 
-    static String getJSONFileContent(String changeObject, String databaseName,
+    static String getJSONFileContent(String change, String databaseName,
                                      String version, String expectedFolder) {
-        return getFileContent(changeObject, databaseName, version, expectedFolder, ".json")
+        return getFileContent(change, databaseName, version, expectedFolder, ".json")
     }
 
     static String getResourceContent(String resourceName) {
