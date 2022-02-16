@@ -20,8 +20,6 @@ class BaseLevelTest extends Specification {
         given: "read input data"
         String checkingSql = getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/checkingSql")
-        String cleanupSql = getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/base/cleanupSql")
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/expectedResultSet")
         Map<String, Object> argsMap = new HashMap()
@@ -65,12 +63,15 @@ class BaseLevelTest extends Specification {
         }
 
         cleanup: "rollback changes if we ran changeSet"
-        try {
-            ((JdbcConnection) connection).createStatement().execute(cleanupSql)
-            connection.commit()
-        } catch (SQLException exception) {
-            Logger.getLogger(this.class.name).severe("Error executing cleanup sql! " + exception.printStackTrace())
-            Assert.fail exception.message
+        if (shouldRunChangeSet) {
+            try {
+                ((JdbcConnection) connection).createStatement().execute("DROP TABLE test_table;")
+                ((JdbcConnection) connection).createStatement().execute("DELETE FROM DATABASECHANGELOG WHERE ID = 1;")
+                connection.commit()
+            } catch (SQLException exception) {
+                Logger.getLogger(this.class.name).severe("Error executing cleanup sql! " + exception.printStackTrace())
+                Assert.fail exception.message
+            }
         }
 
         where: "test input in next data table"
