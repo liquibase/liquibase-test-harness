@@ -66,7 +66,7 @@ class BaseLevelTest extends Specification {
         if (shouldRunChangeSet) {
             try {
                 ((JdbcConnection) connection).createStatement().execute("DROP TABLE test_table;")
-                ((JdbcConnection) connection).createStatement().execute("DELETE FROM DATABASECHANGELOG WHERE ID = 1;")
+                ((JdbcConnection) connection).createStatement().execute("DELETE FROM DATABASECHANGELOG WHERE ID = '1';")
                 connection.commit()
             } catch (SQLException exception) {
                 Logger.getLogger(this.class.name).severe("Error executing cleanup sql! " + exception.printStackTrace())
