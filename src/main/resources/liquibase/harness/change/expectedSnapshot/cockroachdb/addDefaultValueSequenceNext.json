@@ -4,7 +4,11 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "nextval\\('public.test_sequence'::STRING\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "autoIncrementInformation": {
+              "incrementBy": "1\\!\\{java.math.BigInteger\\}",
+              "startWith": "1\\!\\{java.math.BigInteger\\}"
+            },
+            "defaultValue": "nextval\\('public.test_sequence'::REGCLASS\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
             "name": "sequence_referenced_column",
             "nullable": true,
             "type": {
