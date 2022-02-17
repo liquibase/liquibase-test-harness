@@ -8,7 +8,7 @@
             "name": "sequence_referenced_column",
             "nullable": true,
             "type": {
-              "typeName": "int8"
+              "typeName": "bigserial"
             }
           }
         }
