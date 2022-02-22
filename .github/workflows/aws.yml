@@ -95,8 +95,6 @@ jobs:
           - database: oracle
             version: 12-1
           - database: oracle
-            version: 12-2
-          - database: oracle
             version: 19
 
     steps:
