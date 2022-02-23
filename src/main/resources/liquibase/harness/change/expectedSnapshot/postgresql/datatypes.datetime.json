@@ -1,0 +1,332 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes_test_table"
+          }
+        }],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "date",
+            "type": {
+              "typeName": "date"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time",
+            "type": {
+              "decimalDigits": "6\\!\\{java.lang.Integer\\}",
+              "typeName": "time"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time0",
+            "type": {
+              "decimalDigits": "0\\!\\{java.lang.Integer\\}",
+              "typeName": "time"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time1",
+            "type": {
+              "decimalDigits": "1\\!\\{java.lang.Integer\\}",
+              "typeName": "time"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time1wtz",
+            "type": {
+              "decimalDigits": "1\\!\\{java.lang.Integer\\}",
+              "typeName": "timetz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time2",
+            "type": {
+              "decimalDigits": "2\\!\\{java.lang.Integer\\}",
+              "typeName": "time"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time2wtz",
+            "type": {
+              "decimalDigits": "2\\!\\{java.lang.Integer\\}",
+              "typeName": "timetz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time3",
+            "type": {
+              "decimalDigits": "3\\!\\{java.lang.Integer\\}",
+              "typeName": "time"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time3wtz",
+            "type": {
+              "characterOctetLength": "18\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "3\\!\\{java.lang.Integer\\}",
+              "typeName": "timetz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time4",
+            "type": {
+              "dataTypeId": "92\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "4\\!\\{java.lang.Integer\\}",
+              "typeName": "time"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time4wtz",
+            "type": {
+              "dataTypeId": "92\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "4\\!\\{java.lang.Integer\\}",
+              "typeName": "timetz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time5",
+            "type": {
+              "dataTypeId": "92\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "5\\!\\{java.lang.Integer\\}",
+              "typeName": "time"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time5wtz",
+            "type": {
+              "dataTypeId": "92\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "5\\!\\{java.lang.Integer\\}",
+              "typeName": "timetz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time6",
+            "type": {
+              "dataTypeId": "92\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "6\\!\\{java.lang.Integer\\}",
+              "typeName": "time"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "time6wtz",
+            "type": {
+              "dataTypeId": "92\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "6\\!\\{java.lang.Integer\\}",
+              "typeName": "timetz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timee0wtz",
+            "type": {
+              "dataTypeId": "92\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "0\\!\\{java.lang.Integer\\}",
+              "typeName": "timetz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timeewtz",
+            "type": {
+              "dataTypeId": "92\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "6\\!\\{java.lang.Integer\\}",
+              "typeName": "timetz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp",
+            "type": {
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamp"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp0",
+            "type": {
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamp"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp1",
+            "type": {
+              "characterOctetLength": "25\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamp"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp1wtz",
+            "type": {
+              "characterOctetLength": "31\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamptz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp2",
+            "type": {
+              "characterOctetLength": "25\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamp"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp2wtz",
+            "type": {
+              "characterOctetLength": "31\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamptz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp3",
+            "type": {
+              "characterOctetLength": "26\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamp"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp3wtz",
+            "type": {
+              "characterOctetLength": "32\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamptz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp4",
+            "type": {
+              "characterOctetLength": "27\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamp"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp4wtz",
+            "type": {
+              "characterOctetLength": "33\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamptz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp5",
+            "type": {
+              "characterOctetLength": "28\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamp"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp5wtz",
+            "type": {
+              "characterOctetLength": "34\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamptz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp6",
+            "type": {
+              "characterOctetLength": "29\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamp"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestamp6wtz",
+            "type": {
+              "characterOctetLength": "35\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamptz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestampe0wtz",
+            "type": {
+              "characterOctetLength": "28\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamptz"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "timestampewtz",
+            "type": {
+              "characterOctetLength": "35\\!\\{java.lang.Integer\\}",
+              "dataTypeId": "93\\!\\{java.lang.Integer\\}",
+              "typeName": "timestamptz"
+            }
+          }
+        }]
+    }
+  }
+}
