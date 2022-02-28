@@ -1,0 +1,26 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "columnWithInitialValue",
+            "nullable": false,
+            "type": {
+              "typeName": "int8"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "columnWithConstraintInSeparateChange",
+            "nullable": false,
+            "type": {
+              "typeName": "int8"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
