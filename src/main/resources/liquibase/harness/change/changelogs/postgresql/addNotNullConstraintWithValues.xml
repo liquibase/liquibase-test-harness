@@ -1,7 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
-http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
-http://www.liquibase.org/xml/ns/dbchangelog-ext/vacuum http://www.liquibase.org/xml/ns/dbchangelog-ext/vacuum-1.0.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
 
     <changeSet author="Liquibase User" id="1::createTable">
         <createTable tableName="lb45">
@@ -9,9 +9,9 @@ http://www.liquibase.org/xml/ns/dbchangelog-ext/vacuum http://www.liquibase.org/
         </createTable>
     </changeSet>
 
-    <changeSet  author="liquibase-docs"  id="1::insertData">
+    <changeSet author="liquibase-docs" id="1::insertData">
         <insert tableName="lb45">
-            <column name="name"  value="marcel"/>
+            <column name="name" value="marcel"/>
         </insert>
         <rollback/>
     </changeSet>
@@ -22,6 +22,13 @@ http://www.liquibase.org/xml/ns/dbchangelog-ext/vacuum http://www.liquibase.org/
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+    </changeSet>
+
+    <changeSet author="Liquibase User" id="3::addColumnAndAddNotNullConstraint">
+        <addColumn tableName="lb45">
+            <column name="columnWithConstraintInSeparateChange" type="int8" valueNumeric="0"/>
+        </addColumn>
+        <addNotNullConstraint tableName="lb45" columnName="columnWithConstraintInSeparateChange"/>
     </changeSet>
 
 </databaseChangeLog>
