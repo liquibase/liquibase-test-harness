@@ -110,7 +110,7 @@ case $db in
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=derby -Dmaven.test.failure.ignore=true test
     ;;
   "sqlite" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=sqlite test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=sqlite -Dmaven.test.failure.ignore=true test
     ;;
   "diff")
     test_command mvn -ntp -Dtest=DiffTest test
