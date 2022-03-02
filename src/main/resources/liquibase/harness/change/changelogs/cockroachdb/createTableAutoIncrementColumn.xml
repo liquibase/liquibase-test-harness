@@ -1,0 +1,21 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+	http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+	http://www.liquibase.org/xml/ns/dbchangelog
+	http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="1::pr1908::autoincrementColumns" author="liquibase">
+        <createTable tableName="pr1908">
+            <column name="id_smallint" type="smallint" autoIncrement="true"/>
+            <column name="id_int" type="int" autoIncrement="true"/>
+            <column name="id_integer" type="integer" autoIncrement="true"/>
+            <column name="id_int8" type="int8" autoIncrement="true"/>
+            <column name="id_int64" type="int64" autoIncrement="true"/>
+            <column name="id_bigint" type="bigint" autoIncrement="true"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

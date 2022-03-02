@@ -1,0 +1,63 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "pr1908"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "id_bigint",
+            "type": {
+              "typeName": "int8"
+            }
+          }
+        },
+        {
+          "column": {
+            "name":"id_int",
+            "type": {
+              "typeName":"int8"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "id_int64",
+            "type": {
+              "typeName": "int8"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "id_int8",
+            "type": {
+              "typeName": "int8"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "id_integer",
+            "type": {
+              "typeName": "int8"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "id_smallint",
+            "type": {
+              "typeName": "int8"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
