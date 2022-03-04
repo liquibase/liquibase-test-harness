@@ -4,8 +4,6 @@ import liquibase.database.jvm.JdbcConnection
 import org.json.JSONObject
 import org.junit.Assert
 import spock.lang.Specification
-
-import java.sql.SQLException
 import java.util.logging.Logger
 
 import static liquibase.harness.util.FileUtils.*
@@ -64,16 +62,6 @@ class BaseLevelTest extends Specification {
         }
 
         cleanup: "rollback changes if we ran changeSet"
-        /*if (shouldRunChangeSet) {
-            try {
-                ((JdbcConnection) connection).createStatement().execute("DROP TABLE test_table")
-                ((JdbcConnection) connection).createStatement().execute("DELETE FROM DATABASECHANGELOG WHERE ID = '1'")
-                connection.commit()
-            } catch (SQLException exception) {
-                Logger.getLogger(this.class.name).severe("Error executing cleanup sql! " + exception.printStackTrace())
-                Assert.fail exception.message
-            }
-        }*/
         if (shouldRunChangeSet) {
             executeCommandScope("rollbackCount", argsMap)
         }
