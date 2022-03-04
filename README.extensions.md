@@ -50,7 +50,7 @@ This suite will run all Test Harness tests
 #### Base Level Test
 
 In case you don't know if the extension you are going to use works with Liquibase on base level:
-- Execution of sql-formatted changesets;
+- Execution of update/rollback with a formatted SQL file;
 - Databasechangelog table management;
 - Databasechangeloglock table management;
 
