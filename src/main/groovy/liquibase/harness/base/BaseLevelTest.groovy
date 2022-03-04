@@ -27,6 +27,7 @@ class BaseLevelTest extends Specification {
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
+        argsMap.put("count", 1)
         boolean shouldRunChangeSet
 
         and: "fail test if checkingSql is not provided"
@@ -63,7 +64,7 @@ class BaseLevelTest extends Specification {
         }
 
         cleanup: "rollback changes if we ran changeSet"
-        if (shouldRunChangeSet) {
+        /*if (shouldRunChangeSet) {
             try {
                 ((JdbcConnection) connection).createStatement().execute("DROP TABLE test_table")
                 ((JdbcConnection) connection).createStatement().execute("DELETE FROM DATABASECHANGELOG WHERE ID = '1'")
@@ -72,6 +73,9 @@ class BaseLevelTest extends Specification {
                 Logger.getLogger(this.class.name).severe("Error executing cleanup sql! " + exception.printStackTrace())
                 Assert.fail exception.message
             }
+        }*/
+        if (shouldRunChangeSet) {
+            executeCommandScope("rollbackCount", argsMap)
         }
 
         where: "test input in next data table"
