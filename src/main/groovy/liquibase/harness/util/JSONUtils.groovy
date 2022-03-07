@@ -70,7 +70,7 @@ class JSONUtils {
             for (int j = 0; j < jsonArrayToCompare.length(); j++) {
                 def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
                 def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
-                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.NON_EXTENSIBLE)
+                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.LENIENT)
                 compareMarker = result.passed()
                 if (result.passed()) {
                     break
