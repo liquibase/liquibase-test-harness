@@ -1,15 +1,15 @@
 package liquibase.harness.base
 
+import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
 import org.json.JSONObject
 import org.junit.Assert
 import spock.lang.Specification
-import java.util.logging.Logger
+import java.sql.SQLSyntaxErrorException
 
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.TestUtils.*
-
 import static BaseLevelTestHelper.buildTestInput
 
 class BaseLevelTest extends Specification {
@@ -20,6 +20,7 @@ class BaseLevelTest extends Specification {
                 "liquibase/harness/base/checkingSql")
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/expectedResultSet")
+        String testObjectCheckingSql = "SELECT * FROM test_table"
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
@@ -48,22 +49,45 @@ class BaseLevelTest extends Specification {
         when: "execute SQL formatted changelog using liquibase update command"
         executeCommandScope("update", argsMap)
 
-        then: "execute checking sql via JDBC connection, obtain result set and compare it to expected result set"
+        then: "execute checking sql, obtain result set, compare it to expected result set and check for actual presence of created object"
         try {
             def resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkingSql)
             def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+            ((JdbcConnection) connection).createStatement().executeQuery(testObjectCheckingSql)
             connection.commit()
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.change)
             assert compareJSONArraysExtensible(generatedResultSetArray, expectedResultSetArray)
+        } catch (SQLSyntaxErrorException sqlException) {
+            // Assume test object was not created after 'update' command execution and test failed.
+            Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + sqlException.printStackTrace())
+            Assert.fail sqlException.message
         } catch (Exception exception) {
-            Logger.getLogger(this.class.name).severe("Error executing checking sql! " + exception.printStackTrace())
+            Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
         }
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
             executeCommandScope("rollbackCount", argsMap)
+        }
+
+        and: "check for actual absence of the object removed after 'rollback' command execution"
+        if (shouldRunChangeSet) {
+            try {
+                def resultSet = ((JdbcConnection) connection).createStatement().executeQuery(testObjectCheckingSql)
+                if (resultSet.next()) {
+                    Scope.getCurrentScope().getUI().sendMessage("Rollback was not successful! " +
+                            "The object was not removed after 'rollback' command: " +
+                            resultSet.getMetaData().getTableName(0))
+                    connection.commit()
+                    Assert.fail()
+                }
+            } catch (SQLSyntaxErrorException sqlException) {
+                // Assume test object does not exist and 'rollback' was successful. Ignore exception.
+                Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found. " +
+                        sqlException.message)
+            }
         }
 
         where: "test input in next data table"
