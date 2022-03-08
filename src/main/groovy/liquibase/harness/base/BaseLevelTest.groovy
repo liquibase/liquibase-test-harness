@@ -5,7 +5,7 @@ import liquibase.database.jvm.JdbcConnection
 import org.json.JSONObject
 import org.junit.Assert
 import spock.lang.Specification
-import java.sql.SQLSyntaxErrorException
+import java.sql.SQLException
 
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.*
@@ -58,7 +58,7 @@ class BaseLevelTest extends Specification {
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.change)
             assert compareJSONArraysExtensible(generatedResultSetArray, expectedResultSetArray)
-        } catch (SQLSyntaxErrorException sqlException) {
+        } catch (SQLException sqlException) {
             // Assume test object was not created after 'update' command execution and test failed.
             Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + sqlException.printStackTrace())
             Assert.fail sqlException.message
@@ -83,7 +83,7 @@ class BaseLevelTest extends Specification {
                     connection.commit()
                     Assert.fail()
                 }
-            } catch (SQLSyntaxErrorException sqlException) {
+            } catch (SQLException sqlException) {
                 // Assume test object does not exist and 'rollback' was successful. Ignore exception.
                 Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found. " +
                         sqlException.message)
