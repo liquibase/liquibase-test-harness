@@ -80,13 +80,14 @@ class BaseLevelTest extends Specification {
                     Scope.getCurrentScope().getUI().sendMessage("Rollback was not successful! " +
                             "The object was not removed after 'rollback' command: " +
                             resultSet.getMetaData().getTableName(0))
-                    connection.commit()
                     Assert.fail()
                 }
             } catch (SQLException sqlException) {
                 // Assume test object does not exist and 'rollback' was successful. Ignore exception.
                 Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found. " +
                         sqlException.message)
+            } finally {
+                connection.commit()
             }
         }
 
