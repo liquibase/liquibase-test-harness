@@ -1,5 +1,6 @@
 package liquibase.harness.data
 
+import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.TestConfig
 import org.json.JSONObject
@@ -7,7 +8,6 @@ import org.junit.Assert
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
-import java.util.logging.Logger
 
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
@@ -82,7 +82,7 @@ class ChangeDataTests extends Specification {
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
         } catch (Exception exception) {
-            Logger.getLogger(this.class.name).severe("Error executing checking sql! " + exception.printStackTrace())
+            Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
         }
 
