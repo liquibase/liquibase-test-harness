@@ -55,7 +55,6 @@ class TestConfig {
         if (dbVersion) {
             databasesUnderTest = databasesUnderTest.findAll {it.version.equalsIgnoreCase(dbVersion)}
         }
-        Logger.getLogger(TestConfig.name).info("Databases under test: " + databasesUnderTest.toString())
         return databasesUnderTest
     }
 
