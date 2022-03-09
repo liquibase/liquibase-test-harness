@@ -7,7 +7,9 @@ import org.w3c.dom.NodeList
 import org.xml.sax.SAXException
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
+import java.nio.charset.StandardCharsets
 import java.util.logging.Logger
+import java.util.stream.Collectors
 
 class TestUtils {
 
@@ -61,6 +63,20 @@ class TestUtils {
     }
 
     static Integer getChangeSetsCount(String pathToChangeLogFile) {
+        if (pathToChangeLogFile.endsWith("xml")) {
+            return getChangeSetsCountXml(pathToChangeLogFile)
+        } else if (pathToChangeLogFile.endsWith("sql")) {
+            return getChangeSetsCountSql(pathToChangeLogFile)
+        }
+        //TODO: add methods for yml and json formatted changelogs
+        return 0
+    }
+
+    static Integer getChangeSetsCountSql(String pathToChangeLogFile) {
+        return FileUtils.getResourceContent("/" + pathToChangeLogFile).findAll("--changeset").size()
+    }
+
+    static Integer getChangeSetsCountXml(String pathToChangeLogFile) {
         try {
             def documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
             def document = documentBuilder.parse(new FileInputStream("src/main/resources/" + pathToChangeLogFile))
@@ -72,4 +88,6 @@ class TestUtils {
         }
         return 0
     }
+
+
 }
