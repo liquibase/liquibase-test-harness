@@ -1,3 +1,2 @@
-INVALID TEST
-
--- Liquibase doesn't support alterSequence change type for MariaDB
+CREATE SEQUENCE lbcat.test_sequence INCREMENT BY 1 MINVALUE 1 START WITH 1
+ALTER SEQUENCE lbcat.test_sequence INCREMENT BY 10 MINVALUE 1 MAXVALUE 371717 CACHE 371717 CYCLE

@@ -10,5 +10,4 @@ LANGUAGE plpgsql
 CREATE TRIGGER test_trigger
 BEFORE INSERT ON public.posts
 FOR EACH ROW EXECUTE PROCEDURE test_function()
-ALTER SESSION SET SEARCH_PATH=public
 DROP TRIGGER test_trigger ON public.posts

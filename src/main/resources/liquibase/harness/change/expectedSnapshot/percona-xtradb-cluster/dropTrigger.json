@@ -1,0 +1,19 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "com.datical.liquibase.ext.storedlogic.trigger.Trigger": [
+        {
+          "trigger": {
+            "body": "CREATE TRIGGER test_trigger BEFORE UPDATE ON posts FOR EACH ROW BEGIN END",
+            "disabled": false,
+            "name": "test_trigger",
+            "tableName": "posts",
+            "triggeringEvent": "UPDATE",
+            "valid": true,
+            "whenClause": "BEFORE"
+          }
+        }]
+    }
+  }
+}

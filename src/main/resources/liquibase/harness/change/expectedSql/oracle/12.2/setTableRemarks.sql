@@ -1,0 +1,1 @@
+COMMENT ON TABLE LBUSER.authors IS 'A Test Remark'

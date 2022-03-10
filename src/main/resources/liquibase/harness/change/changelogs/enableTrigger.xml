@@ -10,14 +10,14 @@
                 comments="test_function"
                 encoding="UTF-8"
                 procedureName="test_function">CREATE OR REPLACE FUNCTION test_function()
-                                                RETURNS trigger
-                                                AS $$
-                                                BEGIN
-                                                RAISE NOTICE 'Test trigger function created';
-                                                RETURN NEW;
-                                                END;
-                                                $$
-                                                LANGUAGE plpgsql;
+            RETURNS trigger
+            AS $$
+            BEGIN
+            RAISE NOTICE 'Test trigger function created';
+            RETURN NEW;
+            END;
+            $$
+            LANGUAGE plpgsql;
         </createProcedure>
         <rollback>
             <sql>DROP FUNCTION test_function()</sql>

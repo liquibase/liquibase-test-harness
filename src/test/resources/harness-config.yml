@@ -86,6 +86,18 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: percona-xtradb-cluster
+    version: 5.7
+    url: jdbc:mysql://localhost:33070/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: percona-xtradb-cluster
+    version: 8.0
+    url: jdbc:mysql://localhost:33071/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
   - name: mariadb
     prefix: docker
     version: 10.2
@@ -121,6 +133,13 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: mariadb
+    prefix: docker
+    version: 10.7
+    url: jdbc:mariadb://localhost:33070/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
   - name: oracle
     version: 18.4.0
     url: 'jdbc:oracle:thin:@localhost:1522/xe'
@@ -132,6 +151,12 @@ databasesUnderTest:
     url: 'jdbc:oracle:thin:@localhost:1521/PDBORCL'
     username: DATICAL_ADMIN
     password: DATICAL_ADMIN_PW
+
+  - name: oracle
+    version: 21.3.0
+    url: 'jdbc:oracle:thin:@localhost:1523/xe'
+    username: C##LIQUIBASE
+    password: Secret321
 
   - name: cockroachdb
     prefix: docker
@@ -219,9 +244,16 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: edb
+    prefix: docker
+    version: 14
+    url: jdbc:postgresql://localhost:5507/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
   - name: h2
     prefix: local
-    url: jdbc:h2:tcp://localhost:1523/test
+    url: jdbc:h2:file:./src/test/resources/H2/lbcat
 
   - name: sqlite
     prefix: local
@@ -262,8 +294,3 @@ databasesUnderTest:
     url: jdbc:firebirdsql://localhost:3050/lbcat
     username: lbuser
     password: LiquibasePass1
-
-  - name: db2-z
-    url: jdbc:db2://204.90.115.218:5035/DALLASB:emulateParameterMetaDataForZCalls=1;
-    username: IBMUSER
-    password: THISISNOTTHERIGHTPASSWORD

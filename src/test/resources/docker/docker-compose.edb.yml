@@ -46,3 +46,10 @@ services:
     restart: always
     # no environment or volumes as those were created at image creation
 
+  edb-14:
+    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas14:latest
+    ports:
+      - "5507:5444"
+    restart: always
+    # no environment or volumes as those were created at image creation
+
