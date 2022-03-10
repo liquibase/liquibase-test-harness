@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="as" id="1">
+        <createTable tableName="add_default_value_computed_test">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="default_value_computed_test" type="VARCHAR(50)"/>
+        </createTable>
+        <rollback/>
+    </changeSet>
+    <changeSet author="as" id="2">
+        <addDefaultValue tableName="add_default_value_computed_test"
+                         columnName="default_value_computed_test"
+                         columnDataType="VARCHAR(50)"
+                         defaultValueComputed="CURRENT SQLID"/>
+        <rollback>
+            <dropTable tableName="add_default_value_computed_test"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

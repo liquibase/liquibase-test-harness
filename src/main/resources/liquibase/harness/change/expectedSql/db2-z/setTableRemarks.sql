@@ -1,0 +1,1 @@
+COMMENT ON TABLE "LTHUSER".authors IS 'A Test Remark'
