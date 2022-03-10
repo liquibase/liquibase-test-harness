@@ -1,12 +1,10 @@
 package liquibase.harness.change
 
-import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.TestConfig
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
-import java.text.SimpleDateFormat
 
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
@@ -23,15 +21,13 @@ class ChangeObjectTests extends Specification {
         String expectedSnapshot = getJSONFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
                 "liquibase/harness/change/expectedSnapshot")
         boolean shouldRunChangeSet
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("snapshotFormat", "JSON")
-        argsMap.put("date",sdf.format(new Date()))
+        argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
@@ -76,8 +72,7 @@ class ChangeObjectTests extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            Scope.getCurrentScope().getUI().sendMessage("Trying to rollback to date " + argsMap.get("date"))
-            executeCommandScope("rollbackToDate", argsMap)
+            executeCommandScope("rollbackCount", argsMap)
         }
 
         where: "test input in next data table"

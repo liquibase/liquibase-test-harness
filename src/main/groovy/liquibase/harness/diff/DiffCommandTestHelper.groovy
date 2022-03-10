@@ -121,7 +121,7 @@ class DiffCommandTestHelper {
 
     static void tryToRollbackDiff(Map argsMap) {
         try {
-            TestUtils.executeCommandScope("rollbackToDate", argsMap)
+            TestUtils.executeCommandScope("rollbackCount", argsMap)
         } catch (LiquibaseException exception) {
             Logger.getLogger(this.class.name).warning("Failed to rollback changes from generated diff changelog! " +
                     "State of the target database will remain changed! \n" + exception.message + "\n" +
