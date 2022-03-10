@@ -294,3 +294,8 @@ databasesUnderTest:
     url: jdbc:firebirdsql://localhost:3050/lbcat
     username: lbuser
     password: LiquibasePass1
+
+  - name: db2-z
+    url: jdbc:db2://204.90.115.218:5035/DALLASB:emulateParameterMetaDataForZCalls=1;
+    username: THISISNOTACTUALUSERNAME
+    password: THISISNOTACTUALPASSWORD

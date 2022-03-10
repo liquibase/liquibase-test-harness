@@ -8,6 +8,7 @@ import org.junit.Assert
 import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
+import java.text.SimpleDateFormat
 
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
@@ -26,12 +27,14 @@ class ChangeDataTests extends Specification {
         String expectedResultSet = getJSONFileContent(testInput.changeData, testInput.databaseName, testInput.version,
                 "liquibase/harness/data/expectedResultSet")
         boolean shouldRunChangeSet
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
+        argsMap.put("date",sdf.format(new Date()))
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
@@ -93,7 +96,7 @@ class ChangeDataTests extends Specification {
 
         cleanup: "rollback changes"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollbackCount", argsMap)
+            executeCommandScope("rollbackToDate", argsMap)
         }
 
         where: "test input in next data table"
