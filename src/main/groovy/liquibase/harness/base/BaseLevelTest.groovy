@@ -6,7 +6,6 @@ import org.json.JSONObject
 import org.junit.Assert
 import spock.lang.Specification
 import java.sql.SQLException
-import java.text.SimpleDateFormat
 
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.*
@@ -22,15 +21,13 @@ class BaseLevelTest extends Specification {
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/expectedResultSet")
         String testTableCheckSql = "SELECT * FROM test_table"
-        boolean shouldRunChangeSet
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("date",sdf.format(new Date()))
+        argsMap.put("count", getChangeSetsCountSql(testInput.pathToChangeLogFile))
+        boolean shouldRunChangeSet
 
         and: "fail test if checkingSql is not provided"
         shouldRunChangeSet = checkingSql != null
@@ -79,7 +76,7 @@ class BaseLevelTest extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollbackToDate", argsMap)
+            executeCommandScope("rollbackCount", argsMap)
         }
 
         and: "check for actual absence of the object removed after 'rollback' command execution"
