@@ -1,5 +1,6 @@
 package liquibase.harness.change
 
+import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.TestConfig
 import org.junit.Assume
@@ -23,6 +24,7 @@ class ChangeObjectTests extends Specification {
                 "liquibase/harness/change/expectedSnapshot")
         boolean shouldRunChangeSet
         SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("url", testInput.url)
@@ -74,6 +76,7 @@ class ChangeObjectTests extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
+            Scope.getCurrentScope().getUI().sendMessage("Trying to rollback to date " + argsMap.get("date"))
             executeCommandScope("rollbackToDate", argsMap)
         }
 
