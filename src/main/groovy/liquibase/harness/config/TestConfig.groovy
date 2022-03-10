@@ -5,7 +5,6 @@ import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.ResourceAccessor
 import org.yaml.snakeyaml.Yaml
 import java.util.logging.Logger
-import java.util.stream.Collectors
 
 @ToString
 class TestConfig {
@@ -56,7 +55,6 @@ class TestConfig {
         if (dbVersion) {
             databasesUnderTest = databasesUnderTest.findAll {it.version.equalsIgnoreCase(dbVersion)}
         }
-        Logger.getLogger(TestConfig.name).info("Databases Under test: " + databasesUnderTest.toString())
         return databasesUnderTest
     }
 
