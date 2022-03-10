@@ -1,0 +1,1 @@
+ALTER TABLE lbcat.authors COMMENT = 'A Test Remark'

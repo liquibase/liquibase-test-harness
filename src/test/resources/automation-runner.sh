@@ -19,6 +19,12 @@ case $db in
   "mysql-8" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -DdbVersion=8 test
     ;;
+  "percona-xtradb-cluster-5.7" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=percona-xtradb-cluster -DdbVersion=5.7 test
+    ;;
+  "percona-xtradb-cluster-8.0" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=percona-xtradb-cluster -DdbVersion=8.0 test
+    ;;
   "postgres-9.5" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=postgresql -DdbVersion=9.5 test
     ;;
@@ -55,23 +61,29 @@ case $db in
   "mariadb-10.6" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -DdbVersion=10.6 test
     ;;
+    "mariadb-10.7" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -DdbVersion=10.7 test
+    ;;
   "mssql-2017" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -DdbVersion=2017 test
     ;;
   "mssql-2019" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -DdbVersion=2019 test
     ;;
-  "H2Database-1.4" )
+  "H2Database-2.1" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=h2 test
     ;;
   "crdb-20.2" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=20.2 -Dmaven.test.failure.ignore=true test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=20.2 test
     ;;
   "crdb-20.1" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=20.1 -Dmaven.test.failure.ignore=true test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=20.1 test
     ;;
   "crdb-21.1" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.1 -Dmaven.test.failure.ignore=true test
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.1 test
+    ;;
+  "crdb-21.2" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.2 test
     ;;
   "crdb-21.2" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.2 -Dmaven.test.failure.ignore=true test
@@ -93,6 +105,9 @@ case $db in
     ;;
   "edb-13" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=13 test
+    ;;
+  "edb-14" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=14 test
     ;;
   "derby" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=derby -Dmaven.test.failure.ignore=true test

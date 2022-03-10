@@ -1,0 +1,13 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.View": [
+        {
+          "view": {
+            "definition": "SELECT ID,FIRST_NAME,LAST_NAME,EMAIL FROM PUBLIC.AUTHORS",
+            "name": "TEST_VIEW"
+          }
+        }]
+    }
+  }
+}

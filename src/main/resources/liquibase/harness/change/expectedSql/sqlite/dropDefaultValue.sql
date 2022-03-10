@@ -1,5 +1,5 @@
 INVALID TEST
 
-Liquibase Core does not support dropping default value for Sqlite
+Liquibase does not support dropping default value for Sqlite
 
-https://docs.liquibase.com/change-types/community/drop-default-value.html
+-- See https://docs.liquibase.com/change-types/drop-default-value.html
