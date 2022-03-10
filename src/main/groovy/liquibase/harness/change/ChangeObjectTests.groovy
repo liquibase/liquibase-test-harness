@@ -23,7 +23,6 @@ class ChangeObjectTests extends Specification {
                 "liquibase/harness/change/expectedSnapshot")
         boolean shouldRunChangeSet
         SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("url", testInput.url)
