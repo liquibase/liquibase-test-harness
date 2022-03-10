@@ -1,0 +1,19 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "liquibase.structure.core.ForeignKey": [
+        {
+          "foreignKey": {
+            "name": "FK_POSTS_AUTHORS_TEST_1"
+          }
+        },
+        {
+          "foreignKey": {
+            "name": "FK_POSTS_AUTHORS_TEST_2"
+          }
+        }
+      ]
+    }
+  }
+}

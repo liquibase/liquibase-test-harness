@@ -1,0 +1,1 @@
+CREATE TABLE "LTHUSER".createTableDataTypeText (textCol CLOB)

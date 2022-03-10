@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "1\\!\\{java.lang.Integer\\}",
+            "name": "BOOLEAN_TEST",
+            "nullable": true,
+            "type": {
+              "typeName": "SMALLINT"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
