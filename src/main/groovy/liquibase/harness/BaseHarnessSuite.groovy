@@ -1,5 +1,6 @@
 package liquibase.harness
 
+import liquibase.harness.base.BaseLevelTest
 import liquibase.harness.change.ChangeObjectTests
 import liquibase.harness.data.ChangeDataTests
 import liquibase.harness.snapshot.SnapshotObjectTests

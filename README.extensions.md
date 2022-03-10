@@ -46,6 +46,17 @@ This suite will run all Test Harness tests
 
 ## Adding Additional Tests and Configurations
 
+
+#### Base Level Test
+
+In case you don't know if the extension you are going to use works with Liquibase on base level:
+- Execution of update/rollback with a formatted SQL file;
+- Databasechangelog table management;
+- Databasechangeloglock table management;
+
+You may use this test to check it.
+Add new run configuration in extension project and choose class liquibase.harness.base.BaseLevelTest from external libraries. Run the test.
+
 #### New-Database Extensions
 
 If your extension is adding support for a new database type, you will be mainly focused on running and capturing the standard test permutations.
