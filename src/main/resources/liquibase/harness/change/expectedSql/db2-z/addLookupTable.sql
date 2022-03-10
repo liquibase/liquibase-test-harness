@@ -1,0 +1,4 @@
+CREATE TABLE "LTHUSER".authors_data (authors_email VARCHAR(100) NOT NULL)
+INSERT INTO "LTHUSER".authors_data SELECT DISTINCT email FROM "LTHUSER".authors WHERE email IS NOT NULL
+ALTER TABLE "LTHUSER".authors_data ADD PRIMARY KEY (authors_email)
+ALTER TABLE "LTHUSER".authors ADD CONSTRAINT FK_AUTHORS_AUTHORS_DATA FOREIGN KEY (email) REFERENCES "LTHUSER".authors_data (authors_email)

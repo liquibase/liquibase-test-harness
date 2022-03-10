@@ -4,17 +4,17 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-        <!--https://docs.liquibase.com/change-types/drop-procedure.html-->
+        <!--https://docs.liquibase.com/change-types/community/create-procedure.html-->
         <!--Liquibase community doesn't support snapshot generation for procedures thus
             expectedSnapshot file will be empty for this change type-->
     <changeSet author="as" id="1">
-        <createProcedure comments="test procedure"
-                        encoding="UTF-8"
-                        path="createProcedure.txt"
-                        relativeToChangelogFile="true"
-                        procedureName="test_procedure">
+        <createProcedure
+                comments="test procedure"
+                encoding="UTF-8"
+                procedureName="test_procedure">CREATE PROCEDURE test_procedure() BEGIN END
         </createProcedure>
-        <dropProcedure procedureName="test_procedure"/>
-        <rollback/>
+        <rollback>
+            <dropProcedure procedureName="test_procedure"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

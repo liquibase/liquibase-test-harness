@@ -1,0 +1,17 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.trigger.Trigger": [
+        {
+          "trigger": {
+            "body": "CREATE TRIGGER test_trigger AFTER UPDATE OF title ON posts REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW MODE DB2SQL UPDATE posts SET description = 'New description'",
+            "disabled": false,
+            "name": "TEST_TRIGGER",
+            "tableName": "POSTS",
+            "valid": true
+          }
+        }
+      ]
+    }
+  }
+}
