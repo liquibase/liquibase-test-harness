@@ -85,9 +85,6 @@ case $db in
   "crdb-21.2" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.2 test
     ;;
-  "crdb-21.2" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.2 test
-    ;;
   "edb-9.5" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=9.5 test
     ;;
