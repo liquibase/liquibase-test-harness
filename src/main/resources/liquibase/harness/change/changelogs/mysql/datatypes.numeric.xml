@@ -41,7 +41,15 @@
             <column name="float" type="float"/>
             <column name="float.10.10" type="float(10,10)"/>
 
-            <!-- double and double precision are deprecated at 8.0.17 -->
+            <!--
+            DOUBLE(M,D) is a nonstandard MySQL extension. As of MySQL 8.0.17, this syntax is deprecated
+            and you should expect support for it to be removed in a future version of MySQL.
+
+            DOUBLE PRECISION is a synonym for DOUBLE.
+            https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html
+            -->
+            <column name="double_precision_column" type="double precision(5,2)"/>
+            <column name="precision_column" type="double(5,2)"/>
 
         </createTable>
     </changeSet>

@@ -1,0 +1,193 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.numeric_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "bit",
+            "type": {
+              "typeName": "BIT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "bit1",
+            "type": {
+              "columnSize": "1\\!\\{java.lang.Integer\\}",
+              "typeName": "BIT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "bit64",
+            "type": {
+              "columnSize": "64\\!\\{java.lang.Integer\\}",
+              "typeName": "BIT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "tinyint",
+            "type": {
+              "typeName": "TINYINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "tinyint.unsigned",
+            "type": {
+              "typeName": "TINYINT UNSIGNED"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "bool",
+            "type": {
+              "typeName": "BIT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "boolean",
+            "type": {
+              "typeName": "BIT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "smallint",
+            "type": {
+              "typeName": "SMALLINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "smallint.unsigned",
+            "type": {
+              "typeName": "SMALLINT UNSIGNED"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "mediumint",
+            "type": {
+              "typeName": "MEDIUMINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "mediumint.unsigned",
+            "type": {
+              "typeName": "MEDIUMINT UNSIGNED"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "int",
+            "type": {
+              "typeName": "INT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "int.unsigned",
+            "type": {
+              "typeName": "INT UNSIGNED"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "bigint",
+            "type": {
+              "typeName": "BIGINT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "bigint.unsigned",
+            "type": {
+              "typeName": "BIGINT UNSIGNED"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "decimal",
+            "type": {
+              "typeName": "DECIMAL"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "decimal.max",
+            "type": {
+              "columnSize": "65\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "30\\!\\{java.lang.Integer\\}",
+              "typeName": "DECIMAL"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "float",
+            "type": {
+              "typeName": "FLOAT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "float.10.10",
+            "type": {
+              "columnSize": "10\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "10\\!\\{java.lang.Integer\\}",
+              "typeName": "FLOAT"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "double_precision_column",
+            "type": {
+              "columnSize": "5\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "2\\!\\{java.lang.Integer\\}",
+              "typeName": "DOUBLE"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "precision_column",
+            "type": {
+              "columnSize": "5\\!\\{java.lang.Integer\\}",
+              "decimalDigits": "2\\!\\{java.lang.Integer\\}",
+              "typeName": "DOUBLE"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
