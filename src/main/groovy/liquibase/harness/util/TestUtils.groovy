@@ -3,13 +3,8 @@ package liquibase.harness.util
 import liquibase.command.CommandScope
 import liquibase.exception.CommandExecutionException
 import org.junit.Assert
-import org.w3c.dom.NodeList
-import org.xml.sax.SAXException
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.parsers.ParserConfigurationException
-import java.nio.charset.StandardCharsets
+
 import java.util.logging.Logger
-import java.util.stream.Collectors
 
 class TestUtils {
 
@@ -39,7 +34,7 @@ class TestUtils {
         }
     }
 
-    static OutputStream  executeCommandScope(String commandName, Map<String, Object> arguments) {
+    static OutputStream executeCommandScope(String commandName, Map<String, Object> arguments) {
         def commandScope = new CommandScope(commandName)
         def outputStream = new ByteArrayOutputStream()
         for (Map.Entry<String, Object> entry : arguments) {
@@ -61,5 +56,4 @@ class TestUtils {
         }
         return outputStream
     }
-
 }
