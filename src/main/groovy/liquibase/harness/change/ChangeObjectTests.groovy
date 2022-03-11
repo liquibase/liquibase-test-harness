@@ -31,7 +31,7 @@ class ChangeObjectTests extends Specification {
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("snapshotFormat", "JSON")
-        argsMap.put("date",sdf.format(new Date()))
+        argsMap.put("date",sdf.format(new Date(System.currentTimeMillis()-2000)))
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
