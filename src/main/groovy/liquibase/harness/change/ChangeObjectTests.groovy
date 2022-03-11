@@ -31,7 +31,6 @@ class ChangeObjectTests extends Specification {
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("snapshotFormat", "JSON")
-//        argsMap.put("tag","test-harness-tag")
         argsMap.put("date",sdf.format(new Date(System.currentTimeMillis()-2000)))
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
@@ -64,7 +63,6 @@ class ChangeObjectTests extends Specification {
         }
 
         when: "apply changeSet to DB"
-        executeCommandScope("tag", argsMap)
         executeCommandScope("update", argsMap)
 
         then: "get DB snapshot, check if actual snapshot matches expected snapshot"
