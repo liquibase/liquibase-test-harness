@@ -5,6 +5,8 @@ import org.json.JSONObject
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.text.SimpleDateFormat
+
 import static liquibase.harness.diff.DiffCommandTestHelper.*
 import static liquibase.harness.util.TestUtils.*
 import static liquibase.harness.util.JSONUtils.*
@@ -18,6 +20,8 @@ class DiffCommandTest extends Specification {
     @Unroll
     def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version"() {
         given: "create arguments map for executing command scope, read expected diff from file"
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.targetDatabase.url)
         argsMap.put("username", testInput.targetDatabase.username)
@@ -27,6 +31,7 @@ class DiffCommandTest extends Specification {
         argsMap.put("referencePassword", testInput.referenceDatabase.password)
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
         argsMap.put("format", "json")
+        argsMap.put("date",sdf.format(new Date(System.currentTimeMillis()-2000)))
         JSONObject expectedDiff = getJsonFromResource(getExpectedDiffPath(testInput))
         assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection : "Target database " +
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"
@@ -45,7 +50,6 @@ class DiffCommandTest extends Specification {
          * or DropDefaultValueChange or others that are not supported by default rollback
          */
         cleanup: "try to rollback changes out from target database, delete generated changelog file"
-        argsMap.put("count", getChangeSetsCount(testInput.pathToChangelogFile))
         tryToRollbackDiff(argsMap)
         deleteFile(testInput.pathToChangelogFile)
 

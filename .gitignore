@@ -1,5 +1,4 @@
 target/
-.gitignore
 .idea/
 *.iml
 /.apt_generated/

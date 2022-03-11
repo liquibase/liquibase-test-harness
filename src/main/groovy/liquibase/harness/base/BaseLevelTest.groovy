@@ -5,28 +5,34 @@ import liquibase.database.jvm.JdbcConnection
 import org.json.JSONObject
 import org.junit.Assert
 import spock.lang.Specification
+import spock.lang.Unroll
+
 import java.sql.SQLException
+import java.text.SimpleDateFormat
 
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.TestUtils.*
 import static BaseLevelTestHelper.buildTestInput
 
+@Unroll
 class BaseLevelTest extends Specification {
 
-    def "run base level test"() {
+    def "run base level test #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
         String checkingSql = getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/checkingSql")
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/expectedResultSet")
         String testTableCheckSql = "SELECT * FROM test_table"
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("count", getChangeSetsCountSql(testInput.pathToChangeLogFile))
+        argsMap.put("date", sdf.format(new Date(System.currentTimeMillis() - 2000)))
         boolean shouldRunChangeSet
 
         and: "fail test if checkingSql is not provided"
@@ -76,7 +82,7 @@ class BaseLevelTest extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollbackCount", argsMap)
+            executeCommandScope("rollbackToDate", argsMap)
         }
 
         and: "check for actual absence of the object removed after 'rollback' command execution"
