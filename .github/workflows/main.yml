@@ -88,7 +88,7 @@ jobs:
               liquibaseSha = liquibaseBranch.sha;
 
               console.log("Using liquibaseSha "+liquibaseSha+" from "+liquibaseBranch.name);
-              core.setOutput("liquibaseBranchName", repoName);                   
+              core.setOutput("liquibaseBranchName", liquibaseBranch.name);                   
             }
 
             core.setOutput("liquibaseSha", liquibaseSha);
