@@ -203,6 +203,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           java-version: '1.8.0'
+          distribution: 'temurin'
           cache: 'maven'
 
       - name: Build ${{ matrix.database }} test infra
