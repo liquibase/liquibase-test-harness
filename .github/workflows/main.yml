@@ -201,6 +201,7 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '1.8.0'
+          cache: 'maven'
 
       - name: Build ${{ matrix.database }} test infra
         working-directory: src/test/resources/docker
@@ -214,12 +215,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          liquibseRepo = echo "${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}" | sed "s/liquibase\///"
-          
           mvn versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
           mvn liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branch=${{ github.event.inputs.liquibaseCommit }}" \
-            "-Dliquibase.sdk.repo=$liquibaseRepo"
+            "-Dliquibase.sdk.branch=${{ needs.setup.outputs.liquibaseBranch }}" \
+            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseBranch || 'liquibase/liquibase' }}"
 
 
       - name: ${{ matrix.database }} Test Run
