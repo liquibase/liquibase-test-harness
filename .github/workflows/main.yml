@@ -220,7 +220,7 @@ jobs:
           mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
           mvn -B liquibase-sdk:install-snapshot \
             "-Dliquibase.sdk.branch=${{ needs.setup.outputs.liquibaseBranch }}" \
-            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseBranch || 'liquibase/liquibase' }}"
+            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo || 'liquibase/liquibase' }}"
 
 
       - name: ${{ matrix.database }} Test Run
