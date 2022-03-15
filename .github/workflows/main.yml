@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Emit failure code if unsafe
-        if: github.event.pull_request && github.event.pull_request.head.repo.full_name != 'liquibase/liquibase'
+        if: github.event.pull_request && github.event.pull_request.head.repo.full_name != 'liquibase/liquibase-test-harness'
         run: |
           echo "PR from Fork is NOT safe to build"
           exit 1
