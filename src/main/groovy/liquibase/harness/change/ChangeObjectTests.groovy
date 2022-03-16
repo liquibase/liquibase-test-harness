@@ -1,12 +1,15 @@
 package liquibase.harness.change
 
+import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.TestConfig
+import org.junit.Assert
 import org.junit.Assume
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.text.SimpleDateFormat
+import java.sql.SQLException
 
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
@@ -14,7 +17,18 @@ import static liquibase.harness.util.TestUtils.*
 import static ChangeObjectTestHelper.*
 
 class ChangeObjectTests extends Specification {
-
+    @Shared Map<String, Object> argsMap
+    @Shared List<TestInput> testInputs
+    def setupSpec() {
+        testInputs = buildTestInput()
+        argsMap = new HashMap()
+        argsMap.put("url",  testInputs.get(0).url)
+        argsMap.put("username",  testInputs.get(0).username)
+        argsMap.put("password",  testInputs.get(0).password)
+        argsMap.put("snapshotFormat", "JSON")
+        argsMap.put("tag","test-harness-tag")
+        executeCommandScope("tag", argsMap)
+    }
     @Unroll
     def "apply #testInput.changeObject against #testInput.databaseName #testInput.version"() {
         given: "read expected sql and snapshot files, create arguments map for executing command scope"
@@ -23,15 +37,7 @@ class ChangeObjectTests extends Specification {
         String expectedSnapshot = getJSONFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
                 "liquibase/harness/change/expectedSnapshot")
         boolean shouldRunChangeSet
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
-        Map<String, Object> argsMap = new HashMap()
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("url", testInput.url)
-        argsMap.put("username", testInput.username)
-        argsMap.put("password", testInput.password)
-        argsMap.put("snapshotFormat", "JSON")
-        argsMap.put("date",sdf.format(new Date(System.currentTimeMillis()-2000)))
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
@@ -44,7 +50,7 @@ class ChangeObjectTests extends Specification {
                 "${testInput.database.databaseMinorVersion}"
 
         and: "check database under test is online"
-        shouldRunChangeSet =  testInput.database.getConnection() instanceof JdbcConnection
+        shouldRunChangeSet = testInput.database.getConnection() instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         when: "get sql generated for the change set"
@@ -55,7 +61,7 @@ class ChangeObjectTests extends Specification {
             //TODO form nice error message to see expected and actual SQL in logs and remove 2 times in comparison for
             // boolean flag and for assert
             shouldRunChangeSet = generatedSql == expectedSql
-            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. "+" Deleting expectedSql file" +
+            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
                     " will test that new sql works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
@@ -76,10 +82,25 @@ class ChangeObjectTests extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollbackToDate", argsMap)
+            executeCommandScope("rollback", argsMap)
+//            executeCommandScope("rollbackToDate", argsMap)
         }
 
         where: "test input in next data table"
-        testInput << buildTestInput()
+        testInput << testInputs
+    }
+
+    def cleanupSpec() {
+        def connection = testInputs.get(0).database.getConnection()
+        try {
+            ((JdbcConnection) connection).createStatement().executeUpdate("delete from DATABASECHANGELOG where TAG='${argsMap.get("tag")}'")
+        } catch (SQLException sqlException) {
+            // Assume test object was not created after 'update' command execution and test failed.
+            Scope.getCurrentScope().getUI().sendMessage("Couldn't delete ${argsMap.get("tag")} tag from tracking table " +
+                    sqlException.printStackTrace())
+            Assert.fail sqlException.message
+        } finally {
+            connection.commit()
+        }
     }
 }
