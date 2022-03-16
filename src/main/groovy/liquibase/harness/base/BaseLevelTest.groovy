@@ -32,7 +32,7 @@ class BaseLevelTest extends Specification {
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("date", sdf.format(new Date(System.currentTimeMillis() - 2000)))
+        argsMap.put("date", sdf.format(new Date(System.currentTimeMillis() - 1000)))
         boolean shouldRunChangeSet
 
         and: "fail test if checkingSql is not provided"
