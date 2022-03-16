@@ -31,11 +31,11 @@ class DiffCommandTest extends Specification {
         argsMap.put("referencePassword", testInput.referenceDatabase.password)
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
         argsMap.put("format", "json")
-        argsMap.put("date",sdf.format(new Date(System.currentTimeMillis()-2000)))
+        argsMap.put("date", sdf.format(new Date(System.currentTimeMillis() - 1000)))
         JSONObject expectedDiff = getJsonFromResource(getExpectedDiffPath(testInput))
-        assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection : "Target database " +
+        assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection: "Target database " +
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"
-        assert testInput.referenceDatabase.database.getConnection() instanceof JdbcConnection : "Reference database " +
+        assert testInput.referenceDatabase.database.getConnection() instanceof JdbcConnection: "Reference database " +
                 "${testInput.referenceDatabase.name}${testInput.referenceDatabase.version} is offline!"
 
         when: "generate diff changelog, apply changes from generated changelog to target database"
