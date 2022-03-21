@@ -1,7 +1,7 @@
 package liquibase.harness.diff
 
 import liquibase.database.jvm.JdbcConnection
-`import liquibase.harness.config.DatabaseUnderTest
+import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONObject
