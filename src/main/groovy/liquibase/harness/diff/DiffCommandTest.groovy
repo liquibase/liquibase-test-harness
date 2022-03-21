@@ -1,27 +1,39 @@
 package liquibase.harness.diff
 
 import liquibase.database.jvm.JdbcConnection
+import liquibase.harness.config.DatabaseUnderTest
+import liquibase.harness.config.TestConfig
+import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONObject
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.text.SimpleDateFormat
-
 import static liquibase.harness.diff.DiffCommandTestHelper.*
-import static liquibase.harness.util.TestUtils.*
-import static liquibase.harness.util.JSONUtils.*
-import static liquibase.harness.util.FileUtils.*
+import static liquibase.harness.util.FileUtils.deleteFile
+import static liquibase.harness.util.JSONUtils.compareJSONObjects
+import static liquibase.harness.util.JSONUtils.getJsonFromResource
+import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
+import static liquibase.harness.util.TestUtils.executeCommandScope
 
 /**
  * Warning! This test might be destructive, meaning it may change the state of targetDatabase according to referenceDatabase
  */
 class DiffCommandTest extends Specification {
+    @Shared
+    RollbackStrategy strategy;
+    @Shared
+    List<DatabaseUnderTest> databases;
+
+    def setupSpec() {
+        databases = TestConfig.instance.getFilteredDatabasesUnderTest()
+        strategy = chooseRollbackStrategy()
+        strategy.prepareForRollback(databases)
+    }
 
     @Unroll
     def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version"() {
         given: "create arguments map for executing command scope, read expected diff from file"
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.targetDatabase.url)
         argsMap.put("username", testInput.targetDatabase.username)
@@ -31,7 +43,6 @@ class DiffCommandTest extends Specification {
         argsMap.put("referencePassword", testInput.referenceDatabase.password)
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
         argsMap.put("format", "json")
-        argsMap.put("date", sdf.format(new Date(System.currentTimeMillis() - 1000)))
         JSONObject expectedDiff = getJsonFromResource(getExpectedDiffPath(testInput))
         assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection: "Target database " +
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"
@@ -50,10 +61,14 @@ class DiffCommandTest extends Specification {
          * or DropDefaultValueChange or others that are not supported by default rollback
          */
         cleanup: "try to rollback changes out from target database, delete generated changelog file"
-        tryToRollbackDiff(argsMap)
+        tryToRollbackDiff(strategy, argsMap)
         deleteFile(testInput.pathToChangelogFile)
 
         where:
         testInput << buildTestInput()
+    }
+
+    def cleanupSpec() {
+        strategy.cleanupDatabase(databases)
     }
 }

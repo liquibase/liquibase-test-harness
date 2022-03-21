@@ -37,7 +37,7 @@ class BaseLevelTestHelper {
     }
 
     @Builder
-    @ToString(includeNames=true, includeFields=true, includePackage = false, excludes ='database,password')
+    @ToString(includeNames = true, includeFields = true, includePackage = false, excludes = 'database,password')
     static class TestInput {
         String databaseName
         String version

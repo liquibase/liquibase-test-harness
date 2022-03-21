@@ -5,7 +5,7 @@ import liquibase.Scope
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.harness.util.TestUtils
+import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONArray
 import org.json.JSONObject
 import org.yaml.snakeyaml.Yaml
@@ -117,10 +117,9 @@ class DiffCommandTestHelper {
         }
         return diffToCompare
     }
-
-    static void tryToRollbackDiff(Map argsMap) {
+    static void tryToRollbackDiff(RollbackStrategy strategy, Map argsMap) {
         try {
-            TestUtils.executeCommandScope("rollbackToDate", argsMap)
+            strategy.performRollback(argsMap)
         } catch (Error error) {
             Scope.getCurrentScope().getUI().sendErrorMessage("*** Failed to rollback changes from generated diff changelog! " +
                     "State of the target database will remain changed! \n" + error.message)

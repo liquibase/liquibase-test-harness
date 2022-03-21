@@ -18,7 +18,7 @@ class ChangeObjectTestHelper {
         String commandLineInputFormat = System.getProperty("inputFormat")
         String commandLineChangeObjects = System.getProperty("changeObjects")
         List commandLineChangeObjectList = Collections.emptyList()
-        if(commandLineChangeObjects){
+        if (commandLineChangeObjects) {
             commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",")
                     ? commandLineChangeObjects.split(",")
                     : commandLineChangeObjects)
@@ -66,13 +66,13 @@ class ChangeObjectTestHelper {
         outputFile.parentFile.mkdirs()
         try {
             outputFile.write(generatedSql)
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             Logger.getLogger(this.class.name).warning("Failed to save generated sql file! " + exception.message)
         }
     }
 
     @Builder
-    @ToString(includeNames=true, includeFields=true, includePackage = false, excludes ='database,password')
+    @ToString(includeNames = true, includeFields = true, includePackage = false, excludes = 'database,password')
     static class TestInput {
         String databaseName
         String url
