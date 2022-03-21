@@ -2,21 +2,37 @@ package liquibase.harness.base
 
 import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
+import liquibase.harness.config.DatabaseUnderTest
+import liquibase.harness.config.TestConfig
+import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONObject
 import org.junit.Assert
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.sql.SQLException
-import java.text.SimpleDateFormat
 
-import static liquibase.harness.util.FileUtils.*
-import static liquibase.harness.util.JSONUtils.*
-import static liquibase.harness.util.TestUtils.*
 import static BaseLevelTestHelper.buildTestInput
+import static liquibase.harness.util.FileUtils.getJSONFileContent
+import static liquibase.harness.util.FileUtils.getSqlFileContent
+import static liquibase.harness.util.JSONUtils.compareJSONArraysExtensible
+import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
+import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
+import static liquibase.harness.util.TestUtils.executeCommandScope
 
 @Unroll
 class BaseLevelTest extends Specification {
+    @Shared
+    RollbackStrategy strategy;
+    @Shared
+    List<DatabaseUnderTest> databases;
+
+    def setupSpec() {
+        databases = TestConfig.instance.getFilteredDatabasesUnderTest()
+        strategy = chooseRollbackStrategy()
+        strategy.prepareForRollback(databases)
+    }
 
     def "run base level test #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
@@ -25,14 +41,13 @@ class BaseLevelTest extends Specification {
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/expectedResultSet")
         String testTableCheckSql = "SELECT * FROM test_table"
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("date", sdf.format(new Date(System.currentTimeMillis() - 1000)))
+
         boolean shouldRunChangeSet
 
         and: "fail test if checkingSql is not provided"
@@ -82,7 +97,7 @@ class BaseLevelTest extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollbackToDate", argsMap)
+            strategy.performRollback(argsMap)
         }
 
         and: "check for actual absence of the object removed after 'rollback' command execution"
@@ -106,5 +121,9 @@ class BaseLevelTest extends Specification {
 
         where: "test input in next data table"
         testInput << buildTestInput()
+    }
+
+    def cleanupSpec() {
+        strategy.cleanupDatabase(databases)
     }
 }

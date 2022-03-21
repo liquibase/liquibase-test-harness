@@ -2,6 +2,9 @@ package liquibase.harness.util
 
 import liquibase.command.CommandScope
 import liquibase.exception.CommandExecutionException
+import liquibase.harness.util.rollback.RollbackByTag
+import liquibase.harness.util.rollback.RollbackStrategy
+import liquibase.harness.util.rollback.RollbackToDate
 import org.junit.Assert
 
 import java.util.logging.Logger
@@ -55,5 +58,9 @@ class TestUtils {
             Assert.fail exception.message
         }
         return outputStream
+    }
+
+    static RollbackStrategy chooseRollbackStrategy() {
+        return "rollbackByTag".equalsIgnoreCase(System.getProperty("rollbackStrategy")) ? new RollbackByTag() : new RollbackToDate()
     }
 }
