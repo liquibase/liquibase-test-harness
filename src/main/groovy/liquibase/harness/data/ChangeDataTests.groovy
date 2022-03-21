@@ -2,14 +2,15 @@ package liquibase.harness.data
 
 import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
+import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONObject
 import org.junit.Assert
 import org.junit.Assume
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.text.SimpleDateFormat
 
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
@@ -17,6 +18,16 @@ import static liquibase.harness.util.TestUtils.*
 import static ChangeDataTestHelper.*
 
 class ChangeDataTests extends Specification {
+    @Shared
+    RollbackStrategy strategy;
+    @Shared
+    List<DatabaseUnderTest> databases;
+
+    def setupSpec() {
+        databases = TestConfig.instance.getFilteredDatabasesUnderTest()
+        strategy = chooseRollbackStrategy()
+        strategy.prepareForRollback(databases)
+    }
 
     @Unroll
     def "apply #testInput.changeData against #testInput.databaseName #testInput.version"() {
@@ -28,14 +39,11 @@ class ChangeDataTests extends Specification {
         String expectedResultSet = getJSONFileContent(testInput.changeData, testInput.databaseName, testInput.version,
                 "liquibase/harness/data/expectedResultSet")
         boolean shouldRunChangeSet
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("date", sdf.format(new Date(System.currentTimeMillis() - 1000)))
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
@@ -97,10 +105,14 @@ class ChangeDataTests extends Specification {
 
         cleanup: "rollback changes"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollbackToDate", argsMap)
+            strategy.performRollback(argsMap)
         }
 
         where: "test input in next data table"
         testInput << buildTestInput()
+    }
+
+    def cleanupSpec() {
+        strategy.cleanupDatabase(databases)
     }
 }

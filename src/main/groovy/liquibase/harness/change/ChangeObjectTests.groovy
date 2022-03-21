@@ -1,15 +1,13 @@
 package liquibase.harness.change
 
-import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
+import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
-import org.junit.Assert
+import liquibase.harness.util.rollback.RollbackStrategy
 import org.junit.Assume
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.sql.SQLException
 
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
@@ -17,18 +15,17 @@ import static liquibase.harness.util.TestUtils.*
 import static ChangeObjectTestHelper.*
 
 class ChangeObjectTests extends Specification {
-    @Shared Map<String, Object> argsMap
-    @Shared List<TestInput> testInputs
+    @Shared
+    RollbackStrategy strategy;
+    @Shared
+    List<DatabaseUnderTest> databases;
+
     def setupSpec() {
-        testInputs = buildTestInput()
-        argsMap = new HashMap()
-        argsMap.put("url",  testInputs.get(0).url)
-        argsMap.put("username",  testInputs.get(0).username)
-        argsMap.put("password",  testInputs.get(0).password)
-        argsMap.put("snapshotFormat", "JSON")
-        argsMap.put("tag","test-harness-tag")
-        executeCommandScope("tag", argsMap)
+        databases = TestConfig.instance.getFilteredDatabasesUnderTest()
+        strategy = chooseRollbackStrategy()
+        strategy.prepareForRollback(databases)
     }
+
     @Unroll
     def "apply #testInput.changeObject against #testInput.databaseName #testInput.version"() {
         given: "read expected sql and snapshot files, create arguments map for executing command scope"
@@ -37,7 +34,12 @@ class ChangeObjectTests extends Specification {
         String expectedSnapshot = getJSONFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
                 "liquibase/harness/change/expectedSnapshot")
         boolean shouldRunChangeSet
+        Map<String, Object> argsMap = new HashMap()
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
+        argsMap.put("url", testInput.url)
+        argsMap.put("username", testInput.username)
+        argsMap.put("password", testInput.password)
+        argsMap.put("snapshotFormat", "JSON")
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
@@ -82,25 +84,14 @@ class ChangeObjectTests extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollback", argsMap)
-//            executeCommandScope("rollbackToDate", argsMap)
+            strategy.performRollback(argsMap)
         }
 
         where: "test input in next data table"
-        testInput << testInputs
+        testInput << buildTestInput()
     }
 
     def cleanupSpec() {
-        def connection = testInputs.get(0).database.getConnection()
-        try {
-            ((JdbcConnection) connection).createStatement().executeUpdate("delete from DATABASECHANGELOG where TAG='${argsMap.get("tag")}'")
-        } catch (SQLException sqlException) {
-            // Assume test object was not created after 'update' command execution and test failed.
-            Scope.getCurrentScope().getUI().sendMessage("Couldn't delete ${argsMap.get("tag")} tag from tracking table " +
-                    sqlException.printStackTrace())
-            Assert.fail sqlException.message
-        } finally {
-            connection.commit()
-        }
+        strategy.cleanupDatabase(databases)
     }
 }
