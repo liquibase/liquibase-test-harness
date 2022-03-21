@@ -14,12 +14,9 @@ import spock.lang.Unroll
 import java.sql.SQLException
 
 import static BaseLevelTestHelper.buildTestInput
-import static liquibase.harness.util.FileUtils.getJSONFileContent
-import static liquibase.harness.util.FileUtils.getSqlFileContent
-import static liquibase.harness.util.JSONUtils.compareJSONArraysExtensible
-import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
-import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
-import static liquibase.harness.util.TestUtils.executeCommandScope
+import static liquibase.harness.util.FileUtils.*
+import static liquibase.harness.util.JSONUtils.*
+import static liquibase.harness.util.TestUtils.*
 
 @Unroll
 class BaseLevelTest extends Specification {
@@ -41,7 +38,6 @@ class BaseLevelTest extends Specification {
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/expectedResultSet")
         String testTableCheckSql = "SELECT * FROM test_table"
-
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)

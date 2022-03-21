@@ -1,7 +1,7 @@
 package liquibase.harness.diff
 
 import liquibase.database.jvm.JdbcConnection
-import liquibase.harness.config.DatabaseUnderTest
+`import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONObject
@@ -10,11 +10,9 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static liquibase.harness.diff.DiffCommandTestHelper.*
-import static liquibase.harness.util.FileUtils.deleteFile
-import static liquibase.harness.util.JSONUtils.compareJSONObjects
-import static liquibase.harness.util.JSONUtils.getJsonFromResource
-import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
-import static liquibase.harness.util.TestUtils.executeCommandScope
+import static liquibase.harness.util.TestUtils.*
+import static liquibase.harness.util.JSONUtils.*
+import static liquibase.harness.util.FileUtils.*
 
 /**
  * Warning! This test might be destructive, meaning it may change the state of targetDatabase according to referenceDatabase
