@@ -4,48 +4,48 @@ services:
 
   # Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected. 
   # If you do not login privileges to this private repo then you will encounter authentication errors if you run `docker-compose up` on this docker-compose file.
-#  edb-9.5:
-#    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-ppas95:latest
-#    ports:
-#      - "5501:5444"
-#    restart: always
-#    # no environment or volumes as those were created at image creation
-#
-#  edb-9.6:
-#    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas96:latest
-#    ports:
-#      - "5502:5444"
-#    restart: always
-#    # no environment or volumes as those were created at image creation
-#
-#  edb-10:
-#    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas10:latest
-#    ports:
-#      - "5503:5444"
-#    restart: always
-#    # no environment or volumes as those were created at image creation
-#
-#  edb-11:
-#    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas11:latest
-#    ports:
-#      - "5504:5444"
-#    restart: always
-#    # no environment or volumes as those were created at image creation
-#
-#  edb-12:
-#    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas12:latest
-#    ports:
-#      - "5505:5444"
-#    restart: always
-#    # no environment or volumes as those were created at image creation
-#
-#  edb-13:
-#    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas13:latest
-#    ports:
-#      - "5506:5444"
-#    restart: always
-#    # no environment or volumes as those were created at image creation
-#
+  edb-9.5:
+    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-ppas95:latest
+    ports:
+      - "5501:5444"
+    restart: always
+    # no environment or volumes as those were created at image creation
+
+  edb-9.6:
+    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas96:latest
+    ports:
+      - "5502:5444"
+    restart: always
+    # no environment or volumes as those were created at image creation
+
+  edb-10:
+    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas10:latest
+    ports:
+      - "5503:5444"
+    restart: always
+    # no environment or volumes as those were created at image creation
+
+  edb-11:
+    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas11:latest
+    ports:
+      - "5504:5444"
+    restart: always
+    # no environment or volumes as those were created at image creation
+
+  edb-12:
+    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas12:latest
+    ports:
+      - "5505:5444"
+    restart: always
+    # no environment or volumes as those were created at image creation
+
+  edb-13:
+    image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas13:latest
+    ports:
+      - "5506:5444"
+    restart: always
+    # no environment or volumes as those were created at image creation
+
   edb-14:
     image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-edbas14:latest
     ports:
