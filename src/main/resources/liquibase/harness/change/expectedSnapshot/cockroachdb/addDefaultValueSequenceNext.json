@@ -5,9 +5,13 @@
         {
           "column": {
             "name": "sequence_referenced_column",
+            "autoIncrementInformation": {
+              "incrementBy": "1\\!\\{java.math.BigInteger\\}",
+              "startWith": "1\\!\\{java.math.BigInteger\\}"
+            },
             "nullable": true,
             "type": {
-              "typeName": "int8"
+              "typeName": "bigserial"
             }
           }
         }
