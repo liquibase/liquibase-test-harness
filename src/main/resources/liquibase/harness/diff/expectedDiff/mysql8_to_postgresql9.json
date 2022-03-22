@@ -7,15 +7,23 @@
         "differences": [
           {
             "difference": {
+              "field": "autoIncrement",
+              "comparedValue": true,
+              "message": "autoIncrement changed from 'false' to 'true'",
+              "referenceValue": false
+            }
+          },
+          {
+            "difference": {
               "field": "type",
               "comparedValue": {
                 "radix": 10,
                 "characterOctetLength": 10,
                 "columnSizeUnit": "BYTE",
                 "dataTypeId": 4,
-                "typeName": "int4"
+                "typeName": "serial"
               },
-              "message": "type changed from 'INT(10)' to 'int4'",
+              "message": "type changed from 'INT(10)' to 'serial'",
               "referenceValue": {
                 "radix": 10,
                 "columnSizeUnit": "BYTE",
@@ -38,23 +46,15 @@
         "differences": [
           {
             "difference": {
-              "field": "autoIncrement",
-              "comparedValue": false,
-              "message": "autoIncrement changed from 'true' to 'false'",
-              "referenceValue": true
-            }
-          },
-          {
-            "difference": {
               "field": "type",
               "comparedValue": {
                 "radix": 10,
                 "characterOctetLength": 10,
                 "columnSizeUnit": "BYTE",
                 "dataTypeId": 4,
-                "typeName": "int4"
+                "typeName": "serial"
               },
-              "message": "type changed from 'INT(10)' to 'int4'",
+              "message": "type changed from 'INT(10)' to 'serial'",
               "referenceValue": {
                 "radix": 10,
                 "columnSizeUnit": "BYTE",
@@ -216,4 +216,3 @@
     }
   ]
 }
-
