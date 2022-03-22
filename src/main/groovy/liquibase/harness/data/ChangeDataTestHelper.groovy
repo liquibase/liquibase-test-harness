@@ -2,12 +2,12 @@ package liquibase.harness.data
 
 import groovy.transform.ToString
 import groovy.transform.builder.Builder
+import liquibase.Scope
 import liquibase.database.Database
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
-import java.util.logging.Logger
 
 class ChangeDataTestHelper {
 
@@ -30,7 +30,7 @@ class ChangeDataTestHelper {
             TestConfig.instance.inputFormat = commandLineInputFormat
         }
 
-        Logger.getLogger(this.class.name).warning("Only " + TestConfig.instance.inputFormat
+        Scope.getCurrentScope().getUI().sendMessage("Only " + TestConfig.instance.inputFormat
                 + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
@@ -68,7 +68,7 @@ class ChangeDataTestHelper {
         try {
             outputFile.write(generatedSql)
         } catch(IOException exception) {
-            Logger.getLogger(this.class.name).warning("Failed to save generated sql file! " + exception.message)
+            Scope.getCurrentScope().getUI().sendErrorMessage("Failed to save generated sql file! " + exception.message)
         }
     }
 
