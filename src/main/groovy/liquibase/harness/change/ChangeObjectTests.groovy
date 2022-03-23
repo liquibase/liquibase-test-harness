@@ -1,8 +1,11 @@
 package liquibase.harness.change
 
 import liquibase.database.jvm.JdbcConnection
+import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.rollback.RollbackStrategy
 import org.junit.Assume
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -12,6 +15,16 @@ import static liquibase.harness.util.TestUtils.*
 import static ChangeObjectTestHelper.*
 
 class ChangeObjectTests extends Specification {
+    @Shared
+    RollbackStrategy strategy;
+    @Shared
+    List<DatabaseUnderTest> databases;
+
+    def setupSpec() {
+        databases = TestConfig.instance.getFilteredDatabasesUnderTest()
+        strategy = chooseRollbackStrategy()
+        strategy.prepareForRollback(databases)
+    }
 
     @Unroll
     def "apply #testInput.changeObject against #testInput.databaseName #testInput.version"() {
@@ -27,7 +40,6 @@ class ChangeObjectTests extends Specification {
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("snapshotFormat", "JSON")
-        argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
@@ -40,7 +52,7 @@ class ChangeObjectTests extends Specification {
                 "${testInput.database.databaseMinorVersion}"
 
         and: "check database under test is online"
-        shouldRunChangeSet =  testInput.database.getConnection() instanceof JdbcConnection
+        shouldRunChangeSet = testInput.database.getConnection() instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         when: "get sql generated for the change set"
@@ -51,7 +63,7 @@ class ChangeObjectTests extends Specification {
             //TODO form nice error message to see expected and actual SQL in logs and remove 2 times in comparison for
             // boolean flag and for assert
             shouldRunChangeSet = generatedSql == expectedSql
-            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. "+" Deleting expectedSql file" +
+            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
                     " will test that new sql works correctly and will auto-generate a new version if it passes"
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
@@ -72,10 +84,14 @@ class ChangeObjectTests extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollbackCount", argsMap)
+            strategy.performRollback(argsMap)
         }
 
         where: "test input in next data table"
         testInput << buildTestInput()
+    }
+
+    def cleanupSpec() {
+        strategy.cleanupDatabase(databases)
     }
 }
