@@ -49,6 +49,7 @@ jobs:
     needs: check_build_safety
     runs-on: ubuntu-latest
     outputs:
+      useLiquibaseSnapshot: ${{ steps.find-branches.outputs.useLiquibaseSnapshot }}
       liquibaseSha: ${{ steps.find-branches.outputs.liquibaseSha }}
       liquibaseBranch: ${{ steps.find-branches.outputs.liquibaseBranch }}
       liquibaseOwner: ${{ steps.find-branches.outputs.liquibaseOwner }}
@@ -71,6 +72,8 @@ jobs:
 
             let testBranchName = helper.getCurrentBranch();
             console.log("Running in liquibase-test-harness branch "+testBranchName);
+
+            core.setOutput("useLiquibaseSnapshot", testBranchName !== "develop");
 
             let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
             let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}";
@@ -215,6 +218,7 @@ jobs:
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
 
       - name: Configure Liquibase
+        if: needs.setup.outputs.useLiquibaseSnapshot == "true"
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
