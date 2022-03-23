@@ -4,8 +4,8 @@ import liquibase.database.OfflineConnection
 import liquibase.database.core.MySQLDatabase
 import liquibase.database.core.OracleDatabase
 import liquibase.database.core.PostgresDatabase
-import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.harness.config.DatabaseUnderTest
+import liquibase.resource.ClassLoaderResourceAccessor
 import spock.lang.Specification
 
 class FileUtilsTest extends Specification {

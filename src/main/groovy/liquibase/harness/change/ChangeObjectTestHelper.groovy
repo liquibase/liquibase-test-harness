@@ -2,12 +2,12 @@ package liquibase.harness.change
 
 import groovy.transform.ToString
 import groovy.transform.builder.Builder
+import liquibase.Scope
 import liquibase.database.Database
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
-import java.util.logging.Logger
 
 class ChangeObjectTestHelper {
 
@@ -18,7 +18,7 @@ class ChangeObjectTestHelper {
         String commandLineInputFormat = System.getProperty("inputFormat")
         String commandLineChangeObjects = System.getProperty("changeObjects")
         List commandLineChangeObjectList = Collections.emptyList()
-        if(commandLineChangeObjects){
+        if (commandLineChangeObjects) {
             commandLineChangeObjectList = Arrays.asList(commandLineChangeObjects.contains(",")
                     ? commandLineChangeObjects.split(",")
                     : commandLineChangeObjects)
@@ -30,7 +30,7 @@ class ChangeObjectTestHelper {
             TestConfig.instance.inputFormat = commandLineInputFormat
         }
 
-        Logger.getLogger(this.class.name).warning("Only " + TestConfig.instance.inputFormat
+        Scope.getCurrentScope().getUI().sendMessage("Only " + TestConfig.instance.inputFormat
                 + " input files are taken into account for this test run")
 
         List<TestInput> inputList = new ArrayList<>()
@@ -66,13 +66,13 @@ class ChangeObjectTestHelper {
         outputFile.parentFile.mkdirs()
         try {
             outputFile.write(generatedSql)
-        } catch(IOException exception) {
-            Logger.getLogger(this.class.name).warning("Failed to save generated sql file! " + exception.message)
+        } catch (IOException exception) {
+            Scope.getCurrentScope().getUI().sendErrorMessage("Failed to save generated sql file! " + exception.message)
         }
     }
 
     @Builder
-    @ToString(includeNames=true, includeFields=true, includePackage = false, excludes ='database,password')
+    @ToString(includeNames = true, includeFields = true, includePackage = false, excludes = 'database,password')
     static class TestInput {
         String databaseName
         String url
