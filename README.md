@@ -7,11 +7,13 @@
 | Database | Versions Tested|
 | ----------- | ----------- |
 | Postgres |  `9, 9.5, 10, 11, 12, 13, 14` |
+| Postgres RDS |  `9.6, 10, 11, 12, 13` |
 | MySQL | `5.6, 5.7, 8` |
 | MariaDB | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
 | SQL Server | `2017`, `2019` |
 | Percona XtraDB | `5.7`, `8.0`|
 | Oracle | `18.3.0, 18.4.0, 19.9.0, 21.3.0` |
+| Oracle RDS | `12.1.0, 19.0` |
 | CockroachDB | `20.1, 20.2, 21.1` |
 | EDB | `9.5, 9.6, 10, 11, 12, 13, 14` |
 | H2 | `2.1.210` |
@@ -39,14 +41,15 @@ The general pattern is that for each directory containing configuration files:
 - Files directly in that root apply to all databases. Example: `liquibase/harness/change/changelogs`
 - Files in a subdirectory named for the database type apply to only that type of database. Example: `liquibase/harness/change/changelogs/mysql`
 - Files in a subdirectory with a version apply only to this version of the database. Example: `liquibase/harness/change/changelogs/mysql/8`
-##### Note: The version folder name should be match exactly with the DB version provided in `harness-config.yml` file. We do not split this to major/minor/patch subversion folders currently.
+##### Note: The version folder name should match exactly with the DB version provided in `harness-config.yml` file. We do not split this to major/minor/patch subversion folders currently.
 
 At each level in that hierarchy, new configurations can be added and/or can override configurations from a lower level. 
 
-Currently, there are three test types defined in the test harness:
+Currently, there are four test types defined in the test harness:
 * Change Object Tests
 * Change Data Tests
 * Diff Command Test
+* Base level test
 
 This repository is configured to run against databases supported by Liquibase Core. 
 
@@ -80,12 +83,12 @@ whether they make the expected changes.
 
 * The test behavior is as follows:
   * It reads the changesets from the changelogs provided in `src/main/resources/liquibase/harness/change/changelogs` folders (recursively)
-  * Runs the changeset thru the SqlGeneratorFactory to generate SQL
+  * Runs the changeset through the SqlGeneratorFactory to generate SQL
   * Compares the generated SQL with the expected SQL (provided in `src/main/resources/liquibase/harness/change/expectedSql`)
   * If the SQL generation is correct, the test then runs `liquibase update` to deploy the
   changeset to the DB
   * The test takes a snapshot of the database after deployment
-  * The deployed changes are then rolled back 
+  * The deployed changes are then rolled back by either using `rollbackToDate` (default) or `rollback` by tag (**test-harness-tag**). See `-DrollbackStrategy` option below for more information.
   * Finally, the actual DB snapshot is compared to the expected DB snapshot (provided in `src/main/resources/liquibase/harness/change/expectedSnapshot`)
 
 #### Types of input files
@@ -158,6 +161,7 @@ Execute `mvn test` with the (optional) flags outlined below:
 * `-Dprefix=docker` filters database from config file by some common platform identifier. E.g. all AWS based platforms, all Titan managed platforms, all from default docker file.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
 * `-DdbVersion` overrides the database version. Works in conjunction with `-DdbName` flag.
+* `-DrollbackStrategy` overrides the default rollback strategy of `rollbackToDate` where we create a timestamp in UTC timezone and then try to rollback to that point in time. But this rollback strategy might not work well in some cases like cloud databases for instance -- cloud databases are often in different timezones than the test-harness runners, so the `rollback` command can be used instead in conjunction with the `test-harness-tag` tag. To do so, use `-DrollbackStrategy=rollbackByTag`.
 
 To run the test suite itself, you can execute `mvn -Dtest=LiquibaseHarnessSuiteTest test`
 
