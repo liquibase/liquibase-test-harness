@@ -4,8 +4,12 @@ import groovy.json.JsonSlurper
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.skyscreamer.jsonassert.Customization
 import org.skyscreamer.jsonassert.JSONCompare
 import org.skyscreamer.jsonassert.JSONCompareMode
+import org.skyscreamer.jsonassert.RegularExpressionValueMatcher
+import org.skyscreamer.jsonassert.comparator.CustomComparator
+
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import java.sql.SQLException
@@ -70,7 +74,10 @@ class JSONUtils {
             for (int j = 0; j < jsonArrayToCompare.length(); j++) {
                 def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
                 def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
-                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.LENIENT)
+                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight,   new CustomComparator(
+                        JSONCompareMode.NON_EXTENSIBLE,
+                        new Customization("***", new RegularExpressionValueMatcher<>())
+                ))
                 compareMarker = result.passed()
                 if (result.passed()) {
                     break
