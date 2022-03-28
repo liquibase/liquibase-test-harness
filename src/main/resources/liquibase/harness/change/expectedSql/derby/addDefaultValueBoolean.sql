@@ -1,0 +1,2 @@
+ALTER TABLE APP.authors ADD booleanColumn BOOLEAN
+ALTER TABLE APP.authors ALTER COLUMN  booleanColumn WITH DEFAULT TRUE

@@ -1,5 +1,6 @@
 package liquibase.harness.change
 
+import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
@@ -27,7 +28,7 @@ class ChangeObjectTests extends Specification {
     }
 
     @Unroll
-    def "apply #testInput.changeObject against #testInput.databaseName #testInput.version"() {
+    def "apply #testInput.changeObject against testInput.databaseName #testInput.version"() {
         given: "read expected sql and snapshot files, create arguments map for executing command scope"
         String expectedSql = parseQuery(getSqlFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
                 "liquibase/harness/change/expectedSql"))
@@ -47,24 +48,25 @@ class ChangeObjectTests extends Specification {
 
         and: "fail test if snapshot is not provided"
         shouldRunChangeSet = expectedSnapshot != null
-        assert shouldRunChangeSet: "No expectedSnapshot for ${testInput.changeObject} against" +
-                " ${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
-                "${testInput.database.databaseMinorVersion}"
+        assert shouldRunChangeSet : "No expectedSnapshot for ${testInput.changeObject}!"
 
         and: "check database under test is online"
         shouldRunChangeSet = testInput.database.getConnection() instanceof JdbcConnection
-        assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
+        assert shouldRunChangeSet : "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
-            //TODO form nice error message to see expected and actual SQL in logs and remove 2 times in comparison for
-            // boolean flag and for assert
             shouldRunChangeSet = generatedSql == expectedSql
-            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
-                    " will test that new sql works correctly and will auto-generate a new version if it passes"
+            if (!shouldRunChangeSet) {
+                Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
+                        "match generated sql! Deleting expectedSql file will test that new sql works correctly and " +
+                        "will auto-generate a new version if it passes. \nEXPECTED SQL: \n" + expectedSql + " \n" +
+                        "GENERATED SQL: \n" + generatedSql)
+                assert false
+            }
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
             }
