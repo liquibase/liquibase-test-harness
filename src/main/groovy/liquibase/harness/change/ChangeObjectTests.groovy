@@ -17,9 +17,9 @@ import static ChangeObjectTestHelper.*
 
 class ChangeObjectTests extends Specification {
     @Shared
-    RollbackStrategy strategy;
+    RollbackStrategy strategy
     @Shared
-    List<DatabaseUnderTest> databases;
+    List<DatabaseUnderTest> databases
 
     def setupSpec() {
         databases = TestConfig.instance.getFilteredDatabasesUnderTest()
@@ -28,7 +28,7 @@ class ChangeObjectTests extends Specification {
     }
 
     @Unroll
-    def "apply #testInput.changeObject against testInput.databaseName #testInput.version"() {
+    def "apply #testInput.changeObject against #testInput.databaseName #testInput.version"() {
         given: "read expected sql and snapshot files, create arguments map for executing command scope"
         String expectedSql = parseQuery(getSqlFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
                 "liquibase/harness/change/expectedSql"))
