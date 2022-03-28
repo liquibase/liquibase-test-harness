@@ -1,0 +1,1 @@
+CREATE TABLE public.pr1908 (id_smallint SMALLSERIAL, id_int SERIAL, id_integer SERIAL, id_int8 BIGSERIAL, id_int64 INT64, id_bigint BIGSERIAL)
