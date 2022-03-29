@@ -62,7 +62,7 @@ class JSONUtils {
      * Compares exactly number and values of elements in JSON arrays. Ignores order of elements.
      * Works only on the 1st level of nesting. Compare mode NON_EXTENSIBLE.
      */
-    static boolean compareJSONArrays(JSONArray jsonArray, JSONArray jsonArrayToCompare) {
+    static boolean compareJSONArrays(JSONArray jsonArray, JSONArray jsonArrayToCompare, JSONCompareMode jsonCompareMode) {
         if (jsonArray.length() != jsonArrayToCompare.length()) {
             return false
         }
@@ -75,35 +75,9 @@ class JSONUtils {
                 def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
                 def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
                 def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight,   new CustomComparator(
-                        JSONCompareMode.NON_EXTENSIBLE,
+                        jsonCompareMode,
                         new Customization("***", new RegularExpressionValueMatcher<>())
                 ))
-                compareMarker = result.passed()
-                if (result.passed()) {
-                    break
-                }
-            }
-        }
-        return compareMarker
-    }
-
-    /**
-     * Compares values of elements in JSON arrays. Ignores order of elements.
-     * Works only on the 1st level of nesting. Compare mode LENIENT.
-     */
-    static boolean compareJSONArraysExtensible(JSONArray jsonArray, JSONArray jsonArrayToCompare) {
-        if (jsonArray.length() != jsonArrayToCompare.length()) {
-            return false
-        }
-        def compareMarker = true
-        for (int i = 0; i < jsonArray.length(); i++) {
-            if (!compareMarker) {
-                return false
-            }
-            for (int j = 0; j < jsonArrayToCompare.length(); j++) {
-                def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
-                def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
-                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, JSONCompareMode.LENIENT)
                 compareMarker = result.passed()
                 if (result.passed()) {
                     break
