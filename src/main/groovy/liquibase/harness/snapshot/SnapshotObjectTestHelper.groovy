@@ -74,14 +74,15 @@ class SnapshotObjectTestHelper {
                     newConnection.close()
                 }
             }
-        }
-        try {
-            database.execute([new RawSqlStatement(query)] as SqlStatement[], null)
-            database.commit()
-        } catch (Exception exception)  {
-            Scope.getCurrentScope().getUI().sendMessage("Failed to execute query! " + query + " " +
-                    exception.printStackTrace())
-            Assert.fail exception.message
+        } else {
+            try {
+                database.execute([new RawSqlStatement(query)] as SqlStatement[], null)
+                database.commit()
+            } catch (Exception exception)  {
+                Scope.getCurrentScope().getUI().sendMessage("Failed to execute query! " + query + " " +
+                        exception.printStackTrace())
+                Assert.fail exception.message
+            }
         }
     }
 
