@@ -59,7 +59,7 @@ class SnapshotObjectTestHelper {
         String query = FileUtils.getResourceContent(pathToSql)
         Database database = testInput.database.database
         Connection newConnection
-        if (database.connection.isClosed()) {
+        if (database.connection.isClosed() || testInput.database.name == "derby") {
             try {
                 newConnection = DriverManager.getConnection(testInput.database.url, testInput.database.username,
                         testInput.database.password)
