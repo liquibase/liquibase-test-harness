@@ -7,6 +7,7 @@ import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONObject
 import org.junit.Assert
+import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -73,7 +74,7 @@ class BaseLevelTest extends Specification {
             connection.commit()
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.change)
-            assert compareJSONArraysExtensible(generatedResultSetArray, expectedResultSetArray)
+            assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.LENIENT)
         } catch (Exception exception) {
             Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
