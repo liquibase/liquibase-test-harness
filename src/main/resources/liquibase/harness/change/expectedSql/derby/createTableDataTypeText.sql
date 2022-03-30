@@ -1,0 +1,1 @@
+CREATE TABLE APP.createTableDataTypeText (textCol CLOB)

@@ -1,4 +1,4 @@
 INVALID TEST
 
-Renaming views for Apache Derby is not supported by Liquibase community:
+Rename views for Apache Derby is not supported by Liquibase:
 https://docs.liquibase.com/change-types/rename-view.html

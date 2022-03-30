@@ -1,0 +1,2 @@
+ALTER TABLE APP.posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES APP.authors (id) ON UPDATE RESTRICT ON DELETE CASCADE
+ALTER TABLE APP.posts DROP CONSTRAINT fk_posts_authors_test
