@@ -73,7 +73,7 @@ jobs:
             let testBranchName = helper.getCurrentBranch();
             console.log("Running in liquibase-test-harness branch "+testBranchName);
 
-            core.setOutput("useLiquibaseSnapshot", testBranchName !== "develop");
+            core.setOutput("useLiquibaseSnapshot", testBranchName !== "main");
 
             let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
             let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}";
