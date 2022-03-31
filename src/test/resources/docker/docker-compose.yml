@@ -3,7 +3,6 @@ version: '3.3'
 services:
 
   mysql-5.6:
-    platform: linux/x86_64
     image: library/mysql:5.6
     ports:
       - "33064:3306"
@@ -17,7 +16,6 @@ services:
       - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
   mysql-5.7:
-    platform: linux/x86_64
     image: library/mysql:5.7
     ports:
       - "33062:3306"
@@ -31,7 +29,6 @@ services:
       - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
   mysql-8:
-    platform: linux/x86_64
     image: mysql:8.0.26
     ports:
       - "33061:3306"
