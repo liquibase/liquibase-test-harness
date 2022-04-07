@@ -1,7 +1,11 @@
 package liquibase.harness.diff
 
 import liquibase.database.jvm.JdbcConnection
+import liquibase.harness.config.DatabaseUnderTest
+import liquibase.harness.config.TestConfig
+import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONObject
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -14,6 +18,16 @@ import static liquibase.harness.util.FileUtils.*
  * Warning! This test might be destructive, meaning it may change the state of targetDatabase according to referenceDatabase
  */
 class DiffCommandTest extends Specification {
+    @Shared
+    RollbackStrategy strategy;
+    @Shared
+    List<DatabaseUnderTest> databases;
+
+    def setupSpec() {
+        databases = TestConfig.instance.getFilteredDatabasesUnderTest()
+        strategy = chooseRollbackStrategy()
+        strategy.prepareForRollback(databases)
+    }
 
     @Unroll
     def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version"() {
@@ -28,9 +42,9 @@ class DiffCommandTest extends Specification {
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
         argsMap.put("format", "json")
         JSONObject expectedDiff = getJsonFromResource(getExpectedDiffPath(testInput))
-        assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection : "Target database " +
+        assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection: "Target database " +
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"
-        assert testInput.referenceDatabase.database.getConnection() instanceof JdbcConnection : "Reference database " +
+        assert testInput.referenceDatabase.database.getConnection() instanceof JdbcConnection: "Reference database " +
                 "${testInput.referenceDatabase.name}${testInput.referenceDatabase.version} is offline!"
 
         when: "generate diff changelog, apply changes from generated changelog to target database"
@@ -45,11 +59,14 @@ class DiffCommandTest extends Specification {
          * or DropDefaultValueChange or others that are not supported by default rollback
          */
         cleanup: "try to rollback changes out from target database, delete generated changelog file"
-        argsMap.put("count", getChangeSetsCount(testInput.pathToChangelogFile))
-        tryToRollbackDiff(argsMap)
+        tryToRollbackDiff(strategy, argsMap)
         deleteFile(testInput.pathToChangelogFile)
 
         where:
         testInput << buildTestInput()
+    }
+
+    def cleanupSpec() {
+        strategy.cleanupDatabase(databases)
     }
 }

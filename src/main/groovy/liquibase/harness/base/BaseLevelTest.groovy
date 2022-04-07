@@ -2,19 +2,37 @@ package liquibase.harness.base
 
 import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
+import liquibase.harness.config.DatabaseUnderTest
+import liquibase.harness.config.TestConfig
+import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONObject
 import org.junit.Assert
+import org.skyscreamer.jsonassert.JSONCompareMode
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
+
 import java.sql.SQLException
 
+import static BaseLevelTestHelper.buildTestInput
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.TestUtils.*
-import static BaseLevelTestHelper.buildTestInput
 
+@Unroll
 class BaseLevelTest extends Specification {
+    @Shared
+    RollbackStrategy strategy;
+    @Shared
+    List<DatabaseUnderTest> databases;
 
-    def "run base level test"() {
+    def setupSpec() {
+        databases = TestConfig.instance.getFilteredDatabasesUnderTest()
+        strategy = chooseRollbackStrategy()
+        strategy.prepareForRollback(databases)
+    }
+
+    def "run base level test #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
         String checkingSql = getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/checkingSql")
@@ -26,7 +44,7 @@ class BaseLevelTest extends Specification {
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("count", getChangeSetsCountSql(testInput.pathToChangeLogFile))
+
         boolean shouldRunChangeSet
 
         and: "fail test if checkingSql is not provided"
@@ -56,7 +74,7 @@ class BaseLevelTest extends Specification {
             connection.commit()
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.change)
-            assert compareJSONArraysExtensible(generatedResultSetArray, expectedResultSetArray)
+            assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.LENIENT)
         } catch (Exception exception) {
             Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
@@ -76,7 +94,7 @@ class BaseLevelTest extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollbackCount", argsMap)
+            strategy.performRollback(argsMap)
         }
 
         and: "check for actual absence of the object removed after 'rollback' command execution"
@@ -100,5 +118,9 @@ class BaseLevelTest extends Specification {
 
         where: "test input in next data table"
         testInput << buildTestInput()
+    }
+
+    def cleanupSpec() {
+        strategy.cleanupDatabase(databases)
     }
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
+    <!-- Attribute "usePreparedStatements" is set to false because otherwise we can't validate generated query.
+    Reason: Liquibase core class BatchDmlExecutablePreparedStatementGenerator.java doesn't have implementation -->
+
+    <changeSet id="PR-2387" author="liquibase" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="tbl_pr2387">
+            <column name="id" type="int"/>
+            <column name="date_col" type="date"/>
+            <column name="datetime_col" type="datetime"/>
+            <column name="time_col" type="time"/>
+        </createTable>
+        <loadData tableName="tbl_pr2387"
+                  file="loadData.datatypes.datetime.csv"
+                  usePreparedStatements="false"
+                  relativeToChangelogFile="true">
+            <column name="id" type="NUMERIC"/>
+            <column name="date_col" type="DATE"/>
+            <column name="datetime_col" type="DATETIME"/>
+            <column name="time_col" type="TIME"/>
+        </loadData>
+        <rollback>
+            <dropTable tableName="tbl_pr2387"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

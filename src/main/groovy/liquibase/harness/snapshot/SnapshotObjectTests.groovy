@@ -9,7 +9,7 @@ import static SnapshotObjectTestHelper.buildTestInput
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
 import static liquibase.harness.util.FileUtils.getResourceContent
 import static liquibase.harness.util.TestUtils.executeCommandScope
-import static liquibase.harness.util.DatabaseConnectionUtil.executeQuery
+import static liquibase.harness.snapshot.SnapshotObjectTestHelper.executeQuery
 
 class SnapshotObjectTests extends Specification {
 
@@ -29,14 +29,14 @@ class SnapshotObjectTests extends Specification {
                 "${testInput.database.name}${testInput.database.version}"
 
         when: "execute inputSql, generate snapshot"
-        executeQuery(testInput.pathToInputSql, testInput.database.database)
+        executeQuery(testInput.pathToInputSql, testInput)
         def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
 
         then: "compare generated to expected snapshot"
         snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
 
         cleanup: "execute cleanupSql"
-        executeQuery(testInput.pathToCleanupSql, testInput.database.database)
+        executeQuery(testInput.pathToCleanupSql, testInput)
 
         where:
         testInput << buildTestInput()
