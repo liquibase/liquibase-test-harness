@@ -1,15 +1,14 @@
 package liquibase.harness.diff
 
 import groovy.transform.builder.Builder
-import liquibase.exception.LiquibaseException
+import liquibase.Scope
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.harness.util.TestUtils
+import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONArray
 import org.json.JSONObject
 import org.yaml.snakeyaml.Yaml
-import java.util.logging.Logger
 import java.util.stream.Collectors
 
 import static liquibase.util.StringUtil.isNotEmpty
@@ -118,14 +117,12 @@ class DiffCommandTestHelper {
         }
         return diffToCompare
     }
-
-    static void tryToRollbackDiff(Map argsMap) {
+    static void tryToRollbackDiff(RollbackStrategy strategy, Map argsMap) {
         try {
-            TestUtils.executeCommandScope("rollbackCount", argsMap)
-        } catch (LiquibaseException exception) {
-            Logger.getLogger(this.class.name).warning("Failed to rollback changes from generated diff changelog! " +
-                    "State of the target database will remain changed! \n" + exception.message + "\n" +
-                    exception.printStackTrace())
+            strategy.performRollback(argsMap)
+        } catch (Error error) {
+            Scope.getCurrentScope().getUI().sendErrorMessage("*** Failed to rollback changes from generated diff changelog! " +
+                    "State of the target database will remain changed! \n" + error.message)
         }
     }
 

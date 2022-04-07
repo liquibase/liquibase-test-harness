@@ -1,0 +1,2 @@
+ALTER TABLE APP.posts ADD CONSTRAINT fk_posts_authors_test_1 FOREIGN KEY (author_id) REFERENCES APP.authors (id)
+ALTER TABLE APP.posts ADD CONSTRAINT fk_posts_authors_test_2 FOREIGN KEY (id) REFERENCES APP.authors (id)

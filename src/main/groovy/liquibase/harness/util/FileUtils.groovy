@@ -71,7 +71,7 @@ class FileUtils {
     }
 
     static String getResourceContent(String resourceName) {
-        InputStream inputStream = this.class.getResourceAsStream(resourceName)
+        InputStream inputStream = FileUtils.class.getResourceAsStream(resourceName)
         assert inputStream : "Can't find resource file " + resourceName + "!"
         return new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)).lines()
                 .collect(Collectors.joining("\n"))

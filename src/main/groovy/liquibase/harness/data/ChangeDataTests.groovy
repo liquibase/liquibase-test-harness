@@ -2,12 +2,20 @@ package liquibase.harness.data
 
 import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
+import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.rollback.RollbackStrategy
+import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert
 import org.junit.Assume
+import org.skyscreamer.jsonassert.JSONCompareMode
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.ResultSet
 
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
@@ -15,6 +23,16 @@ import static liquibase.harness.util.TestUtils.*
 import static ChangeDataTestHelper.*
 
 class ChangeDataTests extends Specification {
+    @Shared
+    RollbackStrategy strategy
+    @Shared
+    List<DatabaseUnderTest> databases
+
+    def setupSpec() {
+        databases = TestConfig.instance.getFilteredDatabasesUnderTest()
+        strategy = chooseRollbackStrategy()
+        strategy.prepareForRollback(databases)
+    }
 
     @Unroll
     def "apply #testInput.changeData against #testInput.databaseName #testInput.version"() {
@@ -31,7 +49,6 @@ class ChangeDataTests extends Specification {
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
-        argsMap.put("count", getChangeSetsCount(testInput.pathToChangeLogFile))
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
@@ -39,15 +56,11 @@ class ChangeDataTests extends Specification {
 
         and: "fail test if expectedResultSet is not provided"
         shouldRunChangeSet = expectedResultSet != null
-        assert shouldRunChangeSet: "No expectedResultSet for ${testInput.changeData} against " +
-                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
-                "${testInput.database.databaseMinorVersion}"
+        assert shouldRunChangeSet: "No expectedResultSet for ${testInput.changeData}!"
 
         and: "fail test if checkingSql is not provided"
         shouldRunChangeSet = checkingSql != null
-        assert shouldRunChangeSet: "No checkingSql for ${testInput.changeData} against " +
-                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
-                "${testInput.database.databaseMinorVersion}"
+        assert shouldRunChangeSet: "No checkingSql for ${testInput.changeData}!"
 
         and: "check database under test is online"
         def connection = testInput.database.getConnection()
@@ -59,11 +72,14 @@ class ChangeDataTests extends Specification {
 
         then: "verify expected sql matches generated sql"
         if (expectedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql")) {
-            //TODO form nice error message to see expected and actual SQL in logs and remove 2 times in comparison for
-            // boolean flag and for assert
             shouldRunChangeSet = generatedSql == expectedSql
-            assert generatedSql == expectedSql: "Expected sql doesn't match generated sql. Deleting expectedSql file" +
-                    " will test that new sql works correctly and will auto-generate a new version if it passes"
+            if (!shouldRunChangeSet) {
+                Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
+                        "match generated sql! Deleting expectedSql file will test that new sql works correctly and " +
+                        "will auto-generate a new version if it passes. \nEXPECTED SQL: \n" + expectedSql + " \n" +
+                        "GENERATED SQL: \n" + generatedSql)
+                assert false
+            }
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test
             }
@@ -73,17 +89,30 @@ class ChangeDataTests extends Specification {
         executeCommandScope("update", argsMap)
 
         then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet"
-
+        Connection newConnection
+        ResultSet resultSet
+        JSONArray generatedResultSetArray
         try {
-            def resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkingSql)
-            def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-            connection.commit()
+            if (connection.isClosed()) {
+                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                resultSet = newConnection.createStatement().executeQuery(checkingSql)
+                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+                newConnection.commit()
+            } else {
+                resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkingSql)
+                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+                connection.commit()
+            }
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
-            assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray)
+            assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.NON_EXTENSIBLE)
         } catch (Exception exception) {
             Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
+        } finally {
+            if (newConnection != null) {
+                newConnection.close()
+            }
         }
 
         and: "if expected sql is not provided save generated sql as expected sql"
@@ -93,10 +122,14 @@ class ChangeDataTests extends Specification {
 
         cleanup: "rollback changes"
         if (shouldRunChangeSet) {
-            executeCommandScope("rollbackCount", argsMap)
+            strategy.performRollback(argsMap)
         }
 
         where: "test input in next data table"
         testInput << buildTestInput()
+    }
+
+    def cleanupSpec() {
+        strategy.cleanupDatabase(databases)
     }
 }

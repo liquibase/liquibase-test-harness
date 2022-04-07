@@ -48,7 +48,7 @@
             <column name="time6" type="time (6)"/>
             <column name="time6wtz" type="time (6) with time zone"/>
 
-
+<!-- Liquibase GitHub Issue https://github.com/liquibase/liquibase/issues/1886
             <column name="interval_year" type="interval YEAR" />
             <column name="interval_month" type="interval MONTH" />
             <column name="interval_day" type="interval DAY" />
@@ -112,7 +112,7 @@
             <column name="interval_h2m6" type="interval HOUR TO MINUTE(6)" />
             <column name="interval_h2s6" type="interval HOUR TO SECOND(6)" />
             <column name="interval_m2s6" type="interval MINUTE TO SECOND(6)" />
-
+-->
         </createTable>
     </changeSet>
 </databaseChangeLog>
