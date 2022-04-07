@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="as">
+        <createSequence sequenceName="test_sequence"
+                        incrementBy="1"
+                        minValue="1"
+                        startValue="1"/>
+        <addColumn tableName="authors">
+            <column name="sequence_referenced_column" type="number"/>
+        </addColumn>
+        <addDefaultValue tableName="authors"
+                         columnName="sequence_referenced_column"
+                         columnDataType="number"
+                         defaultValueSequenceNext="test_sequence"/>
+        <rollback>
+            <dropColumn tableName="authors"
+                        columnName="sequence_referenced_column"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

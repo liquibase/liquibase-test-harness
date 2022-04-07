@@ -71,7 +71,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>[4.3.0,)</version>
+            <version>0-SNAPSHOT</version>
         </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.codehaus.groovy</groupId>
@@ -109,6 +109,13 @@
             <artifactId>postgresql</artifactId>
             <version>42.3.3</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.edb</groupId>
+            <artifactId>edb-jdbc18</artifactId>
+            <version>42.3.2.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/drivers/edb/edb-jdbc18.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
