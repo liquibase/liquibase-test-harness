@@ -4,6 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <!--For EDB dropping column with defaultValueSequenceNext attribute also drops sequence itself.
+    Without specifying rollback, after dropping column liquibase will try to drop sequence,
+    that already does not exist.-->
     <changeSet id="1" author="as">
         <createSequence sequenceName="test_sequence"
                         incrementBy="1"
