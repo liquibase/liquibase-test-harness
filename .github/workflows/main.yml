@@ -80,8 +80,9 @@ jobs:
             let repoOwnerName = liquibaseRepo.split("/")[0]
             let repoName = liquibaseRepo.split("/")[1]
 
+            let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}";
+            
             if (!liquibaseSha) {
-              let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}";
               if (!liquibaseBranchName) {
                 liquibaseBranchName = testBranchName;
               }
@@ -93,7 +94,13 @@ jobs:
               console.log("Using liquibaseSha "+liquibaseSha+" from "+liquibaseBranch.name);
               core.setOutput("liquibaseBranch", liquibaseBranch.name);                   
             }
+            
+            if (!liquibaseBranch) {
+                //todo: figure out branch from sha?
+                liquibaseBranch = "UNKNOWN";
+            }
 
+            core.setOutput("liquibaseBranch", liquibaseBranch);
             core.setOutput("liquibaseSha", liquibaseSha);
             core.setOutput("liquibaseOwner", repoOwnerName);
             core.setOutput("liquibaseRepo", repoName);
