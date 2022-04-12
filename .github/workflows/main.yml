@@ -66,13 +66,23 @@ jobs:
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
 
-            let useLiquibaseSnapshot = testBranchName !== "main"
-            if ("${{ github.event.pull_request.base.ref }}" !== "") {
-              useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
+              let liquibaseBranch = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
+              liquibaseSha = liquibaseBranch.sha;
+
+              liquibaseBranchName = liquibaseBranch.name;
+              console.log("Using liquibaseSha "+liquibaseSha+" from "+liquibaseBranch.name);
             }
             
-            console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
-            core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
+            if (!liquibaseBranchName) {
+                //todo: figure out branch from sha?
+                liquibaseBranchName = "UNKNOWN";
+            }
+
+            console.log("Using liquibaseBranchName: "+liquibaseBranchName);
+            core.setOutput("liquibaseBranch", liquibaseBranchName);
+            core.setOutput("liquibaseSha", liquibaseSha);
+            core.setOutput("liquibaseOwner", repoOwnerName);
+            core.setOutput("liquibaseRepo", repoName);
 
             core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
 
