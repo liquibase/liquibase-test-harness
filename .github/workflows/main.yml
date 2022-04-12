@@ -100,6 +100,7 @@ jobs:
                 liquibaseBranch = "UNKNOWN";
             }
 
+            console.log("Using liquibaseBranch: "+liquibaseBranch);
             core.setOutput("liquibaseBranch", liquibaseBranch);
             core.setOutput("liquibaseSha", liquibaseSha);
             core.setOutput("liquibaseOwner", repoOwnerName);
