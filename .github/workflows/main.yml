@@ -91,17 +91,17 @@ jobs:
               let liquibaseBranch = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
               liquibaseSha = liquibaseBranch.sha;
 
+              liquibaseBranchName = liquibaseBranch.name;
               console.log("Using liquibaseSha "+liquibaseSha+" from "+liquibaseBranch.name);
-              core.setOutput("liquibaseBranch", liquibaseBranch.name);                   
             }
             
-            if (!liquibaseBranch) {
+            if (!liquibaseBranchName) {
                 //todo: figure out branch from sha?
-                liquibaseBranch = "UNKNOWN";
+                liquibaseBranchName = "UNKNOWN";
             }
 
-            console.log("Using liquibaseBranch: "+liquibaseBranch);
-            core.setOutput("liquibaseBranch", liquibaseBranch);
+            console.log("Using liquibaseBranchName: "+liquibaseBranchName);
+            core.setOutput("liquibaseBranch", liquibaseBranchName);
             core.setOutput("liquibaseSha", liquibaseSha);
             core.setOutput("liquibaseOwner", repoOwnerName);
             core.setOutput("liquibaseRepo", repoName);
