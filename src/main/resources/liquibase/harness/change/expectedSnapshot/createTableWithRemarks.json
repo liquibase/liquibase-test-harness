@@ -4,19 +4,23 @@
       "liquibase.structure.core.Table": [
         {
           "table": {
-            "name": "test_table"
+            "name": "test_table",
+            "remarks": "Table remarks"
           }
         }
       ],
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "test_id"
+            "name": "test_id",
+            "autoIncrementInformation": { },
+            "remarks": "Auto Increment Column"
           }
         },
         {
           "column": {
-            "name": "test_column"
+            "name": "test_column",
+            "remarks": "Normal Column"
           }
         }
       ]
