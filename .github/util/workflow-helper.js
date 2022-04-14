@@ -103,7 +103,6 @@ module.exports = ({github, context}) => {
                     }
 
                     let pageNumber = 1;
-                    const maxPagesToCheck = 10;
                     let matchingBuildFound = false;
                     while(!matchingBuildFound) {
                         try { //add build info
@@ -156,7 +155,6 @@ module.exports = ({github, context}) => {
                                         returnData.lastSuccessfulRunConclusion = run.conclusion;
                                         returnData.lastSuccessfulRunHtmlUrl = run.html_url;
                                         returnData.lastSuccessfulRunRerunUrl = run.rerun_url;
-                                        returnData.lastSuccessfulWorkflowId = run.id;
 
                                         matchingBuildFound = true;
                                         break;
@@ -175,11 +173,7 @@ module.exports = ({github, context}) => {
                                 console.log(`Cannot get build info for ${branchName}`);
                             } else {
                                 throw error;
-        }
-    }
-                        if (pageNumber >= maxPagesToCheck) {
-                            console.log("Hit page limit maximum of", maxPagesToCheck);
-                            matchingBuildFound = true;
+                            }
                         }
                         pageNumber++;
                     }
