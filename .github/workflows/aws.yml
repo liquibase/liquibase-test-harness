@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-18.04
     defaults:
       run:
-        working-directory: src/test/resources/terraform
+        working-directory: src/test/resources/aws
     steps:
       - uses: actions/checkout@v2
 
@@ -106,11 +106,11 @@ jobs:
           terraform_wrapper: false
           
       - name: Terraform Init
-        working-directory: src/test/resources/terraform
+        working-directory: src/test/resources/aws
         run: terraform init
 
       - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
-        working-directory: src/test/resources/terraform
+        working-directory: src/test/resources/aws
         run: |
           echo "DBENDPOINT=$(terraform output -json ${{ matrix.database }}Endpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
 
@@ -118,7 +118,7 @@ jobs:
         if: ${{ matrix.database == 'oracle' }}
         with:
           operation: "update"
-          classpath: "src/test/resources/terraform/changelogs"
+          classpath: "src/test/resources/aws/changelogs"
           changeLogFile: "oracle.sql"
           username: "lbuser"
           password: "LbRootPass1"
@@ -128,7 +128,7 @@ jobs:
         if: ${{ matrix.database == 'postgresql' }}
         with:
           operation: "update"
-          classpath: "src/test/resources/terraform/changelogs"
+          classpath: "src/test/resources/aws/changelogs"
           changeLogFile: "postgres.sql"
           username: "lbuser"
           password: "LbRootPass1"
@@ -164,7 +164,7 @@ jobs:
     needs: [setup,test]
     defaults:
       run:
-        working-directory: src/test/resources/terraform
+        working-directory: src/test/resources/aws
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v2
