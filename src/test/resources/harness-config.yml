@@ -254,49 +254,49 @@ databasesUnderTest:
   - name: edb-edb
     prefix: docker
     version: 9.5
-    url: jdbc:edb://localhost:5501/lbcat
+    url: jdbc:edb://localhost:5508/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: edb-edb
     prefix: docker
     version: 9.6
-    url: jdbc:edb://localhost:5502/lbcat
+    url: jdbc:edb://localhost:5509/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: edb-edb
     prefix: docker
     version: 10
-    url: jdbc:edb://localhost:5503/lbcat
+    url: jdbc:edb://localhost:5510/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: edb-edb
     prefix: docker
     version: 11
-    url: jdbc:edb://localhost:5504/lbcat
+    url: jdbc:edb://localhost:5511/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: edb-edb
     prefix: docker
     version: 12
-    url: jdbc:edb://localhost:5505/lbcat
+    url: jdbc:edb://localhost:5512/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: edb-edb
     prefix: docker
     version: 13
-    url: jdbc:edb://localhost:5506/lbcat
+    url: jdbc:edb://localhost:5513/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: edb-edb
     prefix: docker
     version: 14
-    url: jdbc:edb://localhost:5507/lbcat
+    url: jdbc:edb://localhost:5514/lbcat
     username: lbuser
     password: LiquibasePass1
 

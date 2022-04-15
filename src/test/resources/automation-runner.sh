@@ -85,25 +85,46 @@ case $db in
   "crdb-21.2" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=cockroachdb -DdbVersion=21.2 test
     ;;
-  "edb-9.5" )
+  "edb-postgres-9.5" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=9.5 test
     ;;
-  "edb-9.6" )
+  "edb-postgres-9.6" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=9.6 test
     ;;
-  "edb-10" )
+  "edb-postgres-10" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=10 test
     ;;
-  "edb-11" )
+  "edb-postgres-11" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=11 test
     ;;
-  "edb-12" )
+  "edb-postgres-12" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=12 test
     ;;
-  "edb-13" )
+  "edb-postgres-13" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=13 test
     ;;
-  "edb-14" )
+  "edb-postgres-14" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=14 test
+    ;;
+  "edb-edb-9.5" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=9.5 test
+    ;;
+  "edb-edb-9.6" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=9.6 test
+    ;;
+  "edb-edb-10" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=10 test
+    ;;
+  "edb-edb-11" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=11 test
+    ;;
+  "edb-edb-12" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=12 test
+    ;;
+  "edb-edb-13" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=13 test
+    ;;
+  "edb-edb-14" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=edb -DdbVersion=14 test
     ;;
   "derby" )
