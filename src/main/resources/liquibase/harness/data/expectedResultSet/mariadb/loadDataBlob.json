@@ -1,0 +1,29 @@
+{
+  "loadDataBlob": [
+    {
+      "sys_pk": 1,
+      "sys_id": "\\[B@.*",
+      "email": "user01@example.com"
+    },
+    {
+      "sys_pk": 2,
+      "sys_id": "\\[B@.*",
+      "email": "BRazo@example.com"
+    },
+    {
+      "sys_pk": 3,
+      "sys_id": "\\[B@.*",
+      "email": "FBronson@example.com"
+    },
+    {
+      "sys_pk": 4,
+      "sys_id": "\\[B@.*",
+      "email": "RQuirk@example.com"
+    },
+    {
+      "sys_pk": 5,
+      "sys_id": "\\[B@.*",
+      "email": "WTownes@example.com"
+    }
+  ]
+}
