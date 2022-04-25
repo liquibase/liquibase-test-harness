@@ -189,14 +189,14 @@ databasesUnderTest:
   - name: mssql
     prefix: docker
     version: 2017
-    url: jdbc:sqlserver://localhost:1433;databaseName=lbcat
+    url: jdbc:sqlserver://localhost:1433;trustServerCertificate=true;databaseName=lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: mssql
     prefix: docker
     version: 2019
-    url: jdbc:sqlserver://localhost:1434;databaseName=lbcat
+    url: jdbc:sqlserver://localhost:1434;trustServerCertificate=true;databaseName=lbcat
     username: lbuser
     password: LiquibasePass1
 
