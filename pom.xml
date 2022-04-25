@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.3.3</version>
+            <version>42.3.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -127,29 +127,29 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>2.7.0</version>
+            <version>3.0.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc8</artifactId>
-            <version>18.15.0.0</version>
+            <version>21.5.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>8.4.1.jre8</version>
+            <version>10.2.0.jre8</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.1.210</version>
+            <version>2.1.212</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.34.0</version>
+            <version>3.36.0.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -168,25 +168,12 @@
             <version>10.14.2.0</version>
         </dependency>
         <dependency>
-            <!-- for java 11 -->
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>2.6.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- for java 8 -->
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.5.2</version>
+            <version>2.6.1</version>
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.firebirdsql.jdbc</groupId>
-            <artifactId>jaybird</artifactId>
-            <version>4.0.5.java11</version>
-        </dependency>
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
             <artifactId>jaybird</artifactId>
@@ -196,7 +183,7 @@
         <dependency>
             <groupId>com.ibm.db2</groupId>
             <artifactId>jcc</artifactId>
-            <version>11.5.6.0</version>
+            <version>11.5.7.0</version>
         </dependency>
         <dependency>
             <groupId>com.ibm.db2</groupId>
