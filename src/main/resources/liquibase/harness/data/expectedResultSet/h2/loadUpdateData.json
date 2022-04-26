@@ -1,6 +1,14 @@
 {
   "loadUpdateData" : [
     {
+      "ADDED": "2000-02-04 02:32:00.0",
+      "ID": 1,
+      "BIRTHDATE": "1000-02-22",
+      "LAST_NAME": "Gods",
+      "EMAIL": "test1@example.com",
+      "FIRST_NAME": "Adam"
+    },
+    {
       "ADDED": "2014-03-21 02:52:00.0",
       "ID": 2,
       "BIRTHDATE": "2016-03-27",
@@ -31,14 +39,6 @@
       "LAST_NAME": "Walter",
       "EMAIL": "lillian66@example.com",
       "FIRST_NAME": "Jayden"
-    },
-    {
-      "ADDED": "2000-02-04 02:32:00.0",
-      "ID": 1,
-      "BIRTHDATE": "1000-02-22",
-      "LAST_NAME": "Gods",
-      "EMAIL": "test1@example.com",
-      "FIRST_NAME": "Adam"
     },
     {
       "ADDED": "1994-12-10 01:00:00.0",
