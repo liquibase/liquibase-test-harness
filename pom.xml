@@ -112,6 +112,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.edb</groupId>
+            <artifactId>edb-jdbc18</artifactId>
+            <version>42.3.2.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/drivers/edb/edb-jdbc18.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.21</version>

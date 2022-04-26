@@ -13,7 +13,7 @@ case $db in
     ;;
 
   # edb setup requires login to private registry
-  "edb-9.5"|"edb-9.6"|"edb-10"|"edb-11"|"edb-12"|"edb-13"|"edb-14")
+  "edb-postgres-9.5"|"edb-postgres-9.6"|"edb-postgres-10"|"edb-postgres-11"|"edb-postgres-12"|"edb-postgres-13"|"edb-postgres-14"|"edb-edb-9.5"|"edb-edb-9.6"|"edb-edb-10"|"edb-edb-11"|"edb-edb-12"|"edb-edb-13"|"edb-edb-14")
     docker login $ARTIFACTORY_URL -u $ARTIFACTORY_USER -p $ARTIFACTORY_TOKEN
     docker-compose -f docker-compose.edb.yml up -d $db
     exit 0
