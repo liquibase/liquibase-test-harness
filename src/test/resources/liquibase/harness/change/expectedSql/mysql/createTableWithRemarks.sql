@@ -1,0 +1,1 @@
+CREATE TABLE lbcat.test_table (test_id INT AUTO_INCREMENT NOT NULL COMMENT 'Auto Increment Column', test_column VARCHAR(50) NOT NULL COMMENT 'Normal Column', CONSTRAINT PK_TEST_TABLE PRIMARY KEY (test_id)) COMMENT='Table remarks'
