@@ -312,6 +312,7 @@ services:
       - "8082:8080"
     networks:
       - roachnet
+
   crdb-21.2-init:
     image: cockroachdb/cockroach:v21.2.7
     networks:
@@ -334,6 +335,7 @@ services:
       - "8083:8080"
     networks:
       - roachnet
+
   crdb-22.1-init:
     image: cockroachdb/cockroach-unstable:v22.1.0-alpha.4
     networks:
@@ -341,7 +343,7 @@ services:
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-21.2
+    command: /setup_db.sh crdb-22.1
     depends_on:
       - crdb-22.1
 
