@@ -325,7 +325,7 @@ services:
       - crdb-21.2
 
   crdb-22.1:
-    image: cockroachdb/cockroach-unstable:v22.1.0-alpha.4
+    image: cockroachdb/cockroach-unstable:v22.1.0-beta.4
     command: start-single-node --insecure
     expose:
       - "8080"
@@ -337,7 +337,7 @@ services:
       - roachnet
 
   crdb-22.1-init:
-    image: cockroachdb/cockroach-unstable:v22.1.0-alpha.4
+    image: cockroachdb/cockroach-unstable:v22.1.0-beta.4
     networks:
       - roachnet
     volumes:
