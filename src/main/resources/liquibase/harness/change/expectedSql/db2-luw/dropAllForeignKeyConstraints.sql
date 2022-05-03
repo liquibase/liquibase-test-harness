@@ -1,0 +1,2 @@
+ALTER TABLE "DB2INST1".posts ADD CONSTRAINT fk_posts_authors_test_1 FOREIGN KEY (author_id) REFERENCES "DB2INST1".authors (id)
+ALTER TABLE "DB2INST1".posts ADD CONSTRAINT fk_posts_authors_test_2 FOREIGN KEY (id) REFERENCES "DB2INST1".authors (id)

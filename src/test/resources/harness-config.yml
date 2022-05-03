@@ -265,6 +265,13 @@ databasesUnderTest:
     version: 10.14.2.0
     url: jdbc:derby:./src/test/resources/derby/lbcat
 
+  - name: db2-luw
+    prefix: docker
+    version: 11.5.7
+    url: jdbc:db2://localhost:50000/TSKDB
+    username: db2inst1
+    password: db2inst1-pwd
+
   # change ports if you want to run 2 versions of these platforms simultaneously
   - name: hsqldb
     version: 2.4

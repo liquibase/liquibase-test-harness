@@ -1,0 +1,1 @@
+COMMENT ON TABLE "DB2INST1".authors IS 'A Test Remark'
