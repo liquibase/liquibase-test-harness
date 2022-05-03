@@ -5,7 +5,7 @@
         {
           "column": {
             "defaultValue": "CURRENT_TIMESTAMP\\!\\{liquibase.statement.DatabaseFunction\\}",
-            "name": "inserted_date",
+            "name": "dateColumn",
             "nullable": true
           }
         }
