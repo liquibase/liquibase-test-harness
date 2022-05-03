@@ -257,6 +257,13 @@ services:
       - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
     entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
 
+  db2-luw:
+    image: taskana/db2:11.5
+    environment:
+      LICENSE: 'accept'
+    ports:
+      - "50000:50000"
+
   crdb-20.2:
     image: cockroachdb/cockroach:v20.2.19
     command: start-single-node --insecure

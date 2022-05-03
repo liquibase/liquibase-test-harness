@@ -1,0 +1,1 @@
+ALTER TABLE "DB2INST1".authors RENAME COLUMN first_name TO first_name_renameColumn_test
