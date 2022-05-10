@@ -91,7 +91,7 @@ jobs:
             core.setOutput("liquibaseOwner", repoOwnerName);
             core.setOutput("liquibaseRepo", repoName);
 
-            core.setOutput("forkRepo", "${{ github.event.inputs.forkRepo || 'liquibase' }}";);
+            core.setOutput("forkRepo", "${{ github.event.inputs.forkRepo || 'liquibase' }}");
 
             console.log("Mark tests as pending");
             await github.rest.repos.createCommitStatus({
