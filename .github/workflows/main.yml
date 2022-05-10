@@ -28,6 +28,9 @@ on:
         description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibases/liquibase-pro
         required: true
         default: "liquibase/liquibase"
+      forkRepo:
+        description: Repo the corresponding Liquibase PR's fork came from
+        required: false
 
 jobs:
   check_build_safety:
@@ -45,9 +48,15 @@ jobs:
     needs: check_build_safety
     runs-on: ubuntu-latest
     outputs:
-      useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
-      liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
-      liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
+      useLiquibaseSnapshot: ${{ steps.find-branches.outputs.useLiquibaseSnapshot }}
+      liquibaseSha: ${{ steps.find-branches.outputs.liquibaseSha }}
+      liquibaseBranch: ${{ steps.find-branches.outputs.liquibaseBranch }}
+      liquibaseOwner: ${{ steps.find-branches.outputs.liquibaseOwner }}
+      liquibaseRepo: ${{ steps.find-branches.outputs.liquibaseRepo }}
+      forkRepo: ${{ steps.find-branches.outputs.forkRepo }}
+      thisBranchName: ${{ steps.find-branches.outputs.thisBranchName }}
+      databases: ${{ github.event.inputs.databases || '["mariadb:10.5","mssql:2017","mysql:8.0","oracle:12.2","oracleproxy:12.2","postgres:12"]' }}
+      testClasses: ${{ github.event.inputs.testClasses }}
     steps:
       - uses: actions/checkout@v3
 
@@ -71,6 +80,35 @@ jobs:
             
             core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseBranch }}" || "liquibase/liquibase");
             
+            if (!liquibaseBranchName) {
+                //todo: figure out branch from sha?
+                liquibaseBranchName = "UNKNOWN";
+            }
+
+            console.log("Using liquibaseBranchName: "+liquibaseBranchName);
+            core.setOutput("liquibaseBranch", liquibaseBranchName);
+            core.setOutput("liquibaseSha", liquibaseSha);
+            core.setOutput("liquibaseOwner", repoOwnerName);
+            core.setOutput("liquibaseRepo", repoName);
+
+            core.setOutput("forkRepo", "${{ github.event.inputs.forkRepo || 'liquibase' }}";);
+
+            console.log("Mark tests as pending");
+            await github.rest.repos.createCommitStatus({
+              "owner": repoOwnerName,
+              "repo": repoName,
+              "sha": liquibaseSha,
+              "state": "pending",
+              "context": "Run Test Harness",
+              "description": "Internal functional tests",
+              "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
+            });
+
+
+      - name: Report Details
+        uses: actions/github-script@v5
+        with:
+          script: |
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
                 runDescription = "None given";
@@ -207,7 +245,7 @@ jobs:
         run: |
           mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
           mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branch=${{ needs.setup.outputs.liquibaseOwner }}:${{ needs.setup.outputs.liquibaseBranch }}" \
+            "-Dliquibase.sdk.branch=${{ needs.setup.outputs.forkRepo }}:${{ needs.setup.outputs.liquibaseBranch }}" \
             "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo || 'liquibase/liquibase' }}"
 
 
