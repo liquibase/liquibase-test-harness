@@ -64,7 +64,7 @@ jobs:
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
 
             core.setOutput("useLiquibaseSnapshot", testBranchName !== "main");
-            core.setOutput("liquibaseBranch", context.payload.inputs.liquibaseBranch || testBranchName);
+            core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName);
             
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
