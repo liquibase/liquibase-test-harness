@@ -104,10 +104,10 @@ jobs:
           
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}"
-            -Dliquibase.sdk.status.context="Run Test Harness" 
-            -Dliquibase.sdk.status.state=PENDING 
-            -Dliquibase.sdk.status.url="https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" 
-            -Dliquibase.sdk.status.description="Internal functional tests"
+            "-Dliquibase.sdk.status.context=Run Test Harness" 
+            "-Dliquibase.sdk.status.state=PENDING" 
+            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" 
+            "-Dliquibase.sdk.status.description=Internal functional tests"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v3
@@ -239,10 +239,10 @@ jobs:
         run: |
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}"
-            -Dliquibase.sdk.status.context="Run Test Harness" 
-            -Dliquibase.sdk.status.state=${{ needs.test.result }} 
-            -Dliquibase.sdk.status.url="https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" 
-            -Dliquibase.sdk.status.description="Internal functional tests"
+            "-Dliquibase.sdk.status.context=Run Test Harness" 
+            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" 
+            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" 
+            "-Dliquibase.sdk.status.description=Internal functional tests"
             
           
           mvn -B liquibase-sdk:set-commit-status "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" -Dliquibase.sdk.status.context="Run Test Harness" -Dliquibase.sdk.status.state=${{ needs.test.result }} -Dliquibase.sdk.status.url="https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" -Dliquibase.sdk.status.description="Test Harness tests complete"
