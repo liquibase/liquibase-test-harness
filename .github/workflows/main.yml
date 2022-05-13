@@ -227,6 +227,8 @@ jobs:
 
       - name: Update status
         if: needs.setup.outputs.useLiquibaseSnapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
