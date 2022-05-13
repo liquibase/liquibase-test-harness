@@ -45,14 +45,14 @@ jobs:
     needs: check_build_safety
     runs-on: ubuntu-latest
     outputs:
-      useLiquibaseSnapshot: ${{ steps.find-branches.outputs.useLiquibaseSnapshot }}
-      liquibaseBranch: ${{ steps.find-branches.outputs.liquibaseBranch }}
+      useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
+      liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}
     steps:
       - uses: actions/checkout@v3
 
       - name: Configure Build
-        id: find-branches
+        id: configure-build
         uses: actions/github-script@v5
         with:
           github-token: ${{ secrets.BOT_TOKEN }}
@@ -63,8 +63,12 @@ jobs:
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
 
-            core.setOutput("useLiquibaseSnapshot", testBranchName !== "main");
+            let useLiquibaseSnapshot = testBranchName !== "main"
+            console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
+            core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
+
             core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName);
+            
             
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
@@ -86,7 +90,7 @@ jobs:
             }
 
       - name: Install Snapshot Liquibase
-        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
+        if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
@@ -223,10 +227,14 @@ jobs:
     needs: [ setup, test ]
     if: ${{ always() }}
     steps:
-      - uses: actions/checkout@v3
-        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
+      - name: Cache installed Liquibase
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository/org/liquibase/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Update status
+        if: needs.setup.outputs.useLiquibaseSnapshot
         run: |
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}"
