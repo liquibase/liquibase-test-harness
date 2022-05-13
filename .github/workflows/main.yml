@@ -69,7 +69,7 @@ jobs:
 
             core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName);
             
-            core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseBranch }}" || "liquibase/liquibase" }});
+            core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseBranch }}" || "liquibase/liquibase");
             
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
