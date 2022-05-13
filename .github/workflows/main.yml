@@ -28,9 +28,6 @@ on:
         description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibases/liquibase-pro
         required: true
         default: "liquibase/liquibase"
-      forkRepo:
-        description: Repo the corresponding Liquibase PR's fork came from
-        required: false
 
 jobs:
   check_build_safety:
@@ -49,19 +46,13 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       useLiquibaseSnapshot: ${{ steps.find-branches.outputs.useLiquibaseSnapshot }}
-      liquibaseSha: ${{ steps.find-branches.outputs.liquibaseSha }}
       liquibaseBranch: ${{ steps.find-branches.outputs.liquibaseBranch }}
-      liquibaseOwner: ${{ steps.find-branches.outputs.liquibaseOwner }}
-      liquibaseRepo: ${{ steps.find-branches.outputs.liquibaseRepo }}
-      forkRepo: ${{ steps.find-branches.outputs.forkRepo }}
-      thisBranchName: ${{ steps.find-branches.outputs.thisBranchName }}
-      databases: ${{ github.event.inputs.databases || '["mariadb:10.5","mssql:2017","mysql:8.0","oracle:12.2","oracleproxy:12.2","postgres:12"]' }}
-      testClasses: ${{ github.event.inputs.testClasses }}
+      liquibaseRepo: ${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}
     steps:
       - uses: actions/checkout@v3
 
       - name: Configure Build
-        id: configure-build
+        id: find-branches
         uses: actions/github-script@v5
         with:
           github-token: ${{ secrets.BOT_TOKEN }}
@@ -72,43 +63,9 @@ jobs:
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
 
-            let useLiquibaseSnapshot = testBranchName !== "main"
-            console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
-            core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
-
-            core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName);
+            core.setOutput("useLiquibaseSnapshot", testBranchName !== "main");
+            core.setOutput("liquibaseBranch", github.event.inputs.liquibaseBranch || testBranchName);
             
-            core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseBranch }}" || "liquibase/liquibase");
-            
-            if (!liquibaseBranchName) {
-                //todo: figure out branch from sha?
-                liquibaseBranchName = "UNKNOWN";
-            }
-
-            console.log("Using liquibaseBranchName: "+liquibaseBranchName);
-            core.setOutput("liquibaseBranch", liquibaseBranchName);
-            core.setOutput("liquibaseSha", liquibaseSha);
-            core.setOutput("liquibaseOwner", repoOwnerName);
-            core.setOutput("liquibaseRepo", repoName);
-
-            core.setOutput("forkRepo", "${{ github.event.inputs.forkRepo || 'liquibase' }}");
-
-            console.log("Mark tests as pending");
-            await github.rest.repos.createCommitStatus({
-              "owner": repoOwnerName,
-              "repo": repoName,
-              "sha": liquibaseSha,
-              "state": "pending",
-              "context": "Run Test Harness",
-              "description": "Internal functional tests",
-              "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
-            });
-
-
-      - name: Report Details
-        uses: actions/github-script@v5
-        with:
-          script: |
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
                 runDescription = "None given";
@@ -129,24 +86,23 @@ jobs:
             }
 
       - name: Install Snapshot Liquibase
-        if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
+        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
           mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }}" \
-            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}"
+            "-Dliquibase.sdk.branchSearch=${{ needs.setup.outputs.liquibaseBranch }},master" \
+            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}"
           
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview')"
-          echo "::notice :: Installed Snapshot Liquibase $buildOverview"
+          echo "::notice Installed Snapshot Liquibase $(mvn -B liquibase-sdk:install-snapshot -Dliquibase.sdk.buildInfo.outputKey=overview 2> /dev/null)"
           
           mvn -B liquibase-sdk:set-commit-status \
-            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \
-            "-Dliquibase.sdk.status.context=Run Test Harness" \
-            "-Dliquibase.sdk.status.state=PENDING" \
-            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Internal functional tests"
+            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}"
+            -Dliquibase.sdk.status.context="Run Test Harness" 
+            -Dliquibase.sdk.status.state=PENDING 
+            -Dliquibase.sdk.status.url="https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" 
+            -Dliquibase.sdk.status.description="Internal functional tests"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v3
@@ -218,6 +174,12 @@ jobs:
           path: ~/.m2/repository/org/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
+      - name: Cache installed Liquibase
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository/org/liquibase/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+
       - uses: actions/setup-java@v2
         with:
           java-version: '8'
@@ -237,17 +199,6 @@ jobs:
           ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
-
-      - name: Configure Liquibase
-        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-        run: |
-          mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
-          mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branch=${{ needs.setup.outputs.forkRepo }}:${{ needs.setup.outputs.liquibaseBranch }}" \
-            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo || 'liquibase/liquibase' }}"
-
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}
@@ -275,23 +226,14 @@ jobs:
       - uses: actions/checkout@v3
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
-      - name: Cache installed Liquibase
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository/org/liquibase/
-          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
-
       - name: Update status
-        if: needs.setup.outputs.useLiquibaseSnapshot
-        env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           mvn -B liquibase-sdk:set-commit-status \
-            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
-            "-Dliquibase.sdk.status.context=Run Test Harness" \
-            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
-            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Internal functional tests"
+            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}"
+            -Dliquibase.sdk.status.context="Run Test Harness" 
+            -Dliquibase.sdk.status.state=${{ needs.test.result }} 
+            -Dliquibase.sdk.status.url="https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" 
+            -Dliquibase.sdk.status.description="Internal functional tests"
             
           
           mvn -B liquibase-sdk:set-commit-status "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" -Dliquibase.sdk.status.context="Run Test Harness" -Dliquibase.sdk.status.state=${{ needs.test.result }} -Dliquibase.sdk.status.url="https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" -Dliquibase.sdk.status.description="Test Harness tests complete"
