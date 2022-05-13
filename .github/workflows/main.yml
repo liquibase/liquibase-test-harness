@@ -97,8 +97,8 @@ jobs:
         run: |
           mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
           mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ needs.setup.outputs.liquibaseBranch }},master" \
-            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}"
+            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master" \
+            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}"
           
           echo "::notice Installed Snapshot Liquibase $(mvn -B liquibase-sdk:install-snapshot -Dliquibase.sdk.buildInfo.outputKey=overview 2> /dev/null)"
           
