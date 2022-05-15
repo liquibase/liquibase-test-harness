@@ -26,8 +26,9 @@ case $db in
   # crdb also has an init container
   "crdb-20.2"|"crdb-21.1"|"crdb-21.2"|"crdb-22.1")
     docker-compose up -d $db
-    sleep 10
+    sleep 20
     docker-compose up -d ${db}-init
+    sleep 60
     exit 0
     ;;
 
