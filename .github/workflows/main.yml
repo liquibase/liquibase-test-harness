@@ -67,7 +67,7 @@ jobs:
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
             core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
-            core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName);
+            core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
             
             core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseBranch }}" || "liquibase/liquibase");
             
