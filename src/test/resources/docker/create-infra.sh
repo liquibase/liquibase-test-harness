@@ -28,8 +28,7 @@ case $db in
     docker-compose up -d $db
     sleep 20
     docker-compose up -d ${db}-init
-    docker-compose logs $db
-    docker-compose logs ${db}-init
+    sleep 60
     exit 0
     ;;
 
