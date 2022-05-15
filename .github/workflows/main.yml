@@ -180,12 +180,6 @@ jobs:
           path: ~/.m2/repository/org/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
-      - name: Cache installed Liquibase
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository/org/liquibase/
-          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
-
       - uses: actions/setup-java@v2
         with:
           java-version: '8'
@@ -247,6 +241,8 @@ jobs:
       - name: Update status
         if: needs.setup.outputs.useLiquibaseSnapshot
         run: |
+          mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
+
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
             "-Dliquibase.sdk.status.context=Run Test Harness" \
