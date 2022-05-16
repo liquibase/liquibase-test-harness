@@ -83,7 +83,8 @@ jobs:
             }
             if (!runDetails) {
               runDetails = {};
-            }
+
+            }            
             if (runDetails.notices) {
                 for (let notice of runDetails.notices) {
                     core.notice(notice);
@@ -245,6 +246,5 @@ jobs:
             "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
             "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
             "-Dliquibase.sdk.status.description=Internal functional tests"
-
-
+            
           mvn -B liquibase-sdk:set-commit-status "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" -Dliquibase.sdk.status.context="Run Test Harness" -Dliquibase.sdk.status.state=${{ needs.test.result }} -Dliquibase.sdk.status.url="https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" -Dliquibase.sdk.status.description="Test Harness tests complete"
