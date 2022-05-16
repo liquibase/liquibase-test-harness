@@ -21,6 +21,9 @@ on:
       runDetails:
         description: 'JSON details of run. Provided by automation'
         required: false
+      liquibaseCommit:
+        description: DEPRECATED
+        required: false
       liquibaseBranch:
         description: Liquibase branch/label to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
