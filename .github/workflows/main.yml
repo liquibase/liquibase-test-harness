@@ -39,6 +39,7 @@ jobs:
         run: |
           echo "PR from Fork is NOT safe to build"
           exit 1
+
   setup:
     name: Setup
     needs: check_build_safety
@@ -57,12 +58,15 @@ jobs:
           github-token: ${{ secrets.BOT_TOKEN }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
+
             let testBranchName = helper.getCurrentBranch();
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
+
             let useLiquibaseSnapshot = testBranchName !== "main"
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
             core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
+
             core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
 
             core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseRepo }}" || "liquibase/liquibase");
@@ -72,6 +76,7 @@ jobs:
                 runDescription = "None given";
             }
             core.notice("Run Description: " + runDescription);
+
             let runDetails = null;
             if (context.payload && context.payload.inputs && context.payload.inputs.runDetails) {
                 runDetails = JSON.parse(context.payload.inputs.runDetails);
@@ -84,6 +89,7 @@ jobs:
                     core.notice(notice);
                 }
             }
+
       - name: Install Snapshot Liquibase
         if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
         env:
@@ -103,6 +109,7 @@ jobs:
             "-Dliquibase.sdk.status.state=PENDING" \
             "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
             "-Dliquibase.sdk.status.description=Internal functional tests"
+
       - name: Cache installed Liquibase
         uses: actions/cache@v3
         with:
@@ -193,6 +200,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
+
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}
         env:
@@ -230,6 +238,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
+
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
             "-Dliquibase.sdk.status.context=Run Test Harness" \
