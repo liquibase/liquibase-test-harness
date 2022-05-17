@@ -33,8 +33,8 @@ case $db in
     exit 0
     ;;
 
-  # in memory databases
-  "derby"|"sqlite"|"H2Database-2.1")
+  # in memory and cloud databases TODO make sure it should be configured like that for CICD
+  "derby"|"sqlite"|"H2Database-2.1"|"snowflake")
     exit 0
     ;;
 

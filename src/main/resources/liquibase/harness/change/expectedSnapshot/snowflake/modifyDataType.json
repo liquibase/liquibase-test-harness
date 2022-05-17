@@ -1,0 +1,34 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "modify_data_type_test"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "intColumn",
+            "type": {
+              "columnSize": "20\\!\\{java.lang.Integer\\}",
+              "typeName": "NUMBER"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "intColumn2",
+            "type": {
+              "columnSize": "30\\!\\{java.lang.Integer\\}",
+              "typeName": "NUMBER"
+
+            }
+          }
+        }
+      ]
+    }
+  }
+}
