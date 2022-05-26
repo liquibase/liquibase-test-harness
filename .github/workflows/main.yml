@@ -22,16 +22,15 @@ on:
         description: 'JSON details of run. Provided by automation'
         required: false
       liquibaseCommit:
-        description: Liquibase commit to pull artifacts from. Leave empty to use "liquibaseBranch" setting.
+        description: DEPRECATED
         required: false
       liquibaseBranch:
-        description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch
+        description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
       liquibaseRepo:
         description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibases/liquibase-pro
         required: true
         default: "liquibase/liquibase"
-
 
 jobs:
   check_build_safety:
@@ -49,116 +48,77 @@ jobs:
     needs: check_build_safety
     runs-on: ubuntu-latest
     outputs:
-      useLiquibaseSnapshot: ${{ steps.find-branches.outputs.useLiquibaseSnapshot }}
-      liquibaseSha: ${{ steps.find-branches.outputs.liquibaseSha }}
-      liquibaseBranch: ${{ steps.find-branches.outputs.liquibaseBranch }}
-      liquibaseOwner: ${{ steps.find-branches.outputs.liquibaseOwner }}
-      liquibaseRepo: ${{ steps.find-branches.outputs.liquibaseRepo }}
-      thisBranchName: ${{ steps.find-branches.outputs.thisBranchName }}
-      databases: ${{ github.event.inputs.databases || '["mariadb:10.5","mssql:2017","mysql:8.0","oracle:12.2","oracleproxy:12.2","postgres:12"]' }}
-      testClasses: ${{ github.event.inputs.testClasses }}
+      useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
+      liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
+      liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
     steps:
       - uses: actions/checkout@v2
 
-      - name: Find corresponding branches
-        id: find-branches
+      - name: Configure Build
+        id: configure-build
         uses: actions/github-script@v5
         with:
           github-token: ${{ secrets.BOT_TOKEN }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
 
-            core.setOutput("thisBranchName", helper.getCurrentBranch());
-
             let testBranchName = helper.getCurrentBranch();
-            console.log("Running in liquibase-test-harness branch "+testBranchName);
+            console.log("Running in liquibase-test-harness branch " + testBranchName);
+            core.notice("Running in liquibase-test-harness branch " + testBranchName);
 
-            core.setOutput("useLiquibaseSnapshot", testBranchName !== "main");
+            let useLiquibaseSnapshot = testBranchName !== "main"
+            console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
+            core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
-            let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
-            let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}";
-            let repoOwnerName = liquibaseRepo.split("/")[0]
-            let repoName = liquibaseRepo.split("/")[1]
+            core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
 
-            let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}";
-            
-            if (!liquibaseSha) {
-              if (!liquibaseBranchName) {
-                liquibaseBranchName = testBranchName;
-              }
-              console.log("No liquibaseSha passed. Looking for branch "+liquibaseBranchName+" in "+repoName);
+            core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseRepo }}" || "liquibase/liquibase");
 
-              let liquibaseBranch = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
-              liquibaseSha = liquibaseBranch.sha;
-
-              liquibaseBranchName = liquibaseBranch.name;
-              console.log("Using liquibaseSha "+liquibaseSha+" from "+liquibaseBranch.name);
-            }
-            
-            if (!liquibaseBranchName) {
-                //todo: figure out branch from sha?
-                liquibaseBranchName = "UNKNOWN";
-            }
-
-            console.log("Using liquibaseBranchName: "+liquibaseBranchName);
-            core.setOutput("liquibaseBranch", liquibaseBranchName);
-            core.setOutput("liquibaseSha", liquibaseSha);
-            core.setOutput("liquibaseOwner", repoOwnerName);
-            core.setOutput("liquibaseRepo", repoName);
-
-            console.log("Mark tests as pending");
-            await github.rest.repos.createCommitStatus({
-              "owner": repoOwnerName,
-              "repo": repoName,
-              "sha": liquibaseSha,
-              "state": "pending",
-              "context": "Run Test Harness",
-              "description": "Internal functional tests",
-              "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
-            });
-
-
-      - name: Report Details
-        uses: actions/github-script@v5
-        with:
-          script: |
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
                 runDescription = "None given";
             }
+            core.notice("Run Description: " + runDescription);
 
             let runDetails = null;
-            if (context.payload.inputs && context.payload.inputs.runDetails) {
+            if (context.payload && context.payload.inputs && context.payload.inputs.runDetails) {
                 runDetails = JSON.parse(context.payload.inputs.runDetails);
             }
             if (!runDetails) {
               runDetails = {};
-            }
 
-            let liquibaseBranch = runDetails.liquibaseBranch;
-
-            if (!liquibaseBranch) {
-                liquibaseBranch = "${{ steps.find-branches.outputs.liquibaseBranch }}";
-            }
-
-            if (!liquibaseBranch) {
-                liquibaseBranch = "UNKNOWN";
-            }
-
-            console.log("Build from: ${{ steps.find-branches.outputs.liquibaseOwner }}/${{ steps.find-branches.outputs.liquibaseRepo }}");
-            console.log("Branch: " + liquibaseBranch);
-            console.log("Commit: ${{ steps.find-branches.outputs.liquibaseSha }}");
-
-            core.notice("Run Description: " + runDescription);
-            core.notice("Running liquibase-test-harness branch ${{ steps.find-branches.outputs.thisBranchName }}");
-            core.notice("Running ${{ steps.find-branches.outputs.liquibaseOwner }}/${{ steps.find-branches.outputs.liquibaseRepo }} branch " + liquibaseBranch);
-            core.notice("Running ${{ steps.find-branches.outputs.liquibaseOwner }}/${{ steps.find-branches.outputs.liquibaseRepo }} commit ${{ steps.find-branches.outputs.liquibaseSha }}");
-
+            }            
             if (runDetails.notices) {
                 for (let notice of runDetails.notices) {
                     core.notice(notice);
                 }
             }
+
+      - name: Install Snapshot Liquibase
+        if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
+          mvn -B liquibase-sdk:install-snapshot \
+            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }}" \
+            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}"
+
+          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview')"
+          echo "::notice :: Installed Snapshot Liquibase $buildOverview"
+
+          mvn -B liquibase-sdk:set-commit-status \
+            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \
+            "-Dliquibase.sdk.status.context=Run Test Harness" \
+            "-Dliquibase.sdk.status.state=PENDING" \
+            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
+            "-Dliquibase.sdk.status.description=Internal functional tests"
+
+      - name: Cache installed Liquibase
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository/org/liquibase/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
   test:
     runs-on: ubuntu-18.04
@@ -224,6 +184,12 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Cache installed Liquibase
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository/org/liquibase/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+
       - name: Build ${{ matrix.database }} test infra
         working-directory: src/test/resources/docker
         run: ./create-infra.sh ${{ matrix.database }}
@@ -232,16 +198,12 @@ jobs:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
 
-      - name: Configure Liquibase
+      - name: Configure Liquibase Version
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
-          mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branch=${{ needs.setup.outputs.liquibaseBranch }}" \
-            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo || 'liquibase/liquibase' }}"
-
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}
@@ -268,27 +230,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Coordinate With Liquibase Repo
-        uses: actions/github-script@v5
+      - name: Cache installed Liquibase
+        uses: actions/cache@v3
         with:
-          github-token: ${{ secrets.BOT_TOKEN }}
-          script: |
-            const helper = require('./.github/util/workflow-helper.js')({github, context});
+          path: ~/.m2/repository/org/liquibase/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
-            console.log("result is ${{ needs.test.result }}");
+      - name: Update status
+        if: needs.setup.outputs.useLiquibaseSnapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
 
-            let result = "success"
-            if ("${{ needs.test.result }}" != "success") {
-              result = "failure";
-            }
-
-            console.log("Mark tests as "+result);
-            await github.rest.repos.createCommitStatus({
-              "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
-              "repo": "${{ needs.setup.outputs.liquibaseRepo }}",
-              "sha": "${{ needs.setup.outputs.liquibaseSha }}",
-              "state": result,
-              "context": "Run Test Harness",
-              "description": "Test Harness tests complete",
-              "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
-            });
+          mvn -B liquibase-sdk:set-commit-status \
+            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
+            "-Dliquibase.sdk.status.context=Run Test Harness" \
+            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
+            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
+            "-Dliquibase.sdk.status.description=Internal functional tests"
+            
+          mvn -B liquibase-sdk:set-commit-status "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" -Dliquibase.sdk.status.context="Run Test Harness" -Dliquibase.sdk.status.state=${{ needs.test.result }} -Dliquibase.sdk.status.url="https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" -Dliquibase.sdk.status.description="Test Harness tests complete"
