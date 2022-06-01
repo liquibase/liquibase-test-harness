@@ -19,7 +19,7 @@
         <addAutoIncrement columnDataType="int"
                           columnName="intColumn"
                           generationType="ALWAYS"
-                          incrementBy="1"
+                          incrementBy="2"
                           startWith="100"
                           tableName="autoincrement_test"/>
         <rollback/>
