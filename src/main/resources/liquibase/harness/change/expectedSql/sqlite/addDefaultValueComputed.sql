@@ -1,5 +1,3 @@
 INVALID TEST
 
-Liquibase does not support this type of operation for Sqlite because it requires to drop default value which is not supported
-
--- See https://docs.liquibase.com/change-types/drop-default-value.html
+Bug. Ignored until the issue https://github.com/liquibase/liquibase/issues/2644 is solved.

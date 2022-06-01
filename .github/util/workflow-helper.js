@@ -156,6 +156,7 @@ module.exports = ({github, context}) => {
                                         returnData.lastSuccessfulRunConclusion = run.conclusion;
                                         returnData.lastSuccessfulRunHtmlUrl = run.html_url;
                                         returnData.lastSuccessfulRunRerunUrl = run.rerun_url;
+                                        returnData.lastSuccessfulWorkflowId = run.id;
 
                                         matchingBuildFound = true;
                                         break;
@@ -174,8 +175,8 @@ module.exports = ({github, context}) => {
                                 console.log(`Cannot get build info for ${branchName}`);
                             } else {
                                 throw error;
-                            }
-                        }
+        }
+    }
                         if (pageNumber >= maxPagesToCheck) {
                             console.log("Hit page limit maximum of", maxPagesToCheck);
                             matchingBuildFound = true;
@@ -196,7 +197,7 @@ module.exports = ({github, context}) => {
                         console.log(error)
                         throw (`Checking branch ${branchName} returned ${error.status}`);
                     }
-                }
+}
             }
         }
     }
