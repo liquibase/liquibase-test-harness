@@ -65,7 +65,7 @@ class ChangeObjectTests extends Specification {
                         "match generated sql! Deleting expectedSql file will test that new sql works correctly and " +
                         "will auto-generate a new version if it passes. \nEXPECTED SQL: \n" + expectedSql + " \n" +
                         "GENERATED SQL: \n" + generatedSql)
-                assert false
+                assert generatedSql == expectedSql
             }
             if (!TestConfig.instance.revalidateSql) {
                 return //sql is right. Nothing more to test

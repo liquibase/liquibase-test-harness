@@ -7,10 +7,10 @@
       "date_col":""
     },
     {
-      "datetime_col": "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d\\d\\d",
+      "datetime_col": "\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d.\\d+",
       "id": 2,
-      "time_col": "\\d\\d:\\d\\d:\\d\\d",
-      "date_col": "\\d\\d\\d\\d-\\d\\d-\\d\\d"
+      "time_col": "\\d\\d:\\d\\d:\\d+",
+      "date_col": "\\d\\d\\d\\d-\\d\\d-\\d\\d?"
     },
     {
       "datetime_col":"2022-09-13 12:34:56.789123",
