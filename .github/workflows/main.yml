@@ -229,15 +229,17 @@ jobs:
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v2
+        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
       - name: Cache installed Liquibase
+        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository/org/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Update status
-        if: needs.setup.outputs.useLiquibaseSnapshot
+        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
