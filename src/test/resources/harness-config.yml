@@ -200,6 +200,12 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: mssql
+    version: azure
+    url: jdbc:sqlserver://{azureJdbcUrl}
+    username: {azureusername}
+    password: {azurePassword}
+
 # Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected.
 # We recommend commenting out the EDB sections in this config file to prevent false failures
   - name: edb-postgres
