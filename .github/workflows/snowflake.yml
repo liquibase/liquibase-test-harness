@@ -35,7 +35,7 @@ jobs:
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=cloud -DdbName=snowflake -Durl="${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=LBCAT&schema=PUBLIC" -Dusername=${{ secrets.SNOWFLAKE_TH_USER }} -Dpassword=${{ secrets.SNOWFLAKE_TH_PASS }} -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=cloud -DdbName=snowflake -Durl=${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=LBCAT&schema=TH -Dusername=${{ secrets.SNOWFLAKE_TH_USER }} -Dpassword=${{ secrets.SNOWFLAKE_TH_PASS }} -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3
