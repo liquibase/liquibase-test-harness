@@ -1,12 +1,11 @@
 -- liquibase formatted sql
 -- changeset liquibase:1
 
-DROP DATABASE IF EXISTS LBCAT;
-CREATE DATABASE LBCAT;
-USE DATABASE LBCAT;
-USE SCHEMA PUBLIC;
-DROP TABLE IF EXISTS AUTHORS;
-CREATE TABLE AUTHORS (
+-- USE WAREHOUSE COMPUTE_WH;
+-- USE DATABASE LBCAT;
+-- USE SCHEMA TH;
+DROP TABLE IF EXISTS LBCAT.TH.AUTHORS;
+CREATE TABLE LBCAT.TH.AUTHORS (
                          id int AUTOINCREMENT(6,1) NOT NULL,
                          first_name VARCHAR(50) NOT NULL,
                          last_name varchar(50) NOT NULL,
@@ -16,7 +15,7 @@ CREATE TABLE AUTHORS (
                          PRIMARY KEY (id)
 );
 
-INSERT INTO AUTHORS VALUES ('1','Eileen','Lubowitz','ppaucek@example.org','1991-03-04','2004-05-30 02:08:25'),
+INSERT INTO LBCAT.TH.AUTHORS VALUES ('1','Eileen','Lubowitz','ppaucek@example.org','1991-03-04','2004-05-30 02:08:25'),
                            ('2','Tamia','Mayert','shansen@example.org','2016-03-27','2014-03-21 02:52:00'),
                            ('3','Cyril','Funk','reynolds.godfrey@example.com','1988-04-21','2011-06-24 18:17:48'),
                            ('4','Nicolas','Buckridge','xhoeger@example.net','2017-02-03','2019-04-22 02:04:41'),
