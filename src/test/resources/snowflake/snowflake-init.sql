@@ -4,7 +4,7 @@
 DROP DATABASE IF EXISTS lbcat;
 CREATE DATABASE lbcat;
 USE DATABASE lbcat;
-USE SCHEMA public;
+USE SCHEMA PUBLIC;
 DROP TABLE IF EXISTS authors;
 CREATE TABLE authors (
                          id int AUTOINCREMENT(6,1) NOT NULL,
