@@ -22,7 +22,7 @@ jobs:
           changeLogFile: "snowflake-init.sql"
           username: ${{ secrets.SNOWFLAKE_TH_USER }}
           password: ${{ secrets.SNOWFLAKE_TH_PASS }}
-          url: "${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=LBCAT&schema=PUBLIC"
+          url: "${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=LBCAT&schema=TH"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
