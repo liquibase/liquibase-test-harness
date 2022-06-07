@@ -120,7 +120,7 @@ jobs:
           changeLogFile: "snowflake-init.sql"
           username: ${{ secrets.SNOWFLAKE_TH_USER }}
           password: ${{ secrets.SNOWFLAKE_TH_PASS }}
-          url: "${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=TEST_HARNESS&schema=public"
+          url: "${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=TEST_HARNESS&schema=PUBLIC"
 
       # - name: Update ${{ matrix.database }}-${{ matrix.version }} Harness Config
       #   working-directory: src/test/resources
@@ -139,7 +139,7 @@ jobs:
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=cloud -DdbName=snowflake -Durl="${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=TEST_HARNESS&schema=public" -Dusername=${{ secrets.SNOWFLAKE_TH_USER }} -Dpassword=${{ secrets.SNOWFLAKE_TH_PASS }} -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=cloud -DdbName=snowflake -Durl="${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=TEST_HARNESS&schema=PUBLIC" -Dusername=${{ secrets.SNOWFLAKE_TH_USER }} -Dpassword=${{ secrets.SNOWFLAKE_TH_PASS }} -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3
