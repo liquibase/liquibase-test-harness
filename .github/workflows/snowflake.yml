@@ -40,9 +40,7 @@ jobs:
         run: |
           sed -i "s|USERNAME|$USERNAME|g" harness-config-snowflake.yml
           sed -i "s|PASSWORD|$PASSWORD|g" harness-config-snowflake.yml
-          cat harness-config-snowflake.yml
-          
-
+ 
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
