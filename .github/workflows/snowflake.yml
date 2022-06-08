@@ -34,7 +34,7 @@ jobs:
 
       - name: Update Snowflake Harness Config
         working-directory: src/test/resources
-        with:
+        env:
           URL: ${{ secrets.SNOWFLAKE_JDBC_URL }}
           USERNAME: ${{ secrets.SNOWFLAKE_TH_USER }}
           PASSWORD: ${{ secrets.SNOWFLAKE_TH_PASS }}
