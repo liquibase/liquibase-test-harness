@@ -35,9 +35,9 @@ jobs:
       - name: Update Snowflake Harness Config
         working-directory: src/test/resources
         env:
-          URL: ${{ secrets.SNOWFLAKE_JDBC_URL }}
-          USERNAME: ${{ secrets.SNOWFLAKE_TH_USER }}
-          PASSWORD: ${{ secrets.SNOWFLAKE_TH_PASS }}
+          URL: "${{ secrets.SNOWFLAKE_JDBC_URL }}"
+          USERNAME: "${{ secrets.SNOWFLAKE_TH_USER }}"
+          PASSWORD: "${{ secrets.SNOWFLAKE_TH_PASS }}"
         run: |
           yq -i '
             .databasesUnderTest[0].url = strenv(URL) |
