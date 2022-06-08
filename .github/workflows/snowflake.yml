@@ -20,9 +20,9 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/snowflake"
           changeLogFile: "snowflake-init.sql"
-          username: ${{ secrets.SNOWFLAKE_TH_USER }}
-          password: ${{ secrets.SNOWFLAKE_TH_PASS }}
-          url: ${{ secrets.SNOWFLAKE_JDBC_URL }}
+          username: '${{ secrets.SNOWFLAKE_TH_USER }}'
+          password: '${{ secrets.SNOWFLAKE_TH_PASS }}'
+          url: '${{ secrets.SNOWFLAKE_JDBC_URL }}'
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
