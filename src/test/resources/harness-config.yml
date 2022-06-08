@@ -16,13 +16,6 @@ databasesUnderTest:
     username: lbuser
     password: LbRootPass1
 
-  - name: snowflake
-    prefix: cloud
-    version:
-    url: jdbc:snowflake://{AddConnectionStringHere}
-    username: {username}
-    password: {password}
-
   - name: postgresql
     prefix: docker
     version: 14

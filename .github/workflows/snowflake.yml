@@ -22,7 +22,7 @@ jobs:
           changeLogFile: "snowflake-init.sql"
           username: ${{ secrets.SNOWFLAKE_TH_USER }}
           password: ${{ secrets.SNOWFLAKE_TH_PASS }}
-          url: "${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=LBCAT&schema=TH"
+          url: ${{ secrets.SNOWFLAKE_JDBC_URL }}
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
@@ -32,10 +32,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Update Snowflake Harness Config
+        working-directory: src/test/resources
+        run: |
+          sed -i "s/URL/${{ secrets.SNOWFLAKE_JDBC_URL }}/g" harness-config-snowflake.yml
+          sed -i "s/USERNAME/${{ secrets.SNOWFLAKE_TH_USER }}/g" harness-config-snowflake.yml
+          sed -i "s/PASSWORD/${{ secrets.SNOWFLAKE_TH_PASS }}/g" harness-config-snowflake.yml
+
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=cloud -DdbName=snowflake -Durl=${{ secrets.SNOWFLAKE_JDBC_URL }}/?db=LBCAT&schema=TH -Dusername=${{ secrets.SNOWFLAKE_TH_USER }} -Dpassword=${{ secrets.SNOWFLAKE_TH_PASS }} -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=cloud -DdbName=snowflake -DconfigFile=harness-config-snowflake.yml -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3
