@@ -39,16 +39,17 @@ jobs:
           USERNAME: '${{ secrets.SNOWFLAKE_TH_USER }}'
           PASSWORD: '${{ secrets.SNOWFLAKE_TH_PASS }}'
         run: |
-          sed -i "s|URL|$URL|g" harness-config-snowflake.yml
-          sed -i "s|USERNAME|$USERNAME|g" harness-config-snowflake.yml
-          sed -i "s|PASSWORD|$PASSWORD|g" harness-config-snowflake.yml
+          yq -i '
+            .databasesUnderTest[0].url = strenv(URL) |
+            .databasesUnderTest[0].username = strenv(USERNAME) |
+            .databasesUnderTest[0].password = strenv(PASSWORD)
+          ' harness-config-snowflake.yml
           cat harness-config-snowflake.yml
           
-
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=cloud -DdbName=snowflake -DconfigFile=/harness-config-snowflake.yml -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3
