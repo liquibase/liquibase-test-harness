@@ -1,0 +1,10 @@
+inputFormat: xml
+context: testContext
+
+databasesUnderTest:
+  - name: snowflake
+    prefix: cloud
+    version:
+    url: URL
+    username: USERNAME
+    password: PASSWORD
