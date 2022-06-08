@@ -34,10 +34,14 @@ jobs:
 
       - name: Update Snowflake Harness Config
         working-directory: src/test/resources
+        env:
+          URL: ${{ secrets.SNOWFLAKE_JDBC_URL }}
+          USERNAME: ${{ secrets.SNOWFLAKE_TH_USER }}
+          PASSWORD: ${{ secrets.SNOWFLAKE_TH_PASS }}
         run: |
-          sed -i "s/URL/${{ secrets.SNOWFLAKE_JDBC_URL }}/g" harness-config-snowflake.yml
-          sed -i "s/USERNAME/${{ secrets.SNOWFLAKE_TH_USER }}/g" harness-config-snowflake.yml
-          sed -i "s/PASSWORD/${{ secrets.SNOWFLAKE_TH_PASS }}/g" harness-config-snowflake.yml
+          sed -i "s/URL/$URL/g" harness-config-snowflake.yml
+          sed -i "s/USERNAME/$USERNAME/g" harness-config-snowflake.yml
+          sed -i "s/PASSWORD/$PASSWORD/g" harness-config-snowflake.yml
 
       - name: Snowflake Test Run
         env:
