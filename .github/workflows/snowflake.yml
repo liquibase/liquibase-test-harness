@@ -39,10 +39,15 @@ jobs:
           USERNAME: ${{ secrets.SNOWFLAKE_TH_USER }}
           PASSWORD: ${{ secrets.SNOWFLAKE_TH_PASS }}
         run: |
+          cat harness-config-snowflake.yml
+          echo $URL
+          echo $USERNAME
+          echo $PASSWORD
           sed -i "s|URL|$URL|g" harness-config-snowflake.yml
           sed -i "s|USERNAME|$USERNAME|g" harness-config-snowflake.yml
           sed -i "s|PASSWORD|$PASSWORD|g" harness-config-snowflake.yml
-          cat harness-config-snowflake.yml
+          cat harness-config.snowflake.yml
+          
 
       - name: Snowflake Test Run
         env:
