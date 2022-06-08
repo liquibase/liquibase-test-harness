@@ -20,9 +20,9 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/snowflake"
           changeLogFile: "snowflake-init.sql"
-          username: ${{ secrets.SNOWFLAKE_TH_USER }}
-          password: ${{ secrets.SNOWFLAKE_TH_PASS }}
-          url: ${{ secrets.SNOWFLAKE_JDBC_URL }}
+          username: "${{ secrets.SNOWFLAKE_TH_USER }}"
+          password: "${{ secrets.SNOWFLAKE_TH_PASS }}"
+          url: "${{ secrets.SNOWFLAKE_JDBC_URL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
@@ -39,10 +39,6 @@ jobs:
           USERNAME: ${{ secrets.SNOWFLAKE_TH_USER }}
           PASSWORD: ${{ secrets.SNOWFLAKE_TH_PASS }}
         run: |
-          cat harness-config-snowflake.yml
-          echo $URL
-          echo $USERNAME
-          echo $PASSWORD
           sed -i "s|URL|$URL|g" harness-config-snowflake.yml
           sed -i "s|USERNAME|$USERNAME|g" harness-config-snowflake.yml
           sed -i "s|PASSWORD|$PASSWORD|g" harness-config-snowflake.yml
