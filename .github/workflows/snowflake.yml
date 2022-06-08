@@ -35,8 +35,8 @@ jobs:
       - name: Update Snowflake Harness Config
         working-directory: src/test/resources
         env:
-          USERNAME: '${{ secrets.SNOWFLAKE_TH_USER }}'
-          PASSWORD: '${{ secrets.SNOWFLAKE_TH_PASS }}'
+          USERNAME: "${{ secrets.SNOWFLAKE_TH_USER }}"
+          PASSWORD: "${{ secrets.SNOWFLAKE_TH_PASS }}"
         run: |
           sed -i "s|USERNAME|$USERNAME|g" harness-config-snowflake.yml
           sed -i "s|PASSWORD|$PASSWORD|g" harness-config-snowflake.yml
