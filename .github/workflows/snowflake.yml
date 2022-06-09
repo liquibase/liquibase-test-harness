@@ -3,6 +3,7 @@ name: Snowflake Cloud
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   # schedule:
+  # TODO - UNCOMMENT CRON JOB AFTER MERGE
   #   - cron: '0 12 * * *' # Execute every day at noon
   workflow_dispatch:
 
@@ -24,7 +25,7 @@ jobs:
           password: '${{ secrets.SNOWFLAKE_TH_PASS }}'
           url: 'jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LBCAT&schema=PUBLIC'
 
-      - name: Cache local Maven repository
+      - name: Cache Local Maven Repo
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
