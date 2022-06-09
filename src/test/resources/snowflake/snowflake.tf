@@ -40,14 +40,6 @@ resource "snowflake_warehouse_grant" "grant" {
   with_grant_option = false
 }
 
-# resource "snowflake_schema" "schema" {
-#   provider   = snowflake.sys_admin
-#   database   = snowflake_database.db.name
-#   name       = "TH"
-#   is_managed = false
-# }
-
-
 resource "snowflake_schema_grant" "grant" {
   provider          = snowflake.security_admin
   database_name     = snowflake_database.db.name
@@ -75,11 +67,28 @@ resource "snowflake_schema_grant" "create_procedure" {
   with_grant_option = false
 }
 
+resource "snowflake_schema_grant" "create_sequence" {
+  provider          = snowflake.security_admin
+  database_name     = snowflake_database.db.name
+  schema_name       = "PUBLIC"
+  privilege         = "CREATE SEQUENCE"
+  roles             = [snowflake_role.role.name]
+  with_grant_option = false
+}
+
+resource "snowflake_schema_grant" "create_view" {
+  provider          = snowflake.security_admin
+  database_name     = snowflake_database.db.name
+  schema_name       = "PUBLIC"
+  privilege         = "CREATE VIEW"
+  roles             = [snowflake_role.role.name]
+  with_grant_option = false
+}
+
 resource "snowflake_user" "user" {
-  provider = snowflake.security_admin
-  name     = "test_harness_user"
-  password = "j^9wr+ccMB@6;%ky"
-  #password          = random_password.password.result
+  provider          = snowflake.security_admin
+  name              = "test_harness_user"
+  password          = random_password.password.result
   default_role      = snowflake_role.role.name
   default_namespace = "${snowflake_database.db.name}.PUBLIC"
   default_warehouse = snowflake_warehouse.warehouse.name
@@ -94,4 +103,13 @@ resource "snowflake_role_grants" "grants" {
 resource "random_password" "password" {
   length  = 16
   special = true
+}
+
+output "username" {
+  value = snowflake_user.user.name
+}
+
+output "password" {
+  value     = snowflake_user.user.password
+  sensitive = true
 }
