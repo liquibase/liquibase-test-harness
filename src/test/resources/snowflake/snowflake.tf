@@ -40,18 +40,18 @@ resource "snowflake_warehouse_grant" "grant" {
   with_grant_option = false
 }
 
-resource "snowflake_schema" "schema" {
-  provider   = snowflake.sys_admin
-  database   = snowflake_database.db.name
-  name       = "TH"
-  is_managed = false
-}
+# resource "snowflake_schema" "schema" {
+#   provider   = snowflake.sys_admin
+#   database   = snowflake_database.db.name
+#   name       = "TH"
+#   is_managed = false
+# }
 
 
 resource "snowflake_schema_grant" "grant" {
   provider          = snowflake.security_admin
   database_name     = snowflake_database.db.name
-  schema_name       = snowflake_schema.schema.name
+  schema_name       = "PUBLIC"
   privilege         = "USAGE"
   roles             = [snowflake_role.role.name]
   with_grant_option = false
@@ -60,18 +60,28 @@ resource "snowflake_schema_grant" "grant" {
 resource "snowflake_schema_grant" "create_table" {
   provider          = snowflake.security_admin
   database_name     = snowflake_database.db.name
-  schema_name       = snowflake_schema.schema.name
+  schema_name       = "PUBLIC"
   privilege         = "CREATE TABLE"
   roles             = [snowflake_role.role.name]
   with_grant_option = false
 }
 
-resource "snowflake_user" "user" {
+resource "snowflake_schema_grant" "create_procedure" {
   provider          = snowflake.security_admin
-  name              = "test_harness_user"
-  password          = "j^9wr+ccMB@6;%ky"
+  database_name     = snowflake_database.db.name
+  schema_name       = "PUBLIC"
+  privilege         = "CREATE PROCEDURE"
+  roles             = [snowflake_role.role.name]
+  with_grant_option = false
+}
+
+resource "snowflake_user" "user" {
+  provider = snowflake.security_admin
+  name     = "test_harness_user"
+  password = "j^9wr+ccMB@6;%ky"
+  #password          = random_password.password.result
   default_role      = snowflake_role.role.name
-  default_namespace = "${snowflake_database.db.name}.${snowflake_schema.schema.name}"
+  default_namespace = "${snowflake_database.db.name}.PUBLIC"
   default_warehouse = snowflake_warehouse.warehouse.name
 }
 
@@ -79,4 +89,9 @@ resource "snowflake_role_grants" "grants" {
   provider  = snowflake.security_admin
   role_name = snowflake_role.role.name
   users     = [snowflake_user.user.name]
+}
+
+resource "random_password" "password" {
+  length  = 16
+  special = true
 }
