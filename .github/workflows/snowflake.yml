@@ -57,6 +57,7 @@ jobs:
         run: |
           echo "TH_USER=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
           echo "TH_PASS=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
+          echo $GITHUB_ENV
 
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v5
