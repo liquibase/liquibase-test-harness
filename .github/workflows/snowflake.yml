@@ -64,8 +64,8 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/snowflake"
           changeLogFile: "snowflake-init.sql"
-          username: ${{ env.TH_USER }}
-          password: ${{ env.TH_USER }}
+          username: "${{ env.TH_USER }}"
+          password: "${{ env.TH_PASS }}"
           url: 'jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LBCAT&schema=PUBLIC'
 
       - name: Cache Local Maven Repo
