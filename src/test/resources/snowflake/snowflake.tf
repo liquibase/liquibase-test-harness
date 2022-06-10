@@ -87,7 +87,7 @@ resource "snowflake_schema_grant" "create_view" {
 
 resource "snowflake_user" "user" {
   provider          = snowflake.security_admin
-  name              = "test_harness_user"
+  name              = var.username
   password          = random_password.password.result
   default_role      = snowflake_role.role.name
   default_namespace = "${snowflake_database.db.name}.PUBLIC"

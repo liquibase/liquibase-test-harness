@@ -41,6 +41,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          terraform_wrapper: false
+          
+      - name: Terraform Init
+        working-directory: src/test/resources/snowflake
+        run: terraform init
+
+      - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
+        working-directory: src/test/resources/snowflake
+        run: |
+          echo "USERNAME=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
+          echo "PASSWORD=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
 
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v5
@@ -48,8 +64,8 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/snowflake"
           changeLogFile: "snowflake-init.sql"
-          username: ${{ secrets.SNOWFLAKE_TH_USER }}
-          password: ${{ secrets.SNOWFLAKE_TH_PASS }}
+          username: "$USERNAME"
+          password: "$PASSWORD"
           url: 'jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LBCAT&schema=PUBLIC'
 
       - name: Cache Local Maven Repo
@@ -62,9 +78,6 @@ jobs:
 
       - name: Update Snowflake Harness Config
         working-directory: src/test/resources
-        env:
-          USERNAME: "${{ secrets.SNOWFLAKE_TH_USER }}"
-          PASSWORD: "${{ secrets.SNOWFLAKE_TH_PASS }}"
         run: |
           sed -i "s|USERNAME|$USERNAME|g" harness-config-snowflake.yml
           sed -i "s|PASSWORD|$PASSWORD|g" harness-config-snowflake.yml
