@@ -57,7 +57,6 @@ jobs:
         run: |
           echo "TH_USER=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
           echo "TH_PASS=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
-          echo $GITHUB_ENV
 
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v5
@@ -65,8 +64,8 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/snowflake"
           changeLogFile: "snowflake-init.sql"
-          username: "$TH_USER"
-          password: "$TH_PASS"
+          username: ${{ env.TH_USER }}
+          password: ${{ env.TH_USER }}
           url: 'jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LBCAT&schema=PUBLIC'
 
       - name: Cache Local Maven Repo
@@ -80,8 +79,8 @@ jobs:
       - name: Update Snowflake Harness Config
         working-directory: src/test/resources
         run: |
-          sed -i "s|USERNAME|$TH_USER|g" harness-config-snowflake.yml
-          sed -i "s|PASSWORD|$TH_PASS|g" harness-config-snowflake.yml
+          sed -i "s|USERNAME|${{ env.TH_USER }}|g" harness-config-snowflake.yml
+          sed -i "s|PASSWORD|${{ env.TH_PASS }}|g" harness-config-snowflake.yml
  
       - name: Snowflake Test Run
         env:
