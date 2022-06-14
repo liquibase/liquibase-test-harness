@@ -91,9 +91,7 @@ jobs:
           - database: postgresql
             version: 13
           - database: postgresql
-            version: 14        
-          - database: oracle
-            version: 12-1
+            version: 14
           - database: oracle
             version: 19
 
