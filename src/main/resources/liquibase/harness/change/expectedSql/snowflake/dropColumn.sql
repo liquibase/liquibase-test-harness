@@ -1,0 +1,3 @@
+ALTER TABLE "PUBLIC".posts ADD varcharColumn VARCHAR(25)
+UPDATE "PUBLIC".posts SET varcharColumn = 'INITIAL_VALUE'
+ALTER TABLE "PUBLIC".posts DROP COLUMN varcharColumn
