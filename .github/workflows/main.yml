@@ -173,7 +173,6 @@ jobs:
             "hsqldb-2.5",
             "firebird-3",
             "firebird-4"
-#            "snowflake" TODO uncomment or remove this when CICD is configure for Snowflake
         ]
 
     steps:

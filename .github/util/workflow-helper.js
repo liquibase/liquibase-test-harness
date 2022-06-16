@@ -181,10 +181,6 @@ module.exports = ({github, context}) => {
                             console.log("Hit page limit maximum of", maxPagesToCheck);
                             matchingBuildFound = true;
                         }
-                        if (pageNumber >= maxPagesToCheck) {
-                            console.log("Hit page limit maximum of", maxPagesToCheck);
-                            matchingBuildFound = true;
-                        }
                         pageNumber++;
                     }
 
