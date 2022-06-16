@@ -1,8 +1,8 @@
 # Versions of oracle to create. 
 variable "oracleVersion" {
   type        = list(string)
-  description = "Oracle Database Engine Version (example: 19)"
-  default     = ["19"]
+  description = "Oracle Database Engine Version (example: 12.1, 19)"
+  default     = ["12.1", "19"]
 }
 
 # Create the security group granting access to the database with a source of the public IP of the runner

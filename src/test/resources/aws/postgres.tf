@@ -1,8 +1,8 @@
 # Versions of Postgresql to create. 
 variable "postgresqlVersion" {
   type        = list(string)
-  description = "Postgresql Database Engine Version (example: 10, 11, 12, 13, 14)"
-  default     = ["10", "11", "12", "13", "14"]
+  description = "Postgresql Database Engine Version (example: 9.6, 10, 11)"
+  default     = ["9.6", "10", "11", "12", "13"]
 }
 
 # Create the security group granting access to the database with a source of the public IP of the runner
