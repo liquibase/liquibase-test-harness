@@ -67,6 +67,10 @@ jobs:
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
 
             let useLiquibaseSnapshot = testBranchName !== "main"
+            if ("${{ github.event.pull_request.base.ref }}" !== "") {
+              useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
+            }
+            
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
             core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 

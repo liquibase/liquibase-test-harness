@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -41,13 +41,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
           terraform_wrapper: false
-          
+
       - name: Terraform Init
         working-directory: src/test/resources/snowflake
         run: terraform init
@@ -81,7 +81,7 @@ jobs:
         run: |
           sed -i "s|USERNAME|${{ env.TH_USER }}|g" harness-config-snowflake.yml
           sed -i "s|PASSWORD|${{ env.TH_PASS }}|g" harness-config-snowflake.yml
- 
+
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
@@ -100,17 +100,17 @@ jobs:
       run:
         working-directory: src/test/resources/snowflake
     if: ${{ always() }}
-    
+
     steps:
       - uses: actions/checkout@v3
-    
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-    
+
       - name: Terraform Init
         run: terraform init
-    
+
       - name: Terraform Destroy
         run: terraform destroy -auto-approve

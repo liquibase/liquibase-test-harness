@@ -83,8 +83,6 @@ jobs:
       matrix:
         include:
           - database: postgresql
-            version: 9-6
-          - database: postgresql
             version: 10
           - database: postgresql
             version: 11
@@ -92,8 +90,8 @@ jobs:
             version: 12
           - database: postgresql
             version: 13
-          - database: oracle
-            version: 12-1
+          - database: postgresql
+            version: 14
           - database: oracle
             version: 19
 
