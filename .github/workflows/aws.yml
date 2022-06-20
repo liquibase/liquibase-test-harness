@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
@@ -98,7 +98,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
           terraform_wrapper: false
@@ -139,7 +139,7 @@ jobs:
           sed -i "s/DBVERSION/${{ matrix.version }}/g" harness-config.yml
 
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -167,7 +167,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - name: Terraform Init
