@@ -56,7 +56,7 @@ jobs:
 
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6.1.0
         with:
           github-token: ${{ secrets.BOT_TOKEN }}
           script: |
