@@ -112,7 +112,7 @@ jobs:
         run: |
           echo "DBENDPOINT=$(terraform output -json ${{ matrix.database }}Endpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
 
-      - uses: liquibase/liquibase-github-action@v3
+      - uses: liquibase/liquibase-github-action@v6
         if: ${{ matrix.database == 'oracle' }}
         with:
           operation: "update"
@@ -122,7 +122,7 @@ jobs:
           password: "LbRootPass1"
           url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}:lbcat"
 
-      - uses: liquibase/liquibase-github-action@v3
+      - uses: liquibase/liquibase-github-action@v6
         if: ${{ matrix.database == 'postgresql' }}
         with:
           operation: "update"
