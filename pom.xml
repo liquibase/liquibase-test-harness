@@ -173,7 +173,12 @@
             <version>2.5.2</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>net.snowflake</groupId>
+            <artifactId>snowflake-jdbc</artifactId>
+            <version>3.13.18</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
             <artifactId>jaybird</artifactId>

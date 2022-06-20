@@ -1,0 +1,60 @@
+{
+  "loadUpdateData": [
+      {
+        "ADDED": "2014-03-21 02:52:00.0",
+        "ID": 2,
+        "BIRTHDATE": "2016-03-27",
+        "LAST_NAME": "Mayert",
+        "EMAIL": "shansen@example.org",
+        "FIRST_NAME": "Tamia"
+      },
+      {
+        "ADDED": "2011-06-24 18:17:48.0",
+        "ID": 3,
+        "BIRTHDATE": "1988-04-21",
+        "LAST_NAME": "Funk",
+        "EMAIL": "reynolds.godfrey@example.com",
+        "FIRST_NAME": "Cyril"
+      },
+      {
+        "ADDED": "2019-04-22 02:04:41.0",
+        "ID": 4,
+        "BIRTHDATE": "2017-02-03",
+        "LAST_NAME": "Buckridge",
+        "EMAIL": "xhoeger@example.net",
+        "FIRST_NAME": "Nicolas"
+      },
+      {
+        "ADDED": "1990-02-04 02:32:00.0",
+        "ID": 5,
+        "BIRTHDATE": "2010-02-27",
+        "LAST_NAME": "Walter",
+        "EMAIL": "lillian66@example.com",
+        "FIRST_NAME": "Jayden"
+      },
+      {
+        "ADDED": "2000-02-04 02:32:00.0",
+        "ID": 1,
+        "BIRTHDATE": "1000-02-27",
+        "LAST_NAME": "Gods",
+        "EMAIL": "test1@example.com",
+        "FIRST_NAME": "Adam"
+      },
+      {
+        "ADDED": "1994-12-10 01:00:00.0",
+        "ID": 7,
+        "BIRTHDATE": "2000-02-27",
+        "LAST_NAME": "Lamekhs",
+        "EMAIL": "test2@example.com",
+        "FIRST_NAME": "Noah"
+      },
+      {
+        "ADDED": "2000-12-10 01:00:00.0",
+        "ID": 8,
+        "BIRTHDATE": "3000-02-27",
+        "LAST_NAME": "Ibn Abdullah",
+        "EMAIL": "test3@example.com",
+        "FIRST_NAME": "Muhammad"
+      }
+  ]
+}
