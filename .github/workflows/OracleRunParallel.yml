@@ -27,8 +27,9 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          java-version: '1.8.0'
+          java-version: '8'
           distribution: 'temurin'
+          cache: 'maven'
 
       - name: Docker login to retrive Oracle images from private repo
         run: docker login "${{ secrets.ARTIFACTORY_URL }}" -u "${{ secrets.ARTIFACTORY_USER }}" -p "${{ secrets.ARTIFACTORY_TOKEN }}"
