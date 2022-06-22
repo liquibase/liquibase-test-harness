@@ -54,8 +54,8 @@ jobs:
       - name: Fetch Credentials from Terraform
         working-directory: src/test/resources/snowflake
         run: |
-          echo "TH_USER=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
-          echo "TH_PASS=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
+          echo "::add-mask::TH_USER=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
+          echo "::add-mask::TH_PASS=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
 
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v6
@@ -79,7 +79,7 @@ jobs:
         working-directory: src/test/resources
         run: |
           sed -i "s|USERNAME|${{ env.TH_USER }}|g" harness-config-snowflake.yml
-          sed -i "s|PASSWORD|${{ env.TH_PASS }}|g" harness-config-snowflake.yml
+          sed -i "s|PASSWORD|'${{ env.TH_PASS }}'|g" harness-config-snowflake.yml
 
       - name: Snowflake Test Run
         env:
