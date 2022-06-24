@@ -14,7 +14,7 @@
                 ;
         </pro:createFunction>
         <rollback>
-            <pro:dropFunction functionName="test_function"/>
+            <pro:dropFunction functionName="test_function()"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
