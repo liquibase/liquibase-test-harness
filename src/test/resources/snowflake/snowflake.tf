@@ -102,5 +102,5 @@ resource "snowflake_role_grants" "grants" {
 
 resource "random_password" "password" {
   length  = 16
-  special = true
+  special = false
 }
