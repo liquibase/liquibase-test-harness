@@ -6,5 +6,5 @@ databasesUnderTest:
     prefix: cloud
     version:
     url: jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LBCAT&schema=PUBLIC
-    username: USERNAME
-    password: PASSWORD
+    username: "USERNAME"
+    password: "PASSWORD"
