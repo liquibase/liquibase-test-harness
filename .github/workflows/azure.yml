@@ -89,9 +89,7 @@ jobs:
       - name: Fetch Connect Details from Terraform
         working-directory: src/test/resources/azure
         run: |
-          echo "DBENDPOINT=$(terraform output -json Endpoint | jq -r)" >> $GITHUB_ENV
-          echo "TH_USER=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
-          echo "TH_PASS=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
+          echo "DBENDPOINT=$(terraform output -json azureSqlDbEndpoint | jq -r)" >> $GITHUB_ENV
 
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v6
@@ -99,16 +97,14 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/azure"
           changeLogFile: "azuresql-init.sql"
-          username: "${{ env.TH_USER }}"
-          password: "${{ env.TH_PASS }}"
+          username: "lbuser"
+          password: "LiquibasePass1"
           url: 'jdbc:sqlserver://@${{ env.DBENDPOINT }}:1434;trustServerCertificate=true;databaseName=lbcat'
 
       - name: Update Azure Harness Config
         working-directory: src/test/resources
         run: |
-          sed -i "s|DBENDPOINT|${{ env.DBENDPOINT }}|g" harness-config.yml
-          sed -i "s|USERNAME|${{ env.TH_USER }}|g" harness-config.yml
-          sed -i "s|PASSWORD|${{ env.TH_PASS }}|g" harness-config.yml
+          sed -i "s|DBENDPOINT|${{ env.DBENDPOINT }}|g" harness-config-azuresqldb.yml
 
       - name: Cache Local Maven Repo
         uses: actions/cache@v3

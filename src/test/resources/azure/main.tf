@@ -1,6 +1,6 @@
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_sql_server" "sql_server" {
+resource "azurerm_mssql_server" "sql_server" {
   name                = var.server_name
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -16,13 +16,13 @@ resource "azurerm_sql_firewall_rule" "sql_firewall" {
 
   name                = "AllowAccessToAzure"
   resource_group_name = var.resource_group_name
-  server_name         = azurerm_sql_server.sql_server.name
+  server_name         = azurerm_mssql_server.sql_server.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
 }
 
 resource "azurerm_sql_active_directory_administrator" "sql_admin" {
-  server_name         = azurerm_sql_server.sql_server.name
+  server_name         = azurerm_mssql_server.sql_server.name
   resource_group_name = var.resource_group_name
   login               = var.ad_admin_login_name
   tenant_id           = data.azurerm_client_config.current.tenant_id
@@ -31,7 +31,7 @@ resource "azurerm_sql_active_directory_administrator" "sql_admin" {
 
 resource "azurerm_mssql_database" "test" {
   name      = var.database_name
-  server_id = azurerm_sql_server.sql_server.id
+  server_id = azurerm_mssql_server.sql_server.id
   #collation      = "SQL_Latin1_General_CP1_CI_AS"
   #license_type   = "LicenseIncluded"
   max_size_gb = 2
