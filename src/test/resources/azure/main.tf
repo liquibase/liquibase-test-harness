@@ -6,8 +6,7 @@ resource "azurerm_mssql_server" "sql_server" {
   location            = var.location
   version             = "12.0"
   administrator_login = var.admin_login_name
-  #administrator_login_password = random_string.password.result
-  administrator_login_password = "Run2Trouble!"
+  administrator_login_password = random_string.password.result
 
 }
 
@@ -32,18 +31,8 @@ resource "azurerm_sql_active_directory_administrator" "sql_admin" {
 resource "azurerm_mssql_database" "test" {
   name      = var.database_name
   server_id = azurerm_mssql_server.sql_server.id
-  #collation      = "SQL_Latin1_General_CP1_CI_AS"
-  #license_type   = "LicenseIncluded"
   max_size_gb = 2
   sku_name    = "Basic"
-
-  # extended_auditing_policy {
-  #   storage_endpoint                        = azurerm_storage_account.example.primary_blob_endpoint
-  #   storage_account_access_key              = azurerm_storage_account.example.primary_access_key
-  #   storage_account_access_key_is_secondary = true
-  #   retention_in_days                       = 6
-  # }
-
 
   tags = {
     terraform = "true"
@@ -59,7 +48,6 @@ resource "azurerm_management_lock" "resource-CanNotDelete-lock" {
   lock_level = "CanNotDelete"
   notes      = "Locked due to holding critical data."
 }
-
 
 resource "random_string" "password" {
   length           = 32
