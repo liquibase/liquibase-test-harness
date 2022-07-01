@@ -16,6 +16,13 @@ databasesUnderTest:
     username: lbuser
     password: LbRootPass1
 
+  - name: azuresqldb
+    prefix: azure
+    version:
+    url: jdbc:sqlserver://@DBENDPOINT:1434;trustServerCertificate=true;databaseName=lbcat
+    username: lbuser
+    password: LiquibasePass1
+
   - name: postgresql
     prefix: docker
     version: 14
