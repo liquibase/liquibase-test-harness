@@ -1,5 +1,5 @@
 
-name: Azure Cloud
+name: Azure Cloud Sql DB Test
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   workflow_dispatch:
