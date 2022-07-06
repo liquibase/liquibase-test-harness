@@ -16,7 +16,7 @@ variable "resource_group_name" {
 }
 
 variable "server_name" {
-  default     = "azuresqldb"
+  default     = "aztestharness"
   description = "Name of the server. "
 }
 
