@@ -31,7 +31,7 @@ variable "admin_login_name" {
 }
 
 variable "allow_azure_ip_access" {
-  default     = "false"
+  default     = "true"
   description = "If azure ip ranges should be allowed through the sql server firewall."
 }
 
