@@ -16,11 +16,13 @@ variable "resource_group_name" {
 }
 
 variable "server_name" {
+  default     = "azuresqldb"
   description = "Name of the server. "
 }
 
 variable "database_name" {
   description = "Name on the initial database on the server. "
+  default     = "azuresqldb"
 }
 
 variable "admin_login_name" {

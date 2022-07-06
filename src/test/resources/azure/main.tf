@@ -8,6 +8,11 @@ resource "azurerm_mssql_server" "sql_server" {
   administrator_login = var.admin_login_name
   administrator_login_password = random_string.password.result
 
+  azuread_administrator {
+    login_username = "AzureAD Admin"
+    object_id      = "00000000-0000-0000-0000-000000000000"
+  }
+
 }
 
 resource "azurerm_sql_firewall_rule" "sql_firewall" {
@@ -18,14 +23,6 @@ resource "azurerm_sql_firewall_rule" "sql_firewall" {
   server_name         = azurerm_mssql_server.sql_server.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-}
-
-resource "azurerm_sql_active_directory_administrator" "sql_admin" {
-  server_name         = azurerm_mssql_server.sql_server.name
-  resource_group_name = var.resource_group_name
-  login               = var.ad_admin_login_name
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-  object_id           = var.ad_admin_object_id
 }
 
 resource "azurerm_mssql_database" "test" {
