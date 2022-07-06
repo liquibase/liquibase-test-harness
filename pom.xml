@@ -12,6 +12,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
+        <liquibase-core.version>[4.3.0,)</liquibase-core.version>
     </properties>
     <organization>
         <name>Liquibase.org</name>
@@ -72,7 +73,7 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
 <!-- This syntax means open-ended version range. Take newest accessible starting from 4.3.0 -->
-            <version>[4.3.0,)</version>
+            <version>${liquibase-core.version}</version>
         </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.codehaus.groovy</groupId>
