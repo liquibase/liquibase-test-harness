@@ -40,10 +40,6 @@ variable "ad_admin_login_name" {
   description = "Name of the login for sql admin loging in from Azure AD. "
 }
 
-variable "ad_admin_object_id" {
-  description = "Object ID of the login for the sql admin"
-}
-
 variable "lock_database_resource" {
   default     = "false"
   description = "Param defining whether to set CanNotDelete lock on the database resource upon DB creation. Possible input values is 'true' and 'false'."
