@@ -1,0 +1,14 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.function.Function": [
+        {
+          "function": {
+            "body": "CREATE OR REPLACE FUNCTION \"TEST_FUNCTION\"()\nRETURNS FLOAT\nLANGUAGE SQL\nAS '3.141592654::FLOAT';",
+            "name": "TEST_FUNCTION"
+          }
+        }
+      ]
+    }
+  }
+}
