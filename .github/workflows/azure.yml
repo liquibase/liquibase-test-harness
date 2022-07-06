@@ -99,7 +99,7 @@ jobs:
           changeLogFile: "azuresql-init.sql"
           username: "lbuser"
           password: "LiquibasePass1"
-          url: 'jdbc:sqlserver://${{ env.DBENDPOINT }}:1434;trustServerCertificate=true;databaseName=lbcat'
+          url: 'jdbc:sqlserver://${{ env.DBENDPOINT }}:1433;trustServerCertificate=true;databaseName=lbcat'
 
       - name: Update Azure Harness Config
         working-directory: src/test/resources
