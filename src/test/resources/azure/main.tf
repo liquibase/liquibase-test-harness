@@ -13,12 +13,6 @@ resource "azurerm_mssql_server" "sql_server" {
   administrator_login = var.admin_login_name
   administrator_login_password = random_string.password.result
   depends_on          = [azurerm_resource_group.test_harness]
-
-  azuread_administrator {
-    login_username = "AzureAD Admin"
-    object_id      = "00000000-0000-0000-0000-000000000000"
-  }
-
 }
 
 resource "azurerm_sql_firewall_rule" "sql_firewall" {
