@@ -1,5 +1,11 @@
 data "azurerm_client_config" "current" {}
 
+resource "azurerm_resource_group" "test_harness" {
+  provider = azurerm.vsps
+  name     = var.resource_group_name
+  location = var.location
+}
+
 resource "azurerm_mssql_server" "sql_server" {
   name                = var.server_name
   resource_group_name = var.resource_group_name
@@ -35,7 +41,6 @@ resource "azurerm_mssql_database" "test" {
     terraform = "true"
   }
 }
-
 
 resource "azurerm_management_lock" "resource-CanNotDelete-lock" {
   count = var.lock_database_resource == true ? 1 : 0
