@@ -1,9 +1,10 @@
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_resource_group" "test_harness" {
-  name     = var.resource_group_name
-  location = var.location
-}
+# use pre-created resource group 
+# resource "azurerm_resource_group" "test_harness" {
+# name     = var.resource_group_name
+# location = var.location
+# }
 
 resource "azurerm_mssql_server" "sql_server" {
   name                = var.server_name
