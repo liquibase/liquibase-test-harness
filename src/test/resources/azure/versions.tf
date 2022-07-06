@@ -24,8 +24,3 @@ terraform {
     }
   }
 }
-
-# This block is needed to fix "insufficient feature blocks" error!
-provider "azurerm" {
-  features {}
-}
