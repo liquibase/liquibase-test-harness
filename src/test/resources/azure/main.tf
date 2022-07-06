@@ -15,12 +15,11 @@ resource "azurerm_mssql_server" "sql_server" {
   depends_on          = [azurerm_resource_group.test_harness]
 }
 
-resource "azurerm_sql_firewall_rule" "sql_firewall" {
+resource "azurerm_mssql_firewall_rule" "sql_firewall" {
   count = var.allow_azure_ip_access ? 1 : 0
 
   name                = "AllowAccessToAzure"
-  resource_group_name = var.resource_group_name
-  server_name         = azurerm_mssql_server.sql_server.name
+  server_id         = azurerm_mssql_server.sql_server.id  
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
 }
