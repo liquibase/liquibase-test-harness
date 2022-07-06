@@ -11,7 +11,7 @@ variable "location" {
 }
 
 variable "resource_group_name" {
-  default     = "AzureTestHarness"
+  default     = "aztestharness"
   description = "The resource group the sql server should be placed in. "
 }
 
