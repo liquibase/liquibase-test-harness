@@ -1,8 +1,12 @@
 data "azurerm_client_config" "current" {}
 
- resource "azurerm_resource_group" "test_harness" {
+resource "azurerm_resource_group" "testharness" {
  name     = var.resource_group_name
  location = var.location
+ timeouts {
+   create = "10m"
+   delete = "30m"
+ }
 }
 
 resource "azurerm_mssql_server" "sql_server" {
@@ -12,6 +16,11 @@ resource "azurerm_mssql_server" "sql_server" {
   version             = "12.0"
   administrator_login = var.admin_login_name
   administrator_login_password = random_string.password.result
+
+  timeouts {
+    create = "8m"
+    delete = "15m"
+  }
   depends_on          = [azurerm_resource_group.test_harness]
 }
 
