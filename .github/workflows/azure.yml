@@ -90,15 +90,16 @@ jobs:
         working-directory: src/test/resources/azure
         run: |
           echo "DBENDPOINT=$(terraform output -json azureSqlDbEndpoint | jq -r)" >> $GITHUB_ENV
-
+          echo "ADMINPASSWD"=$(terraform output -json admin_password | jq -r)" >> $GITHUB_ENV
+ 
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v7
         with:
           operation: "update"
           classpath: "src/test/resources/azure"
           changeLogFile: "azuresql-init.sql"
-          username: "lbuser"
-          password: "LiquibasePass1"
+          username: "lbadmin"
+          password: ${{ env.ADMINPASSWD }}
           url: 'jdbc:sqlserver://${{ env.DBENDPOINT }}:1433;trustServerCertificate=true;databaseName=lbcat'
 
       - name: Update Azure Harness Config
