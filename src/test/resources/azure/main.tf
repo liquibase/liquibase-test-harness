@@ -18,8 +18,8 @@ resource "azurerm_mssql_server" "sql_server" {
   administrator_login_password = random_string.password.result
 
   timeouts {
-    create = "8m"
-    delete = "15m"
+    create = "4h"
+    delete = "4h"
   }
   depends_on          = [azurerm_resource_group.testharness]
 }
