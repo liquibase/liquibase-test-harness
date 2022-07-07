@@ -90,7 +90,7 @@ jobs:
         working-directory: src/test/resources/azure
         run: |
           echo "DBENDPOINT=$(terraform output -json azureSqlDbEndpoint | jq -r)" >> $GITHUB_ENV
-          echo "ADMINPASSWD"=$(terraform output -json admin_password | jq -r)" >> $GITHUB_ENV
+          echo "ADMINPASSWD=$(terraform output -json admin_password | jq -r)" >> $GITHUB_ENV
  
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v7
