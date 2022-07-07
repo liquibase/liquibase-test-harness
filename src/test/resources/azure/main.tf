@@ -21,7 +21,7 @@ resource "azurerm_mssql_server" "sql_server" {
     create = "8m"
     delete = "15m"
   }
-  depends_on          = [azurerm_resource_group.test_harness]
+  depends_on          = [azurerm_resource_group.testharness]
 }
 
 resource "azurerm_mssql_firewall_rule" "sql_firewall" {
