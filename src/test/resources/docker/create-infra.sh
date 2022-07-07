@@ -26,13 +26,15 @@ case $db in
   # crdb also has an init container
   "crdb-20.2"|"crdb-21.1"|"crdb-21.2"|"crdb-22.1")
     docker-compose up -d $db
-    sleep 10
+    sleep 20
     docker-compose up -d ${db}-init
+    docker-compose logs $db
+    docker-compose logs ${db}-init
     exit 0
     ;;
 
-  # in memory databases
-  "derby"|"sqlite"|"H2Database-2.1")
+  # in memory and cloud databases
+  "derby"|"sqlite"|"H2Database-2.1"|"snowflake")
     exit 0
     ;;
 

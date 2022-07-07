@@ -1,0 +1,1 @@
+COMMENT ON COLUMN "PUBLIC".authors.id IS 'A Test Column Remark'
