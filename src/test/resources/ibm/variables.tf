@@ -26,7 +26,7 @@ variable "subnetwork_name" {
 }
 
 variable "total_ipv4_address_count" {
-    default = 256
+  default = 256
 }
 
 variable "vsi_name" {
