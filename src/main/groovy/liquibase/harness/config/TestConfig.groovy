@@ -70,6 +70,8 @@ class TestConfig {
         if(dbUrl) {
             databasesUnderTest.forEach( {it.url = dbUrl})
         }
+
+        return databasesUnderTest
     }
 
 }
