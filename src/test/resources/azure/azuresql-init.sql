@@ -3,7 +3,7 @@ DECLARE @logPath varchar(256);
 SET @dataPath=(SELECT CAST(serverproperty('InstanceDefaultDataPath') AS varchar(256)));
 SET @logPath=(SELECT CAST(serverproperty('InstanceDefaultLogPath') AS varchar(256)));
 
-CREATE LOGIN [lbuser] with password=N'LiquibasePass1', CHECK_EXPIRATION=OFF;
+CREATE LOGIN [lbuser] with password=N'LiquibasePass1';
 GO
 
 CREATE DATABASE lbcat;
