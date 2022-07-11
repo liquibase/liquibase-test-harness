@@ -30,12 +30,3 @@ variable "admin_login_name" {
   description = "Login name for the sql server administrator. If not set the default login name will be 'lbadmin'."
 }
 
-variable "allow_azure_ip_access" {
-  default     = "true"
-  description = "If azure ip ranges should be allowed through the sql server firewall."
-}
-
-variable "lock_database_resource" {
-  default     = "false"
-  description = "Param defining whether to set CanNotDelete lock on the database resource upon DB creation. Possible input values is 'true' and 'false'."
-}
