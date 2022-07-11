@@ -25,8 +25,6 @@ resource "azurerm_mssql_server" "sql_server" {
 }
 
 resource "azurerm_mssql_firewall_rule" "sql_firewall" {
-  count = var.allow_azure_ip_access ? 1 : 0
-
   name                = "AllowAccessToAzure"
   server_id         = azurerm_mssql_server.sql_server.id  
   start_ip_address    = "0.0.0.0"
@@ -42,15 +40,6 @@ resource "azurerm_mssql_database" "test" {
   tags = {
     terraform = "true"
   }
-}
-
-resource "azurerm_management_lock" "resource-CanNotDelete-lock" {
-  count = var.lock_database_resource == true ? 1 : 0
-
-  name       = "sql-database-CanNotDelete-lock"
-  scope      = azurerm_mssql_database.test.id
-  lock_level = "CanNotDelete"
-  notes      = "Locked due to holding critical data."
 }
 
 resource "random_string" "password" {
