@@ -22,7 +22,7 @@ variable "server_name" {
 
 variable "database_name" {
   description = "Name on the initial database on the server. "
-  default     = "azuresqldb"
+  default     = "lbcat"
 }
 
 variable "admin_login_name" {

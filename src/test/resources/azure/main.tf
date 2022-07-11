@@ -33,7 +33,7 @@ resource "azurerm_mssql_firewall_rule" "sql_firewall" {
   end_ip_address      = "0.0.0.0"
 }
 
-resource "azurerm_mssql_database" "test" {
+resource "azurerm_mssql_database" "lbcat" {
   name      = var.database_name
   server_id = azurerm_mssql_server.sql_server.id
   max_size_gb = 2
