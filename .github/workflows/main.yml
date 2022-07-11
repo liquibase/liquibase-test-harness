@@ -208,6 +208,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=0-SNAPSHOT -DforceVersion=true
+          mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-commercial -DdepVersion=0-SNAPSHOT -DforceVersion=true
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}
