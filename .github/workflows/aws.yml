@@ -132,11 +132,11 @@ jobs:
           password: "LbRootPass1"
           url: "jdbc:postgresql://${{ env.DBENDPOINT }}/lbcat"
 
-      - name: Update ${{ matrix.database }}-${{ matrix.version }} Harness Config
-        working-directory: src/test/resources
-        run: |
-          sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
-          sed -i "s/DBVERSION/${{ matrix.version }}/g" harness-config.yml
+      # - name: Update ${{ matrix.database }}-${{ matrix.version }} Harness Config
+      #   working-directory: src/test/resources
+      #   run: |
+      #     sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
+      #     sed -i "s/DBVERSION/${{ matrix.version }}/g" harness-config.yml
 
       - name: Cache local Maven repository
         uses: actions/cache@v2
@@ -149,7 +149,7 @@ jobs:
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=aws -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=aws -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} =DdbUrl=${{ env.DBENDPOINT }} -Dmaven.test.failure.ignore=true test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v2
