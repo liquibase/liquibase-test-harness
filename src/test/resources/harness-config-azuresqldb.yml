@@ -1,6 +1,6 @@
   - name: mssql
     prefix: azure
     version:
-    url: jdbc:sqlserver://DBENDPOINT:1434;trustServerCertificate=true;databaseName=lbcat
+    url: jdbc:sqlserver://DBENDPOINT:1433;trustServerCertificate=true;databaseName=lbcat
     username: lbuser
     password: LiquibasePass1
