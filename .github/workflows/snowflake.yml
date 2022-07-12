@@ -53,9 +53,10 @@ jobs:
 
       - name: Fetch Credentials from Terraform
         working-directory: src/test/resources/snowflake
+        id: credentials
         run: |
-          echo "TH_USER=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
-          echo "TH_PASS=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
+          echo "::set-output name=user::$(terraform output -json username | jq -r)"
+          echo "::set-output name=password::$(terraform output -json password | jq -r)"
 
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v5
@@ -63,8 +64,8 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/snowflake"
           changeLogFile: "snowflake-init.sql"
-          username: "${{ env.TH_USER }}"
-          password: "${{ env.TH_PASS }}"
+          username: ${{steps.credentials.outputs.name}}
+          password: ${{steps.credentials.outputs.password}}
           url: 'jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LBCAT&schema=PUBLIC'
 
       - name: Cache Local Maven Repo
@@ -75,16 +76,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Update Snowflake Harness Config
-        working-directory: src/test/resources
-        run: |
-          sed -i "s|USERNAME|${{ env.TH_USER }}|g" harness-config-snowflake.yml
-          sed -i "s|PASSWORD|${{ env.TH_PASS }}|g" harness-config-snowflake.yml
+      # - name: Update Snowflake Harness Config
+      #   working-directory: src/test/resources
+      #   run: |
+      #     sed -i "s|USERNAME|${{ env.TH_USER }}|g" harness-config-snowflake.yml
+      #     sed -i "s|PASSWORD|${{ env.TH_PASS }}|g" harness-config-snowflake.yml
 
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DdbUsername=${{steps.credentials.outputs.name}} -DdbPassword=${{steps.credentials.outputs.password}} -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3
