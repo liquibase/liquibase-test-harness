@@ -53,6 +53,7 @@ jobs:
 
       - name: Fetch Credentials from Terraform
         working-directory: src/test/resources/snowflake
+        id: credentials
         run: |
           echo "TH_USER=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
           echo "TH_PASS=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
