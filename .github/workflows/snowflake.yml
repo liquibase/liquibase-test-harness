@@ -55,7 +55,7 @@ jobs:
         working-directory: src/test/resources/snowflake
         id: credentials
         run: |
-          echo "::set-output name=user::$(terraform output -json username | jq -r)"
+          echo "::set-output name=username::$(terraform output -json username | jq -r)"
           echo "::set-output name=password::$(terraform output -json password | jq -r)"
 
       - name: Run Liquibase
@@ -64,7 +64,7 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/snowflake"
           changeLogFile: "snowflake-init.sql"
-          username: ${{steps.credentials.outputs.name}}
+          username: ${{steps.credentials.outputs.username}}
           password: ${{steps.credentials.outputs.password}}
           url: 'jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LBCAT&schema=PUBLIC'
 
@@ -85,7 +85,7 @@ jobs:
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DdbUsername=${{steps.credentials.outputs.name}} -DdbPassword=${{steps.credentials.outputs.password}} -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DdbUsername=${{steps.credentials.outputs.username}} -DdbPassword=${{steps.credentials.outputs.password}} -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3
