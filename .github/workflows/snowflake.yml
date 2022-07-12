@@ -55,8 +55,8 @@ jobs:
         working-directory: src/test/resources/snowflake
         id: credentials
         run: |
-          echo "::set-output name=username::$(terraform output -json username | jq -r)"
-          echo "::set-output name=password::$(terraform output -json password | jq -r)"
+          echo "TH_USER=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
+          echo "TH_PASS=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
 
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v5
@@ -64,8 +64,8 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/snowflake"
           changeLogFile: "snowflake-init.sql"
-          username: ${{steps.credentials.outputs.username}}
-          password: ${{steps.credentials.outputs.password}}
+          username: "${{ env.TH_USER }}"
+          password: "${{ env.TH_PASS }}"
           url: 'jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LBCAT&schema=PUBLIC'
 
       - name: Cache Local Maven Repo
@@ -76,16 +76,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # - name: Update Snowflake Harness Config
-      #   working-directory: src/test/resources
-      #   run: |
-      #     sed -i "s|USERNAME|${{ env.TH_USER }}|g" harness-config-snowflake.yml
-      #     sed -i "s|PASSWORD|${{ env.TH_PASS }}|g" harness-config-snowflake.yml
-
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DdbUsername=${{steps.credentials.outputs.username}} -DdbPassword=${{steps.credentials.outputs.password}} -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DdbUsername=${{env.TH_USER}} -DdbPassword=${{env.TH_PASS} -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3
