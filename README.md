@@ -162,6 +162,9 @@ Execute `mvn test` with the (optional) flags outlined below:
 * `-Dprefix=docker` filters database from config file by some common platform identifier. E.g. all AWS based platforms, all Titan managed platforms, all from default docker file.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
 * `-DdbVersion` overrides the database version. Works in conjunction with `-DdbName` flag.
+* `-DdbUsername=myUsername` overrides the database login username. Providing placeholder username in config.yml file is still required.
+* `-DdbPassword=myPassword` overrides the database login password. Providing placeholder password in config.yml file is still required.
+* `-DdbUrl=myUrl` overrides the database url. Providing placeholder url in config.yml file is still required.
 * `-DrollbackStrategy` overrides the default rollback strategy of `rollbackToDate` where we create a timestamp in UTC timezone and then try to rollback to that point in time. But this rollback strategy might not work well in some cases like cloud databases for instance -- cloud databases are often in different timezones than the test-harness runners, so the `rollback` command can be used instead in conjunction with the `test-harness-tag` tag. To do so, use `-DrollbackStrategy=rollbackByTag`.
 * `-Dliquibase-core.version` overrides default version of liquibase-core.
 
