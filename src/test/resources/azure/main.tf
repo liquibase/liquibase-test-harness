@@ -44,8 +44,7 @@ resource "azurerm_mssql_database" "test" {
 
 resource "random_string" "password" {
   length           = 32
-  special          = true
-  override_special = "/@\" "
+  special          = false
 }
 
 
