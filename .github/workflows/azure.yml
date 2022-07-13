@@ -1,20 +1,19 @@
-# Terraform Action to test Cloud Databases with test-harness
 
-name: AWS Cloud Database Test Execution
+name: Azure Cloud Sql DB Test
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
-  schedule:
-    - cron: '0 12 * * *' # Execute every day at noon
   workflow_dispatch:
 
 jobs:
   setup:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/test/resources/aws
+        working-directory: src/test/resources/azure
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -50,24 +49,18 @@ jobs:
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-
             <details><summary>Show Plan</summary>
-
             \`\`\`\n
             ${process.env.PLAN}
             \`\`\`
-
             </details>
-
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: output
             })
-
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
@@ -76,69 +69,44 @@ jobs:
         run: terraform apply -auto-approve
 
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [setup]
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - database: postgresql
-            version: 10
-          - database: postgresql
-            version: 11
-          - database: postgresql
-            version: 12
-          - database: postgresql
-            version: 13
-          - database: postgresql
-            version: 14
-          - database: oracle
-            version: 19
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
           terraform_wrapper: false
-          
+
       - name: Terraform Init
-        working-directory: src/test/resources/aws
+        working-directory: src/test/resources/azure
         run: terraform init
 
-      - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
-        working-directory: src/test/resources/aws
+      - name: Fetch Connect Details from Terraform
+        working-directory: src/test/resources/azure
         run: |
-          echo "DBENDPOINT=$(terraform output -json ${{ matrix.database }}Endpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
+          echo "DBENDPOINT=$(terraform output -json azureSqlDbEndpoint | jq -r)" >> $GITHUB_ENV
 
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'oracle' }}
+      - name: Run Liquibase
+        uses: liquibase/liquibase-github-action@v7
         with:
           operation: "update"
-          classpath: "src/test/resources/aws/changelogs"
-          changeLogFile: "oracle.sql"
+          classpath: "src/test/resources/azure"
+          changeLogFile: "azuresql-init.sql"
           username: "lbuser"
-          password: "LbRootPass1"
-          url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}:lbcat"
+          password: "LiquibasePass1"
+          url: 'jdbc:sqlserver://${{ env.DBENDPOINT }}:1433;trustServerCertificate=true;databaseName=lbcat'
 
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'postgresql' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/aws/changelogs"
-          changeLogFile: "postgres.sql"
-          username: "lbuser"
-          password: "LbRootPass1"
-          url: "jdbc:postgresql://${{ env.DBENDPOINT }}/lbcat"
-
-      - name: Update ${{ matrix.database }}-${{ matrix.version }} Harness Config
+      - name: Update Azure Harness Config
         working-directory: src/test/resources
         run: |
-          sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
-          sed -i "s/DBVERSION/${{ matrix.version }}/g" harness-config.yml
+          sed -i "s|DBENDPOINT|${{ env.DBENDPOINT }}|g" harness-config-azuresqldb.yml
 
-      - name: Cache local Maven repository
+      - name: Cache Local Maven Repo
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
@@ -146,31 +114,35 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+      - name: Azure SQL DB Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=aws -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=azure -DdbName=azuresqldb -Dmaven.test.failure.ignore=true test
 
-      - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
+      - name: Archive Azure Sql Database Test Results
         uses: actions/upload-artifact@v3
         with:
-          name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
+          name: azure-sqldb-test-results
           path: build/spock-reports
 
   destroy:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [setup,test]
     defaults:
       run:
-        working-directory: src/test/resources/aws
+        working-directory: src/test/resources/azure
     if: ${{ always() }}
+
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
       - name: Terraform Init
         run: terraform init
+
       - name: Terraform Destroy
         run: terraform destroy -auto-approve

@@ -52,11 +52,11 @@ jobs:
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6.1.0
         with:
           github-token: ${{ secrets.BOT_TOKEN }}
           script: |
@@ -70,7 +70,7 @@ jobs:
             if ("${{ github.event.pull_request.base.ref }}" !== "") {
               useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
             }
-            
+
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
             core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
@@ -180,9 +180,9 @@ jobs:
         ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           java-version: '8'
           distribution: 'temurin'
@@ -215,7 +215,7 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
       - name: Archive ${{ matrix.database }} test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
           name: ${{ matrix.database }}-test-results
@@ -232,7 +232,7 @@ jobs:
     needs: [ setup, test ]
     if: ${{ always() }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
       - name: Cache installed Liquibase
