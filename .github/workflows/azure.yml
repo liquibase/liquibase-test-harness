@@ -90,6 +90,7 @@ jobs:
         working-directory: src/test/resources/azure
         run: |
           echo "DBENDPOINT=$(terraform output -json azureSqlDbEndpoint | jq -r)" >> $GITHUB_ENV
+          echo "ADMINUSER=$(terraform output -json admin_user | jq -r)" >> $GITHUB_ENV
           echo "ADMINPASSWD=$(terraform output -json admin_password | jq -r)" >> $GITHUB_ENV
  
       - name: Run Liquibase
@@ -98,14 +99,9 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/azure"
           changeLogFile: "azuresql-init.sql"
-          username: "lbadmin"
+          username: ${{ env.ADMINUSER }}
           password: ${{ env.ADMINPASSWD }}
-          url: 'jdbc:sqlserver://${{ env.DBENDPOINT }}:1433;trustServerCertificate=true;databaseName=lbcat'
-
-      - name: Update Azure Harness Config
-        working-directory: src/test/resources
-        run: |
-          sed -i "s|DBENDPOINT|${{ env.DBENDPOINT }}|g" harness-config-azuresqldb.yml
+          url: ${{ env.DBENDPOINT }}
 
       - name: Cache Local Maven Repo
         uses: actions/cache@v3
@@ -118,7 +114,7 @@ jobs:
       - name: Azure SQL DB Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/azuresqldb.yml -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/azuresqldb.yml -DdbUsername=${{env.ADMINUSER}} -DdbPassword=${{env.ADMINPASSWD}} -DdbUrl=${{env.DBENDPOINT}} -Dmaven.test.failure.ignore=true test
 
       - name: Archive Azure Sql Database Test Results
         uses: actions/upload-artifact@v3
