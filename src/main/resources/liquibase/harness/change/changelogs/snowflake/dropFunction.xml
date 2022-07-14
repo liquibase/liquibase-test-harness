@@ -16,7 +16,7 @@
         <rollback/>
     </changeSet>
     <changeSet author="as" id="2">
-        <pro:dropFunction functionName="test_function"/>
+        <pro:dropFunction functionName="test_function()"/>
         <rollback/>
     </changeSet>
 </databaseChangeLog>

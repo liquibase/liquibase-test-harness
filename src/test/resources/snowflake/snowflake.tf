@@ -85,6 +85,15 @@ resource "snowflake_schema_grant" "create_view" {
   with_grant_option = false
 }
 
+resource "snowflake_schema_grant" "create_function" {
+  provider          = snowflake.security_admin
+  database_name     = snowflake_database.db.name
+  schema_name       = "PUBLIC"
+  privilege         = "CREATE FUNCTION"
+  roles             = [snowflake_role.role.name]
+  with_grant_option = false
+}
+
 resource "snowflake_user" "user" {
   provider          = snowflake.security_admin
   name              = var.username
