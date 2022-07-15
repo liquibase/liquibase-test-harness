@@ -22,6 +22,7 @@
 | Apache Derby | `10.14.2.0` |
 | Firebird | `3.0, 4.0` |
 | HSQLDB | `2.3.4`, `2.5` |
+| Snowflake | `6.23.0` |
 | Azure SQL DB | `latest` |
 
 ## Framework
