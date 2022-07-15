@@ -1,3 +1,7 @@
+inputFormat: xml
+context: testContext
+
+databasesUnderTest:
   - name: mssql
     prefix: azure
     version: azure
