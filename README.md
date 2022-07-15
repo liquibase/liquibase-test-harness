@@ -4,24 +4,25 @@
 
 ## Test-Harness Support Matrix
 
-| Database | Versions Tested|
-| ----------- | ----------- |
-| Postgres |  `9, 9.5, 10, 11, 12, 13, 14` |
-| Postgres RDS |  `10, 11, 12, 13, 14` |
-| MySQL | `5.6, 5.7, 8` |
-| MariaDB | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
-| SQL Server | `2017`, `2019` |
-| Percona XtraDB | `5.7`, `8.0`|
-| Oracle | `18.3.0, 18.4.0, 19.9.0, 21.3.0` |
-| Oracle RDS | `19.0` |
-| CockroachDB | `20.2, 21.1, 21.2, 22.1` |
-| EDB | `9.5, 9.6, 10, 11, 12, 13, 14` |
-| DB2 on z/OS | `11.1` |
-| H2 | `2.1.210` |
-| SQLite | `3.34.0` |
-| Apache Derby | `10.14.2.0` |
-| Firebird | `3.0, 4.0` |
-| HSQLDB | `2.3.4`, `2.5` |
+| Database                  | Versions Tested                       |
+|---------------------------|---------------------------------------|
+| Postgres                  | `9, 9.5, 10, 11, 12, 13, 14`          |
+| Postgres RDS              | `10, 11, 12, 13, 14`                  |
+| MySQL                     | `5.6, 5.7, 8`                         |
+| MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
+| SQL Server                | `2017`, `2019`                        |
+| Percona XtraDB            | `5.7`, `8.0`                          |
+| Oracle                    | `18.3.0, 18.4.0, 19.9.0, 21.3.0`      |
+| Oracle RDS                | `19.0`                                |
+| CockroachDB               | `20.2, 21.1, 21.2, 22.1`              |
+| EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        |
+| DB2 on z/OS               | `11.1`                                |
+| DB2 on Linux/Unix/Windows | `11.5.7`                              |
+| H2                        | `2.1.210`                             |
+| SQLite                    | `3.34.0`                              |
+| Apache Derby              | `10.14.2.0`                           |
+| Firebird                  | `3.0, 4.0`                            |
+| HSQLDB                    | `2.3.4`, `2.5`                        |
 
 ## Framework
 
