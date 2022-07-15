@@ -116,7 +116,7 @@ jobs:
       - name: Azure SQL DB Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/azuresqldb.yml -DdbUsername=${{env.ADMINUSER}} -DdbPassword=${{env.ADMINPASSWD}} -DdbUrl='${{env.DBENDPOINT}}' -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-azuresqldb.yml -DdbUsername=${{env.ADMINUSER}} -DdbPassword=${{env.ADMINPASSWD}} -DdbUrl='${{env.DBENDPOINT}}' -Dmaven.test.failure.ignore=true test
 
       - name: Archive Azure Sql Database Test Results
         uses: actions/upload-artifact@v3
