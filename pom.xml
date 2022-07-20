@@ -75,6 +75,12 @@
 <!-- This syntax means open-ended version range. Take newest accessible starting from 4.3.0 -->
             <version>${liquibase-core.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-commercial</artifactId>
+            <!-- This syntax means open-ended version range. Take newest accessible starting from 4.14.0 -->
+            <version>${liquibase-core.version}</version>
+        </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
