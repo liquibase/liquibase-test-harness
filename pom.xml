@@ -75,6 +75,12 @@
 <!-- This syntax means open-ended version range. Take newest accessible starting from 4.3.0 -->
             <version>${liquibase-core.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-commercial</artifactId>
+            <!-- This syntax means open-ended version range. Take newest accessible starting from 4.14.0 -->
+            <version>${liquibase-core.version}</version>
+        </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -122,7 +128,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.29</version>
+            <version>8.0.30</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -177,7 +183,7 @@
         <dependency>
             <groupId>net.snowflake</groupId>
             <artifactId>snowflake-jdbc</artifactId>
-            <version>3.13.20</version>
+            <version>3.13.21</version>
             <scope>test</scope>
         </dependency>
         <dependency>

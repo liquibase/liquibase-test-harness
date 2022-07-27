@@ -75,17 +75,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Update Snowflake Harness Config
-        working-directory: src/test/resources
-        run: |
-          sed -i "s|USERNAME|${{ env.TH_USER }}|g" harness-config-snowflake.yml
-          sed -i "s|PASSWORD|${{ env.TH_PASS }}|g" harness-config-snowflake.yml
-          cat harness-config-snowflake.yml
-
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DdbUsername=${{env.TH_USER}} -DdbPassword=${{env.TH_PASS}} -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3

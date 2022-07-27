@@ -4,25 +4,26 @@
 
 ## Test-Harness Support Matrix
 
-| Database                  | Versions Tested                       |
-|---------------------------|---------------------------------------|
-| Postgres                  | `9, 9.5, 10, 11, 12, 13, 14`          |
-| Postgres RDS              | `10, 11, 12, 13, 14`                  |
-| MySQL                     | `5.6, 5.7, 8`                         |
-| MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
-| SQL Server                | `2017`, `2019`                        |
-| Percona XtraDB            | `5.7`, `8.0`                          |
-| Oracle                    | `18.3.0, 18.4.0, 19.9.0, 21.3.0`      |
-| Oracle RDS                | `19.0`                                |
-| CockroachDB               | `20.2, 21.1, 21.2, 22.1`              |
-| EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        |
-| DB2 on z/OS               | `11.1`                                |
-| DB2 on Linux/Unix/Windows | `11.5.7`                              |
-| H2                        | `2.1.210`                             |
-| SQLite                    | `3.34.0`                              |
-| Apache Derby              | `10.14.2.0`                           |
-| Firebird                  | `3.0, 4.0`                            |
-| HSQLDB                    | `2.3.4`, `2.5`                        |
+| Database | Versions Tested|
+| ----------- | ----------- |
+| Postgres |  `9, 9.5, 10, 11, 12, 13, 14` |
+| AWS Postgres RDS |  `10, 11, 12, 13, 14` |
+| MySQL | `5.6, 5.7, 8` |
+| MariaDB | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
+| SQL Server | `2017`, `2019` |
+| Percona XtraDB | `5.7`, `8.0`|
+| Oracle | `18.3.0, 18.4.0, 19.9.0, 21.3.0` |
+| AWS Oracle RDS | `19.0` |
+| CockroachDB | `20.2, 21.1, 21.2, 22.1` |
+| EDB | `9.5, 9.6, 10, 11, 12, 13, 14` |
+| DB2 on z/OS | `11.1` |
+| H2 | `2.1.210` |
+| SQLite | `3.34.0` |
+| Apache Derby | `10.14.2.0` |
+| Firebird | `3.0, 4.0` |
+| HSQLDB | `2.3.4`, `2.5` |
+| Snowflake | `6.23.0` |
+| Azure SQL DB | `latest` |
 
 ## Framework
 
@@ -163,6 +164,9 @@ Execute `mvn test` with the (optional) flags outlined below:
 * `-Dprefix=docker` filters database from config file by some common platform identifier. E.g. all AWS based platforms, all Titan managed platforms, all from default docker file.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.
 * `-DdbVersion` overrides the database version. Works in conjunction with `-DdbName` flag.
+* `-DdbUsername=myUsername` overrides the database login username. Providing placeholder username in config.yml file is still required.
+* `-DdbPassword=myPassword` overrides the database login password. Providing placeholder password in config.yml file is still required.
+* `-DdbUrl=myUrl` overrides the database url. Providing placeholder url in config.yml file is still required.
 * `-DrollbackStrategy` overrides the default rollback strategy of `rollbackToDate` where we create a timestamp in UTC timezone and then try to rollback to that point in time. But this rollback strategy might not work well in some cases like cloud databases for instance -- cloud databases are often in different timezones than the test-harness runners, so the `rollback` command can be used instead in conjunction with the `test-harness-tag` tag. To do so, use `-DrollbackStrategy=rollbackByTag`.
 * `-Dliquibase-core.version` overrides default version of liquibase-core.
 

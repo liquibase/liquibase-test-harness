@@ -3,6 +3,8 @@ name: Azure Cloud Sql DB Test
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   workflow_dispatch:
+  schedule:
+    - cron: '0 12 * * *'
 
 jobs:
   setup:
@@ -90,21 +92,18 @@ jobs:
         working-directory: src/test/resources/azure
         run: |
           echo "DBENDPOINT=$(terraform output -json azureSqlDbEndpoint | jq -r)" >> $GITHUB_ENV
-
+          echo "ADMINUSER=$(terraform output -json admin_user | jq -r)" >> $GITHUB_ENV
+          echo "ADMINPASSWD=$(terraform output -json admin_password | jq -r)" >> $GITHUB_ENV
+ 
       - name: Run Liquibase
         uses: liquibase/liquibase-github-action@v7
         with:
           operation: "update"
           classpath: "src/test/resources/azure"
           changeLogFile: "azuresql-init.sql"
-          username: "lbuser"
-          password: "LiquibasePass1"
-          url: 'jdbc:sqlserver://${{ env.DBENDPOINT }}:1433;trustServerCertificate=true;databaseName=lbcat'
-
-      - name: Update Azure Harness Config
-        working-directory: src/test/resources
-        run: |
-          sed -i "s|DBENDPOINT|${{ env.DBENDPOINT }}|g" harness-config-azuresqldb.yml
+          username: ${{ env.ADMINUSER }}
+          password: ${{ env.ADMINPASSWD }}
+          url: ${{ env.DBENDPOINT }}
 
       - name: Cache Local Maven Repo
         uses: actions/cache@v3
@@ -117,7 +116,7 @@ jobs:
       - name: Azure SQL DB Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=azure -DdbName=azuresqldb -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-azuresqldb.yml -DdbUsername=${{env.ADMINUSER}} -DdbPassword=${{env.ADMINPASSWD}} -DdbUrl='${{env.DBENDPOINT}}' -Dmaven.test.failure.ignore=true test
 
       - name: Archive Azure Sql Database Test Results
         uses: actions/upload-artifact@v3

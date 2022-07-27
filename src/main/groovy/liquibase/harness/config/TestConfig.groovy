@@ -43,6 +43,9 @@ class TestConfig {
         String dbName = System.getProperty("dbName")
         String dbVersion = System.getProperty("dbVersion")?.replaceAll("-", ".")
         String platformPrefix = System.getProperty("prefix")
+        String dbUsername = System.getProperty("dbUsername")
+        String dbPassword = System.getProperty("dbPassword")
+        String dbUrl = System.getProperty("dbUrl")
         databasesUnderTest.forEach({ it -> it.version = it.version?.replaceAll("-", ".") })
 
         if (platformPrefix) {
@@ -55,6 +58,19 @@ class TestConfig {
         if (dbVersion) {
             databasesUnderTest = databasesUnderTest.findAll {it.version.equalsIgnoreCase(dbVersion)}
         }
+
+        if(dbUsername) {
+            databasesUnderTest.forEach( {it.username = dbUsername})
+        }
+
+        if(dbPassword) {
+            databasesUnderTest.forEach( {it.password = dbPassword})
+        }
+
+        if(dbUrl) {
+            databasesUnderTest.forEach( {it.url = dbUrl})
+        }
+
         return databasesUnderTest
     }
 
