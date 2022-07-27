@@ -91,7 +91,7 @@
                 "characterOctetLength": 65535,
                 "columnSizeUnit": "BYTE",
                 "columnSize": 65535,
-                "dataTypeId": "-1",
+                "dataTypeId": -1,
                 "typeName": "TEXT"
               }
             }
