@@ -148,6 +148,9 @@ case $db in
   "firebird-4")
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=firebird -DdbVersion=4 test
     ;;
+  "db2-luw")
+      test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=db2-luw test
+      ;;
   "snowflake")
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=snowflake -DrollbackStrategy=rollbackByTag test
     ;;
