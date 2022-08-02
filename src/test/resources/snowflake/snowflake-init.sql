@@ -1,35 +1,16 @@
 -- liquibase formatted sql
--- changeset liquibase:1
 
-DROP TABLE IF EXISTS AUTHORS;
-CREATE TABLE AUTHORS (
-                         id int AUTOINCREMENT(6,1) NOT NULL,
-                         first_name VARCHAR(50) NOT NULL,
-                         last_name varchar(50) NOT NULL,
-                         email varchar(100) NOT NULL,
-                         birthdate date NOT NULL,
-                         added timestamp NOT NULL DEFAULT current_timestamp(),
-                         PRIMARY KEY (id)
+-- changeset liquibase:table-dim-dumm-address
+-- USE SCHEMA "JNSCHEMA"
+create or replace TABLE DIM_DUMM_ADDRESS (
+ADDRESSID NUMBER(38,0) autoincrement,
+STREETNAME VARCHAR(16777216),
+CITY VARCHAR(100),
+STATE VARCHAR(100),
+POSTALCODE VARCHAR(50),
+COUNTRY VARCHAR(100),
+ADDRESSTYPE VARCHAR(50),
+STATUS VARCHAR(50),
+DUMMY VARCHAR(50)
 );
-
-INSERT INTO AUTHORS VALUES ('1','Eileen','Lubowitz','ppaucek@example.org','1991-03-04','2004-05-30 02:08:25'),
-                           ('2','Tamia','Mayert','shansen@example.org','2016-03-27','2014-03-21 02:52:00'),
-                           ('3','Cyril','Funk','reynolds.godfrey@example.com','1988-04-21','2011-06-24 18:17:48'),
-                           ('4','Nicolas','Buckridge','xhoeger@example.net','2017-02-03','2019-04-22 02:04:41'),
-                           ('5','Jayden','Walter','lillian66@example.com','2010-02-27','1990-02-04 02:32:00');
-
-DROP TABLE IF EXISTS POSTS;
-CREATE TABLE POSTS (
-                       id int NOT NULL,
-                       author_id int NOT NULL,
-                       title varchar(255) NOT NULL,
-                       description varchar(500) NOT NULL,
-                       content text NOT NULL,
-                       inserted_date date
-);
-
-INSERT INTO POSTS VALUES ('1','1','temporibus','voluptatum','Fugit non et doloribus repudiandae.','2015-11-18'),
-                         ('2','2','ea','aut','Tempora molestias maiores provident molestiae sint possimus quasi.','1975-06-08'),
-                         ('3','3','illum','rerum','Delectus recusandae sit officiis dolor.','1975-02-25'),
-                         ('4','4','itaque','deleniti','Magni nam optio id recusandae.','2010-07-28'),
-                         ('5','5','ad','similique','Rerum tempore quis ut nesciunt qui excepturi est.','2006-10-09');
+--rollback drop table table-dim-dumm-address;
