@@ -25,6 +25,7 @@
 | HSQLDB                    | `2.3.4`, `2.5`                        |
 | Snowflake                 | `6.23.0`                              |
 | Azure SQL DB              | `latest`                              |
+| Azure SQL MI              | `latest`                              |
 
 ## Framework
 
