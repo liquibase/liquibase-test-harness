@@ -149,7 +149,7 @@ This test executes the following steps:
 This test validates work of Liquibase 'snapshot' command by comparing expected and generated snapshots
 after a DB object was created.
 
-## BaseTests
+## BaseLevelTest
 
 This test validates work of basic Liquibase logic. It runs simple 'create table' sql-formatted query using Liquibase 'update' command and 
 checks whether databasechangelog and databasechangeloglock tables were created and filled with correct data.
