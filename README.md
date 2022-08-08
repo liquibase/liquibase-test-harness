@@ -12,7 +12,7 @@
 | MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
 | SQL Server                | `2017`, `2019`                        |
 | Percona XtraDB            | `5.7`, `8.0`                          |
-| Oracle                    | `18.3.0, 18.4.0, 19.9.0, 21.3.0`      |
+| Oracle                    | `18.3.0, 18.4.0, 21.3.0`              |
 | AWS Oracle RDS            | `19.0`                                |
 | CockroachDB               | `20.2, 21.1, 21.2, 22.1`              |
 | EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        |
@@ -22,7 +22,7 @@
 | SQLite                    | `3.34.0`                              |
 | Apache Derby              | `10.14.2.0`                           |
 | Firebird                  | `3.0, 4.0`                            |
-| HSQLDB                    | `2.3.4`, `2.5`                        |
+| HSQLDB                    | `2.4, 2.5`                            |
 | Snowflake                 | `6.23.0`                              |
 | Azure SQL DB              | `latest`                              |
 | Azure SQL MI              | `latest`                              |
