@@ -125,7 +125,7 @@ jobs:
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [ setup ]
     strategy:
       fail-fast: false
