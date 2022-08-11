@@ -321,6 +321,13 @@ databasesUnderTest:
     username: db2inst1
     password: db2inst1-pwd
 
+  - name: db2-z
+    prefix: cloud
+    version:
+    url: jdbc:db2://163.66.95.189:8100/DBC1LOC
+    username: "USERNAME"
+    password: "PASSWORD"
+
   # change ports if you want to run 2 versions of these platforms simultaneously
   - name: hsqldb
     version: 2.4
