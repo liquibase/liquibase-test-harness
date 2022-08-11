@@ -1,6 +1,10 @@
-  - name: azuresqldb
+inputFormat: xml
+context: testContext
+
+databasesUnderTest:
+  - name: mssql
     prefix: azure
-    version:
-    url: jdbc:sqlserver://@DBENDPOINT:1434;trustServerCertificate=true;databaseName=lbcat
-    username: lbuser
-    password: LiquibasePass1
+    version: azure
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD

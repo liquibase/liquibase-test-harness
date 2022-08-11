@@ -1,0 +1,1 @@
+ALTER TABLE "DB2INST1".posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES "DB2INST1".authors (id) ON DELETE CASCADE

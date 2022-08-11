@@ -1,0 +1,1 @@
+CREATE TABLE "DB2INST1".createTableDataTypeText (textCol CLOB)
