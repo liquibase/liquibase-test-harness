@@ -7,7 +7,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet  author="as" id="1">
-        <pro:createSynonym objectSchemaName="LTHUSER"
+        <pro:createSynonym objectSchemaName="IBMUSER"
                            objectType="table"
                            objectName="authors"
                            private="true"
