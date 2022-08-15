@@ -34,7 +34,7 @@ case $db in
     ;;
 
   # in memory and cloud databases
-  "derby"|"sqlite"|"H2Database-2.1"|"snowflake"|"mysql-aws")
+  "derby"|"sqlite"|"H2Database-2.1"|"snowflake"|"mysql-aws-8")
     exit 0
     ;;
 
