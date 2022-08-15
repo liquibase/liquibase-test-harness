@@ -19,7 +19,7 @@ case $db in
   "mysql-8" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -DdbVersion=8 test
     ;;
-  "mysql-8-aws" )
+  "mysql-aws-8" )
       test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mysql -Dprefix=aws -DdbVersion=8 test
       ;;
   "percona-xtradb-cluster-5.7" )
