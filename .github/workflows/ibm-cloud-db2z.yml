@@ -16,7 +16,7 @@ jobs:
       - name: IBM DB2/Z Cloud Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbUsername=${{secrets.DB2_USER}} -DdbPassword=${{secrets.DB2_PASS}} -DdbName=db2-z test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbUsername=${{secrets.DB2_USER}} -DdbPassword=${{secrets.DB2_PASS}} -DdbName=db2-z -DrollbackStrategy=rollbackByTag test
 
       - name: Archive IBM DB2/Z Cloud Database Test Results
         uses: actions/upload-artifact@v3

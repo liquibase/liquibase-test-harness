@@ -1,0 +1,29 @@
+{
+  "databaseChangelogTest": [
+    {
+      "EXECTYPE": "EXECUTED",
+      "ORDEREXECUTED": 1,
+      "COMMENTS": "",
+      "AUTHOR": "liquibase",
+      "MD5SUM": "8:d41d8cd98f00b204e9800998ecf8427e",
+      "CONTEXTS": "",
+      "DESCRIPTION": "empty",
+      "TAG": "test-harness-tag",
+      "LABELS": "",
+      "FILENAME": "liquibase-internal"
+    },
+    {
+      "EXECTYPE": "EXECUTED",
+      "ORDEREXECUTED": 2,
+      "COMMENTS": "",
+      "AUTHOR": "as",
+      "MD5SUM": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
+      "CONTEXTS": "",
+      "DESCRIPTION": "sql",
+      "ID": "1",
+      "TAG": "",
+      "LABELS": "",
+      "FILENAME": "liquibase\/harness\/base\/changelogs\/databaseChangelogTest.sql"
+    }
+  ]
+}
