@@ -61,8 +61,11 @@ case $db in
   "mariadb-10.6" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -DdbVersion=10.6 test
     ;;
-    "mariadb-10.7" )
+  "mariadb-10.7" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -DdbVersion=10.7 test
+    ;;
+  "mariadb-aws-10.6" )
+    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -Dprefix=aws -DdbVersion=10.6 test
     ;;
   "mssql-2017" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -DdbVersion=2017 test
