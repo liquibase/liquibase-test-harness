@@ -1,2 +1,2 @@
-CREATE TABLE "LTHUSER".oldnametable (test_id INTEGER NOT NULL, test_column VARCHAR(50) NOT NULL, CONSTRAINT PK_OLDNAMETABLE PRIMARY KEY (test_id))
-RENAME "LTHUSER".oldnametable TO newnametable
+CREATE TABLE "IBMUSER".oldnametable (test_id INTEGER NOT NULL, test_column VARCHAR(50) NOT NULL, CONSTRAINT PK_OLDNAMETABLE PRIMARY KEY (test_id))
+RENAME "IBMUSER".oldnametable TO newnametable

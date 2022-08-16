@@ -1,1 +1,1 @@
-COMMENT ON COLUMN "LTHUSER".authors.id IS 'A Test Column Remark'
+COMMENT ON COLUMN "IBMUSER".authors.id IS 'A Test Column Remark'

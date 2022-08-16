@@ -1,1 +1,1 @@
-ALTER TABLE "LTHUSER".authors RENAME COLUMN first_name TO first_name_renameColumn_test
+ALTER TABLE "IBMUSER".authors RENAME COLUMN first_name TO first_name_renameColumn_test

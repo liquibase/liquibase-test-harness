@@ -1,2 +1,2 @@
-ALTER TABLE "LTHUSER".posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES "LTHUSER".authors (id) ON DELETE CASCADE
-ALTER TABLE "LTHUSER".posts DROP CONSTRAINT fk_posts_authors_test
+ALTER TABLE "IBMUSER".posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES "IBMUSER".authors (id) ON DELETE CASCADE
+ALTER TABLE "IBMUSER".posts DROP CONSTRAINT fk_posts_authors_test

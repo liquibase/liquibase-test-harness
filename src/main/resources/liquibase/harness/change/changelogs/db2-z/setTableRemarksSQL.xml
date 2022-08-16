@@ -6,7 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="setTableRemarksSQL" author="kristyl">
         <sql>
-            COMMENT ON TABLE "LTHUSER".authors IS 'hello';
+            COMMENT ON TABLE "IBMUSER".authors IS 'hello';
         </sql>
         <rollback>
         </rollback>
