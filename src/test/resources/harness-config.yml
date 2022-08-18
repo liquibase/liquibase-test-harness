@@ -16,6 +16,13 @@ databasesUnderTest:
     username: lbuser
     password: LbRootPass1
 
+  - name: mariadb
+    prefix: aws
+    version: DBVERSION
+    url: DBENDPOINT
+    username: lbuser
+    password: LbRootPass1
+
   - name: postgresql
     prefix: docker
     version: 14
