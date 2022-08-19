@@ -25,6 +25,7 @@ module.exports = ({github, context}) => {
         },
 
         getCurrentBranch: function () {
+            console.log(context.payload)
             if (context.payload.pull_request) {
                 return this.cleanBranchRef(context.payload.pull_request.head.ref);
             } else {
