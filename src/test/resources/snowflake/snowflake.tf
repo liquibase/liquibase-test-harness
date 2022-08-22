@@ -15,7 +15,7 @@ resource "snowflake_role" "role" {
 
 resource "snowflake_database" "db" {
   provider = snowflake.sys_admin
-  name     = "LBCAT"
+  name     = "LTHDB"
 }
 resource "snowflake_database_grant" "grant" {
   provider          = snowflake.security_admin

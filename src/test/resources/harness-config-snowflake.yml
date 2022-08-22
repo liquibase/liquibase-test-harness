@@ -5,6 +5,6 @@ databasesUnderTest:
   - name: snowflake
     prefix: cloud
     version:
-    url: jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LBCAT&schema=PUBLIC
+    url: jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LTHDB&schema=PUBLIC
     username: "USERNAME"
     password: "PASSWORD"
