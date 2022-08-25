@@ -16,7 +16,7 @@
 | AWS Oracle RDS            | `19.0`                                |
 | CockroachDB               | `20.2, 21.1, 21.2, 22.1`              |
 | EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        |
-| DB2 on z/OS               | `11.1`                                |
+| DB2 on z/OS               | `11.1, 12`                          |
 | DB2 on Linux/Unix/Windows | `11.5.7`                              |
 | H2                        | `2.1.210`                             |
 | SQLite                    | `3.34.0`                              |

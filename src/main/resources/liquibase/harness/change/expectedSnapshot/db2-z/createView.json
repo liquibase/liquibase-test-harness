@@ -4,7 +4,7 @@
       "liquibase.structure.core.View": [
         {
           "view": {
-            "definition": "CREATE VIEW \"LTHUSER\".test_view AS select id, first_name, last_name, email from authors",
+            "definition": "CREATE VIEW \"IBMUSER\".test_view AS select id, first_name, last_name, email from authors",
             "name": "test_view"
           }
         }]

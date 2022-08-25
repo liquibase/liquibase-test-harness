@@ -2,7 +2,7 @@
   "snapshot": {
     "objects": {
       "_noMatch": true,
-      "com.datical.liquibase.ext.appdba.synonym.Synonym": [
+      "com.datical.liquibase.ext.storedlogic.synonym.Synonym": [
         {
           "synonym": {
             "name": "TEST_SYNONYM",

@@ -1,1 +1,1 @@
-CREATE TABLE "LTHUSER".createTableDataTypeText (textCol CLOB)
+CREATE TABLE "IBMUSER".createTableDataTypeText (textCol CLOB)
