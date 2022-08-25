@@ -35,7 +35,7 @@ on:
 jobs:
   check_build_safety:
     name: Check if Build should be done
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Emit failure code if unsafe
         if: github.event.pull_request && github.event.pull_request.head.repo.full_name != 'liquibase/liquibase-test-harness'
@@ -46,7 +46,7 @@ jobs:
   setup:
     name: Setup
     needs: check_build_safety
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
@@ -125,7 +125,7 @@ jobs:
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [ setup ]
     strategy:
       fail-fast: false
@@ -229,7 +229,7 @@ jobs:
 
   finish:
     name: Finish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [ setup, test ]
     if: ${{ always() }}
     steps:
