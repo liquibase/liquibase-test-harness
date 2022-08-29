@@ -40,7 +40,7 @@ case $db in
 
   # titan run databases
   "hsqldb-2.4"|"hsqldb-2.5"|"firebird-3"|"firebird-4")
-    ../titan-installer.sh 0.5.3
+    ../titan-installer.sh 0.6.0
     docker ps
     titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/$db
     exit 0
