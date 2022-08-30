@@ -89,9 +89,9 @@ databasesUnderTest:
   - name: mysql
     prefix: aws
     version: 8
-    url: jdbc:mysql://aws-rds-mysql-80.cqj273gwp38i.us-east-1.rds.amazonaws.com/lbcat
-    username: lbuser
-    password: LiquibasePass1
+    url: DBENDPOINT
+    username: DBUSER
+    password: DBPASSWORD
 
   - name: percona-xtradb-cluster
     version: 5.7
