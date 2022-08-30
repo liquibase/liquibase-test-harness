@@ -86,13 +86,6 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-  - name: mysql
-    prefix: aws
-    version: 8
-    url: DBENDPOINT
-    username: DBUSER
-    password: DBPASSWORD
-
   - name: percona-xtradb-cluster
     version: 5.7
     url: jdbc:mysql://localhost:33070/lbcat
