@@ -3,20 +3,6 @@ context: testContext
 
 databasesUnderTest:
   - name: postgresql
-    prefix: aws
-    version: DBVERSION
-    url: jdbc:postgresql://DBENDPOINT/lbcat
-    username: lbuser
-    password: LbRootPass1
-
-  - name: oracle
-    prefix: aws
-    version: DBVERSION
-    url: jdbc:oracle:thin:@DBENDPOINT/lbcat
-    username: lbuser
-    password: LbRootPass1
-
-  - name: postgresql
     prefix: docker
     version: 14
     url: jdbc:postgresql://localhost:5438/lbcat

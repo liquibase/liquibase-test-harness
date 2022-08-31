@@ -1,0 +1,31 @@
+inputFormat: xml
+context: testContext
+
+databasesUnderTest:
+  - name: mssql
+    prefix: azure
+    version: azure
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
+    prefix: aws
+    version: DBVERSION
+    url: jdbc:postgresql://DBENDPOINT/lbcat
+    username: lbuser
+    password: LbRootPass1
+
+  - name: oracle
+    prefix: aws
+    version: DBVERSION
+    url: jdbc:oracle:thin:@DBENDPOINT/lbcat
+    username: lbuser
+    password: LbRootPass1
+
+  - name: snowflake
+    prefix: cloud
+    version:
+    url: jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LTHDB&schema=PUBLIC
+    username: "USERNAME"
+    password: "PASSWORD"
