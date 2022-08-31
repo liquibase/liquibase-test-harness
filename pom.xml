@@ -110,12 +110,12 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.30</version>
+            <version>1.31</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.4.2</version>
+            <version>42.5.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -140,12 +140,12 @@
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc8</artifactId>
-            <version>21.6.0.0.1</version>
+            <version>21.7.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>10.2.1.jre8</version>
+            <version>11.2.0.jre8</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -156,7 +156,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.39.2.0</version>
+            <version>3.39.2.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -245,7 +245,7 @@
             <plugin>
                 <groupId>org.liquibase.ext</groupId>
                 <artifactId>liquibase-sdk-maven-plugin</artifactId>
-                <version>0.10.13</version>
+                <version>0.10.17</version>
                 <configuration>
                     <githubToken>${env.GITHUB_TOKEN}</githubToken>
                 </configuration>

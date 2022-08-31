@@ -25,16 +25,15 @@ module.exports = ({github, context}) => {
         },
 
         getCurrentBranch: function () {
-            console.log("Debug info here:");
-            console.log("context payload:"+JSON.stringify(context.payload,null,2));
-            console.log(JSON.stringify(context.payload,null,2));
-            console.log("context:");
-            console.log(JSON.stringify(context,null,2));
             if (context.payload.pull_request) {
                 return this.cleanBranchRef(context.payload.pull_request.head.ref);
-            } else {
+            } else if (context.payload.ref) {
                 return this.cleanBranchRef(context.payload.ref);
+                // scheduled builds don't have `ref` in payload, using `ref` from `context`
+            } else if (context.ref) {
+                return this.cleanBranchRef(context.ref);
             }
+            console.warn("can't determine current branch")
         },
 
         getCurrentSha: function () {
