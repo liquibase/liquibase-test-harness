@@ -44,14 +44,14 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
           POSTGRES_VERSION: ${{  matrix.version }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_USER}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl=${{secrets.TH_PGRESURL_env.POSTGRES_VERSION }} -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl=${{secrets.TH_PGRESURL_env.POSTGRES_VERSION }} -Dmaven.test.failure.ignore=true test
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
         if: ${{ matrix.database == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
           ORACLE_VERSION: ${{  matrix.version }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_USER}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl=${{secrets.TH_ORACLEURL_env.ORACLE_VERSION }} -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl=${{secrets.TH_ORACLEURL_env.ORACLE_VERSION }} -Dmaven.test.failure.ignore=true test
 
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
