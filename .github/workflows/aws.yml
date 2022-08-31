@@ -40,14 +40,14 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        if: ${{ matrix.database == postgresql }}
+        if: ${{ matrix.database == 'postgresql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
           POSTGRES_VERSION: ${{  matrix.version }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=aws -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_USER}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_PGRESURL_env.POSTGRES_VERSION }}' -Dmaven.test.failure.ignore=true test
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        if: ${{ matrix.database == oracle }}
+        if: ${{ matrix.database == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
           ORACLE_VERSION: ${{  matrix.version }}
