@@ -18,9 +18,9 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/changelogs/azure"
           changeLogFile: "sqlserver.sql"
-          username: ${{secrets.TH_DB_ADMIN}}
-          password: ${{secrets.TH_DB_PASSWD}}
-          url: ${{secrets.TH_AZURE_URL}}
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{secrets.TH_AZURE_URL}}"
 
       - name: Azure SQL DB Test Run
         env:
