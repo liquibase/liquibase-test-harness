@@ -10,7 +10,7 @@ EXCEPTION
    WHEN OTHERS THEN
       IF SQLCODE != -942 THEN
          RAISE;
-      END IF;
+      END IF
 END;
 
 CREATE TABLE "AUTHORS"
@@ -65,7 +65,7 @@ INSERT INTO "AUTHORS" VALUES('5','Jayden','Walter','lillian66@example.com','27-F
      WHEN OTHERS THEN
         IF SQLCODE != -942 THEN
            RAISE;
-        END IF;
+        END IF
   END;
 
   CREATE TABLE "POSTS"

@@ -52,7 +52,7 @@ jobs:
         with:
           operation: "update"
           classpath: "src/test/resources/changelogs/aws"
-          changeLogFile: "postgres.sql"
+          changeLogFile: "postgresql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_PGRESURL_10 }}"
