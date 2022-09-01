@@ -13,14 +13,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/changelogs/azure"
-          changeLogFile: "sqlserver.sql"
-          username: ${{secrets.TH_DB_ADMIN}}
-          password: ${{secrets.TH_DB_PASSWD}}
-          url: ${{secrets.TH_AZURE_URL}}
+#      - uses: liquibase/liquibase-github-action@v7
+#        with:
+#          operation: "update"
+#          classpath: "src/test/resources/changelogs/azure"
+#          changeLogFile: "sqlserver.sql"
+#          username: ${{secrets.TH_DB_ADMIN}}
+#          password: ${{secrets.TH_DB_PASSWD}}
+#          url: ${{secrets.TH_AZURE_URL}}
 
       - name: Azure SQL DB Test Run
         env:
