@@ -18,9 +18,9 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/changelogs/snowflake"
           changeLogFile: "snowflake.sql"
-          username: ${{secrets.TH_DB_ADMIN}}
-          password: ${{secrets.TH_DB_PASSWD}}
-          url: ${{secrets.TH_SNOW_URL}}
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{secrets.TH_SNOW_URL}}"
 
       - name: Snowflake Test Run
         env:

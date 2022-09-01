@@ -31,31 +31,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'oracle' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-          ORACLE_VERSION: ${{  matrix.version }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/changelogs/aws"
-          changeLogFile: "oracle.sql"
-          username: ${{secrets.TH_DB_ADMIN}}
-          password: ${{secrets.TH_DB_PASSWD}}
-          url: ${{secrets.TH_ORACLEURL_env.ORACLE_VERSION }}
-
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'postgresql' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-          POSTGRES_VERSION: ${{  matrix.version }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/changelogs/aws"
-          changeLogFile: "postgres.sql"
-          username: ${{secrets.TH_DB_ADMIN}}
-          password: ${{secrets.TH_DB_PASSWD}}
-          url: ${{secrets.TH_PGRESURL_env.POSTGRES_VERSION }}
+#      - uses: liquibase/liquibase-github-action@v7
+#        if: ${{ matrix.database == 'oracle' }}
+#        env:
+#          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+#          ORACLE_VERSION: ${{  matrix.version }}
+#        with:
+#          operation: "update"
+#          classpath: "src/test/resources/changelogs/aws"
+#          changeLogFile: "oracle.sql"
+#          username: ${{secrets.TH_DB_ADMIN}}
+#          password: ${{secrets.TH_DB_PASSWD}}
+#          url: ${{secrets.TH_ORACLEURL_env.ORACLE_VERSION }}
+#
+#      - uses: liquibase/liquibase-github-action@v7
+#        if: ${{ matrix.database == 'postgresql' }}
+#        env:
+#          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+#          POSTGRES_VERSION: ${{  matrix.version }}
+#        with:
+#          operation: "update"
+#          classpath: "src/test/resources/changelogs/aws"
+#          changeLogFile: "postgres.sql"
+#          username: ${{secrets.TH_DB_ADMIN}}
+#          password: ${{secrets.TH_DB_PASSWD}}
+#          url: ${{secrets.TH_PGRESURL_env.POSTGRES_VERSION }}
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
