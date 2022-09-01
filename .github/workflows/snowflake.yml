@@ -13,10 +13,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: liquibase/liquibase-github-action@v7
+        with:
+          operation: "update"
+          classpath: "src/test/resources/changelogs/snowflake"
+          changeLogFile: "snowflake.sql"
+          username: ${{secrets.TH_DB_ADMIN}}
+          password: ${{secrets.TH_DB_PASSWD}}
+          url: ${{secrets.TH_SNOW_URL}}
+
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl=${{secrets.TH_SNOW_URL}} -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=snowflake -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl=${{secrets.TH_SNOW_URL}} -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3
