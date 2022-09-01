@@ -33,6 +33,9 @@ jobs:
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ matrix.database == 'oracle' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          ORACLE_VERSION: ${{  matrix.version }}
         with:
           operation: "update"
           classpath: "src/test/resources/changelogs/aws"
@@ -43,6 +46,9 @@ jobs:
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ matrix.database == 'postgresql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          POSTGRES_VERSION: ${{  matrix.version }}
         with:
           operation: "update"
           classpath: "src/test/resources/changelogs/aws"
