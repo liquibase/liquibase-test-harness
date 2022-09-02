@@ -16,7 +16,7 @@ jobs:
       - uses: liquibase/liquibase-github-action@v7
         with:
           operation: "update"
-          classpath: "src/test/resources/changelogs/snowflake"
+          classpath: "src/test/resources/init-changelogs/snowflake"
           changeLogFile: "snowflake.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"

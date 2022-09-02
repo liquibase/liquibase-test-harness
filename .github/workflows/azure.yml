@@ -16,7 +16,7 @@ jobs:
       - uses: liquibase/liquibase-github-action@v7
         with:
           operation: "update"
-          classpath: "src/test/resources/changelogs/azure"
+          classpath: "src/test/resources/init-changelogs/azure"
           changeLogFile: "sqlserver.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"

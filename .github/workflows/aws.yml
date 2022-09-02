@@ -38,7 +38,7 @@ jobs:
           ORACLE_VERSION: ${{  matrix.version }}
         with:
           operation: "update"
-          classpath: "src/test/resources/changelogs/aws"
+          classpath: "src/test/resources/init-changelogs/aws"
           changeLogFile: "oracle.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
@@ -51,7 +51,7 @@ jobs:
           POSTGRES_VERSION: ${{  matrix.version }}
         with:
           operation: "update"
-          classpath: "src/test/resources/changelogs/aws"
+          classpath: "src/test/resources/init-changelogs/aws"
           changeLogFile: "postgresql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
