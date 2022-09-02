@@ -8,76 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup:
-    runs-on: ubuntu-18.04
-    defaults:
-      run:
-        working-directory: src/test/resources/aws
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-      - name: Terraform Format
-        id: fmt
-        run: terraform fmt
-
-      - name: Terraform Init
-        id: init
-        run: terraform init
-
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
-
-      - name: Terraform Plan
-        id: plan
-        if: github.event_name == 'pull_request'
-        run: terraform plan -no-color
-        continue-on-error: true
-
-      - uses: actions/github-script@v6.1.1
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-
-            <details><summary>Show Plan</summary>
-
-            \`\`\`\n
-            ${process.env.PLAN}
-            \`\`\`
-
-            </details>
-
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-
   test:
-    runs-on: ubuntu-18.04
-    needs: [setup]
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -96,47 +28,34 @@ jobs:
             version: 19
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-          terraform_wrapper: false
-          
-      - name: Terraform Init
-        working-directory: src/test/resources/aws
-        run: terraform init
-
-      - name: Get ${{ matrix.database }}-${{ matrix.version }} Database Host URL
-        working-directory: src/test/resources/aws
-        run: |
-          echo "DBENDPOINT=$(terraform output -json ${{ matrix.database }}Endpoint | jq -r '."${{ matrix.database }}-${{ matrix.version }}"')" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ matrix.database == 'oracle' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          ORACLE_VERSION: ${{  matrix.version }}
         with:
           operation: "update"
-          classpath: "src/test/resources/aws/changelogs"
+          classpath: "src/test/resources/init-changelogs/aws"
           changeLogFile: "oracle.sql"
-          username: "lbuser"
-          password: "LbRootPass1"
-          url: "jdbc:oracle:thin:@${{ env.DBENDPOINT }}:lbcat"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}"
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ matrix.database == 'postgresql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          POSTGRES_VERSION: ${{  matrix.version }}
         with:
           operation: "update"
-          classpath: "src/test/resources/aws/changelogs"
-          changeLogFile: "postgres.sql"
-          username: "lbuser"
-          password: "LbRootPass1"
-          url: "jdbc:postgresql://${{ env.DBENDPOINT }}/lbcat"
-
-      - name: Update ${{ matrix.database }}-${{ matrix.version }} Harness Config
-        working-directory: src/test/resources
-        run: |
-          sed -i "s/DBENDPOINT/${{ env.DBENDPOINT }}/g" harness-config.yml
-          sed -i "s/DBVERSION/${{ matrix.version }}/g" harness-config.yml
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "postgresql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
@@ -147,9 +66,17 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+        if: ${{ matrix.database == 'postgresql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -Dprefix=aws -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
+
+      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+        if: ${{ matrix.database == 'oracle' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
+
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v3
@@ -157,20 +84,3 @@ jobs:
           name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
           path: build/spock-reports
 
-  destroy:
-    runs-on: ubuntu-18.04
-    needs: [setup,test]
-    defaults:
-      run:
-        working-directory: src/test/resources/aws
-    if: ${{ always() }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-      - name: Terraform Init
-        run: terraform init
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve

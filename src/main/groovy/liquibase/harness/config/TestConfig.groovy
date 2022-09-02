@@ -56,6 +56,7 @@ class TestConfig {
         }
 
         if (dbVersion) {
+            databasesUnderTest.forEach( {it.version = it.version.equalsIgnoreCase("DBVERSION") ? dbVersion : it.version })
             databasesUnderTest = databasesUnderTest.findAll {it.version.equalsIgnoreCase(dbVersion)}
         }
 
