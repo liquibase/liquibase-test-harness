@@ -1,0 +1,31 @@
+inputFormat: xml
+context: testContext
+
+databasesUnderTest:
+  - name: mssql
+    prefix: azure
+    version: azure
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
+    prefix: aws
+    version: DBVERSION
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: oracle
+    prefix: aws
+    version: DBVERSION
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: snowflake
+    prefix: cloud
+    version:
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD

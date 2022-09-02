@@ -1,4 +1,3 @@
-
 name: Snowflake Cloud
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
@@ -7,78 +6,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/test/resources/snowflake
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-      - name: Terraform Format
-        id: fmt
-        run: terraform fmt
-
-      - name: Terraform Init
-        id: init
-        run: terraform init
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-
   test:
     runs-on: ubuntu-latest
-    needs: [setup]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-          terraform_wrapper: false
-
-      - name: Terraform Init
-        working-directory: src/test/resources/snowflake
-        run: terraform init
-
-      - name: Fetch Credentials from Terraform
-        working-directory: src/test/resources/snowflake
-        run: |
-          echo "TH_USER=$(terraform output -json username | jq -r)" >> $GITHUB_ENV
-          echo "TH_PASS=$(terraform output -json password | jq -r)" >> $GITHUB_ENV
-
-      - name: Run Liquibase
-        uses: liquibase/liquibase-github-action@v7
+      - uses: liquibase/liquibase-github-action@v7
         with:
           operation: "update"
-          classpath: "src/test/resources/snowflake"
-          changeLogFile: "snowflake-init.sql"
-          username: "${{ env.TH_USER }}"
-          password: "${{ env.TH_PASS }}"
-          url: 'jdbc:snowflake://ba89345.us-east-2.aws.snowflakecomputing.com/?db=LTHDB&schema=PUBLIC'
-
-      - name: Cache Local Maven Repo
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          classpath: "src/test/resources/init-changelogs/snowflake"
+          changeLogFile: "snowflake.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{secrets.TH_SNOW_URL}}"
 
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-snowflake.yml -DdbUsername=${{env.TH_USER}} -DdbPassword=${{env.TH_PASS}} -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=snowflake -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v3
@@ -86,24 +33,3 @@ jobs:
           name: snowflake-test-results
           path: build/spock-reports
 
-  destroy:
-    runs-on: ubuntu-latest
-    needs: [setup,test]
-    defaults:
-      run:
-        working-directory: src/test/resources/snowflake
-    if: ${{ always() }}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve
