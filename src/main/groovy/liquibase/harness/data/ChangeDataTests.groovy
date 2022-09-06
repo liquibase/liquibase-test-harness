@@ -97,12 +97,10 @@ class ChangeDataTests extends Specification {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
                 generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                newConnection.setAutoCommit(false)
                 newConnection.commit()
             } else {
                 resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkingSql)
                 generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                connection.setAutoCommit(false)
                 connection.commit()
             }
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
