@@ -1,5 +1,3 @@
-# Terraform Action to test Cloud Databases with test-harness
-
 name: AWS Cloud Database Test Execution
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
@@ -26,6 +24,10 @@ jobs:
             version: 14
           - database: oracle
             version: 19
+          - database: mariadb
+            version: 10.6
+          - database: mysql
+            version: 8
 
     steps:
       - name: Checkout
@@ -33,9 +35,6 @@ jobs:
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ matrix.database == 'oracle' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-          ORACLE_VERSION: ${{  matrix.version }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
@@ -46,9 +45,6 @@ jobs:
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ matrix.database == 'postgresql' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-          POSTGRES_VERSION: ${{  matrix.version }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
@@ -57,6 +53,26 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}"
 
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ matrix.database == 'mariadb' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "mariadb.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets.TH_MARIADBURL }}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ matrix.database == 'mysql' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "mysql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets.TH_MYSQLURL }}"
+
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
@@ -64,7 +80,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
         if: ${{ matrix.database == 'postgresql' }}
         env:
@@ -77,10 +92,20 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
 
+      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+        if: ${{ matrix.database == 'mariadb' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MARIADBURL }}' -Dmaven.test.failure.ignore=true test
+
+      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+        if: ${{ matrix.database == 'mysql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MYSQLURL }}' -Dmaven.test.failure.ignore=true test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v3
         with:
           name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
           path: build/spock-reports
-

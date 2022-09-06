@@ -29,3 +29,10 @@ databasesUnderTest:
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
+
+  - name: mysql
+    prefix: cloud
+    version: 8
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
