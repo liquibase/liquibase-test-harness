@@ -14,18 +14,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-#          - database: postgresql
-#            version: 10
-#          - database: postgresql
-#            version: 11
-#          - database: postgresql
-#            version: 12
-#          - database: postgresql
-#            version: 13
-#          - database: postgresql
-#            version: 14
-#          - database: oracle
-#            version: 19
+          - database: postgresql
+            version: 10
+          - database: postgresql
+            version: 11
+          - database: postgresql
+            version: 12
+          - database: postgresql
+            version: 13
+          - database: postgresql
+            version: 14
+          - database: oracle
+            version: 19
           - database: mariadb
             version: 10.6
 
