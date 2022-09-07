@@ -26,6 +26,8 @@ jobs:
             version: 14
           - database: oracle
             version: 19
+          - database: aurora-postgresql
+            version: 13
 
     steps:
       - name: Checkout
@@ -57,6 +59,19 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}"
 
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ matrix.database == 'aurora-postgresql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          POSTGRES_VERSION: ${{  matrix.version }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "aurora-postgresql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets[format('TH_AURORA_PGRESURL_{0}', matrix.version)] }}"
+
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
@@ -77,6 +92,11 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
 
+      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+        if: ${{ matrix.database == 'postgresql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=postgresql -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_AURORA_PGRESURL_{0}', matrix.version)] }}' test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v3
