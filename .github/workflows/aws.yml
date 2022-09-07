@@ -14,18 +14,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - database: postgresql
-            version: 10
-          - database: postgresql
-            version: 11
-          - database: postgresql
-            version: 12
-          - database: postgresql
-            version: 13
-          - database: postgresql
-            version: 14
-          - database: oracle
-            version: 19
+#          - database: postgresql
+#            version: 10
+#          - database: postgresql
+#            version: 11
+#          - database: postgresql
+#            version: 12
+#          - database: postgresql
+#            version: 13
+#          - database: postgresql
+#            version: 14
+#          - database: oracle
+#            version: 19
           - database: mariadb
             version: 10.6
 
@@ -33,25 +33,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'oracle' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "oracle.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}"
-
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'postgresql' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "postgresql.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}"
+#      - uses: liquibase/liquibase-github-action@v7
+#        if: ${{ matrix.database == 'oracle' }}
+#        with:
+#          operation: "update"
+#          classpath: "src/test/resources/init-changelogs/aws"
+#          changeLogFile: "oracle.sql"
+#          username: "${{secrets.TH_DB_ADMIN}}"
+#          password: "${{secrets.TH_DB_PASSWD}}"
+#          url: "${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}"
+#
+#      - uses: liquibase/liquibase-github-action@v7
+#        if: ${{ matrix.database == 'postgresql' }}
+#        with:
+#          operation: "update"
+#          classpath: "src/test/resources/init-changelogs/aws"
+#          changeLogFile: "postgresql.sql"
+#          username: "${{secrets.TH_DB_ADMIN}}"
+#          password: "${{secrets.TH_DB_PASSWD}}"
+#          url: "${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}"
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ matrix.database == 'mariadb' }}
@@ -71,17 +71,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        if: ${{ matrix.database == 'postgresql' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
-
-      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        if: ${{ matrix.database == 'oracle' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
+#      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+#        if: ${{ matrix.database == 'postgresql' }}
+#        env:
+#          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
+#
+#      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+#        if: ${{ matrix.database == 'oracle' }}
+#        env:
+#          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
         if: ${{ matrix.database == 'mariadb' }}
