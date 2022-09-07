@@ -67,7 +67,7 @@ jobs:
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "aurora-postgresql.sql"
+          changeLogFile: "postgresql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_AURORA_PGRESURL_{0}', matrix.version)] }}"
