@@ -1,1 +1,1 @@
-CREATE ALIAS "LTHUSER".test_synonym FOR "LTHUSER"."authors"
+CREATE ALIAS "IBMUSER".test_synonym FOR "IBMUSER"."authors"

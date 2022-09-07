@@ -1,1 +1,1 @@
-COMMENT ON TABLE "LTHUSER".authors IS 'A Test Remark'
+COMMENT ON TABLE "IBMUSER".authors IS 'A Test Remark'
