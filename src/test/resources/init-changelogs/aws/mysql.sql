@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset liquibase:1
 DROP TABLE IF EXISTS `authors`;
 CREATE TABLE `authors` (
                            `id` int(11) NOT NULL AUTO_INCREMENT,
