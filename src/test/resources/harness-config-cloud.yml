@@ -30,8 +30,15 @@ databasesUnderTest:
     username: USERNAME
     password: PASSWORD
 
+  - name: mariadb
+    prefix: aws
+    version: 10.6
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
   - name: mysql
-    prefix: cloud
+    prefix: aws
     version: 8
     url: DBENDPOINT
     username: USERNAME
