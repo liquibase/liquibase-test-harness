@@ -73,7 +73,7 @@ jobs:
           changeLogFile: "mysql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets[format('TH_MYSQLURL_{0}', matrix.version)] }}"
+          url: "${{ secrets.TH_MYSQLURL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
@@ -105,10 +105,11 @@ jobs:
         if: ${{ matrix.database == 'mysql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_MYSQLURL_{0}', matrix.version)] }}' test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MYSQLURL }}' test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v3
         with:
           name: aws-rds-${{ matrix.database }}-${{ matrix.version }}-test-results
           path: build/spock-reports
+
