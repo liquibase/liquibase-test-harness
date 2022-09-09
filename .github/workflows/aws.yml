@@ -71,6 +71,7 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
           changeLogFile: "mysql.sql"
+          driver: "com.mysql.cj.jdbc.Driver"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_MYSQLURL }}"
