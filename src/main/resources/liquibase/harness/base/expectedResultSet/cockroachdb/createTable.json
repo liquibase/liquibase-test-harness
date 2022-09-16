@@ -8,8 +8,8 @@
       "contexts": "test_context",
       "exectype": "EXECUTED",
       "labels": "test_label",
-      "filename": "liquibase\/harness\/base\/changelogs\/createTable.sql",
-      "md5sum": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
+      "filename": "liquibase\/harness\/base\/changelogs\/createTable.xml",
+      "md5sum": "8:c5760b2f43afa76f82f44476ca28d779",
       "id": "1",
       "tag": "test_tag"
     }

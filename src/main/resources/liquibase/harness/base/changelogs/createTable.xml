@@ -4,10 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet id="1" author="oleh" labels="test_label" context="test_context">
+    <changeSet id="1" author="as" labels="test_label" context="test_context">
         <comment>test_comment</comment>
-        <createTable tableName="test_table">
-            <column name="test_column" type="INT"/>
-        </createTable>
+        <sql>CREATE TABLE test_table (test_column INT)</sql>
+        <rollback>DROP TABLE test_table</rollback>
     </changeSet>
 </databaseChangeLog>
