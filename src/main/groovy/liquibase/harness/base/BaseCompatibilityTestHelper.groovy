@@ -8,7 +8,7 @@ import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
 
-class BaseLevelTestHelper {
+class BaseCompatibilityTestHelper {
 
     final static String baseChangelogPath = "liquibase/harness/base/changelogs"
 
@@ -19,7 +19,7 @@ class BaseLevelTestHelper {
 
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
-            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "sql").entrySet()) {
+            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "xml").entrySet()) {
                 inputList.add(TestInput.builder()
                         .databaseName(databaseUnderTest.name)
                         .url(databaseUnderTest.url)

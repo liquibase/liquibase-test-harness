@@ -78,7 +78,21 @@ See `src/test/resources/harness-config.yml` to see what this repository is confi
 For more information on using the test harness in your extension, see [README.extensions.md] 
 
 # Framework Tests
- 
+
+## BaseCompatibilityTest
+
+This test validates work of basic Liquibase functions. 
+1) runs Liquibase validate command to ensure the changelog is valid;
+2) runs xml-inlined query with basic metadata decorations (labels, contexts, comments) using Liquibase update command;
+3) runs Liquibase tag command;
+4) runs select query from databasechangelog table using jdbc to ensure contexts, labels, comments and tags are present in metadata;
+5) runs verification query using jdbc to ensure a test object was actually created or modified during Liquibase update command;
+6) runs Liquibase history command;
+7) runs Liquibase status command;
+8) runs Liquibase rollback command;
+9) runs verification query to ensure a test object was actually removed during Liquibase rollback command;
+10) tracks time of the test and shows it in console;
+
 ## Change Objects Test
 
 The test-harness validates most of the Data Definition Language related Change Types as listed on [Home Page](https://docs.liquibase.com/change-types/home.html). 
@@ -149,13 +163,6 @@ This test executes the following steps:
 
 This test validates work of Liquibase 'snapshot' command by comparing expected and generated snapshots
 after a DB object was created.
-
-## BaseLevelTest
-
-This test validates work of basic Liquibase logic. It runs simple 'create table' sql-formatted query using Liquibase 'update' command and 
-checks whether databasechangelog and databasechangeloglock tables were created and filled with correct data.
-
-
 
 ## Running the Tests
 

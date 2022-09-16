@@ -1,0 +1,17 @@
+{
+  "createTable": [
+    {
+      "comments": "test_comment",
+      "author": "as",
+      "orderexecuted": 1,
+      "description": "sql",
+      "contexts": "test_context",
+      "exectype": "EXECUTED",
+      "labels": "test_label",
+      "filename": "liquibase\/harness\/base\/changelogs\/createTable.sql",
+      "md5sum": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
+      "id": "1",
+      "tag": "test_tag"
+    }
+  ]
+}

@@ -11,16 +11,17 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
 import java.sql.SQLException
+import java.sql.Time
+import java.time.LocalDateTime
 
-import static BaseLevelTestHelper.buildTestInput
+import static BaseCompatibilityTestHelper.buildTestInput
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.TestUtils.*
 
 @Unroll
-class BaseLevelTest extends Specification {
+class BaseCompatibilityTest extends Specification {
     @Shared
     RollbackStrategy strategy;
     @Shared
@@ -32,13 +33,12 @@ class BaseLevelTest extends Specification {
         strategy.prepareForRollback(databases)
     }
 
-    def "run base level test #testInput.change against #testInput.databaseName #testInput.version"() {
+    def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
-        String checkingSql = getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+        String checkObjectIsPresentSql = getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/checkingSql")
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/base/expectedResultSet")
-        String testTableCheckSql = "SELECT * FROM test_table"
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
@@ -47,9 +47,9 @@ class BaseLevelTest extends Specification {
 
         boolean shouldRunChangeSet
 
-        and: "fail test if checkingSql is not provided"
-        shouldRunChangeSet = checkingSql != null
-        assert shouldRunChangeSet: "No checkingSql for ${testInput.change} against " +
+        and: "fail test if checkObjectIsPresentSql is not provided"
+        shouldRunChangeSet = checkObjectIsPresentSql != null
+        assert shouldRunChangeSet: "No checkObjectIsPresentSql for ${testInput.change} against " +
                 "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
                 "${testInput.database.databaseMinorVersion}"
 
@@ -64,25 +64,37 @@ class BaseLevelTest extends Specification {
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
-        when: "execute SQL formatted changelog using liquibase update command"
+        //and: "execute Liquibase validate command to ensure a chagelog is valid"
+        //executeCommandScope("validate", argsMap) //Doesn't work :(
+
+        when: "execute XML-inlined changelog using liquibase update command"
         executeCommandScope("update", argsMap)
 
-        then: "execute checking sql, obtain result set, compare it to expected result set"
+        and: "execute Liquibase tag command"
+        argsMap.put("tag", "test_tag")
+        executeCommandScope("tag", argsMap)
+
+        and: "execute Liquibase tag command"
+        executeCommandScope("history", argsMap)
+
+        and: "execute Liquibase tag command"
+        executeCommandScope("status", argsMap)
+
+        then: "execute metadata checking sql, obtain result set, compare it to expected result set"
         try {
-            def resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkingSql)
+            def resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
             def generatedResultSetArray = mapResultSetToJSONArray(resultSet)
             connection.commit()
-            def expectedResultSetJSON = new JSONObject(expectedResultSet)
-            def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.change)
+            def expectedResultSetArray = new JSONObject(expectedResultSet).getJSONArray(testInput.change)
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.LENIENT)
         } catch (Exception exception) {
-            Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
+            Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
         }
 
         and: "check for actual presence of created object"
         try {
-            ((JdbcConnection) connection).createStatement().executeQuery(testTableCheckSql)
+            ((JdbcConnection) connection).createStatement().executeQuery(checkObjectIsPresentSql)
         } catch (SQLException sqlException) {
             // Assume test object was not created after 'update' command execution and test failed.
             Scope.getCurrentScope().getUI().sendMessage("Error executing test table checking sql! " +
@@ -100,7 +112,7 @@ class BaseLevelTest extends Specification {
         and: "check for actual absence of the object removed after 'rollback' command execution"
         if (shouldRunChangeSet) {
             try {
-                def resultSet = ((JdbcConnection) connection).createStatement().executeQuery(testTableCheckSql)
+                def resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkObjectIsPresentSql)
                 if (resultSet.next()) {
                     Scope.getCurrentScope().getUI().sendMessage("Rollback was not successful! " +
                             "The object was not removed after 'rollback' command: " +

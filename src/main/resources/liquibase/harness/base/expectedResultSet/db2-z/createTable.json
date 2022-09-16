@@ -1,5 +1,5 @@
 {
-  "databaseChangelogTest": [
+  "createTable": [
     {
       "EXECTYPE": "EXECUTED",
       "ORDEREXECUTED": 1,
@@ -18,12 +18,12 @@
       "COMMENTS": "",
       "AUTHOR": "as",
       "MD5SUM": "8:d2e4d3093d8d8d68fc2398a56bb0ea7e",
-      "CONTEXTS": "",
+      "CONTEXTS": "test_context",
       "DESCRIPTION": "sql",
       "ID": "1",
-      "TAG": "",
-      "LABELS": "",
-      "FILENAME": "liquibase\/harness\/base\/changelogs\/databaseChangelogTest.sql"
+      "TAG": "test_tag",
+      "LABELS": "test_label",
+      "FILENAME": "liquibase\/harness\/base\/changelogs\/createTable.sql"
     }
   ]
 }
