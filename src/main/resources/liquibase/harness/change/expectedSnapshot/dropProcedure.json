@@ -1,3 +1,14 @@
 {
-
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "liquibase.structure.core.StoredProcedure": [
+        {
+          "storedProcedure": {
+            "name": "TEST_PROCEDURE"
+          }
+        }
+      ]
+    }
+  }
 }
