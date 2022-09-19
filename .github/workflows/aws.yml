@@ -8,6 +8,42 @@ on:
   workflow_dispatch:
 
 jobs:
+  init-db:
+    runs-on: ubuntu-latest
+    container:
+      image: liquibase/liquibase:latest
+      env:
+        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+#          - database: postgresql
+#            version: 10
+#          - database: postgresql
+#            version: 11
+#          - database: postgresql
+#            version: 12
+#          - database: postgresql
+#            version: 13
+#          - database: postgresql
+#            version: 14
+#          - database: oracle
+#            version: 19
+#          - database: mariadb
+#            version: 10.6
+          - database: mysql
+            version: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: lpm update && lpm add mysql
+
+      - name: Init Database
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{matrix.database}}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL }}" update
+
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -74,6 +110,7 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_MYSQLURL }}"
+          INSTALL_MSQL: true
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
