@@ -45,6 +45,7 @@ jobs:
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{matrix.database}}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL }}" update
 
   test:
+    needs: [init-db]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
