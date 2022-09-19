@@ -42,7 +42,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Init Database
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{matrix.database}}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL }}" update
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL }}" update
 
   test:
     needs: [init-db]
@@ -101,17 +101,6 @@ jobs:
 #          username: "${{secrets.TH_DB_ADMIN}}"
 #          password: "${{secrets.TH_DB_PASSWD}}"
 #          url: "${{ secrets.TH_MARIADBURL }}"
-
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'mysql' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "mysql.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets.TH_MYSQLURL }}"
-          INSTALL_MSQL: true
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
