@@ -4,19 +4,18 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-<!--    https://docs.liquibase.com/change-types/create-procedure.html-->
-<!--Liquibase doesn't include stored procedures in snapshot for this platform (DAT-11679)
-ExpectedSnapshot file will be empty for this change type-->
-<!--    This changeType differs from default as Firebird require AS closure for procedures -->
-<!--    https://firebirdsql.org/refdocs/langrefupd21-ddl-procedure.html -->
+        <!--https://docs.liquibase.com/change-types/create-procedure.html-->
+    <!--Liquibase doesn't include stored procedures in snapshot for this platform (DAT-11679)
+    ExpectedSnapshot file will be empty for this change type, remove this file and use default once issue is fixed-->
     <changeSet author="as" id="1">
         <createProcedure
                 comments="test procedure"
                 encoding="UTF-8"
-                procedureName="test_procedure">CREATE PROCEDURE test_procedure
-                                               AS
+                procedureName="test_procedure">CREATE OR REPLACE PROCEDURE test_procedure()
+                                               AS $$
                                                BEGIN
                                                END;
+                                               $$
         </createProcedure>
         <rollback>
             <dropProcedure procedureName="test_procedure"/>

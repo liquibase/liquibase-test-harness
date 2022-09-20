@@ -5,6 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <!--    https://docs.liquibase.com/change-types/create-procedure.html-->
+    <!--Liquibase doesn't include stored procedures in snapshot for this platform (DAT-11679)
+ExpectedSnapshot file will be empty for this change type-->
     <!--    This changeType differs from default as Firebird require AS closure for procedures -->
     <!--    https://firebirdsql.org/refdocs/langrefupd21-ddl-procedure.html -->
     <changeSet author="as" id="1">
