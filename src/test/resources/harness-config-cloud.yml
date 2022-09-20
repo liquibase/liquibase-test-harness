@@ -39,7 +39,7 @@ databasesUnderTest:
 
   - name: mysql
     prefix: aws
-    version: 8
+    version: aws
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD

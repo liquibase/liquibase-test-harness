@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!-- LB-874: Escape reserved word CUBE in Column Name -->
+    <changeSet author="Liquibase Pro User" id="1::columnNamedCube" labels="lb874">
+        <createTable   tableName="tbl_lb847">
+            <column name="CUBE" type="VARCHAR2(64)"/>
+            <column name="BUCKETS" type="VARCHAR2(64)"/>
+            <column name="CHECK" type="VARCHAR2(64)"/>
+            <column name="FOLLOWING" type="VARCHAR2(64)"/>
+            <column name="HIGH_PRIORITY" type="VARCHAR2(64)"/>
+            <column name="LEAD" type="VARCHAR2(64)"/>
+            <column name="PERCENT_RANK" type="VARCHAR2(64)"/>
+            <column name="ROLE" type="VARCHAR2(64)"/>
+            <column name="VIRTUAL" type="VARCHAR2(64)"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
