@@ -70,9 +70,10 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: liquibase/liquibase:latest
+          options: -v src/test/resources/init-changelogs/aws:liquibase/changelog
           run: |
               lpm update && lpm add mysql
-              liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="mysql.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
+              liquibase --changeLogFile="mysql.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
