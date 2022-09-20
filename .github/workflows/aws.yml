@@ -8,12 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  init-db:
+  test:
     runs-on: ubuntu-latest
-    container:
-      image: liquibase/liquibase:latest
-      env:
-        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
     strategy:
       fail-fast: false
       matrix:
@@ -34,39 +30,6 @@ jobs:
 #            version: 10.6
           - database: mysql
             version: 8
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install Dependencies
-        run: lpm update && lpm add mysql
-
-      - name: Init Database
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL }}" update
-
-  test:
-    needs: [init-db]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-#          - database: postgresql
-#            version: 10
-#          - database: postgresql
-#            version: 11
-#          - database: postgresql
-#            version: 12
-#          - database: postgresql
-#            version: 13
-#          - database: postgresql
-#            version: 14
-#          - database: oracle
-#            version: 19
-#          - database: mariadb
-#            version: 10.6
-          - database: mysql
-            version: aws
 
     steps:
       - name: Checkout
@@ -101,6 +64,15 @@ jobs:
 #          username: "${{secrets.TH_DB_ADMIN}}"
 #          password: "${{secrets.TH_DB_PASSWD}}"
 #          url: "${{ secrets.TH_MARIADBURL }}"
+
+      - name: Init MySQL Database using Docker Container
+        if: ${{ matrix.database == 'mysql' }}
+        uses: addnab/docker-run-action@v3
+        with:
+          image: liquibase/liquibase:latest
+          run: |
+              lpm update && lpm add mysql
+              liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="mysql.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
