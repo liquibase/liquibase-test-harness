@@ -82,29 +82,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-#      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-#        if: ${{ matrix.database == 'postgresql' }}
-#        env:
-#          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
-#
-#      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-#        if: ${{ matrix.database == 'oracle' }}
-#        env:
-#          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
-#
-#      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-#        if: ${{ matrix.database == 'mariadb' }}
-#        env:
-#          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-#        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MARIADBURL }}'  test
-
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        if: ${{ matrix.database == 'mysql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MYSQLURL }}' test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl=--url="${{ secrets[format('TH_{0}URL_{1}', matrix.database, matrix.version)] }}" test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v3
