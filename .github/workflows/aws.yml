@@ -73,7 +73,7 @@ jobs:
 #          options: -v src/test/resources/init-changelogs/aws/
           run: |
               lpm update && lpm add mysql
-              liquibase --changeLogFile="src/test/resources/init-changelogs/aws/mysql.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
+              liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="mysql.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
