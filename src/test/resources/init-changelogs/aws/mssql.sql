@@ -3,11 +3,11 @@
 -- SET @dataPath=(SELECT CAST(serverproperty('InstanceDefaultDataPath') AS varchar(256)));
 -- SET @logPath=(SELECT CAST(serverproperty('InstanceDefaultLogPath') AS varchar(256)));
 --
-CREATE LOGIN [lbuser] with password=N'LiquibasePass1', CHECK_EXPIRATION=OFF;
-GO
+-- CREATE LOGIN [lbuser] with password=N'LiquibasePass1', CHECK_EXPIRATION=OFF;
+-- GO
 
-CREATE DATABASE lbcat;
-GO
+-- CREATE DATABASE lbcat;
+-- GO
 --
 -- EXEC lbcat..sp_addsrvrolemember @loginame = N'lbuser', @rolename = N'sysadmin'
 -- GO
@@ -16,11 +16,11 @@ GO
  * are differences in behaviour, e.g. with implicit conversions of date and time values. See
  * https://docs.microsoft.com/en-us/sql/t-sql/functions/cast-and-convert-transact-sql for details.
  */
-ALTER DATABASE [lbcat] SET COMPATIBILITY_LEVEL = 100
-GO
-
-USE [lbcat]
-GO
+-- ALTER DATABASE [lbcat] SET COMPATIBILITY_LEVEL = 100
+-- GO
+--
+-- USE [lbcat]
+-- GO
 
 
 DROP TABLE IF EXISTS [dbo].[authors]
