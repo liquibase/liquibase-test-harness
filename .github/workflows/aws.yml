@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  init-db:
+  init-mysql:
     runs-on: ubuntu-latest
     container:
       image: liquibase/liquibase:latest
@@ -18,20 +18,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          #          - database: postgresql
-          #            version: 10
-          #          - database: postgresql
-          #            version: 11
-          #          - database: postgresql
-          #            version: 12
-          #          - database: postgresql
-          #            version: 13
-          #          - database: postgresql
-          #            version: 14
-          #          - database: oracle
-          #            version: 19
-          #          - database: mariadb
-          #            version: 10.6
           - database: mysql
             version: 8
     steps:
@@ -45,7 +31,7 @@ jobs:
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
 
   test:
-    needs: [init-db]
+    needs: [init-mysql]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
