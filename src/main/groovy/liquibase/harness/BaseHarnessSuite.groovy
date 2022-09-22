@@ -10,7 +10,7 @@ import org.junit.runners.Suite
 @Suite.SuiteClasses([
 //        ChangeObjectTests,
         ChangeDataTests
-//        , SnapshotObjectTests
+        , SnapshotObjectTests
 ])
 abstract class BaseHarnessSuite {
 }
