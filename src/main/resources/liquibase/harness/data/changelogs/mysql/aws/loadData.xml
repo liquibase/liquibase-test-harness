@@ -6,9 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 <!-- Attribute "usePreparedStatements" is set to false because otherwise we can't validate generated query.
 Reason: Liquibase core class BatchDmlExecutablePreparedStatementGenerator.java doesn't have implementation -->
-    <changeSet id="setup" author="as">
-        <sql>SET autocommit=0</sql>
-    </changeSet>
     <changeSet id="1" author="as">
         <loadData file="loadData.csv"
                   tableName="posts"
