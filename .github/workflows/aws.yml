@@ -24,6 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+#      This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
         run: lpm update && lpm add mysql
 
