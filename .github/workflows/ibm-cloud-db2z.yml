@@ -2,8 +2,8 @@
 name: IBM DB2/Z Cloud
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
-  schedule:
-    - cron: '0 12 * * *' # Execute every day at noon
+  # schedule:
+  #  - cron: '0 12 * * *' # Execute every day at noon
   workflow_dispatch:
 
 jobs:
