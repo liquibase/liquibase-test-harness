@@ -78,7 +78,7 @@ class BaseCompatibilityTest extends Specification {
         argsMap.put("changeLogFile", pathToJsonChangelogFile)
         executeCommandScope("validate", argsMap)
         argsMap.put("changeLogFile", pathToSqlChangelogFile)
-        executeCommandScope("validate", argsMap) //Doesn't work for sql-formatted changelogs :(
+        executeCommandScope("validate", argsMap) //TODO: Doesn't work for sql-formatted changelogs. Add issue link
 
         when: "execute XML, YAML, SQL and JSON formatted changelogs using liquibase update command"
         argsMap.put("changeLogFile", pathToXmlChangelogFile)
@@ -93,7 +93,7 @@ class BaseCompatibilityTest extends Specification {
         and: "execute Liquibase tag command"
         argsMap.remove("changeLogFile")
         argsMap.put("tag", "test_tag")
-        executeCommandScope("tag", argsMap)
+        executeCommandScope("tag", argsMap)//TODO: Doesn't work properly. Add issue link
 
         and: "execute Liquibase history command"
         executeCommandScope("history", argsMap)
