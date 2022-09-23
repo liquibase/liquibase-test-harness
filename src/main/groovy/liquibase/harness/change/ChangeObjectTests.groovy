@@ -13,7 +13,7 @@ import spock.lang.Unroll
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
 import static liquibase.harness.util.TestUtils.*
-import static ChangeObjectTestHelper.*
+import static liquibase.harness.change.ChangeObjectTestHelper.*
 
 class ChangeObjectTests extends Specification {
     @Shared

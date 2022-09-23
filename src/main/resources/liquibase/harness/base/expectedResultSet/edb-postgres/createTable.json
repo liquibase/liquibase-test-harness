@@ -3,18 +3,6 @@
     {
       "comments": "test_comment",
       "author": "as",
-      "description": "sql",
-      "contexts": "test_context",
-      "exectype": "EXECUTED",
-      "labels": "test_label",
-      "filename": "liquibase\/harness\/base\/changelogs\/createTable.xml",
-      "md5sum": "8:4e697074d57029d3e267ce7507da5cf5",
-      "id": "1",
-      "tag": ""
-    },
-    {
-      "comments": "test_comment",
-      "author": "as",
       "description": "createTable tableName=test_table_yaml",
       "contexts": "test_context",
       "exectype": "EXECUTED",
@@ -31,10 +19,10 @@
       "contexts": "test_context",
       "exectype": "EXECUTED",
       "labels": "test_label",
-      "filename": "liquibase\/harness\/base\/changelogs\/createTable.sql",
-      "md5sum": "8:3e89383340c9b7c69e4902c53534b7ac",
+      "filename": "liquibase\/harness\/base\/changelogs\/createTable.xml",
+      "md5sum": "8:4e697074d57029d3e267ce7507da5cf5",
       "id": "1",
-      "tag": "test_tag"
+      "tag": ""
     },
     {
       "comments": "test_comment",
@@ -47,6 +35,18 @@
       "md5sum": "8:b9ab89365e024967a1da5704f0441428",
       "id": "1",
       "tag": ""
+    },
+    {
+      "comments": "test_comment",
+      "author": "as",
+      "description": "sql",
+      "contexts": "test_context",
+      "exectype": "EXECUTED",
+      "labels": "test_label",
+      "filename": "liquibase\/harness\/base\/changelogs\/createTable.sql",
+      "md5sum": "8:3e89383340c9b7c69e4902c53534b7ac",
+      "id": "1",
+      "tag": "test_tag"
     }
   ]
 }

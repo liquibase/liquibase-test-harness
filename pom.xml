@@ -206,6 +206,14 @@
         </dependency>
 
         <dependency>
+            <groupId>com.sybase.jdbc4.jdbc.sybdriver</groupId>
+            <artifactId>sybase</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/drivers/sybase/jconn4.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>com.athaydes</groupId>
             <artifactId>spock-reports</artifactId>
             <version>1.7.1</version>
