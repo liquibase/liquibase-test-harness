@@ -9,8 +9,7 @@
       "labels": "test_label",
       "filename": "liquibase\/harness\/base\/changelogs\/createTable.xml",
       "md5sum": "8:4e697074d57029d3e267ce7507da5cf5",
-      "id": "1",
-      "tag": ""
+      "id": "1"
     },
     {
       "comments": "test_comment",
@@ -21,8 +20,7 @@
       "labels": "test_label",
       "filename": "liquibase\/harness\/base\/changelogs\/createTable.yml",
       "md5sum": "8:13bf5dadad410884e263691bc66ee760",
-      "id": "1",
-      "tag": "test_tag"
+      "id": "1"
     },
     {
       "comments": "test_comment",
@@ -33,8 +31,7 @@
       "labels": "test_label",
       "filename": "liquibase\/harness\/base\/changelogs\/createTable.sql",
       "md5sum": "8:3e89383340c9b7c69e4902c53534b7ac",
-      "id": "1",
-      "tag": "test_tag"
+      "id": "1"
     },
     {
       "comments": "test_comment",
@@ -45,8 +42,7 @@
       "labels": "test_label",
       "filename": "liquibase\/harness\/base\/changelogs\/createTable.json",
       "md5sum": "8:b9ab89365e024967a1da5704f0441428",
-      "id": "1",
-      "tag": ""
+      "id": "1"
     }
   ]
 }
