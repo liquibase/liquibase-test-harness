@@ -90,10 +90,10 @@ class BaseCompatibilityTest extends Specification {
         argsMap.put("changeLogFile", pathToSqlChangelogFile)
         executeCommandScope("update", argsMap)
 
-        and: "execute Liquibase tag command"
+        and: "execute Liquibase tag command. Tagging last row of DATABASECHANGELOG table"
         argsMap.remove("changeLogFile")
         argsMap.put("tag", "test_tag")
-        executeCommandScope("tag", argsMap)//TODO: Doesn't work properly. Add issue link
+        executeCommandScope("tag", argsMap)
 
         and: "execute Liquibase history command"
         executeCommandScope("history", argsMap)

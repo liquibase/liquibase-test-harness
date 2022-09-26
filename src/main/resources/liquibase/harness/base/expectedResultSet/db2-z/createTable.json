@@ -20,7 +20,8 @@
       "DESCRIPTION": "sql",
       "ID": "1",
       "LABELS": "test_label",
-      "FILENAME": "liquibase\/harness\/base\/changelogs\/createTable.xml"
+      "FILENAME": "liquibase\/harness\/base\/changelogs\/createTable.xml",
+      "TAG": ""
     },
     {
       "EXECTYPE": "EXECUTED",
@@ -31,7 +32,8 @@
       "DESCRIPTION": "createTable tableName=test_table_yaml",
       "ID": "1",
       "LABELS": "test_label",
-      "FILENAME": "liquibase\/harness\/base\/changelogs\/createTable.yml"
+      "FILENAME": "liquibase\/harness\/base\/changelogs\/createTable.yml",
+      "TAG": ""
     },
     {
       "EXECTYPE": "EXECUTED",
@@ -42,7 +44,8 @@
       "DESCRIPTION": "sql",
       "ID": "1",
       "LABELS": "test_label",
-      "FILENAME": "liquibase\/harness\/base\/changelogs\/createTable.sql"
+      "FILENAME": "liquibase\/harness\/base\/changelogs\/createTable.sql",
+      "TAG": "test_tag"
     },
     {
       "EXECTYPE": "EXECUTED",
@@ -53,7 +56,8 @@
       "DESCRIPTION": "sql",
       "ID": "1",
       "LABELS": "test_label",
-      "FILENAME": "liquibase\/harness\/base\/changelogs\/createTable.json"
+      "FILENAME": "liquibase\/harness\/base\/changelogs\/createTable.json",
+      "TAG": ""
     }
   ]
 }
