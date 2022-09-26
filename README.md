@@ -83,15 +83,16 @@ For more information on using the test harness in your extension, see [README.ex
 
 This test validates work of basic Liquibase functions. 
 1) runs Liquibase validate command to ensure the changelog is valid;
-2) runs xml-inlined query with basic metadata decorations (labels, contexts, comments) using Liquibase update command;
+2) runs changelog (all supported formats: XML, YAML, JSON, SQL) with basic metadata decorations (labels, contexts, comments) using Liquibase update command;
 3) runs Liquibase tag command;
 4) runs select query from DATABASECHANGELOG table using jdbc to ensure contexts, labels, comments and tags are present in metadata;
-5) runs verification query using jdbc to ensure a test object was actually created or modified during Liquibase update command;
+5) runs verification query using jdbc to ensure a test object was actually created or modified during Liquibase update command
+by comparing it to JSON-formatted expected result set (**Note! Result set for your database may differ from existing result set if
+it is not present in test**)
 6) runs Liquibase history command;
 7) runs Liquibase status command;
 8) runs Liquibase rollback command;
 9) runs verification query to ensure a test object was actually removed during Liquibase rollback command;
-10) tracks time of the test and shows it in console;
 
 ### Running BaseCompatibilityTest against your database
 As far as this test validates work of Basic Liquibase functions it is essential to keep its configuration as simple as possible:
