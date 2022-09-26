@@ -94,22 +94,25 @@ This test validates work of basic Liquibase functions.
 10) tracks time of the test and shows it in console;
 
 ### Running BaseCompatibilityTest against your database
-As far as this test validates work of Basic Liquibase functions it is essential to keep its configuration as simple as possible.
-If you have your database instance up and running you need to just add appropriate configuration details to `src/test/resources/harness-config.yml` file.
+As far as this test validates work of Basic Liquibase functions it is essential to keep its configuration as simple as possible:
+1. If you have your database instance up and running you need to just add appropriate configuration details to `src/test/resources/harness-config.yml` file.
 Following the example:
-- **name**: `database_name` (**mandatory**) </br>
-  **version**: `database_version` (optional) </br>
-  **prefix**: `local` (optional parameter required for CI/CD tests, leave it empty or set `local`) </br>
-  **url**: `db_connection_url` (**mandatory**) </br>
-  **username**: `username` (optional if your database authentication config doesn't require it) </br>
-  **password**: `password` (optional if your database authentication config doesn't require it) </br>
+   - **name**: `database_name` (**mandatory**) </br>
+     **version**: `database_version` (optional) </br>
+     **prefix**: `local` (optional parameter required for CI/CD tests, leave it empty or set `local`) </br>
+     **url**: `db_connection_url` (**mandatory**) </br>
+     **username**: `username` (optional if your database authentication config doesn't require it) </br>
+     **password**: `password` (optional if your database authentication config doesn't require it) </br>
+2. Add driver dependency for you database to POM.xml file
+
+3. To run the test go to you IDE run configurations and add new JUnit configuration. Add 
+`liquibase.harness.base.BaseCompatibilityTest` as target class and use -DdbName, -DdbVersion to set up
+appropriate parameters. Or you may just comment out/delete all existing configurations in harness-config.yml
+file leaving just your configuration and run BaseCompatibilityTest directly from the class file. 
 
 In case you want to set up your database instance using docker image then you may use 
 `src/test/resources/docker/docker-compose.yml` file for configuration.
-To run the test go to you IDE run configurations and add new JUnit configuration. Add 
-`liquibase.harness.base.BaseCompatibilityTest` as target class and use -DdbName, -DdbVersion to set up
-appropriate parameters. Or you may just comment out/delete all existing configurations in harness-config.yml
-file leaving just your configuration and run BaseCompatibilityTest directly from the class file.
+
 
 ## Change Objects Test
 
@@ -127,7 +130,7 @@ whether they make the expected changes.
   * The test takes a snapshot of the database after deployment by running Liquibase 'snapshot' command
   * Actual DB snapshot is compared to expected DB snapshot (provided in `src/main/resources/liquibase/harness/change/expectedSnapshot`)
   * Finally, deployed changes are then rolled back by either using `rollbackToDate` (default) or `rollback` by tag (**test-harness-tag**). See `-DrollbackStrategy` option below for more information.
-  
+
 
 #### Types of input files
 * The tests work with 4 types of input files that are supported by Liquibase itself - xml, yaml, json, sql.
