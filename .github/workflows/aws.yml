@@ -19,9 +19,9 @@ jobs:
       matrix:
         include:
           - database: mysql
-            url: ${{ secrets.TH_MYSQLURL_8_0 }}
+            version: aws
           - database: mysql
-            url: ${{ secrets.TH_AURORA_MYSQLURL }}
+            version: aurora
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,7 +31,12 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Init Database
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ matrix.url }}" update
+        if: ${{ matrix.vrsion == 'aws' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
+
+      - name: Init Database
+        if: ${{ matrix.vrsion == 'aurora' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
 
   test:
     needs: [init-mysql]
