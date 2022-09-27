@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Collect Data
         id: collect-data
-        uses: actions/github-script@v6.2.0
+        uses: actions/github-script@v6.3.0
         with:
           script: |
             if (context.payload.inputs) {
