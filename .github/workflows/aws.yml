@@ -19,7 +19,9 @@ jobs:
       matrix:
         include:
           - database: mysql
-            version: 8
+            version: aws
+          - database: mysql
+            version: aurora
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -29,7 +31,12 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Init Database
+        if: ${{ matrix.vrsion == 'aws' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
+
+      - name: Init Database
+        if: ${{ matrix.vrsion == 'aurora' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
 
   test:
     needs: [init-mysql]
@@ -54,6 +61,8 @@ jobs:
             version: 10.6
           - database: mysql
             version: aws
+          - database: mysql
+            version: aurora
           - database: mssql
             version: 2019
 
@@ -128,7 +137,7 @@ jobs:
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MARIADBURL_10_6 }}'  test
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        if: ${{ matrix.database == 'mysql' }}
+        if: ${{ matrix.database == 'mysql' }} && ${{ matrix.version == 'aws' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MYSQLURL_8_0 }}' -Dmaven.test.failure.ignore=true test
@@ -138,6 +147,12 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MSSQLURL }}'  test
+
+      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
+        if: ${{ matrix.database == 'mysql' }} && ${{ matrix.version == 'aurora' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_AURORA_MYSQLURL }}' -Dmaven.test.failure.ignore=true test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v3
