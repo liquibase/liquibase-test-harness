@@ -119,7 +119,7 @@ jobs:
           changeLogFile: "postgresql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets[format('TH_AURORA_PGRESURL_{0}', matrix.version)] }}"
+          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
