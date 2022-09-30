@@ -57,3 +57,10 @@ databasesUnderTest:
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
+
+  - name: postgresql
+    prefix: aurora
+    version: 13
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD

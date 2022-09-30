@@ -65,6 +65,8 @@ jobs:
             version: aurora
           - database: mssql
             version: 2019
+          - database: postgresql
+            version: aurora
 
     steps:
       - name: Checkout
@@ -110,6 +112,16 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: ${{ secrets.TH_MSSQLURL }}
 
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ matrix.database == 'postgresql' && matrix.version == 'aurora' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "postgresql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
+
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
@@ -119,10 +131,10 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        if: ${{ matrix.database == 'postgresql' }}
+        if: ${{ matrix.database == 'postgresql' && matrix.version != 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dprefix=aws -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
         if: ${{ matrix.database == 'oracle' }}
@@ -137,7 +149,7 @@ jobs:
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MARIADBURL_10_6 }}'  test
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        if: ${{ matrix.database == 'mysql' }} && ${{ matrix.version == 'aws' }}
+        if: ${{ matrix.database == 'mysql' && matrix.version == 'aws' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MYSQLURL_8_0 }}' -Dmaven.test.failure.ignore=true test
@@ -148,11 +160,17 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MSSQLURL }}'  test
 
-      - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
-        if: ${{ matrix.database == 'mysql' }} && ${{ matrix.version == 'aurora' }}
+      - name: AWS Aurora ${{ matrix.database }} Test Run
+        if: ${{ matrix.database == 'mysql' && matrix.version == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_AURORA_MYSQLURL }}' -Dmaven.test.failure.ignore=true test
+
+      - name: AWS Aurora ${{ matrix.database }} Test Run
+        if: ${{ matrix.database == 'postgresql' && matrix.version == 'aurora' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=13 -Dprefix=aurora -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_AURORA_POSTGRESQLURL }}' -Dmaven.test.failure.ignore=true test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v3
