@@ -30,9 +30,37 @@ databasesUnderTest:
     username: USERNAME
     password: PASSWORD
 
-  - name: aurora-postgresql
+  - name: mariadb
     prefix: aws
-    version: DBVERSION
+    version: 10.6
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mysql
+    prefix: aws
+    version: aws
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mssql
+    prefix: aws
+    version: 2019
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mysql
+    prefix: aurora
+    version: aurora
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
+    prefix: aurora
+    version: 13
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD

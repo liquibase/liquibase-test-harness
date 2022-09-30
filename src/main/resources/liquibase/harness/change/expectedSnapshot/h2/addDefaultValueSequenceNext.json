@@ -8,7 +8,7 @@
             "name": "SEQUENCE_REFERENCED_COLUMN",
             "nullable": true,
             "type": {
-              "typeName": "DECFLOAT"
+              "typeName": "NUMERIC"
             }
           }
         }
