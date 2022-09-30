@@ -9,6 +9,7 @@ on:
 
 jobs:
   init-mysql:
+    needs: [init-mysql]
     runs-on: ubuntu-latest
     container:
       image: liquibase/liquibase:latest
