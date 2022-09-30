@@ -13,14 +13,17 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-import java.sql.Connection
+
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-import static liquibase.harness.util.JSONUtils.*
-import static liquibase.harness.util.FileUtils.*
+import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
+import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
+import static liquibase.harness.util.FileUtils.getJSONFileContent
+import static liquibase.harness.util.FileUtils.getSqlFileContent
+import static liquibase.harness.util.JSONUtils.compareJSONArrays
+import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
 import static liquibase.harness.util.TestUtils.*
-import static liquibase.harness.data.ChangeDataTestHelper.*
 
 class ChangeDataTests extends Specification {
     @Shared
@@ -63,9 +66,9 @@ class ChangeDataTests extends Specification {
         assert shouldRunChangeSet: "No checkingSql for ${testInput.changeData}!"
 
         and: "check database under test is online"
-        def connection = testInput.database.getConnection()
-        shouldRunChangeSet = connection instanceof JdbcConnection
+        shouldRunChangeSet = testInput.database.getConnection() instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
+        def connection = testInput.database.getConnection() as JdbcConnection
 
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
@@ -89,20 +92,17 @@ class ChangeDataTests extends Specification {
         executeCommandScope("update", argsMap)
 
         then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet"
-        Connection newConnection
         ResultSet resultSet
         JSONArray generatedResultSetArray
         try {
             if (connection.isClosed()) {
-                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-                resultSet = newConnection.createStatement().executeQuery(checkingSql)
-                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                newConnection.commit()
-            } else {
-                resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkingSql)
-                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                connection.commit()
+                connection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password) as JdbcConnection
             }
+            resultSet = connection.createStatement().executeQuery(checkingSql)
+            generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+
+            connection.autoCommit ?: connection.commit()
+
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.NON_EXTENSIBLE)
@@ -110,9 +110,6 @@ class ChangeDataTests extends Specification {
             Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
         } finally {
-            if (newConnection != null) {
-                newConnection.close()
-            }
         }
 
         and: "if expected sql is not provided save generated sql as expected sql"
