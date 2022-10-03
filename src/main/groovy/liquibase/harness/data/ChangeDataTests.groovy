@@ -70,9 +70,10 @@ class ChangeDataTests extends Specification {
         assert shouldRunChangeSet: "No checkingSql for ${testInput.changeData}!"
 
         and: "check database under test is online"
-        DatabaseConnection connection = testInput.database.getConnection()
-        shouldRunChangeSet = connection instanceof JdbcConnection
+        shouldRunChangeSet = testInput.database.getConnection() instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
+        JdbcConnection connection = testInput.database.getConnection() as JdbcConnection
+
 
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
@@ -99,14 +100,15 @@ class ChangeDataTests extends Specification {
         ResultSet resultSet
         JSONArray generatedResultSetArray
         try {
-            if (connection.isClosed()) {
-                connection = DatabaseTestContext.getInstance().getConnection(testInput.url, testInput.username, testInput.password)
-//                connection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-            }
-            resultSet = ((JdbcConnection)connection).getUnderlyingConnection().createStatement().executeQuery(checkingSql)
-            generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+            if (connection.isClosed()) {//this is most likely embedded connection, let's get separate one for running checking SQL
+                Connection newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                resultSet = newConnection.createStatement().executeQuery(checkingSql)
+            } else {
+                resultSet = connection.createStatement().executeQuery(checkingSql)
+                connection.autoCommit ?: connection.commit()
 
-            connection.autoCommit ?: connection.commit()
+            }
+            generatedResultSetArray = mapResultSetToJSONArray(resultSet)
 
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
