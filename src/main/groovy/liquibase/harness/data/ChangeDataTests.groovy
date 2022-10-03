@@ -1,9 +1,12 @@
 package liquibase.harness.data
 
 import liquibase.Scope
+import liquibase.database.DatabaseConnection
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.DatabaseConnectionUtil
+import liquibase.harness.util.DatabaseTestContext
 import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONArray
 import org.json.JSONObject
@@ -14,6 +17,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 
@@ -66,9 +70,9 @@ class ChangeDataTests extends Specification {
         assert shouldRunChangeSet: "No checkingSql for ${testInput.changeData}!"
 
         and: "check database under test is online"
-        shouldRunChangeSet = testInput.database.getConnection() instanceof JdbcConnection
+        DatabaseConnection connection = testInput.database.getConnection()
+        shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
-        def connection = testInput.database.getConnection() as JdbcConnection
 
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
@@ -96,9 +100,10 @@ class ChangeDataTests extends Specification {
         JSONArray generatedResultSetArray
         try {
             if (connection.isClosed()) {
-                connection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password) as JdbcConnection
+                connection = DatabaseTestContext.getInstance().getConnection(testInput.url, testInput.username, testInput.password)
+//                connection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
             }
-            resultSet = connection.createStatement().executeQuery(checkingSql)
+            resultSet = ((JdbcConnection)connection).getUnderlyingConnection().createStatement().executeQuery(checkingSql)
             generatedResultSetArray = mapResultSetToJSONArray(resultSet)
 
             connection.autoCommit ?: connection.commit()
@@ -109,7 +114,6 @@ class ChangeDataTests extends Specification {
         } catch (Exception exception) {
             Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
-        } finally {
         }
 
         and: "if expected sql is not provided save generated sql as expected sql"

@@ -110,7 +110,7 @@ jobs:
           changeLogFile: "mssql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
-          url: ${{ secrets.TH_MSSQLURL }}
+          url: "${{ secrets.TH_MSSQLURL }}"
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ matrix.database == 'postgresql' && matrix.version == 'aurora' }}
@@ -134,7 +134,7 @@ jobs:
         if: ${{ matrix.database == 'postgresql' && matrix.version != 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dprefix=aws -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}' -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=${{ matrix.version }} -Dprefix=aws -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}' test
 
       - name: AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Run
         if: ${{ matrix.database == 'oracle' }}
@@ -170,7 +170,7 @@ jobs:
         if: ${{ matrix.database == 'postgresql' && matrix.version == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=13 -Dprefix=aurora -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_AURORA_POSTGRESQLURL }}' -Dmaven.test.failure.ignore=true test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=13 -Dprefix=aurora -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_AURORA_POSTGRESQLURL }}' test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v3
