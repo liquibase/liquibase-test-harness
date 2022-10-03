@@ -20,7 +20,7 @@ import java.sql.ResultSet
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.TestUtils.*
-import static ChangeDataTestHelper.*
+import static liquibase.harness.data.ChangeDataTestHelper.*
 
 class ChangeDataTests extends Specification {
     @Shared

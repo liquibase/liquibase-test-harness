@@ -51,11 +51,11 @@ The general pattern is that for each directory containing configuration files:
 At each level in that hierarchy, new configurations can be added and/or can override configurations from a lower level. 
 
 Currently, there are five test types defined in the test harness:
+* Base Compatibility test
 * Change Object Tests
 * Change Data Tests
 * Snapshot Command Test
 * Diff Command Test
-* Base level test
 
 This repository is configured to run against databases supported by Liquibase Core. 
 
@@ -78,7 +78,43 @@ See `src/test/resources/harness-config.yml` to see what this repository is confi
 For more information on using the test harness in your extension, see [README.extensions.md] 
 
 # Framework Tests
- 
+
+## BaseCompatibilityTest
+
+This test validates work of basic Liquibase functions. 
+1) runs Liquibase validate command to ensure the changelog is valid;
+2) runs changelog (all supported formats: XML, YAML, JSON, SQL) with basic metadata decorations (labels, contexts, comments) using Liquibase update command;
+3) runs Liquibase tag command;
+4) runs select query from DATABASECHANGELOG table using jdbc to ensure contexts, labels, comments and tags are present in metadata;
+5) runs verification query using jdbc to ensure a test object was actually created or modified during Liquibase update command
+by comparing it to JSON-formatted expected result set (**Note! Result set for your database may differ from existing result set if
+it is not present in test**)
+6) runs Liquibase history command;
+7) runs Liquibase status command;
+8) runs Liquibase rollback command;
+9) runs verification query to ensure a test object was actually removed during Liquibase rollback command;
+
+### Running BaseCompatibilityTest against your database
+As far as this test validates work of Basic Liquibase functions it is essential to keep its configuration as simple as possible:
+1. If you have your database instance up and running you need to just add appropriate configuration details to `src/test/resources/harness-config.yml` file.
+Following the example:
+   - **name**: `database_name` (**mandatory**) </br>
+     **version**: `database_version` (optional) </br>
+     **prefix**: `local` (optional parameter required for CI/CD tests, leave it empty or set `local`) </br>
+     **url**: `db_connection_url` (**mandatory**) </br>
+     **username**: `username` (optional if your database authentication config doesn't require it) </br>
+     **password**: `password` (optional if your database authentication config doesn't require it) </br>
+2. Add driver dependency for you database to POM.xml file
+
+3. To run the test go to you IDE run configurations and add new JUnit configuration. Add 
+`liquibase.harness.base.BaseCompatibilityTest` as target class and use -DdbName, -DdbVersion to set up
+appropriate parameters. Or you may just comment out/delete all existing configurations in harness-config.yml
+file leaving just your configuration and run BaseCompatibilityTest directly from the class file. 
+
+In case you want to set up your database instance using docker image then you may use 
+`src/test/resources/docker/docker-compose.yml` file for configuration.
+
+
 ## Change Objects Test
 
 The test-harness validates most of the Data Definition Language related Change Types as listed on [Home Page](https://docs.liquibase.com/change-types/home.html). 
@@ -95,7 +131,7 @@ whether they make the expected changes.
   * The test takes a snapshot of the database after deployment by running Liquibase 'snapshot' command
   * Actual DB snapshot is compared to expected DB snapshot (provided in `src/main/resources/liquibase/harness/change/expectedSnapshot`)
   * Finally, deployed changes are then rolled back by either using `rollbackToDate` (default) or `rollback` by tag (**test-harness-tag**). See `-DrollbackStrategy` option below for more information.
-  
+
 
 #### Types of input files
 * The tests work with 4 types of input files that are supported by Liquibase itself - xml, yaml, json, sql.
@@ -149,13 +185,6 @@ This test executes the following steps:
 
 This test validates work of Liquibase 'snapshot' command by comparing expected and generated snapshots
 after a DB object was created.
-
-## BaseLevelTest
-
-This test validates work of basic Liquibase logic. It runs simple 'create table' sql-formatted query using Liquibase 'update' command and 
-checks whether databasechangelog and databasechangeloglock tables were created and filled with correct data.
-
-
 
 ## Running the Tests
 
