@@ -44,19 +44,20 @@ class BaseCompatibilityTest extends Specification {
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
+
         String basePath = "liquibase/harness/base/"
-        String pathToXmlChangelogFile = "${basePath}changelogs/${testInput.change}.xml"
-        String pathToYamlChangelogFile = "${basePath}changelogs/${testInput.change}.yml"
-        String pathToJsonChangelogFile = "${basePath}changelogs/${testInput.change}.json"
-        String pathToSqlChangelogFile = "${basePath}changelogs/${testInput.change}.sql"
-        String pathToXmlCheckingSqlFile =
-                getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Xml.sql")
-        String pathToYamlCheckingSqlFile =
-                getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Yaml.sql")
-        String pathToJsonCheckingSqlFile =
-                getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Json.sql")
-        String pathToSqlCheckingSqlFile =
-                getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Sql.sql")
+        ArrayList<String> changelogList = new ArrayList<>()
+        changelogList.add("${basePath}changelogs/${testInput.change}.xml")
+        changelogList.add("${basePath}changelogs/${testInput.change}.yml")
+        changelogList.add("${basePath}changelogs/${testInput.change}.json")
+        changelogList.add("${basePath}changelogs/${testInput.change}.sql")
+
+        ArrayList<String> checkingSqlList = new ArrayList<>()
+        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Xml.sql"))
+        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Yaml.sql"))
+        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Json.sql"))
+        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Sql.sql"))
+
         boolean shouldRunChangeSet
 
         and: "fail test if expectedResultSet is not provided"
@@ -71,54 +72,43 @@ class BaseCompatibilityTest extends Specification {
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         and: "execute Liquibase validate command to ensure a chagelog is valid"
-        argsMap.put("changeLogFile", pathToXmlChangelogFile)
-        executeCommandScope("validate", argsMap)
-        argsMap.put("changeLogFile", pathToYamlChangelogFile)
-        executeCommandScope("validate", argsMap)
-        argsMap.put("changeLogFile", pathToJsonChangelogFile)
-        executeCommandScope("validate", argsMap)
-        argsMap.put("changeLogFile", pathToSqlChangelogFile)
-        executeCommandScope("validate", argsMap) //Doesn't work for sql-formatted changelogs. https://github.com/liquibase/liquibase/issues/1675 , https://github.com/liquibase/liquibase/issues/1118
+        for (int i=0; i < changelogList.size(); i++) {
+            argsMap.put("changeLogFile", changelogList.get(i))
+            executeCommandScope("validate", argsMap)
+        }
+        //Doesn't work for sql-formatted changelogs. https://github.com/liquibase/liquibase/issues/1675 , https://github.com/liquibase/liquibase/issues/1118
 
         when: "execute XML, YAML, SQL and JSON formatted changelogs using liquibase update command"
-        argsMap.put("changeLogFile", pathToXmlChangelogFile)
-        executeCommandScope("update", argsMap)
-        argsMap.put("changeLogFile", pathToYamlChangelogFile)
-        executeCommandScope("update", argsMap)
-        argsMap.put("changeLogFile", pathToJsonChangelogFile)
-        executeCommandScope("update", argsMap)
-        argsMap.put("changeLogFile", pathToSqlChangelogFile)
-        executeCommandScope("update", argsMap)
+        for (int i=0; i < changelogList.size(); i++) {
+            argsMap.put("changeLogFile", changelogList.get(i))
+            executeCommandScope("update", argsMap)
+        }
 
         and: "execute Liquibase tag command. Tagging last row of DATABASECHANGELOG table (SQL-formatted changelog)"
         argsMap.remove("changeLogFile")
         argsMap.put("tag", "test_tag")
-        executeCommandScope("tag", argsMap) //Doesn't work properly for SQLite https://github.com/liquibase/liquibase/issues/3304
+        executeCommandScope("tag", argsMap)
+        //Doesn't work properly for SQLite https://github.com/liquibase/liquibase/issues/3304
 
         and: "execute Liquibase history command"
         executeCommandScope("history", argsMap)
 
         and: "execute Liquibase status command"
-        argsMap.put("changeLogFile", pathToXmlChangelogFile)
-        executeCommandScope("status", argsMap)
-        argsMap.put("changeLogFile", pathToYamlChangelogFile)
-        executeCommandScope("status", argsMap)
-        argsMap.put("changeLogFile", pathToJsonChangelogFile)
-        executeCommandScope("status", argsMap)
-        argsMap.put("changeLogFile", pathToSqlChangelogFile)
-        executeCommandScope("status", argsMap)
+        for (int i=0; i < changelogList.size(); i++) {
+            argsMap.put("changeLogFile", changelogList.get(i))
+            assert executeCommandScope("status", argsMap).toString().contains("is up to date")
+        }
 
         then: "execute metadata checking sql, obtain result set, compare it to expected result set"
-        Connection newConnection
         JSONArray generatedResultSetArray
         try {
             ResultSet resultSet
             if (connection.isClosed()) {
-                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-                resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
+                connection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                resultSet = connection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
                 generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                if (!newConnection.autoCommit) {
-                    newConnection.commit()
+                if (!connection.autoCommit) {
+                    connection.commit()
                 }
             } else {
                 resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
@@ -132,18 +122,13 @@ class BaseCompatibilityTest extends Specification {
         } catch (Exception exception) {
             Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
-        } finally {
-            if (newConnection != null) {
-                newConnection.close()
-            }
         }
 
         and: "check for actual presence of created object"
         try {
-            executeQuery(pathToXmlCheckingSqlFile, testInput)
-            executeQuery(pathToYamlCheckingSqlFile, testInput)
-            executeQuery(pathToJsonCheckingSqlFile, testInput)
-            executeQuery(pathToSqlCheckingSqlFile, testInput)
+            for (int i = 0; i < checkingSqlList.size(); i++) {
+                executeQuery(checkingSqlList.get(i), testInput)
+            }
         } catch (SQLException sqlException) {
             // Assume test object was not created after 'update' command execution and test failed.
             Scope.getCurrentScope().getUI().sendMessage("Error executing test table checking sql! " +
@@ -153,65 +138,27 @@ class BaseCompatibilityTest extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            argsMap.put("changeLogFile", pathToXmlChangelogFile)
-            strategy.performRollback(argsMap)
-            argsMap.put("changeLogFile", pathToYamlChangelogFile)
-            strategy.performRollback(argsMap)
-            argsMap.put("changeLogFile", pathToJsonChangelogFile)
-            strategy.performRollback(argsMap)
-            argsMap.put("changeLogFile", pathToSqlChangelogFile)
-            strategy.performRollback(argsMap)
+            for (int i=0; i < changelogList.size(); i++) {
+                argsMap.put("changeLogFile", changelogList.get(i))
+                strategy.performRollback(argsMap)
+            }
         }
 
         and: "check for actual absence of the object removed after 'rollback' command execution"
         if (shouldRunChangeSet) {
-            try {
-                ResultSet resultSetXml = executeQuery(pathToXmlCheckingSqlFile, testInput)
-                if (resultSetXml.next()) {
-                    Scope.getCurrentScope().getUI().sendMessage("Rollback was not successful! " +
-                            "The object was not removed after 'rollback' command: " +
-                            resultSetXml.getMetaData().getTableName(0))
-                    Assert.fail()
+            for (int i = 0; i < checkingSqlList.size(); i++) {
+                try {
+                    ResultSet resultSet = executeQuery(checkingSqlList.get(i), testInput)
+                    if (resultSet.next()) {
+                        Scope.getCurrentScope().getUI().sendMessage("ERROR!: Rollback was not successful! " +
+                                "The object was not removed after 'rollback' command: " +
+                                resultSet.getMetaData().getTableName(0))
+                        Assert.fail()
+                    }
+                } catch (ignored) {
+                    // Assume test object does not exist and 'rollback' was successful. Ignore exception.
+                    Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
                 }
-            } catch (ignored) {
-                // Assume test object does not exist and 'rollback' was successful. Ignore exception.
-                Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
-            }
-            try {
-                ResultSet resultSetYaml = executeQuery(pathToYamlCheckingSqlFile, testInput)
-                if (resultSetYaml.next()) {
-                    Scope.getCurrentScope().getUI().sendMessage("Rollback was not successful! " +
-                            "The object was not removed after 'rollback' command: " +
-                            resultSetYaml.getMetaData().getTableName(0))
-                    Assert.fail()
-                }
-            } catch (ignored) {
-                // Assume test object does not exist and 'rollback' was successful. Ignore exception.
-                Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
-            }
-            try {
-                ResultSet resultSetJson = executeQuery(pathToJsonCheckingSqlFile, testInput)
-                if (resultSetJson.next()) {
-                    Scope.getCurrentScope().getUI().sendMessage("Rollback was not successful! " +
-                            "The object was not removed after 'rollback' command: " +
-                            resultSetJson.getMetaData().getTableName(0))
-                    Assert.fail()
-                }
-            } catch (ignored) {
-                // Assume test object does not exist and 'rollback' was successful. Ignore exception.
-                Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
-            }
-            try {
-                ResultSet resultSetSql = executeQuery(pathToSqlCheckingSqlFile, testInput)
-                if (resultSetSql.next()) {
-                    Scope.getCurrentScope().getUI().sendMessage("Rollback was not successful! " +
-                            "The object was not removed after 'rollback' command: " +
-                            resultSetSql.getMetaData().getTableName(0))
-                    Assert.fail()
-                }
-            } catch (ignored) {
-                // Assume test object does not exist and 'rollback' was successful. Ignore exception.
-                Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
             }
         }
 
