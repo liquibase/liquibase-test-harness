@@ -12,8 +12,6 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -72,14 +70,14 @@ class BaseCompatibilityTest extends Specification {
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         and: "execute Liquibase validate command to ensure a chagelog is valid"
-        for (int i=0; i < changelogList.size(); i++) {
+        for (int i = 0; i < changelogList.size(); i++) {
             argsMap.put("changeLogFile", changelogList.get(i))
             executeCommandScope("validate", argsMap)
         }
         //Doesn't work for sql-formatted changelogs. https://github.com/liquibase/liquibase/issues/1675 , https://github.com/liquibase/liquibase/issues/1118
 
         when: "execute XML, YAML, SQL and JSON formatted changelogs using liquibase update command"
-        for (int i=0; i < changelogList.size(); i++) {
+        for (int i = 0; i < changelogList.size(); i++) {
             argsMap.put("changeLogFile", changelogList.get(i))
             executeCommandScope("update", argsMap)
         }
@@ -94,7 +92,7 @@ class BaseCompatibilityTest extends Specification {
         executeCommandScope("history", argsMap)
 
         and: "execute Liquibase status command"
-        for (int i=0; i < changelogList.size(); i++) {
+        for (int i = 0; i < changelogList.size(); i++) {
             argsMap.put("changeLogFile", changelogList.get(i))
             assert executeCommandScope("status", argsMap).toString().contains("is up to date")
         }
@@ -125,20 +123,20 @@ class BaseCompatibilityTest extends Specification {
         }
 
         and: "check for actual presence of created object"
-        try {
-            for (int i = 0; i < checkingSqlList.size(); i++) {
+        for (int i = 0; i < checkingSqlList.size(); i++) {
+            try {
                 executeQuery(checkingSqlList.get(i), testInput)
+            } catch (SQLException sqlException) {
+                // Assume test object was not created after 'update' command execution and test failed.
+                Scope.getCurrentScope().getUI().sendMessage("Error executing test table checking sql! " +
+                        sqlException.printStackTrace())
+                Assert.fail sqlException.message
             }
-        } catch (SQLException sqlException) {
-            // Assume test object was not created after 'update' command execution and test failed.
-            Scope.getCurrentScope().getUI().sendMessage("Error executing test table checking sql! " +
-                    sqlException.printStackTrace())
-            Assert.fail sqlException.message
         }
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            for (int i=0; i < changelogList.size(); i++) {
+            for (int i = 0; i < changelogList.size(); i++) {
                 argsMap.put("changeLogFile", changelogList.get(i))
                 strategy.performRollback(argsMap)
             }
