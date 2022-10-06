@@ -1,12 +1,9 @@
 package liquibase.harness.data
 
 import liquibase.Scope
-import liquibase.database.DatabaseConnection
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
-import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.harness.util.DatabaseTestContext
 import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONArray
 import org.json.JSONObject
@@ -16,18 +13,14 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
-import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
-import static liquibase.harness.util.FileUtils.getJSONFileContent
-import static liquibase.harness.util.FileUtils.getSqlFileContent
-import static liquibase.harness.util.JSONUtils.compareJSONArrays
-import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
+import static liquibase.harness.util.JSONUtils.*
+import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.TestUtils.*
+import static liquibase.harness.data.ChangeDataTestHelper.*
 
 class ChangeDataTests extends Specification {
     @Shared
@@ -97,11 +90,12 @@ class ChangeDataTests extends Specification {
         executeCommandScope("update", argsMap)
 
         then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet"
+        Connection newConnection
         ResultSet resultSet
         JSONArray generatedResultSetArray
         try {
             if (connection.isClosed()) {//this is most likely embedded connection, let's get separate one for running checking SQL
-                Connection newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
             } else {
                 resultSet = connection.createStatement().executeQuery(checkingSql)
@@ -116,6 +110,10 @@ class ChangeDataTests extends Specification {
         } catch (Exception exception) {
             Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
+        } finally {
+            if (newConnection != null) {
+                newConnection.close()
+            }
         }
 
         and: "if expected sql is not provided save generated sql as expected sql"
