@@ -4,13 +4,13 @@ import groovy.transform.ToString
 import groovy.transform.builder.Builder
 import liquibase.Scope
 import liquibase.database.Database
+import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
-import liquibase.statement.SqlStatement
-import liquibase.statement.core.RawSqlStatement
 import org.junit.Assert
+
 import java.sql.Connection
 import java.sql.DriverManager
 import java.util.logging.Logger
@@ -33,7 +33,7 @@ class SnapshotObjectTestHelper {
         Logger.getLogger(this.class.name).warning("Only " + TestConfig.instance.inputFormat
                 + " input files are taken into account for this test run")
         List<TestInput> inputList = new ArrayList<>()
-        for (DatabaseUnderTest databaseUnderTest: new DatabaseConnectionUtil()
+        for (DatabaseUnderTest databaseUnderTest : new DatabaseConnectionUtil()
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
             for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, inputSqlPath, "sql")
                     .entrySet()) {
@@ -41,7 +41,7 @@ class SnapshotObjectTestHelper {
                     String pathToCleanupSQL = FileUtils.resolveInputFilePaths(databaseUnderTest,
                             cleanupSqlPath, "sql").get(changeLogEntry.key)
                     String pathToExpectedSnapshot = FileUtils.resolveInputFilePaths(databaseUnderTest,
-                                    expectedSnapshotPath, "json").get(changeLogEntry.key)
+                            expectedSnapshotPath, "json").get(changeLogEntry.key)
                     inputList.add(TestInput.builder()
                             .database(databaseUnderTest)
                             .snapshotObjectName(changeLogEntry.key)
@@ -59,35 +59,29 @@ class SnapshotObjectTestHelper {
         String query = FileUtils.getResourceContent(pathToSql)
         Database database = testInput.database.database
         Connection newConnection
-        if (database.connection.isClosed()) {
-            try {
+        try {
+            if (database.connection.isClosed()) {
                 newConnection = DriverManager.getConnection(testInput.database.url, testInput.database.username,
                         testInput.database.password)
                 newConnection.createStatement().execute(query)
-                newConnection.commit()
-            } catch (Exception exception) {
-                Scope.getCurrentScope().getUI().sendMessage("Failed to execute query! " + query + " " +
-                        exception.printStackTrace())
-                Assert.fail exception.message
-            } finally {
-                if (newConnection != null) {
-                    newConnection.close()
-                }
+            } else {
+                JdbcConnection connection = testInput.database.database.getConnection() as JdbcConnection
+                connection.createStatement().executeQuery(query)
+                connection.autoCommit ?: connection.commit()
             }
-        } else {
-            try {
-                database.execute([new RawSqlStatement(query)] as SqlStatement[], null)
-                database.commit()
-            } catch (Exception exception)  {
-                Scope.getCurrentScope().getUI().sendMessage("Failed to execute query! " + query + " " +
-                        exception.printStackTrace())
-                Assert.fail exception.message
+        } catch (Exception exception) {
+            Scope.getCurrentScope().getUI().sendMessage("Failed to execute query! " + query + " " +
+                    exception.printStackTrace())
+            Assert.fail exception.message
+        } finally {
+            if (newConnection != null) {
+                newConnection.close()
             }
         }
     }
 
     @Builder
-    @ToString(includeNames=true, includeFields=true, includePackage = false)
+    @ToString(includeNames = true, includeFields = true, includePackage = false)
     static class TestInput {
         DatabaseUnderTest database
         String snapshotObjectName
