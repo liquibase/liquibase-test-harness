@@ -45,26 +45,26 @@ jobs:
       fail-fast: false
       matrix:
         include:
-#          - database: postgresql
-#            version: 10
-#          - database: postgresql
-#            version: 11
-#          - database: postgresql
-#            version: 12
-#          - database: postgresql
-#            version: 13
-#          - database: postgresql
-#            version: 14
-#          - database: oracle
-#            version: 19
-#          - database: mariadb
-#            version: 10.6
-#          - database: mysql
-#            version: aws
-#          - database: mysql
-#            version: aurora
-#          - database: mssql
-#            version: 2019
+          - database: postgresql
+            version: 10
+          - database: postgresql
+            version: 11
+          - database: postgresql
+            version: 12
+          - database: postgresql
+            version: 13
+          - database: postgresql
+            version: 14
+          - database: oracle
+            version: 19
+          - database: mariadb
+            version: 10.6
+          - database: mysql
+            version: aws
+          - database: mysql
+            version: aurora
+          - database: mssql
+            version: 2019
           - database: postgresql
             version: aurora
 
@@ -112,15 +112,15 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: ${{ secrets.TH_MSSQLURL }}
 
-#      - uses: liquibase/liquibase-github-action@v7
-#        if: ${{ matrix.database == 'postgresql' && matrix.version == 'aurora' }}
-#        with:
-#          operation: "update"
-#          classpath: "src/test/resources/init-changelogs/aws"
-#          changeLogFile: "postgresql.sql"
-#          username: "${{secrets.TH_DB_ADMIN}}"
-#          password: "${{secrets.TH_DB_PASSWD}}"
-#          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ matrix.database == 'postgresql' && matrix.version == 'aurora' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "postgresql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
