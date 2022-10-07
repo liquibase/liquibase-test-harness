@@ -112,15 +112,15 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: ${{ secrets.TH_MSSQLURL }}
 
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'postgresql' && matrix.version == 'aurora' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "postgresql.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
+#      - uses: liquibase/liquibase-github-action@v7
+#        if: ${{ matrix.database == 'postgresql' && matrix.version == 'aurora' }}
+#        with:
+#          operation: "update"
+#          classpath: "src/test/resources/init-changelogs/aws"
+#          changeLogFile: "postgresql.sql"
+#          username: "${{secrets.TH_DB_ADMIN}}"
+#          password: "${{secrets.TH_DB_PASSWD}}"
+#          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
