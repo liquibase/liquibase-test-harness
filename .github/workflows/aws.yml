@@ -83,7 +83,7 @@ jobs:
           url: "${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}"
 
       - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'postgresql' }}
+        if: ${{ matrix.database == 'postgresql' && matrix.version != 'aurora' }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
