@@ -5,6 +5,7 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
+import liquibase.ui.UIService
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -30,16 +31,16 @@ class FoundationalCompatibilityTest extends Specification {
 
     def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
+        UIService uiService = Scope.getCurrentScope().getUI()
+
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
-
         String setupChangelog = testInput.baseChangelogPath + "setup/" + testInput.change + ".xml"
         String insertChangelog = testInput.baseChangelogPath + "insert/" + testInput.change + ".xml"
         String updateChangelog = testInput.baseChangelogPath + "update/" + testInput.change + ".xml"
         String selectChangelog = testInput.baseChangelogPath + "select/" + testInput.change + ".xml"
-
 
         boolean shouldRunChangeSet
 
@@ -50,38 +51,39 @@ class FoundationalCompatibilityTest extends Specification {
 
         and: "create test table"
         timeMillisBeforeTest = System.currentTimeMillis()
-        Scope.getCurrentScope().getUI().sendMessage("Executing setup query!")
+        uiService.sendMessage("Executing setup query!")
         argsMap.put("changeLogFile", setupChangelog)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
-        Scope.getCurrentScope().getUI().sendMessage("Setup execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
+        uiService.sendMessage("Setup execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
 
         and: "execute big insert query"
         timeMillisBeforeTest = System.currentTimeMillis()
-        Scope.getCurrentScope().getUI().sendMessage("Executing insert query: 100000 rows!")
+        uiService.sendMessage("Executing insert query: 100000 rows!")
         argsMap.put("changeLogFile", insertChangelog)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
-        Scope.getCurrentScope().getUI().sendMessage("Insert query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
+        uiService.sendMessage("Insert query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
 
         and: "execute update query"
         timeMillisBeforeTest = System.currentTimeMillis()
-        Scope.getCurrentScope().getUI().sendMessage("Executing update query: 100000 rows!")
+        uiService.sendMessage("Executing update query: 100000 rows!")
         argsMap.put("changeLogFile", updateChangelog)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
-        Scope.getCurrentScope().getUI().sendMessage("Update query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
+        uiService.sendMessage("Update query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
 
         and: "execute select query"
         timeMillisBeforeTest = System.currentTimeMillis()
-        Scope.getCurrentScope().getUI().sendMessage("Executing select query: 100000 rows!")
+        uiService.sendMessage("Executing select query: 100000 rows!")
         argsMap.put("changeLogFile", selectChangelog)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
-        Scope.getCurrentScope().getUI().sendMessage("Select query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
+        uiService.sendMessage("Select query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
+            argsMap.put("changeLogFile", setupChangelog)
             strategy.performRollback(argsMap)
         }
 
