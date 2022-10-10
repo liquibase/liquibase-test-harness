@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="as">
+        <createTable tableName="foundational_test_table">
+            <column name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="test_1" type="int"/>
+            <column name="test_2" type="int"/>
+            <column name="test_3" type="int"/>
+            <column name="test_4" type="int"/>
+            <column name="test_5" type="int"/>
+            <column name="test_6" type="int"/>
+            <column name="test_7" type="int"/>
+            <column name="test_8" type="int"/>
+            <column name="test_9" type="int"/>
+            <column name="test_10" type="int"/>
+            <column name="test_11" type="int"/>
+            <column name="test_12" type="int"/>
+            <column name="test_13" type="int"/>
+            <column name="test_14" type="int"/>
+            <column name="test_15" type="int"/>
+            <column name="test_16" type="int"/>
+            <column name="test_17" type="int"/>
+            <column name="test_18" type="int"/>
+            <column name="test_19" type="int"/>
+            <column name="test_20" type="int"/>
+            <column name="test_21" type="int"/>
+            <column name="test_22" type="int"/>
+            <column name="test_23" type="int"/>
+            <column name="test_24" type="int"/>
+            <column name="test_25" type="int"/>
+            <column name="test_26" type="int"/>
+            <column name="test_27" type="int"/>
+            <column name="test_28" type="int"/>
+            <column name="test_29" type="int"/>
+            <column name="test_30" type="int"/>
+            <column name="test_31" type="int"/>
+            <column name="test_32" type="int"/>
+            <column name="test_33" type="int"/>
+            <column name="test_34" type="int"/>
+            <column name="test_35" type="int"/>
+            <column name="test_36" type="int"/>
+            <column name="test_37" type="int"/>
+            <column name="test_38" type="int"/>
+            <column name="test_39" type="int"/>
+            <column name="test_40" type="int"/>
+            <column name="test_41" type="int"/>
+            <column name="test_42" type="int"/>
+            <column name="test_43" type="int"/>
+            <column name="test_44" type="int"/>
+            <column name="test_45" type="int"/>
+            <column name="test_46" type="int"/>
+            <column name="test_47" type="int"/>
+            <column name="test_48" type="int"/>
+            <column name="test_49" type="int"/>
+            <column name="test_50" type="int"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="foundational_test_table"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
