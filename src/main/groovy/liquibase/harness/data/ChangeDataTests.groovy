@@ -13,14 +13,18 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-import static liquibase.harness.util.JSONUtils.*
-import static liquibase.harness.util.FileUtils.*
+import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
+import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
+import static liquibase.harness.util.FileUtils.getJSONFileContent
+import static liquibase.harness.util.FileUtils.getSqlFileContent
+import static liquibase.harness.util.JSONUtils.compareJSONArrays
+import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
 import static liquibase.harness.util.TestUtils.*
-import static liquibase.harness.data.ChangeDataTestHelper.*
 
 class ChangeDataTests extends Specification {
     @Shared
@@ -111,9 +115,7 @@ class ChangeDataTests extends Specification {
             Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
         } finally {
-            if (newConnection != null) {
-                newConnection.close()
-            }
+            newConnection == null ?: newConnection.close()
         }
 
         and: "if expected sql is not provided save generated sql as expected sql"
