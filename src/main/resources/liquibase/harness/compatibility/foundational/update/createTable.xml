@@ -10,6 +10,7 @@
                         relativeToChangelogFile="true"
                         separator=";"
                         primaryKey="id">
+            <column name="id" defaultValueNumeric="0"/>
         </loadUpdateData>
         <rollback/>
     </changeSet>
