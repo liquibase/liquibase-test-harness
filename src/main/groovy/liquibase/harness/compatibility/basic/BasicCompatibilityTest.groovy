@@ -12,7 +12,6 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet

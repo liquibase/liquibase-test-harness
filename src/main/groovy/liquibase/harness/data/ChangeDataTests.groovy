@@ -71,7 +71,6 @@ class ChangeDataTests extends Specification {
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
         JdbcConnection connection = testInput.database.getConnection() as JdbcConnection
 
-
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
 
@@ -104,7 +103,6 @@ class ChangeDataTests extends Specification {
             } else {
                 resultSet = connection.createStatement().executeQuery(checkingSql)
                 connection.autoCommit ?: connection.commit()
-
             }
             generatedResultSetArray = mapResultSetToJSONArray(resultSet)
 
