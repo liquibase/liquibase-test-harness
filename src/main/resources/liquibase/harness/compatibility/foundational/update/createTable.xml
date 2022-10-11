@@ -7,7 +7,6 @@
     <changeSet id="1" author="as" >
         <loadUpdateData file="update.csv"
                         tableName="foundational_test_table"
-                        quotchar="'"
                         relativeToChangelogFile="true"
                         separator=";"
                         primaryKey="id">

@@ -8,7 +8,6 @@
         <loadData file="insert.csv"
                   tableName="foundational_test_table"
                   commentLineStartsWith="//"
-                  quotchar="'"
                   relativeToChangelogFile="true"
                   separator=";"
                   usePreparedStatements="false">
