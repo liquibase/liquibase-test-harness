@@ -66,7 +66,7 @@ class SnapshotObjectTestHelper {
                 newConnection.createStatement().execute(query)
             } else {
                 JdbcConnection connection = testInput.database.database.getConnection() as JdbcConnection
-                connection.createStatement().executeQuery(query)
+                connection.createStatement().execute(query)
                 connection.autoCommit ?: connection.commit()
             }
         } catch (Exception exception) {
