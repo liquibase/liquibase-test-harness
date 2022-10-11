@@ -24,7 +24,7 @@ class FoundationalCompatibilityTestHelper {
                         .username(databaseUnderTest.username)
                         .password(databaseUnderTest.password)
                         .version(databaseUnderTest.version)
-                        .baseChangelogPath(baseChangelogPath)
+                        .baseChangelogPath(changeLogEntry.value)
                         .change(changeLogEntry.key)
                         .database(databaseUnderTest.database)
                         .build())

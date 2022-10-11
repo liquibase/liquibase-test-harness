@@ -7,7 +7,7 @@
     <changeSet id="1" author="as" labels="foundational">
         <createTable tableName="foundational_test_table">
             <column name="id" type="INT" autoIncrement="true">
-                <constraints primaryKey="true"/>
+                <constraints primaryKey="true" nullable="true"/>
             </column>
             <column name="test_1" type="INT"/>
             <column name="test_2" type="INT"/>

@@ -37,10 +37,10 @@ class FoundationalCompatibilityTest extends Specification {
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
-        String setupChangelog = testInput.baseChangelogPath + "setup/" + testInput.change + ".xml"
-        String insertChangelog = testInput.baseChangelogPath + "insert/" + testInput.change + ".xml"
-        String updateChangelog = testInput.baseChangelogPath + "update/" + testInput.change + ".xml"
-        String selectChangelog = testInput.baseChangelogPath + "select/" + testInput.change + ".xml"
+        String baseChangelogPath = "liquibase/harness/compatibility/foundational/"
+        String insertChangelog = baseChangelogPath + "insert/" + testInput.change + ".xml"
+        String updateChangelog = baseChangelogPath + "update/" + testInput.change + ".xml"
+        String selectChangelog = baseChangelogPath + "select/" + testInput.change + ".xml"
 
         boolean shouldRunChangeSet
 
@@ -52,14 +52,14 @@ class FoundationalCompatibilityTest extends Specification {
         and: "create test table"
         timeMillisBeforeTest = System.currentTimeMillis()
         uiService.sendMessage("Executing setup query!")
-        argsMap.put("changeLogFile", setupChangelog)
+        argsMap.put("changeLogFile", testInput.baseChangelogPath)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
         uiService.sendMessage("Setup execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
 
         and: "execute big insert query"
         timeMillisBeforeTest = System.currentTimeMillis()
-        uiService.sendMessage("Executing insert query: 100000 rows!")
+        uiService.sendMessage("Executing insert query: 10000 rows!")
         argsMap.put("changeLogFile", insertChangelog)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
@@ -67,7 +67,7 @@ class FoundationalCompatibilityTest extends Specification {
 
         and: "execute update query"
         timeMillisBeforeTest = System.currentTimeMillis()
-        uiService.sendMessage("Executing update query: 100000 rows!")
+        uiService.sendMessage("Executing update query: 10000 rows!")
         argsMap.put("changeLogFile", updateChangelog)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
@@ -75,7 +75,7 @@ class FoundationalCompatibilityTest extends Specification {
 
         and: "execute select query"
         timeMillisBeforeTest = System.currentTimeMillis()
-        uiService.sendMessage("Executing select query: 100000 rows!")
+        uiService.sendMessage("Executing select query: 10000 rows!")
         argsMap.put("changeLogFile", selectChangelog)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
@@ -83,7 +83,7 @@ class FoundationalCompatibilityTest extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            argsMap.put("changeLogFile", setupChangelog)
+            argsMap.put("changeLogFile", testInput.baseChangelogPath)
             strategy.performRollback(argsMap)
         }
 

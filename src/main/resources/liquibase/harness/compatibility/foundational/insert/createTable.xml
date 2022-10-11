@@ -4,10 +4,11 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet id="1" author="as" >
+    <changeSet id="1" author="as" labels="foundational">
         <loadData file="insert.csv"
                   tableName="foundational_test_table"
                   commentLineStartsWith="//"
+                  quotchar="'"
                   relativeToChangelogFile="true"
                   separator=";"
                   usePreparedStatements="false">
