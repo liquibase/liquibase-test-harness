@@ -39,7 +39,7 @@ class FoundationalCompatibilityTest extends Specification {
         argsMap.put("password", testInput.password)
         String baseChangelogPath = "liquibase/harness/compatibility/foundational/"
         String insertChangelog = baseChangelogPath + "insert/" + testInput.change + ".xml"
-        String updateChangelog = baseChangelogPath + "update/" + testInput.change + ".xml"
+        String updateChangelog = testInput.baseChangelogPath.replace("setup", "update")
         String selectChangelog = baseChangelogPath + "select/" + testInput.change + ".xml"
 
         boolean shouldRunChangeSet
