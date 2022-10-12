@@ -81,7 +81,7 @@ class SnapshotObjectTestHelper {
     }
 
     @Builder
-    @ToString(includeNames = true, includeFields = true, includePackage = false)
+    @ToString(includeNames = true, includeFields = true, includePackage = false, excludes ='database')
     static class TestInput {
         DatabaseUnderTest database
         String snapshotObjectName
