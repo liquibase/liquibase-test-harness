@@ -79,7 +79,7 @@ For more information on using the test harness in your extension, see [README.ex
 
 # Framework Tests
 
-## BaseCompatibilityTest
+## BasicCompatibilityTest
 
 This test validates work of basic Liquibase functions. 
 1) runs Liquibase validate command to ensure the changelog is valid;
@@ -114,6 +114,9 @@ file leaving just your configuration and run BaseCompatibilityTest directly from
 In case you want to set up your database instance using docker image then you may use 
 `src/test/resources/docker/docker-compose.yml` file for configuration.
 
+## FoundationalCompatibilityTest
+
+Checks if your database doesn't "choke" while Liquibase tries to deploy very long queries (inserts and updates with 10k rows).
 
 ## Change Objects Test
 
