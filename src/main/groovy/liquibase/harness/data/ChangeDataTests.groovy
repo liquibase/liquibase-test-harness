@@ -13,14 +13,18 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-import static liquibase.harness.util.JSONUtils.*
-import static liquibase.harness.util.FileUtils.*
+import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
+import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
+import static liquibase.harness.util.FileUtils.getJSONFileContent
+import static liquibase.harness.util.FileUtils.getSqlFileContent
+import static liquibase.harness.util.JSONUtils.compareJSONArrays
+import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
 import static liquibase.harness.util.TestUtils.*
-import static liquibase.harness.data.ChangeDataTestHelper.*
 
 class ChangeDataTests extends Specification {
     @Shared
@@ -93,7 +97,8 @@ class ChangeDataTests extends Specification {
         ResultSet resultSet
         JSONArray generatedResultSetArray
         try {
-            if (connection.isClosed()) {//this is most likely embedded connection, let's get separate one for running checking SQL
+            //For embedded databases, let's create separate connection for running checking SQL
+            if (connection.isClosed()||connection.getDatabaseProductName().equalsIgnoreCase("sqlite")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
             } else {
