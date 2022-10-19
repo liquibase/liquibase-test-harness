@@ -99,11 +99,18 @@ class ChangeDataTests extends Specification {
         try {
             //For embedded databases, let's create separate connection for running checking SQL
             if (connection.isClosed()||connection.getDatabaseProductName().equalsIgnoreCase("sqlite")) {
+                Scope.getCurrentScope().getUI().sendMessage("if() opening new connection")
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                Scope.getCurrentScope().getUI().sendMessage("if() executing query")
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
+                Scope.getCurrentScope().getUI().sendMessage("if() query executed")
             } else {
+                Scope.getCurrentScope().getUI().sendMessage("else() executing query")
                 resultSet = connection.createStatement().executeQuery(checkingSql)
+                Scope.getCurrentScope().getUI().sendMessage("else() query executed")
+                Scope.getCurrentScope().getUI().sendMessage("connection.autoCommit="+connection.autoCommit)
                 connection.autoCommit ?: connection.commit()
+                Scope.getCurrentScope().getUI().sendMessage("commit/autocommit executed")
             }
             generatedResultSetArray = mapResultSetToJSONArray(resultSet)
 
