@@ -105,7 +105,7 @@ class ChangeDataTests extends Specification {
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
                 Scope.getCurrentScope().getUI().sendMessage("if() query executed")
             } else {
-                Scope.getCurrentScope().getUI().sendMessage("else() executing query")
+                Scope.getCurrentScope().getUI().sendMessage("else() executing checkingSql query=" +checkingSql)
                 resultSet = connection.createStatement().executeQuery(checkingSql)
                 Scope.getCurrentScope().getUI().sendMessage("else() query executed")
                 Scope.getCurrentScope().getUI().sendMessage("connection.autoCommit="+connection.autoCommit)
