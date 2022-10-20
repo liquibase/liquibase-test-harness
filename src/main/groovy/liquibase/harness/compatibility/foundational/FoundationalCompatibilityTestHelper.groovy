@@ -24,7 +24,10 @@ class FoundationalCompatibilityTestHelper {
                         .username(databaseUnderTest.username)
                         .password(databaseUnderTest.password)
                         .version(databaseUnderTest.version)
-                        .baseChangelogPath(changeLogEntry.value)
+                        .setupChangelogPath(changeLogEntry.value)
+                        .insertChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath + "insert", "xml").get(changeLogEntry.key))
+                        .updateChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath + "update", "xml").get(changeLogEntry.key))
+                        .selectChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath + "select", "xml").get(changeLogEntry.key))
                         .change(changeLogEntry.key)
                         .database(databaseUnderTest.database)
                         .build())
@@ -41,7 +44,10 @@ class FoundationalCompatibilityTestHelper {
         String username
         String password
         String url
-        String baseChangelogPath
+        String setupChangelogPath
+        String insertChangelogPath
+        String updateChangelogPath
+        String selectChangelogPath
         String dbSchema
         String change
         Database database

@@ -4,6 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <!--Using specific changeset for H2 to avoid sql error thrown while using "loadUpdateData" changetype - it requires primary key-->
     <changeSet id="1" author="as" labels="foundational">
         <sql>UPDATE PUBLIC.foundational_test_table SET test_1=50, test_2=49, test_3=48, test_4=47, test_5=46, test_6=45, test_7=44, test_8=43, test_9=42, test_10=41, test_11=40,
                                                        test_12=39, test_13=38, test_14=37, test_15=36, test_16=35, test_17=34, test_18=33, test_19=32, test_20=31, test_21=30,

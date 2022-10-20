@@ -39,7 +39,7 @@ class FoundationalCompatibilityTest extends Specification {
         argsMap.put("password", testInput.password)
         String baseChangelogPath = "liquibase/harness/compatibility/foundational/"
         String insertChangelog = baseChangelogPath + "insert/" + testInput.change + ".xml"
-        String updateChangelog = testInput.baseChangelogPath.replace("setup", "update")
+        String updateChangelog = testInput.setupChangelogPath.replace("setup", "update")
         String selectChangelog = baseChangelogPath + "select/" + testInput.change + ".xml"
 
         boolean shouldRunChangeSet
@@ -52,7 +52,7 @@ class FoundationalCompatibilityTest extends Specification {
         and: "create test table"
         timeMillisBeforeTest = System.currentTimeMillis()
         uiService.sendMessage("Executing setup query!")
-        argsMap.put("changeLogFile", testInput.baseChangelogPath)
+        argsMap.put("changeLogFile", testInput.setupChangelogPath)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
         uiService.sendMessage("Setup execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
@@ -83,7 +83,7 @@ class FoundationalCompatibilityTest extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            argsMap.put("changeLogFile", testInput.baseChangelogPath)
+            argsMap.put("changeLogFile", testInput.setupChangelogPath)
             strategy.performRollback(argsMap)
         }
 
