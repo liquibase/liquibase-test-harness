@@ -17,7 +17,7 @@ import static liquibase.harness.util.TestUtils.executeCommandScope
 @Unroll
 class FoundationalCompatibilityTest extends Specification {
     @Shared
-    RollbackStrategy strategy;
+    RollbackStrategy strategy
     @Shared
     List<DatabaseUnderTest> databases
     long timeMillisBeforeTest
@@ -45,37 +45,20 @@ class FoundationalCompatibilityTest extends Specification {
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
-        and: "create test table"
-        timeMillisBeforeTest = System.currentTimeMillis()
-        uiService.sendMessage("Executing setup query!")
-        argsMap.put("changeLogFile", testInput.setupChangelogPath)
-        executeCommandScope("update", argsMap)
-        timeMillisAfterTest = System.currentTimeMillis()
-        uiService.sendMessage("Setup execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
-
-        and: "execute big insert query"
-        timeMillisBeforeTest = System.currentTimeMillis()
-        uiService.sendMessage("Executing insert query: 10000 rows!")
-        argsMap.put("changeLogFile", testInput.insertChangelogPath)
-        executeCommandScope("update", argsMap)
-        timeMillisAfterTest = System.currentTimeMillis()
-        uiService.sendMessage("Insert query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
-
-        and: "execute update query"
-        timeMillisBeforeTest = System.currentTimeMillis()
-        uiService.sendMessage("Executing update query: 10000 rows!")
-        argsMap.put("changeLogFile", testInput.updateChangelogPath)
-        executeCommandScope("update", argsMap)
-        timeMillisAfterTest = System.currentTimeMillis()
-        uiService.sendMessage("Update query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
-
-        and: "execute select query"
-        timeMillisBeforeTest = System.currentTimeMillis()
-        uiService.sendMessage("Executing select query: 10000 rows!")
-        argsMap.put("changeLogFile", testInput.selectChangelogPath)
-        executeCommandScope("update", argsMap)
-        timeMillisAfterTest = System.currentTimeMillis()
-        uiService.sendMessage("Select query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
+        and: "execute setup, insert, update and select queries with 10000 rows"
+        def map = new LinkedHashMap<String, String>()
+        map.put("setup", testInput.setupChangelogPath)
+        map.put("insert", testInput.insertChangelogPath)
+        map.put("update", testInput.updateChangelogPath)
+        map.put("select", testInput.selectChangelogPath)
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            timeMillisBeforeTest = System.currentTimeMillis()
+            uiService.sendMessage("Executing $entry.key query: 10000 rows!")
+            argsMap.put("changeLogFile", entry.value)
+            executeCommandScope("update", argsMap)
+            timeMillisAfterTest = System.currentTimeMillis()
+            uiService.sendMessage("Execution time for $entry.key query: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
+        }
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
