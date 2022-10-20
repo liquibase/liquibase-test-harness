@@ -33,12 +33,10 @@ class FoundationalCompatibilityTest extends Specification {
 
     def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
-
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
-
         boolean shouldRunChangeSet
 
         and: "check database under test is online"
