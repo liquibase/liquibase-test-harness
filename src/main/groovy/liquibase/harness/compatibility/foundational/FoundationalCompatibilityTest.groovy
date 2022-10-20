@@ -20,6 +20,8 @@ class FoundationalCompatibilityTest extends Specification {
     RollbackStrategy strategy
     @Shared
     List<DatabaseUnderTest> databases
+    @Shared
+    UIService uiService = Scope.getCurrentScope().getUI()
     long timeMillisBeforeTest
     long timeMillisAfterTest
 
@@ -31,7 +33,6 @@ class FoundationalCompatibilityTest extends Specification {
 
     def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
-        UIService uiService = Scope.getCurrentScope().getUI()
 
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
