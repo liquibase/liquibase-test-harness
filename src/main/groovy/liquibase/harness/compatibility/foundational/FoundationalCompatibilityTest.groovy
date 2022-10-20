@@ -37,10 +37,6 @@ class FoundationalCompatibilityTest extends Specification {
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
-        String baseChangelogPath = "liquibase/harness/compatibility/foundational/"
-        String insertChangelog = baseChangelogPath + "insert/" + testInput.change + ".xml"
-        String updateChangelog = testInput.setupChangelogPath.replace("setup", "update")
-        String selectChangelog = baseChangelogPath + "select/" + testInput.change + ".xml"
 
         boolean shouldRunChangeSet
 
@@ -60,7 +56,7 @@ class FoundationalCompatibilityTest extends Specification {
         and: "execute big insert query"
         timeMillisBeforeTest = System.currentTimeMillis()
         uiService.sendMessage("Executing insert query: 10000 rows!")
-        argsMap.put("changeLogFile", insertChangelog)
+        argsMap.put("changeLogFile", testInput.insertChangelogPath)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
         uiService.sendMessage("Insert query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
@@ -68,7 +64,7 @@ class FoundationalCompatibilityTest extends Specification {
         and: "execute update query"
         timeMillisBeforeTest = System.currentTimeMillis()
         uiService.sendMessage("Executing update query: 10000 rows!")
-        argsMap.put("changeLogFile", updateChangelog)
+        argsMap.put("changeLogFile", testInput.updateChangelogPath)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
         uiService.sendMessage("Update query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
@@ -76,7 +72,7 @@ class FoundationalCompatibilityTest extends Specification {
         and: "execute select query"
         timeMillisBeforeTest = System.currentTimeMillis()
         uiService.sendMessage("Executing select query: 10000 rows!")
-        argsMap.put("changeLogFile", selectChangelog)
+        argsMap.put("changeLogFile", testInput.selectChangelogPath)
         executeCommandScope("update", argsMap)
         timeMillisAfterTest = System.currentTimeMillis()
         uiService.sendMessage("Select query execution time: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
