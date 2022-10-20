@@ -1,4 +1,4 @@
-package liquibase.harness.base
+package liquibase.harness.compatibility.basic
 
 import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
@@ -19,10 +19,10 @@ import java.sql.SQLException
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.TestUtils.*
-import static liquibase.harness.base.BaseCompatibilityTestHelper.*
+import static BasicCompatibilityTestHelper.*
 
 @Unroll
-class BaseCompatibilityTest extends Specification {
+class BasicCompatibilityTest extends Specification {
     @Shared
     RollbackStrategy strategy;
     @Shared
@@ -37,13 +37,13 @@ class BaseCompatibilityTest extends Specification {
     def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/base/expectedResultSet")
+                "liquibase/harness/compatibility/basic/expectedResultSet")
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
 
-        String basePath = "liquibase/harness/base/"
+        String basePath = "liquibase/harness/compatibility/basic/"
         ArrayList<String> changelogList = new ArrayList<>()
         changelogList.add("${basePath}changelogs/${testInput.change}.xml")
         changelogList.add("${basePath}changelogs/${testInput.change}.yml")
