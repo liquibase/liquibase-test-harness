@@ -9,7 +9,6 @@ import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
-
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet

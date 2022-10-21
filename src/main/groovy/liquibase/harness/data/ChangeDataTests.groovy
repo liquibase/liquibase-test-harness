@@ -1,13 +1,10 @@
 package liquibase.harness.data
 
 import liquibase.Scope
-import liquibase.database.DatabaseConnection
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
-import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.harness.util.DatabaseTestContext
 import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.resource.ClassLoaderResourceAccessor
 import org.json.JSONArray
@@ -102,7 +99,7 @@ class ChangeDataTests extends Specification {
         ResultSet resultSet
         JSONArray generatedResultSetArray
         try {
-            //For embedded databases, let's create separate connection for running checking SQL
+            //For embedded databases, let's create separate connection to run checking SQL
             if (connection.isClosed()||connection.getDatabaseProductName().equalsIgnoreCase("sqlite")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
