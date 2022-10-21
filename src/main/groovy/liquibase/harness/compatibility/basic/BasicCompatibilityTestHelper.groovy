@@ -53,27 +53,16 @@ class BasicCompatibilityTestHelper {
     static ResultSet executeQuery(String pathToSql, TestInput testInput) throws SQLException {
         Connection newConnection
         ResultSet resultSet
-        try {
-            if (testInput.database.connection.isClosed()) {
-                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-                resultSet = newConnection.createStatement().executeQuery(pathToSql)
-                if (!newConnection.autoCommit) {
-                    newConnection.commit()
-                }
-                return resultSet
-            } else {
-                JdbcConnection connection = (JdbcConnection) testInput.database.connection
-                resultSet = connection.createStatement().executeQuery(pathToSql)
-                if (!testInput.database.connection.autoCommit) {
-                    testInput.database.connection.commit()
-                }
-                return resultSet
-            }
-        } finally {
-            if (newConnection != null) {
-                newConnection.close()
-            }
+        if (testInput.database.connection.isClosed()) {
+            newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+            resultSet = newConnection.createStatement().executeQuery(pathToSql)
+            newConnection.close()
+        } else {
+            JdbcConnection connection = (JdbcConnection) testInput.database.connection
+            resultSet = connection.createStatement().executeQuery(pathToSql)
+            testInput.database.connection.autoCommit ?: testInput.database.connection.commit()
         }
+        return resultSet
     }
 
     @Builder

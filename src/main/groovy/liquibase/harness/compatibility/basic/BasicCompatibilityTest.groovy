@@ -12,6 +12,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -99,27 +100,26 @@ class BasicCompatibilityTest extends Specification {
 
         then: "execute metadata checking sql, obtain result set, compare it to expected result set"
         JSONArray generatedResultSetArray
+        Connection newConnection
         try {
             ResultSet resultSet
             if (connection.isClosed()) {
-                connection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-                resultSet = connection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
-                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                if (!connection.autoCommit) {
-                    connection.commit()
-                }
+                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
             } else {
                 resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
-                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                if (!connection.autoCommit) {
-                    connection.commit()
-                }
+                connection.autoCommit ?: connection.commit()
             }
+            generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+
             def expectedResultSetArray = new JSONObject(expectedResultSet).getJSONArray(testInput.change)
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.LENIENT)
         } catch (Exception exception) {
             Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
+        } finally {
+            newConnection == null ?: newConnection.close()
+
         }
 
         and: "check for actual presence of created object"
@@ -136,7 +136,7 @@ class BasicCompatibilityTest extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            for (int i = 0; i < changelogList.size(); i++) {
+            for (int i = 0; i < changelogList.size(); i++) {//TODO rethink rollback logic to do it only once
                 argsMap.put("changeLogFile", changelogList.get(i))
                 strategy.performRollback(argsMap)
             }
@@ -154,6 +154,7 @@ class BasicCompatibilityTest extends Specification {
                         Assert.fail()
                     }
                 } catch (ignored) {
+                    (connection.isClosed() || connection.autoCommit) ?: connection.commit()
                     // Assume test object does not exist and 'rollback' was successful. Ignore exception.
                     Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
                 }
