@@ -105,17 +105,9 @@ class BasicCompatibilityTest extends Specification {
             ResultSet resultSet
             if (connection.isClosed()||connection.getDatabaseProductName().equalsIgnoreCase("sqlite")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-                Scope.getCurrentScope().getUI().sendMessage("running query on new connection `execute metadata checking sql`")
-
                 resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
-                Scope.getCurrentScope().getUI().sendMessage("finished query on new connection `execute metadata checking sql`")
-
             } else {
-                Scope.getCurrentScope().getUI().sendMessage("running query on same connection `execute metadata checking sql`")
-
                 resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
-                Scope.getCurrentScope().getUI().sendMessage("finished query on same connection `execute metadata checking sql`")
-
                 connection.autoCommit ?: connection.commit()
             }
             generatedResultSetArray = mapResultSetToJSONArray(resultSet)
