@@ -8,9 +8,9 @@
       "CONTEXTS": "test_context",
       "DESCRIPTION": "sql",
       "ID": "1",
+      "TAG": "",
       "LABELS": "test_label",
-      "FILENAME": "liquibase\/harness\/compatibility\/basic\/changelogs\/createTable.xml",
-      "TAG": "test_tag"
+      "FILENAME":"liquibase\/harness\/compatibility\/basic\/changelogs\/createTable.xml"
     },
     {
       "EXECTYPE": "EXECUTED",
@@ -21,8 +21,7 @@
       "DESCRIPTION": "createTable tableName=test_table_yaml",
       "ID": "1",
       "LABELS": "test_label",
-      "FILENAME": "liquibase\/harness\/compatibility\/basic\/changelogs\/createTable.yml",
-      "TAG": "test_tag"
+      "FILENAME": "liquibase\/harness\/compatibility\/basic\/changelogs\/createTable.yml"
     },
     {
       "EXECTYPE": "EXECUTED",
@@ -32,9 +31,9 @@
       "CONTEXTS": "test_context",
       "DESCRIPTION": "createTable tableName=test_table_json",
       "ID": "1",
+      "TAG": "",
       "LABELS": "test_label",
-      "FILENAME": "liquibase\/harness\/compatibility\/basic\/changelogs\/createTable.json",
-      "TAG": "test_tag"
+      "FILENAME": "liquibase\/harness\/compatibility\/basic\/changelogs\/createTable.json"
     },
     {
       "EXECTYPE": "EXECUTED",
@@ -44,9 +43,9 @@
       "CONTEXTS": "test_context",
       "DESCRIPTION": "sql",
       "ID": "1",
+      "TAG": "test_tag",
       "LABELS": "test_label",
-      "FILENAME": "liquibase\/harness\/compatibility\/basic\/changelogs\/createTable.sql",
-      "TAG": "test_tag"
+      "FILENAME": "liquibase\/harness\/compatibility\/basic\/changelogs\/createTable.sql"
     }
   ]
 }
