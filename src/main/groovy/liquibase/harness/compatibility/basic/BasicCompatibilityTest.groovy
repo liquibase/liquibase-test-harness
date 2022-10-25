@@ -105,9 +105,17 @@ class BasicCompatibilityTest extends Specification {
             ResultSet resultSet
             if (connection.isClosed()) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                Scope.getCurrentScope().getUI().sendMessage("running query on new connection `execute metadata checking sql`")
+
                 resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
+                Scope.getCurrentScope().getUI().sendMessage("finished query on new connection `execute metadata checking sql`")
+
             } else {
+                Scope.getCurrentScope().getUI().sendMessage("running query on same connection `execute metadata checking sql`")
+
                 resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
+                Scope.getCurrentScope().getUI().sendMessage("finished query on same connection `execute metadata checking sql`")
+
                 connection.autoCommit ?: connection.commit()
             }
             generatedResultSetArray = mapResultSetToJSONArray(resultSet)
@@ -125,6 +133,7 @@ class BasicCompatibilityTest extends Specification {
         and: "check for actual presence of created object"
         for (int i = 0; i < checkingSqlList.size(); i++) {
             try {
+                Scope.getCurrentScope().getUI().sendMessage("running query on `check for actual presence of created object`")
                 executeQuery(checkingSqlList.get(i), testInput)
             } catch (SQLException sqlException) {
                 // Assume test object was not created after 'update' command execution and test failed.
