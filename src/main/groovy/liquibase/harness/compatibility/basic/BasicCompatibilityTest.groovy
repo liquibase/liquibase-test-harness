@@ -103,7 +103,7 @@ class BasicCompatibilityTest extends Specification {
         Connection newConnection
         try {
             ResultSet resultSet
-            if (connection.isClosed()) {
+            if (connection.isClosed()||connection.getDatabaseProductName().equalsIgnoreCase("sqlite")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 Scope.getCurrentScope().getUI().sendMessage("running query on new connection `execute metadata checking sql`")
 
