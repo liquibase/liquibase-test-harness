@@ -4,6 +4,7 @@ import groovy.transform.ToString
 import groovy.transform.builder.Builder
 import liquibase.Scope
 import liquibase.database.Database
+import liquibase.database.DatabaseConnection
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
@@ -18,6 +19,10 @@ class BasicCompatibilityTestHelper {
 
     final static String baseChangelogPath = "liquibase/harness/compatibility/basic/changelogs"
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
+
+    static boolean checkConnection(DatabaseConnection connection, String dbName) {
+        return connection.isClosed()||connection.getDatabaseProductName().toLowerCase().contains(dbName)
+    }
 
     static List<TestInput> buildTestInput() {
         String commandLineInputFormat = System.getProperty("inputFormat")
@@ -51,9 +56,10 @@ class BasicCompatibilityTestHelper {
     }
 
     static ResultSet executeQuery(String pathToSql, TestInput testInput) throws SQLException {
+        def oldConnection = testInput.database.getConnection()
         Connection newConnection
         ResultSet resultSet
-        if (testInput.database.connection.isClosed()||testInput.database.connection.getDatabaseProductName().toLowerCase().contains("firebird")) {
+        if (checkConnection(oldConnection, "firebird")) {
             newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
             resultSet = newConnection.createStatement().executeQuery(pathToSql)
             newConnection.close()

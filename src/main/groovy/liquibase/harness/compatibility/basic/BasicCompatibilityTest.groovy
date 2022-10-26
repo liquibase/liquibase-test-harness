@@ -103,8 +103,7 @@ class BasicCompatibilityTest extends Specification {
         Connection newConnection
         try {
             ResultSet resultSet
-            if (connection.isClosed()||connection.getDatabaseProductName().equalsIgnoreCase("sqlite")
-                    ||connection.getDatabaseProductName().toLowerCase().contains("firebird")) {
+            if (checkConnection(connection, "sqlite", )) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
             } else {
