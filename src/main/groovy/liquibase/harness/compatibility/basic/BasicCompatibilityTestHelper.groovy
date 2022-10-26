@@ -53,7 +53,7 @@ class BasicCompatibilityTestHelper {
     static ResultSet executeQuery(String pathToSql, TestInput testInput) throws SQLException {
         Connection newConnection
         ResultSet resultSet
-        if (testInput.database.connection.isClosed()) {
+        if (testInput.database.connection.isClosed()||testInput.database.connection.getDatabaseProductName().toLowerCase().contains("firebird")) {
             newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
             resultSet = newConnection.createStatement().executeQuery(pathToSql)
             newConnection.close()
