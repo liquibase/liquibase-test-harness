@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset liquibase:1 splitStatements:false
+--changeset liquibase:1 splitStatements:false runAlways:true
 
 BEGIN
    EXECUTE IMMEDIATE 'DROP TABLE AUTHORS';
@@ -10,7 +10,7 @@ EXCEPTION
       END IF;
 END;
 
---changeset liquibase:2
+--changeset liquibase:2 runAlways:true
 
 --------------------------------------------------------
 --  DDL for Table AUTHORS
@@ -58,7 +58,7 @@ INSERT INTO "AUTHORS" VALUES('3','Cyril','Funk','reynolds.godfrey@example.com','
 INSERT INTO "AUTHORS" VALUES('4','Nicolas','Buckridge','xhoeger@example.net','03-MAR-17', TO_DATE('1978-12-13', 'yyyy-MM-dd'));
 INSERT INTO "AUTHORS" VALUES('5','Jayden','Walter','lillian66@example.com','27-FEB-10', TO_DATE('1979-12-06', 'yyyy-MM-dd'));
 
---changeset liquibase:3 splitStatements:false
+--changeset liquibase:3 splitStatements:false runAlways:true
 
   BEGIN
      EXECUTE IMMEDIATE 'DROP TABLE POSTS';
@@ -69,7 +69,7 @@ INSERT INTO "AUTHORS" VALUES('5','Jayden','Walter','lillian66@example.com','27-F
         END IF;
   END;
 
---changeset liquibase:4
+--changeset liquibase:4 runAlways:true
 
 --------------------------------------------------------
 --  DDL for Table POSTS

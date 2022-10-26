@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset liquibase:1
+--changeset liquibase:1 runAlways:true
 DROP TABLE IF EXISTS authors;
 CREATE TABLE authors (
                          id SERIAL,
