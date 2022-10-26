@@ -56,10 +56,9 @@ class BasicCompatibilityTestHelper {
     }
 
     static ResultSet executeQuery(String pathToSql, TestInput testInput) throws SQLException {
-        def oldConnection = testInput.database.getConnection()
         Connection newConnection
         ResultSet resultSet
-        if (checkConnection(oldConnection, "firebird")) {
+        if (checkConnection(testInput.database.getConnection(), "firebird")) {
             newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
             resultSet = newConnection.createStatement().executeQuery(pathToSql)
             newConnection.close()

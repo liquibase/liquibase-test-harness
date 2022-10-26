@@ -125,7 +125,6 @@ class BasicCompatibilityTest extends Specification {
         and: "check for actual presence of created object"
         for (int i = 0; i < checkingSqlList.size(); i++) {
             try {
-                Scope.getCurrentScope().getUI().sendMessage("running query on `check for actual presence of created object`")
                 executeQuery(checkingSqlList.get(i), testInput)
             } catch (SQLException sqlException) {
                 // Assume test object was not created after 'update' command execution and test failed.
