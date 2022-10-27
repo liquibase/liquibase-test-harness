@@ -1,1 +1,1 @@
-ALTER TABLE "LTHUSER".posts ALTER COLUMN  title SET DEFAULT 'title_test'
+ALTER TABLE "IBMUSER".posts ALTER COLUMN  title SET DEFAULT 'title_test'

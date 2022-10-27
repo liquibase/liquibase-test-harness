@@ -60,7 +60,6 @@ class JSONUtils {
 
     /**
      * Compares exactly number and values of elements in JSON arrays. Ignores order of elements.
-     * Works only on the 1st level of nesting. Compare mode NON_EXTENSIBLE.
      */
     static boolean compareJSONArrays(JSONArray jsonArray, JSONArray jsonArrayToCompare, JSONCompareMode jsonCompareMode) {
         if (jsonArray.length() != jsonArrayToCompare.length()) {
@@ -74,9 +73,8 @@ class JSONUtils {
             for (int j = 0; j < jsonArrayToCompare.length(); j++) {
                 def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
                 def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
-                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight,   new CustomComparator(
-                        jsonCompareMode,
-                        new Customization("***", new RegularExpressionValueMatcher<>())
+                def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, new CustomComparator(
+                        jsonCompareMode, new Customization("***", new RegularExpressionValueMatcher<>())
                 ))
                 compareMarker = result.passed()
                 if (result.passed()) {

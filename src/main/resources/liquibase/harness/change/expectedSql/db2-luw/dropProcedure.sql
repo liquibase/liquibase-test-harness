@@ -1,0 +1,2 @@
+CREATE PROCEDURE test_procedure() BEGIN END
+DROP PROCEDURE "DB2INST1".test_procedure

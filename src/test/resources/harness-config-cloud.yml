@@ -1,0 +1,66 @@
+inputFormat: xml
+context: testContext
+
+databasesUnderTest:
+  - name: mssql
+    prefix: azure
+    version: azure
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
+    prefix: aws
+    version: DBVERSION
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: oracle
+    prefix: aws
+    version: DBVERSION
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: snowflake
+    prefix: cloud
+    version:
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mariadb
+    prefix: aws
+    version: 10.6
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mysql
+    prefix: aws
+    version: aws
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mssql
+    prefix: aws
+    version: 2019
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mysql
+    prefix: aurora
+    version: aurora
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
+    prefix: aurora
+    version: 13
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD

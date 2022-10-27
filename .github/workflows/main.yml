@@ -35,7 +35,7 @@ on:
 jobs:
   check_build_safety:
     name: Check if Build should be done
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Emit failure code if unsafe
         if: github.event.pull_request && github.event.pull_request.head.repo.full_name != 'liquibase/liquibase-test-harness'
@@ -46,7 +46,7 @@ jobs:
   setup:
     name: Setup
     needs: check_build_safety
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
@@ -56,7 +56,7 @@ jobs:
 
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v6.1.0
+        uses: actions/github-script@v6.3.3
         with:
           github-token: ${{ secrets.BOT_TOKEN }}
           script: |
@@ -74,8 +74,10 @@ jobs:
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
             core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
+            console.log("liquibaseBranch == " + "${{ github.event.inputs.liquibaseBranch }}");
             core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
 
+            console.log("liquibaseRepo == " + "${{ github.event.inputs.liquibaseRepo }}");
             core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseRepo }}" || "liquibase/liquibase");
 
             let runDescription = "${{ github.event.inputs.runDescription }}";
@@ -125,7 +127,7 @@ jobs:
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [ setup ]
     strategy:
       fail-fast: false
@@ -176,7 +178,8 @@ jobs:
             "hsqldb-2.4",
             "hsqldb-2.5",
             "firebird-3",
-            "firebird-4"
+            "firebird-4",
+            "db2-luw"
         ]
 
     steps:
@@ -228,7 +231,7 @@ jobs:
 
   finish:
     name: Finish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [ setup, test ]
     if: ${{ always() }}
     steps:

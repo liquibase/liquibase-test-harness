@@ -1,10 +1,12 @@
 package liquibase.harness.data
 
 import liquibase.Scope
+import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
+import liquibase.resource.ClassLoaderResourceAccessor
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert
@@ -13,14 +15,18 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-import static liquibase.harness.util.JSONUtils.*
-import static liquibase.harness.util.FileUtils.*
+import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
+import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
+import static liquibase.harness.util.FileUtils.getJSONFileContent
+import static liquibase.harness.util.FileUtils.getSqlFileContent
+import static liquibase.harness.util.JSONUtils.compareJSONArrays
+import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
 import static liquibase.harness.util.TestUtils.*
-import static ChangeDataTestHelper.*
 
 class ChangeDataTests extends Specification {
     @Shared
@@ -63,9 +69,9 @@ class ChangeDataTests extends Specification {
         assert shouldRunChangeSet: "No checkingSql for ${testInput.changeData}!"
 
         and: "check database under test is online"
-        def connection = testInput.database.getConnection()
-        shouldRunChangeSet = connection instanceof JdbcConnection
+        shouldRunChangeSet = testInput.database.getConnection() instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
+        JdbcConnection connection = testInput.database.getConnection() as JdbcConnection
 
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
@@ -93,16 +99,19 @@ class ChangeDataTests extends Specification {
         ResultSet resultSet
         JSONArray generatedResultSetArray
         try {
-            if (connection.isClosed()) {
+            //For embedded databases, let's create separate connection to run checking SQL
+            if (connection.isClosed()||connection.getDatabaseProductName().equalsIgnoreCase("sqlite")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
-                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                newConnection.commit()
             } else {
-                resultSet = ((JdbcConnection) connection).createStatement().executeQuery(checkingSql)
-                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                connection.commit()
+                connection.close()
+                connection = DatabaseFactory.getInstance().openConnection(testInput.url, testInput.username, testInput.password,
+                        null, new ClassLoaderResourceAccessor()) as JdbcConnection
+                resultSet = connection.createStatement().executeQuery(checkingSql)
+                connection.autoCommit ?: connection.commit()
             }
+            generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+
             def expectedResultSetJSON = new JSONObject(expectedResultSet)
             def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.NON_EXTENSIBLE)
@@ -110,9 +119,7 @@ class ChangeDataTests extends Specification {
             Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
         } finally {
-            if (newConnection != null) {
-                newConnection.close()
-            }
+            newConnection == null ?: newConnection.close()
         }
 
         and: "if expected sql is not provided save generated sql as expected sql"

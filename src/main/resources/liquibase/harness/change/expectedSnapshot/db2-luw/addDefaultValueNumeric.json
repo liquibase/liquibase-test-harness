@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "100\\!\\{java.lang.Integer\\}",
+            "name": "NUMERIC_TEST",
+            "nullable": true,
+            "type": {
+              "typeName": "INTEGER"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

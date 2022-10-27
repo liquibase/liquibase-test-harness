@@ -5,11 +5,10 @@ import org.junit.Assume
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static SnapshotObjectTestHelper.buildTestInput
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
 import static liquibase.harness.util.FileUtils.getResourceContent
 import static liquibase.harness.util.TestUtils.executeCommandScope
-import static liquibase.harness.snapshot.SnapshotObjectTestHelper.executeQuery
+import static liquibase.harness.snapshot.SnapshotObjectTestHelper.*
 
 class SnapshotObjectTests extends Specification {
 
