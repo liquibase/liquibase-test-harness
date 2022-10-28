@@ -1,4 +1,5 @@
 name: Snowflake Cloud
+concurrency: snowflake-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
