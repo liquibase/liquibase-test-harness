@@ -1,6 +1,7 @@
 # Terraform Action to test Cloud Databases with test-harness
 
 name: AWS Cloud Database Test Execution
+concurrency: aws-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
