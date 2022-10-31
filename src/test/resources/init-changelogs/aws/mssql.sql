@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset liquibase:1 runAlways:true
+
 DROP TABLE IF EXISTS [dbo].[authors]
 
 CREATE TABLE [dbo].[authors](

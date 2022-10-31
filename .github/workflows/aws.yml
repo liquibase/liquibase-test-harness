@@ -5,7 +5,7 @@ concurrency: aws-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
-    - cron: '0 12 * * *' # Execute every day at noon
+    - cron: '0 6 * * *' # Execute every day at noon
   workflow_dispatch:
 
 jobs:
@@ -32,11 +32,11 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Init Database
-        if: ${{ matrix.vrsion == 'aws' }}
+        if: ${{ matrix.version == 'aws' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
 
       - name: Init Database
-        if: ${{ matrix.vrsion == 'aurora' }}
+        if: ${{ matrix.version == 'aurora' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
 
   test:
