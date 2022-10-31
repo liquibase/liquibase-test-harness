@@ -4,7 +4,7 @@ on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   workflow_dispatch:
   schedule:
-    - cron: '0 12 * * *'
+    - cron: '0 7 * * *'
 
 jobs:
   test:

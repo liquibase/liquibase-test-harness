@@ -12,7 +12,7 @@ on:
       - synchronize
 
   schedule:
-    - cron: '0 12 * * *' # Execute every day at noon
+    - cron: '0 6 * * *' # Execute every day at noon
   workflow_dispatch:
     inputs:
       runDescription:

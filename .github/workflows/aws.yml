@@ -4,7 +4,7 @@ name: AWS Cloud Database Test Execution
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
-    - cron: '0 12 * * *' # Execute every day at noon
+    - cron: '0 6 * * *' # Execute every day at noon
   workflow_dispatch:
 
 jobs:
