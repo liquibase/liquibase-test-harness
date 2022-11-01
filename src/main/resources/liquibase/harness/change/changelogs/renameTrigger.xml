@@ -6,8 +6,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="as" id="1">
+        <comment>test procedure</comment>
         <createProcedure
-                comments="test_function"
                 encoding="UTF-8"
                 procedureName="test_function">CREATE OR REPLACE FUNCTION test_function()
             RETURNS trigger

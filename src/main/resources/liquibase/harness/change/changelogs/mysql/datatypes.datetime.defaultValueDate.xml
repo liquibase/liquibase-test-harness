@@ -3,7 +3,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/LBUSER">
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!-- MySQL Date and Time Data Type Syntax: https://dev.mysql.com/doc/refman/8.0/en/date-and-time-type-syntax.html -->
     <changeSet  author="Liquibase User" id="dateTimePrecision" dbms="mysql" labels="lb-679">
