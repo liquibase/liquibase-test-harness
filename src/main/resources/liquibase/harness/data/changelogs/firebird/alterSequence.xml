@@ -3,7 +3,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 <!--    This changeType can't be verified by ChangeObjectTest as it require running query for verification -->
 <!--    ChangeDataTest is the one who can do such check -->
     <changeSet id="1" author="oleh">
