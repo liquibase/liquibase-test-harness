@@ -253,7 +253,7 @@
             <plugin>
                 <groupId>org.liquibase.ext</groupId>
                 <artifactId>liquibase-sdk-maven-plugin</artifactId>
-                <version>0.10.19</version>
+                <version>0.10.20</version>
                 <configuration>
                     <githubToken>${env.GITHUB_TOKEN}</githubToken>
                 </configuration>
