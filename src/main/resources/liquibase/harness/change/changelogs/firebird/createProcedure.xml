@@ -10,8 +10,9 @@ ExpectedSnapshot file will be empty for this change type-->
 <!--    This changeType differs from default as Firebird require AS closure for procedures -->
 <!--    https://firebirdsql.org/refdocs/langrefupd21-ddl-procedure.html -->
     <changeSet author="as" id="1">
+        <comment>test procedure</comment>
         <createProcedure
-                comments="test procedure"
+
                 encoding="UTF-8"
                 procedureName="test_procedure">CREATE PROCEDURE test_procedure
                                                AS

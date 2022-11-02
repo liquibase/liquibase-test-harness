@@ -8,8 +8,9 @@
     <!--Liquibase doesn't include stored procedures in snapshot for this platform (DAT-11679)
         ExpectedSnapshot file will be empty for this change type, remove this file and use default once issue is fixed-->
     <changeSet author="as" id="1">
+        <comment>test procedure</comment>
         <createProcedure
-                comments="test procedure"
+
                 encoding="UTF-8"
                 path="createProcedure.txt"
                 relativeToChangelogFile="true"

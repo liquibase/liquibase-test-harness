@@ -9,7 +9,7 @@
 <!--    https://firebirdsql.org/refdocs/langrefupd21-ddl-procedure.html -->
     <changeSet author="as" id="1">
         <createProcedure
-                comments="test procedure"
+
                 encoding="UTF-8"
                 path="createProcedure.txt"
                 relativeToChangelogFile="true"
