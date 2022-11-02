@@ -20,8 +20,8 @@ class BasicCompatibilityTestHelper {
     final static String baseChangelogPath = "liquibase/harness/compatibility/basic/changelogs"
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
 
-    static boolean checkConnection(DatabaseConnection connection, String dbName) {
-        return connection.isClosed()||connection.getDatabaseProductName().toLowerCase().contains(dbName)
+    static boolean checkConnection(DatabaseConnection connection, String... dbNames) {
+        return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
     }
 
     static List<TestInput> buildTestInput() {

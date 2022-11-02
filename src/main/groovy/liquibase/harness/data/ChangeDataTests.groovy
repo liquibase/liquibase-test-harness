@@ -21,6 +21,7 @@ import java.sql.DriverManager
 import java.sql.ResultSet
 
 import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
+import static liquibase.harness.data.ChangeDataTestHelper.checkConnection
 import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
 import static liquibase.harness.util.FileUtils.getJSONFileContent
 import static liquibase.harness.util.FileUtils.getSqlFileContent
@@ -100,7 +101,7 @@ class ChangeDataTests extends Specification {
         JSONArray generatedResultSetArray
         try {
             //For embedded databases, let's create separate connection to run checking SQL
-            if (connection.isClosed()||connection.getDatabaseProductName().equalsIgnoreCase("sqlite")) {
+            if (checkConnection(connection, "sqlite", "snowflake")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
             } else {
