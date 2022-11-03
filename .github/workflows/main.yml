@@ -259,7 +259,7 @@ jobs:
             "-Dliquibase.sdk.status.context=Run Test Harness" \
             "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
             "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Internal functional tests" \
+            "-Dliquibase.sdk.status.description=Internal functional tests"
             
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.status.commit=installed" \
