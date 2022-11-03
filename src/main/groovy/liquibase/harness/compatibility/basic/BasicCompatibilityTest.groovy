@@ -103,7 +103,7 @@ class BasicCompatibilityTest extends Specification {
         Connection newConnection
         try {
             ResultSet resultSet
-            if (checkConnection(connection, "sqlite", )) {
+            if (shouldOpenNewConnection(connection, "sqlite", )) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
             } else {

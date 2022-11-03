@@ -88,7 +88,7 @@ class ChangeDataTestHelper {
         Database database
     }
 
-    static boolean checkConnection(DatabaseConnection connection, String... dbNames) {
+    static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
         return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
     }
 }

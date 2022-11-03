@@ -20,7 +20,7 @@ class BasicCompatibilityTestHelper {
     final static String baseChangelogPath = "liquibase/harness/compatibility/basic/changelogs"
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
 
-    static boolean checkConnection(DatabaseConnection connection, String... dbNames) {
+    static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
         return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
     }
 
@@ -58,7 +58,7 @@ class BasicCompatibilityTestHelper {
     static ResultSet executeQuery(String pathToSql, TestInput testInput) throws SQLException {
         Connection newConnection
         ResultSet resultSet
-        if (checkConnection(testInput.database.getConnection(), "firebird")) {
+        if (shouldOpenNewConnection(testInput.database.getConnection(), "firebird")) {
             newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
             resultSet = newConnection.createStatement().executeQuery(pathToSql)
             newConnection.close()
