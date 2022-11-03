@@ -119,6 +119,7 @@ jobs:
             "-Dliquibase.sdk.status.state=PENDING" \
             "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
             "-Dliquibase.sdk.status.description=Internal functional tests"
+            "-Dliquibase.sdk.status.commit=installed"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v3
