@@ -17,6 +17,8 @@ jobs:
       - uses: liquibase-github-actions/drop-all@v4.17.0
         with:
           url: "${{secrets.TH_SNOW_URL}}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7

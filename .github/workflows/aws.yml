@@ -36,6 +36,8 @@ jobs:
         if: ${{ matrix.version == 'aws' }}
         with:
           url: "${{ secrets.TH_MYSQLURL_8_0 }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - name: Init Database
@@ -47,6 +49,8 @@ jobs:
         if: ${{ matrix.version == 'aws' }}
         with:
           url: "${{ secrets.TH_AURORA_MYSQLURL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - name: Init Database
@@ -91,6 +95,8 @@ jobs:
         if: ${{ matrix.database == 'oracle' }}
         with:
           url: "${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7
@@ -107,6 +113,8 @@ jobs:
         if: ${{ matrix.database == 'postgresql' && matrix.version != 'aurora' }}
         with:
           url: "${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7
@@ -123,6 +131,8 @@ jobs:
         if: ${{ matrix.database == 'mariadb' }}
         with:
           url: "${{ secrets.TH_MARIADBURL_10_6 }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7
@@ -139,6 +149,8 @@ jobs:
         if: ${{ matrix.database == 'mssql' }}
         with:
           url: "${{ secrets.TH_MSSQLURL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7
@@ -155,6 +167,8 @@ jobs:
         if: ${{ matrix.database == 'postgresql' && matrix.version == 'aurora' }}
         with:
           url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7
