@@ -27,10 +27,9 @@ on:
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
-      useLiquibaseSnapshot:
-        description: Whether Liquibase Snapshot should be installed.
-        required: false
-        default: false
+      ignoreLiquibaseSnapshot:
+        type: boolean
+        description: Don't autoconfigure Liquibase Snapshot
       liquibaseRepo:
         description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibases/liquibase-pro
         required: true
@@ -86,6 +85,9 @@ jobs:
             let useLiquibaseSnapshot = testBranchName !== "main"
             if ("${{ github.event.pull_request.base.ref }}" !== "") {
               useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
+            }
+            if (${{ github.github.event.inputs.ignoreLiquibaseSnapshot == true) {
+              useLiquibaseSnapshot = false
             }
 
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
