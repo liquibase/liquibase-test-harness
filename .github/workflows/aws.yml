@@ -31,31 +31,31 @@ jobs:
       - name: Install Dependencies
         run: lpm update && lpm add mysql
 
-#      - name: Clean AWS MySQL Database
-#        uses: liquibase-github-actions/drop-all@v4.17.0
-#        if: ${{ matrix.version == 'aws' }}
-#        with:
-#          url: "${{ secrets.TH_MYSQLURL_8_0 }}"
-#          username: "${{secrets.TH_DB_ADMIN}}"
-#          password: "${{secrets.TH_DB_PASSWD}}"
-#          licenseKey: "${{secrets.LICENSE_KEY}}"
-#
-#      - name: Init Database
-#        if: ${{ matrix.version == 'aws' }}
-#        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
-#
-#      - name: Clean Aurora MySQL Database
-#        uses: liquibase-github-actions/drop-all@v4.17.0
-#        if: ${{ matrix.version == 'aurora' }}
-#        with:
-#          url: "${{ secrets.TH_AURORA_MYSQLURL }}"
-#          username: "${{secrets.TH_DB_ADMIN}}"
-#          password: "${{secrets.TH_DB_PASSWD}}"
-#          licenseKey: "${{secrets.LICENSE_KEY}}"
-#
-#      - name: Init Database
-#        if: ${{ matrix.version == 'aurora' }}
-#        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
+      - name: Clean AWS MySQL Database
+        uses: liquibase-github-actions/drop-all@v4.17.0
+        if: ${{ matrix.version == 'aws' }}
+        with:
+          url: "${{ secrets.TH_MYSQLURL_8_0 }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - name: Init Database
+        if: ${{ matrix.version == 'aws' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
+
+      - name: Clean Aurora MySQL Database
+        uses: liquibase-github-actions/drop-all@v4.17.0
+        if: ${{ matrix.version == 'aurora' }}
+        with:
+          url: "${{ secrets.TH_AURORA_MYSQLURL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - name: Init Database
+        if: ${{ matrix.version == 'aurora' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
 
   test:
     needs: [init-mysql]
@@ -64,28 +64,28 @@ jobs:
       fail-fast: false
       matrix:
         include:
-#          - database: postgresql
-#            version: 10
-#          - database: postgresql
-#            version: 11
-#          - database: postgresql
-#            version: 12
-#          - database: postgresql
-#            version: 13
-#          - database: postgresql
-#            version: 14
+          - database: postgresql
+            version: 10
+          - database: postgresql
+            version: 11
+          - database: postgresql
+            version: 12
+          - database: postgresql
+            version: 13
+          - database: postgresql
+            version: 14
           - database: oracle
             version: 19
-#          - database: mariadb
-#            version: 10.6
-#          - database: mysql
-#            version: aws
-#          - database: mysql
-#            version: aurora
-#          - database: mssql
-#            version: 2019
-#          - database: postgresql
-#            version: aurora
+          - database: mariadb
+            version: 10.6
+          - database: mysql
+            version: aws
+          - database: mysql
+            version: aurora
+          - database: mssql
+            version: 2019
+          - database: postgresql
+            version: aurora
 
     steps:
       - name: Checkout
