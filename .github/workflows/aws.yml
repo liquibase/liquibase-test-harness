@@ -19,10 +19,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - database: mysql
-            version: aws
-          - database: mysql
-            version: aurora
+#          - database: mysql
+#            version: aws
+#          - database: mysql
+#            version: aurora
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -64,28 +64,28 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - database: postgresql
-            version: 10
-          - database: postgresql
-            version: 11
-          - database: postgresql
-            version: 12
-          - database: postgresql
-            version: 13
-          - database: postgresql
-            version: 14
+#          - database: postgresql
+#            version: 10
+#          - database: postgresql
+#            version: 11
+#          - database: postgresql
+#            version: 12
+#          - database: postgresql
+#            version: 13
+#          - database: postgresql
+#            version: 14
           - database: oracle
             version: 19
-          - database: mariadb
-            version: 10.6
-          - database: mysql
-            version: aws
-          - database: mysql
-            version: aurora
-          - database: mssql
-            version: 2019
-          - database: postgresql
-            version: aurora
+#          - database: mariadb
+#            version: 10.6
+#          - database: mysql
+#            version: aws
+#          - database: mysql
+#            version: aurora
+#          - database: mssql
+#            version: 2019
+#          - database: postgresql
+#            version: aurora
 
     steps:
       - name: Checkout
