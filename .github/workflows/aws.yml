@@ -19,10 +19,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-#          - database: mysql
-#            version: aws
-#          - database: mysql
-#            version: aurora
+          - database: mysql
+            version: aws
+          - database: mysql
+            version: aurora
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,31 +31,31 @@ jobs:
       - name: Install Dependencies
         run: lpm update && lpm add mysql
 
-      - name: Clean AWS MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.17.0
-        if: ${{ matrix.version == 'aws' }}
-        with:
-          url: "${{ secrets.TH_MYSQLURL_8_0 }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
-      - name: Init Database
-        if: ${{ matrix.version == 'aws' }}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
-
-      - name: Clean Aurora MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.17.0
-        if: ${{ matrix.version == 'aurora' }}
-        with:
-          url: "${{ secrets.TH_AURORA_MYSQLURL }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
-      - name: Init Database
-        if: ${{ matrix.version == 'aurora' }}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
+#      - name: Clean AWS MySQL Database
+#        uses: liquibase-github-actions/drop-all@v4.17.0
+#        if: ${{ matrix.version == 'aws' }}
+#        with:
+#          url: "${{ secrets.TH_MYSQLURL_8_0 }}"
+#          username: "${{secrets.TH_DB_ADMIN}}"
+#          password: "${{secrets.TH_DB_PASSWD}}"
+#          licenseKey: "${{secrets.LICENSE_KEY}}"
+#
+#      - name: Init Database
+#        if: ${{ matrix.version == 'aws' }}
+#        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
+#
+#      - name: Clean Aurora MySQL Database
+#        uses: liquibase-github-actions/drop-all@v4.17.0
+#        if: ${{ matrix.version == 'aurora' }}
+#        with:
+#          url: "${{ secrets.TH_AURORA_MYSQLURL }}"
+#          username: "${{secrets.TH_DB_ADMIN}}"
+#          password: "${{secrets.TH_DB_PASSWD}}"
+#          licenseKey: "${{secrets.LICENSE_KEY}}"
+#
+#      - name: Init Database
+#        if: ${{ matrix.version == 'aurora' }}
+#        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
 
   test:
     needs: [init-mysql]
