@@ -46,7 +46,7 @@ jobs:
 
       - name: Clean Aurora MySQL Database
         uses: liquibase-github-actions/drop-all@v4.17.0
-        if: ${{ matrix.version == 'aws' }}
+        if: ${{ matrix.version == 'aurora' }}
         with:
           url: "${{ secrets.TH_AURORA_MYSQLURL }}"
           username: "${{secrets.TH_DB_ADMIN}}"
