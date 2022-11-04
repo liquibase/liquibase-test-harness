@@ -30,7 +30,7 @@ on:
       useLiquibaseSnapshot:
         description: Whether Liquibase Snapshot should be installed.
         required: false
-        default: "false"
+        default: false
       liquibaseRepo:
         description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibases/liquibase-pro
         required: true
