@@ -14,6 +14,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: liquibase-github-actions/drop-all@v4.17.0
+        with:
+          url: "${{secrets.TH_AZURE_URL}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
       - uses: liquibase/liquibase-github-action@v7
         with:
           operation: "update"
