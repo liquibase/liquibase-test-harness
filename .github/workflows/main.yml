@@ -86,7 +86,7 @@ jobs:
             if ("${{ github.event.pull_request.base.ref }}" !== "") {
               useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
             }
-            if (${{ github.github.event.inputs.ignoreLiquibaseSnapshot == true }}) {
+            if (${{ inputs.ignoreLiquibaseSnapshot == true }}) {
               useLiquibaseSnapshot = false
             }
 
