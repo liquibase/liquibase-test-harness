@@ -24,25 +24,20 @@ on:
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
-      tSuits:
+      testClasses:
         type: choice
-        description: Test Suite
+        description: Test Suite or test class to run
         options:
           - LiquibaseHarnessSuiteTest
           - CompatibilityHarnessSuiteTest
-      tClass:
-        type: choice
-        description: Test Class
-        options:
-          -
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
           - BasicCompatibilityTest
           - FoundationalCompatibilityTest
-      testClasses:
-        description: List of test classes or test suites to run, separated by coma. E.g. ChangeObjectTests,CompatibilityHarnessSuiteTest
-        required: false
+#      testClasses:
+#        description: List of test classes or test suites to run, separated by coma. E.g. ChangeObjectTests,CompatibilityHarnessSuiteTest
+#        required: false
       ignoreLiquibaseSnapshot:
         type: boolean
         description: Don't autoconfigure Liquibase Snapshot
@@ -84,7 +79,7 @@ jobs:
         "edb-postgres-10","edb-postgres-11","edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-edb-9.5","edb-edb-9.6","edb-edb-10","edb-edb-11",
         "edb-edb-12","edb-edb-13","edb-edb-14","derby","sqlite","diff","hsqldb-2.4","hsqldb-2.5","firebird-3","firebird-4","db2-luw"]' }}
 #      testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
-      testClasses: ${{ inputs.tClass || inputs.tSuits }}
+      testClasses: ${{ inputs.testClasses }}
     steps:
       - uses: actions/checkout@v3
 
