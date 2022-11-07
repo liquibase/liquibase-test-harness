@@ -64,10 +64,3 @@ databasesUnderTest:
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
-
-  - name: redshift
-    prefix: aws
-    version: aws
-    url: DBENDPOINT
-    username: USERNAME
-    password: PASSWORD
