@@ -28,7 +28,7 @@ on:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
       testClasses:
-        description: List of test classes to run, separated by coma. E.g. ChangeObjectTests,ChangeDataTests,SnapshotObjectTests
+        description: List of test classes or test suites to run, separated by coma. E.g. ChangeObjectTests,CompatibilityHarnessSuiteTest
         required: false
       ignoreLiquibaseSnapshot:
         type: boolean
