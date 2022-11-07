@@ -34,16 +34,12 @@ on:
         type: choice
         description: Test Class
         options:
-          if [[ "${{inputs.tSuits}}" == "LiquibaseHarnessSuiteTest" ]]
-          then
-            - a
-            - b
-          fi
-          if [[ "${{inputs.tSuits}}" == "CompatibilityHarnessSuiteTest" ]]
-          then
-            - c
-            - d
-          fi
+          -
+          - ChangeObjectTests
+          - ChangeDataTests
+          - SnapshotObjectTests
+          - BasicCompatibilityTest
+          - FoundationalCompatibilityTest
       testClasses:
         description: List of test classes or test suites to run, separated by coma. E.g. ChangeObjectTests,CompatibilityHarnessSuiteTest
         required: false
