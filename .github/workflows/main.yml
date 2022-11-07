@@ -21,12 +21,29 @@ on:
       runDetails:
         description: 'JSON details of run. Provided by automation'
         required: false
-      liquibaseCommit:
-        description: DEPRECATED
-        required: false
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
+      tSuits:
+        type: choice
+        description: Test Suite
+        options:
+          - LiquibaseHarnessSuiteTest
+          - CompatibilityHarnessSuiteTest
+      tClass:
+        type: choice
+        description: Test Class
+        options:
+          if [[ "${{inputs.tSuits}}" == "LiquibaseHarnessSuiteTest" ]]
+          then
+            - a
+            - b
+          fi
+          if [[ "${{inputs.tSuits}}" == "CompatibilityHarnessSuiteTest" ]]
+          then
+            - c
+            - d
+          fi
       testClasses:
         description: List of test classes or test suites to run, separated by coma. E.g. ChangeObjectTests,CompatibilityHarnessSuiteTest
         required: false
