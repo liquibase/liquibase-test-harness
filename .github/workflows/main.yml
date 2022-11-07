@@ -27,6 +27,9 @@ on:
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
+      testClasses:
+        description: List of test classes to run, separated by coma. E.g. ChangeObjectTests,ChangeDataTests,SnapshotObjectTests
+        required: false
       ignoreLiquibaseSnapshot:
         type: boolean
         description: Don't autoconfigure Liquibase Snapshot
@@ -67,6 +70,7 @@ jobs:
         "mariadb-10.7","mssql-2017","mssql-2019","H2Database-2.1","crdb-20.2","crdb-21.1","crdb-21.2","crdb-22.1","edb-postgres-9.5","edb-postgres-9.6",
         "edb-postgres-10","edb-postgres-11","edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-edb-9.5","edb-edb-9.6","edb-edb-10","edb-edb-11",
         "edb-edb-12","edb-edb-13","edb-edb-14","derby","sqlite","diff","hsqldb-2.4","hsqldb-2.5","firebird-3","firebird-4","db2-luw"]' }}
+      testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - uses: actions/checkout@v3
 
@@ -152,55 +156,6 @@ jobs:
       fail-fast: false
       matrix:
         database: ${{ fromJson(needs.setup.outputs.databases) }}
-#        database: [
-#            "mysql-5.6",
-#            "mysql-5.7",
-#            "mysql-8",
-#            "percona-xtradb-cluster-5.7",
-#            "percona-xtradb-cluster-8.0",
-#            "postgres-9.5",
-#            "postgres-9",
-#            "postgres-10",
-#            "postgres-11",
-#            "postgres-12",
-#            "postgres-13",
-#            "postgres-14",
-#            "mariadb-10.2",
-#            "mariadb-10.3",
-#            "mariadb-10.4",
-#            "mariadb-10.5",
-#            "mariadb-10.6",
-#            "mariadb-10.7",
-#            "mssql-2017",
-#            "mssql-2019",
-#            "H2Database-2.1",
-#            "crdb-20.2",
-#            "crdb-21.1",
-#            "crdb-21.2",
-#            "crdb-22.1",
-#            "edb-postgres-9.5",
-#            "edb-postgres-9.6",
-#            "edb-postgres-10",
-#            "edb-postgres-11",
-#            "edb-postgres-12",
-#            "edb-postgres-13",
-#            "edb-postgres-14",
-#            "edb-edb-9.5",
-#            "edb-edb-9.6",
-#            "edb-edb-10",
-#            "edb-edb-11",
-#            "edb-edb-12",
-#            "edb-edb-13",
-#            "edb-edb-14",
-#            "derby",
-#            "sqlite",
-#            "diff",
-#            "hsqldb-2.4",
-#            "hsqldb-2.5",
-#            "firebird-3",
-#            "firebird-4",
-#            "db2-luw"
-#        ]
 
     steps:
       - uses: actions/checkout@v3
@@ -233,7 +188,7 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
       - name: ${{ matrix.database }} Test Run
-        run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}
+        run: ./src/test/resources/test-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
