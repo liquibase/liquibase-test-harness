@@ -188,7 +188,7 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
       - name: ${{ matrix.database }} Test Run
-        run: ./src/test/resources/test-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
+        run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 

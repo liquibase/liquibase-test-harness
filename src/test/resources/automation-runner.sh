@@ -3,6 +3,7 @@
 set -ex
 
 db=$1
+tc=$2
 
 test_command () {
   $@
@@ -61,8 +62,8 @@ case $db in
   "mariadb-10.6" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -DdbVersion=10.6 test
     ;;
-    "mariadb-10.7" )
-    test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mariadb -DdbVersion=10.7 test
+  "mariadb-10.7" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=mariadb -DdbVersion=10.7 test
     ;;
   "mssql-2017" )
     test_command mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=mssql -DdbVersion=2017 test
