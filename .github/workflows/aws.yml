@@ -68,8 +68,6 @@ jobs:
             version: 2019
           - database: postgresql
             version: aurora
-          - database: redshift
-            version: aws
 
     steps:
       - name: Checkout
@@ -125,16 +123,6 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
 
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.database == 'redshift' && matrix.version == 'aws' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "redshift.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets.TH_REDSHIFTURL }}"
-
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
@@ -184,12 +172,6 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbVersion=13 -Dprefix=aurora -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_AURORA_POSTGRESQLURL }}' test
-
-      - name: AWS Redshift ${{ matrix.database }} Test Run
-        if: ${{ matrix.database == 'redshift' && matrix.version == 'aws' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{ matrix.database }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_REDSHIFTURL }}' test
 
       - name: Archive AWS RDS ${{ matrix.database }}-${{ matrix.version }} Test Results
         uses: actions/upload-artifact@v3
