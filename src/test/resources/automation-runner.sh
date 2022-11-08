@@ -138,10 +138,10 @@ case $db in
     test_command mvn -ntp -Dtest=DiffTest test
     ;;
   "hsqldb-2.4")
-    test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.4 -Dhsqldb.method_class_names="" test
+    test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.4 test
     ;;
   "hsqldb-2.5")
-    test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.5 -Dhsqldb.method_class_names="" test
+    test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.5 test
     ;;
   "firebird-3")
     test_command mvn -ntp -Dtest=$tc -DdbName=firebird -DdbVersion=3 test
