@@ -11,7 +11,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <maven.enforcer.requireJavaVersion>11</maven.enforcer.requireJavaVersion>
+        <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
         <liquibase-core.version>[4.3.0,)</liquibase-core.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
     </properties>
