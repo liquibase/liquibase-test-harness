@@ -189,10 +189,13 @@ This test executes the following steps:
 This test validates work of Liquibase 'snapshot' command by comparing expected and generated snapshots
 after a DB object was created.
 
-## Running the Tests
 
-### Minimum Requirements
-Java 1.8
+## Minimum Requirements
+ - Java 11. Java 8 should actually work for most of the platforms that don't have jdbc drivers that require Java 11, those that do are
+Firebird, HyperSQL(HSQLDB), Microsoft SQL Server. Downgrade java and jdbc driver versions in pom at your own risk.
+ - Maven >=3.5
+
+## Running the Tests
 
 1) Make sure you have a docker container up and running first
 2) Go to `src/test/resources/docker` and run `docker-compose up -d`. 
