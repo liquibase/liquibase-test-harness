@@ -1,4 +1,4 @@
-package liquibase.harness.base
+package liquibase.harness.compatibility.basic
 
 import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
@@ -12,6 +12,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -19,10 +20,10 @@ import java.sql.SQLException
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.TestUtils.*
-import static liquibase.harness.base.BaseCompatibilityTestHelper.*
+import static BasicCompatibilityTestHelper.*
 
 @Unroll
-class BaseCompatibilityTest extends Specification {
+class BasicCompatibilityTest extends Specification {
     @Shared
     RollbackStrategy strategy;
     @Shared
@@ -37,13 +38,13 @@ class BaseCompatibilityTest extends Specification {
     def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/base/expectedResultSet")
+                "liquibase/harness/compatibility/basic/expectedResultSet")
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
 
-        String basePath = "liquibase/harness/base/"
+        String basePath = "liquibase/harness/compatibility/basic/"
         ArrayList<String> changelogList = new ArrayList<>()
         changelogList.add("${basePath}changelogs/${testInput.change}.xml")
         changelogList.add("${basePath}changelogs/${testInput.change}.yml")
@@ -99,27 +100,26 @@ class BaseCompatibilityTest extends Specification {
 
         then: "execute metadata checking sql, obtain result set, compare it to expected result set"
         JSONArray generatedResultSetArray
+        Connection newConnection
         try {
             ResultSet resultSet
-            if (connection.isClosed()) {
-                connection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-                resultSet = connection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
-                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                if (!connection.autoCommit) {
-                    connection.commit()
-                }
+            if (checkConnection(connection, "sqlite", )) {
+                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
             } else {
                 resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
-                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-                if (!connection.autoCommit) {
-                    connection.commit()
-                }
+                connection.autoCommit ?: connection.commit()
             }
+            generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+
             def expectedResultSetArray = new JSONObject(expectedResultSet).getJSONArray(testInput.change)
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.LENIENT)
         } catch (Exception exception) {
             Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.printStackTrace())
             Assert.fail exception.message
+        } finally {
+            newConnection == null ?: newConnection.close()
+
         }
 
         and: "check for actual presence of created object"
@@ -136,7 +136,7 @@ class BaseCompatibilityTest extends Specification {
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
-            for (int i = 0; i < changelogList.size(); i++) {
+            for (int i = 0; i < changelogList.size(); i++) {//TODO rethink rollback logic to do it only once
                 argsMap.put("changeLogFile", changelogList.get(i))
                 strategy.performRollback(argsMap)
             }
@@ -154,6 +154,7 @@ class BaseCompatibilityTest extends Specification {
                         Assert.fail()
                     }
                 } catch (ignored) {
+                    (connection.isClosed() || connection.autoCommit) ?: connection.commit()
                     // Assume test object does not exist and 'rollback' was successful. Ignore exception.
                     Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
                 }

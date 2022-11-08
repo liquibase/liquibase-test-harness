@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <!--Using specific changeset for Firebird to avoid sql error thrown while using "loadUpdateData" changetype - it requires primary key-->
+    <changeSet id="1" author="as" labels="foundational">
+        <sql>UPDATE foundational_test_table SET test_1=50, test_2=49, test_3=48, test_4=47, test_5=46, test_6=45, test_7=44, test_8=43, test_9=42, test_10=41, test_11=40,
+                                                       test_12=39, test_13=38, test_14=37, test_15=36, test_16=35, test_17=34, test_18=33, test_19=32, test_20=31, test_21=30,
+                                                       test_22=29, test_23=28, test_24=27, test_25=26, test_26=25, test_27=24, test_28=23, test_29=22, test_30=21, test_31=20,
+                                                       test_32=19, test_33=18, test_34=17, test_35=16, test_36=15, test_37=14, test_38=13, test_39=12, test_40=11, test_41=10,
+                                                       test_42=9, test_43=8, test_44=7, test_45=6, test_46=5, test_47=4, test_48=3, test_49=2, test_50=1 WHERE id = 0;</sql>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

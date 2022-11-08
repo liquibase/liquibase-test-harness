@@ -56,7 +56,7 @@ jobs:
 
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v6.3.1
+        uses: actions/github-script@v6.3.3
         with:
           github-token: ${{ secrets.BOT_TOKEN }}
           script: |
@@ -74,8 +74,10 @@ jobs:
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
             core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
+            console.log("liquibaseBranch == " + "${{ github.event.inputs.liquibaseBranch }}");
             core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
 
+            console.log("liquibaseRepo == " + "${{ github.event.inputs.liquibaseRepo }}");
             core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseRepo }}" || "liquibase/liquibase");
 
             let runDescription = "${{ github.event.inputs.runDescription }}";
@@ -116,7 +118,8 @@ jobs:
             "-Dliquibase.sdk.status.context=Run Test Harness" \
             "-Dliquibase.sdk.status.state=PENDING" \
             "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Internal functional tests"
+            "-Dliquibase.sdk.status.description=Internal functional tests" \
+            "-Dliquibase.sdk.status.commit=installed"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v3
@@ -251,10 +254,17 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
           mvn -B liquibase-sdk:set-commit-status \
+            "-Dliquibase.sdk.status.commit=installed" \
             "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
             "-Dliquibase.sdk.status.context=Run Test Harness" \
             "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
             "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
             "-Dliquibase.sdk.status.description=Internal functional tests"
             
-          mvn -B liquibase-sdk:set-commit-status "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" -Dliquibase.sdk.status.context="Run Test Harness" -Dliquibase.sdk.status.state=${{ needs.test.result }} -Dliquibase.sdk.status.url="https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" -Dliquibase.sdk.status.description="Test Harness tests complete"
+          mvn -B liquibase-sdk:set-commit-status \
+            "-Dliquibase.sdk.status.commit=installed" \
+            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
+            "-Dliquibase.sdk.status.context=Run Test Harness" \
+            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
+            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
+            "-Dliquibase.sdk.status.description=Test Harness tests complete"

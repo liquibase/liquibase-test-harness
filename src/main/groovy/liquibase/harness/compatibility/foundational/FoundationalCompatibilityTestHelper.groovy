@@ -1,30 +1,22 @@
-package liquibase.harness.base
+package liquibase.harness.compatibility.foundational
 
 import groovy.transform.ToString
 import groovy.transform.builder.Builder
 import liquibase.database.Database
-import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.ResultSet
-import java.sql.SQLException
 
-class BaseCompatibilityTestHelper {
-
-    final static String baseChangelogPath = "liquibase/harness/base/changelogs"
+class FoundationalCompatibilityTestHelper {
+    final static String baseChangelogPath = "liquibase/harness/compatibility/foundational/"
 
     static List<TestInput> buildTestInput() {
-
         List<TestInput> inputList = new ArrayList<>()
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
-
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
-            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "xml").entrySet()) {
+            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath + "setup", "xml").entrySet()) {
                 inputList.add(TestInput.builder()
                         .databaseName(databaseUnderTest.name)
                         .url(databaseUnderTest.url)
@@ -32,38 +24,16 @@ class BaseCompatibilityTestHelper {
                         .username(databaseUnderTest.username)
                         .password(databaseUnderTest.password)
                         .version(databaseUnderTest.version)
+                        .setupChangelogPath(changeLogEntry.value)
+                        .insertChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath + "insert", "xml").get(changeLogEntry.key))
+                        .updateChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath + "update", "xml").get(changeLogEntry.key))
+                        .selectChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath + "select", "xml").get(changeLogEntry.key))
                         .change(changeLogEntry.key)
                         .database(databaseUnderTest.database)
                         .build())
             }
         }
         return inputList
-    }
-
-    static ResultSet executeQuery(String pathToSql, TestInput testInput) throws SQLException {
-        Connection newConnection
-        ResultSet resultSet
-        try {
-            if (testInput.database.connection.isClosed()) {
-                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-                resultSet = newConnection.createStatement().executeQuery(pathToSql)
-                if (!newConnection.autoCommit) {
-                    newConnection.commit()
-                }
-                return resultSet
-            } else {
-                JdbcConnection connection = (JdbcConnection) testInput.database.connection
-                resultSet = connection.createStatement().executeQuery(pathToSql)
-                if (!testInput.database.connection.autoCommit) {
-                    testInput.database.connection.commit()
-                }
-                return resultSet
-            }
-        } finally {
-            if (newConnection != null) {
-                newConnection.close()
-            }
-        }
     }
 
     @Builder
@@ -74,6 +44,10 @@ class BaseCompatibilityTestHelper {
         String username
         String password
         String url
+        String setupChangelogPath
+        String insertChangelogPath
+        String updateChangelogPath
+        String selectChangelogPath
         String dbSchema
         String change
         Database database
