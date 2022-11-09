@@ -60,10 +60,6 @@ class FoundationalCompatibilityTest extends Specification {
             uiService.sendMessage("Execution time for $entry.key query: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
         }
 
-        and: "generateChangelog"
-        argsMap.put("changeLogFile", "C:\\Users\\osashc\\IdeaProjects\\liquibase-test-harness\\src\\test\\resources\\liquibase\\harness\\compatibility\\foundational\\generateChangeLog\\myChangelog.mysql.sql")
-        executeCommandScope("generateChangelog", argsMap)
-
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
             argsMap.put("changeLogFile", testInput.setupChangelogPath)
