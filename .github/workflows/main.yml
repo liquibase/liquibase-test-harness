@@ -110,6 +110,7 @@ jobs:
             "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }}" \
             "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}"
 
+          mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview'
           buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview')"
           echo "::notice :: Installed Snapshot Liquibase $buildOverview"
 
