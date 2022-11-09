@@ -8,5 +8,5 @@ import org.junit.runners.Suite
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses([CompatibilityTest, FoundationalTest])
-abstract class CompatibilityHarnessSuite {
+abstract class FoundationalHarnessSuite {
 }
