@@ -17,8 +17,8 @@ on:
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
-          - BasicCompatibilityTest
-          - FoundationalCompatibilityTest
+          - CompatibilityTest
+          - FoundationalTest
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
@@ -251,4 +251,3 @@ jobs:
         with:
           name: aws-rds-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
           path: build/spock-reports
-

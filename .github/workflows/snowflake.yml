@@ -40,4 +40,3 @@ jobs:
         with:
           name: snowflake-test-results
           path: build/spock-reports
-
