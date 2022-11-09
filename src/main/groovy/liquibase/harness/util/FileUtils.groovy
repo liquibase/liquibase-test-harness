@@ -77,16 +77,6 @@ class FileUtils {
                 .collect(Collectors.joining("\n"))
     }
 
-    static String read(String filename) {
-        File myObj = new File(filename);
-        FileInputStream is = new FileInputStream(myObj)
-        int content;
-        while ((content = is.read()) != -1) {
-            System.out.println((char)content);
-        }
-
-    }
-
     static Boolean deleteFile(String fileName) {
         try {
             new File(fileName).delete()
