@@ -4,19 +4,18 @@ import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
-import liquibase.harness.util.FileUtils
 import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.ui.UIService
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static liquibase.harness.compatibility.foundational.FoundationalCompatibilityTestHelper.buildTestInput
+import static FoundationalTestHelper.buildTestInput
 import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
 import static liquibase.harness.util.TestUtils.executeCommandScope
 
 @Unroll
-class FoundationalCompatibilityTest extends Specification {
+class FoundationalTest extends Specification {
     @Shared
     RollbackStrategy strategy
     @Shared

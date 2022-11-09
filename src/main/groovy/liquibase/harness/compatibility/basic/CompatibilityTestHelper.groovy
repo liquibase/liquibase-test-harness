@@ -15,7 +15,7 @@ import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.SQLException
 
-class BasicCompatibilityTestHelper {
+class CompatibilityTestHelper {
 
     final static String baseChangelogPath = "liquibase/harness/compatibility/basic/changelogs"
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
