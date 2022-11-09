@@ -4,6 +4,7 @@ import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
+import liquibase.harness.util.FileUtils
 import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.ui.UIService
 import spock.lang.Shared
@@ -47,7 +48,9 @@ class FoundationalCompatibilityTest extends Specification {
         and: "execute setup, insert, update and select queries with 10000 rows"
         def map = new LinkedHashMap<String, String>()
         map.put("setup", testInput.setupChangelogPath)
-        map.put("insert", testInput.insertChangelogPath)
+        argsMap.put("changeLogFile", testInput.setupChangelogPath)
+        executeCommandScope("update", argsMap)
+        /*map.put("insert", testInput.insertChangelogPath)
         map.put("update", testInput.updateChangelogPath)
         map.put("select", testInput.selectChangelogPath)
         for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -57,7 +60,14 @@ class FoundationalCompatibilityTest extends Specification {
             executeCommandScope("update", argsMap)
             timeMillisAfterTest = System.currentTimeMillis()
             uiService.sendMessage("Execution time for $entry.key query: " + (timeMillisAfterTest - timeMillisBeforeTest)/1000 + "s")
-        }
+        }*/
+
+        and: "generateChangelog"
+        argsMap.put("changeLogFile", "C:\\Users\\osashc\\IdeaProjects\\liquibase-test-harness\\src\\test\\resources\\liquibase\\harness\\compatibility\\foundational\\generateChangeLog\\myChangelog.mysql.sql")
+        executeCommandScope("generateChangelog", argsMap)
+
+        String content = FileUtils.read("\\src\\test\\resources\\liquibase\\harness\\compatibility\\foundational\\generateChangeLog\\myChangelog.mysql.sql")
+        content.toString()
 
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
