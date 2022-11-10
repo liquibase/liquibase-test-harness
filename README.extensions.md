@@ -47,10 +47,10 @@ This suite will run all Test Harness tests
 ## Adding Additional Tests and Configurations
 
 
-#### Basic Compatibility Test
+#### Compatibility Test
 
 In case you don't know if the extension you are going to use works with Liquibase on basic level - you may use this test
-to check it. Add new run configuration in extension project and choose class liquibase.harness.compatibility.BasicCompatibilityTest
+to check it. Add new run configuration in extension project and choose class liquibase.harness.compatibility.basic.CompatibilityTest
 from external libraries. Run the test.
 This test will allow you to check if basic Liquibase functions work correctly with your database:
 - Deploying simple change sets using all format types (.sql, .xml, .json, .yml);

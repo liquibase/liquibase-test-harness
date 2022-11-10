@@ -51,7 +51,8 @@ The general pattern is that for each directory containing configuration files:
 At each level in that hierarchy, new configurations can be added and/or can override configurations from a lower level. 
 
 Currently, there are five test types defined in the test harness:
-* Base Compatibility test
+* Compatibility test
+* Foundational test
 * Change Object Tests
 * Change Data Tests
 * Snapshot Command Test
@@ -79,7 +80,7 @@ For more information on using the test harness in your extension, see [README.ex
 
 # Framework Tests
 
-## BasicCompatibilityTest
+## CompatibilityTest
 
 This test validates work of basic Liquibase functions. 
 1) runs Liquibase validate command to ensure the changelog is valid;
@@ -94,8 +95,8 @@ it is not present in test**)
 8) runs Liquibase rollback command;
 9) runs verification query to ensure a test object was actually removed during Liquibase rollback command;
 
-### Running BaseCompatibilityTest against your database
-As far as this test validates work of Basic Liquibase functions it is essential to keep its configuration as simple as possible:
+### Running CompatibilityTest against your database
+As far as this test validates work of basic Liquibase functions it is essential to keep its configuration as simple as possible:
 1. If you have your database instance up and running you need to just add appropriate configuration details to `src/test/resources/harness-config.yml` file.
 Following the example:
    - **name**: `database_name` (**mandatory**) </br>
@@ -107,14 +108,14 @@ Following the example:
 2. Add driver dependency for you database to POM.xml file
 
 3. To run the test go to you IDE run configurations and add new JUnit configuration. Add 
-`liquibase.harness.base.BaseCompatibilityTest` as target class and use -DdbName, -DdbVersion to set up
+`liquibase.harness.compatibility.basic.CompatibilityTest` as target class and use -DdbName, -DdbVersion to set up
 appropriate parameters. Or you may just comment out/delete all existing configurations in harness-config.yml
-file leaving just your configuration and run BaseCompatibilityTest directly from the class file. 
+file leaving just your configuration and run CompatibilityTest directly from the class file. 
 
 In case you want to set up your database instance using docker image then you may use 
 `src/test/resources/docker/docker-compose.yml` file for configuration.
 
-## FoundationalCompatibilityTest
+## FoundationalTest
 
 Checks if your database doesn't "choke" while Liquibase tries to deploy very long queries (inserts and updates with 10k rows).
 

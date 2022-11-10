@@ -20,14 +20,14 @@ import java.sql.SQLException
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.TestUtils.*
-import static BasicCompatibilityTestHelper.*
+import static CompatibilityTestHelper.*
 
 @Unroll
-class BasicCompatibilityTest extends Specification {
+class CompatibilityTest extends Specification {
     @Shared
-    RollbackStrategy strategy;
+    RollbackStrategy strategy
     @Shared
-    List<DatabaseUnderTest> databases;
+    List<DatabaseUnderTest> databases
 
     def setupSpec() {
         databases = TestConfig.instance.getFilteredDatabasesUnderTest()

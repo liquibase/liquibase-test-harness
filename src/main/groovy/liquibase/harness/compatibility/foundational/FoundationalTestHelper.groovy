@@ -8,7 +8,7 @@ import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
 
-class FoundationalCompatibilityTestHelper {
+class FoundationalTestHelper {
     final static String baseChangelogPath = "liquibase/harness/compatibility/foundational/"
 
     static List<TestInput> buildTestInput() {
