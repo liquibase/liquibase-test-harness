@@ -28,7 +28,7 @@ on:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
       liquibaseRepo:
-        description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibases/liquibase-pro
+        description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibase/liquibase-pro
         required: true
         default: "liquibase/liquibase"
 
@@ -107,11 +107,14 @@ jobs:
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }}" \
-            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}"
+            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
+            "-Dliquibase.sdk.repo=liquibase/liquibase-pro,liquibase/liquibase"
 
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview')"
+          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
           echo "::notice :: Installed Snapshot Liquibase $buildOverview"
+          
+          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase-pro')"
+          echo "::notice :: Installed Snapshot Liquibase-pro $buildOverview"
 
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \
