@@ -61,7 +61,7 @@ jobs:
 
       - name: Clean AWS MySQL Database
         uses: liquibase-github-actions/drop-all@v4.17.2
-        if: ${{ steps.setup.outputs.databaseVersion == 'aws' }}
+        if: ${{ matrix.version == 'aws' }}
         with:
           url: "${{ secrets.TH_MYSQLURL_8_0 }}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -69,7 +69,7 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - name: Init Database
-        if: ${{ steps.setup.outputs.databaseVersion == 'aws' }}
+        if: ${{ matrix.version == 'aws' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
 
       - name: Clean Aurora MySQL Database
