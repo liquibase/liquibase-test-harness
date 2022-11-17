@@ -61,7 +61,7 @@ jobs:
 
       - name: Clean AWS MySQL Database
         uses: liquibase-github-actions/drop-all@v4.17.2
-        if: ${{ matrix.version == 'aws' }}
+        if: ${{ steps.setup.outputs.databaseVersion == 'aws' }}
         with:
           url: "${{ secrets.TH_MYSQLURL_8_0 }}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -69,12 +69,12 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - name: Init Database
-        if: ${{ matrix.version == 'aws' }}
+        if: ${{ steps.setup.outputs.databaseVersion == 'aws' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
 
       - name: Clean Aurora MySQL Database
         uses: liquibase-github-actions/drop-all@v4.17.2
-        if: ${{ matrix.version == 'aurora' }}
+        if: ${{ steps.setup.outputs.databaseVersion == 'aurora' }}
         with:
           url: "${{ secrets.TH_AURORA_MYSQLURL }}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -82,7 +82,7 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - name: Init Database
-        if: ${{ matrix.version == 'aurora' }}
+        if: ${{ steps.setup.outputs.databaseVersion == 'aurora' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
 
   test:
@@ -109,7 +109,7 @@ jobs:
       - uses: liquibase-github-actions/drop-all@v4.17.2
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         with:
-          url: "${{ secrets[format('TH_ORACLEURL_{0}', matrix.version)] }}"
+          url: "${{ secrets[format('TH_ORACLEURL_{0}', steps.setup.outputs.databaseVersion)] }}"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
@@ -127,7 +127,7 @@ jobs:
       - uses: liquibase-github-actions/drop-all@v4.17.2
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
         with:
-          url: "${{ secrets[format('TH_PGRESURL_{0}', matrix.version)] }}"
+          url: "${{ secrets[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
