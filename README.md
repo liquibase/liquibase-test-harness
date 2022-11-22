@@ -6,17 +6,22 @@
 
 | Database                  | Versions Tested                       |
 |---------------------------|---------------------------------------|
-| Postgres                  | `9, 9.5, 10, 11, 12, 13, 14`          |
+| Aurora MySQL              | `8`                                   |
+| Aurora Postgres           | `14`                                  |
 | AWS Postgres RDS          | `10, 11, 12, 13, 14`                  |
-| MySQL                     | `5.6, 5.7, 8`                         |
+| AWS Oracle RDS            | `19.0`                                |
+| AWS MySQL                 | `8`                                   |
+| AWS MariaDB               | `10.6`                                |
+| AWS SQL Server            | `2019`                                |
 | MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
-| SQL Server                | `2017`, `2019`                        |
+| Postgres                  | `9, 9.5, 10, 11, 12, 13, 14, 15`      |
+| MySQL                     | `5.6, 5.7, 8`                         |
+| SQL Server                | `2017`, `2019`, `2022`                |
 | Percona XtraDB            | `5.7`, `8.0`                          |
 | Oracle                    | `18.3.0, 18.4.0, 21.3.0`              |
-| AWS Oracle RDS            | `19.0`                                |
 | CockroachDB               | `20.2, 21.1, 21.2, 22.1`              |
 | EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        |
-| DB2 on z/OS               | `11.1, 12`                          |
+| DB2 on z/OS               | `11.1, 12`                            |
 | DB2 on Linux/Unix/Windows | `11.5.7`                              |
 | H2                        | `2.1.210`                             |
 | SQLite                    | `3.34.0`                              |
