@@ -193,6 +193,13 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: mssql
+    prefix: docker
+    version: 2022
+    url: jdbc:sqlserver://localhost:1435;trustServerCertificate=true;databaseName=lbcat
+    username: lbuser
+    password: LiquibasePass1
+
 # Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected.
 # We recommend commenting out the EDB sections in this config file to prevent false failures
   - name: edb-postgres

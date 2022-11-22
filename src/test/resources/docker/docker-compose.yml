@@ -280,6 +280,25 @@ services:
       retries: 10
       start_period: 10s
 
+  mssql-2022:
+    container_name: sql-server-db-2022
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1435:1433"
+    environment:
+      SA_PASSWORD: "LiquibasePass1"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - "./mssql-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
+      - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
+    entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$${SA_PASSWORD}" -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
   db2-luw:
     image: taskana/db2:11.5
     environment:
