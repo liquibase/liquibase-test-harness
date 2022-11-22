@@ -24,8 +24,9 @@ class CompatibilityTestHelper {
         return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
     }
 
-    static List<TestInput> buildTestInput() {
+    static List<TestInput> buildTestInput(String changelogPathSpecification) {
         String commandLineInputFormat = System.getProperty("inputFormat")
+        String specificChangelogPath = baseChangelogPath + changelogPathSpecification
         if (commandLineInputFormat) {
             if (!supportedChangeLogFormats.contains(commandLineInputFormat)) {
                 throw new IllegalArgumentException(commandLineInputFormat + " inputFormat is not supported")
@@ -39,7 +40,7 @@ class CompatibilityTestHelper {
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
-            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "xml").entrySet()) {
+            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, specificChangelogPath, "xml").entrySet()) {
                 inputList.add(TestInput.builder()
                         .databaseName(databaseUnderTest.name)
                         .url(databaseUnderTest.url)

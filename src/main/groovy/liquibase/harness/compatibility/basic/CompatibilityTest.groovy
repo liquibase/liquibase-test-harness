@@ -162,7 +162,7 @@ class CompatibilityTest extends Specification {
         }
 
         where: "test input in next data table"
-        testInput << buildTestInput()
+        testInput << buildTestInput("")
     }
 
     def cleanupSpec() {
