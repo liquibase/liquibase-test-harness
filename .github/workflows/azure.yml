@@ -65,7 +65,7 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - name: Init Azure MySQL Database
-      - uses: liquibase/liquibase-github-action@v7
+        uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
         with:
           operation: "update"
