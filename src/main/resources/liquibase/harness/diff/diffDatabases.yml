@@ -4,17 +4,8 @@
 # -> with such name or DB doesn't have version as such
 ---
 references:
-  - targetDatabaseName: postgresql
-    targetDatabaseVersion: 9
-    referenceDatabaseName: postgresql
-    referenceDatabaseVersion: 12
 
   - targetDatabaseName: mysql
     targetDatabaseVersion: 5.7
-    referenceDatabaseName: mysql
-    referenceDatabaseVersion: 8
-
-  - targetDatabaseName: postgresql
-    targetDatabaseVersion: 9
     referenceDatabaseName: mysql
     referenceDatabaseVersion: 8

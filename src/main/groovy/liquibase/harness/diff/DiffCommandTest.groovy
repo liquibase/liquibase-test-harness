@@ -4,19 +4,14 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
-import org.json.JSONObject
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static liquibase.harness.diff.DiffCommandTestHelper.*
 import static liquibase.harness.util.TestUtils.*
-import static liquibase.harness.util.JSONUtils.*
 import static liquibase.harness.util.FileUtils.*
 
-/**
- * Warning! This test might be destructive, meaning it may change the state of targetDatabase according to referenceDatabase
- */
 class DiffCommandTest extends Specification {
     @Shared
     RollbackStrategy strategy;
@@ -30,8 +25,8 @@ class DiffCommandTest extends Specification {
     }
 
     @Unroll
-    def "compare referenceDatabase #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version"() {
-        given: "create arguments map for executing command scope, read expected diff from file"
+    def "apply diffChangelog test against #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version"() {
+        given: "read input data for diff changelog test"
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.targetDatabase.url)
         argsMap.put("username", testInput.targetDatabase.username)
@@ -40,32 +35,75 @@ class DiffCommandTest extends Specification {
         argsMap.put("referenceUsername", testInput.referenceDatabase.username)
         argsMap.put("referencePassword", testInput.referenceDatabase.password)
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
-        argsMap.put("format", "json")
-        JSONObject expectedDiff = getJsonFromResource(getExpectedDiffPath(testInput))
+
+        and: "check databases are online"
         assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection: "Target database " +
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"
         assert testInput.referenceDatabase.database.getConnection() instanceof JdbcConnection: "Reference database " +
                 "${testInput.referenceDatabase.name}${testInput.referenceDatabase.version} is offline!"
 
-        when: "generate diff changelog, apply changes from generated changelog to target database"
-        executeCommandScope("diffChangelog", argsMap)
+        when: "update changelog against target database and generate diff changelog for different file formats"
+
         executeCommandScope("update", argsMap)
+        argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")//excluding static test-harness objects from generated changelog
+        def map = new LinkedHashMap<String, String>()
+        map.put("changelogFileXml", testInput.pathToGeneratedXmlDiffChangelogFile)
+        map.put("changelogFileSql", testInput.pathToGeneratedSqlDiffChangelogFile.replace(".sql", ".$testInput.targetDatabase.name" + ".sql"))
+        map.put("changelogFileYml", testInput.pathToGeneratedYmlDiffChangelogFile)
+        map.put("changelogFileJson", testInput.pathToGeneratedJsonDiffChangelogFile)
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            argsMap.put("changelogFile", entry.value)
+            executeCommandScope("diffChangelog", argsMap)
+        }
 
-        then: "compare expected diff to generated diff"
-        def diffToCompare = createDiffToCompare(executeCommandScope("diff", argsMap))
-        compareJSONObjects(expectedDiff, diffToCompare)
+        then: "validate generated diff changelog"
+        assert validateGeneratedDiffChangelog(testInput)
 
-        /** Rollback might not take effect in the case generated changelog contains ModifyDataTypeChange
-         * or DropDefaultValueChange or others that are not supported by default rollback
-         */
         cleanup: "try to rollback changes out from target database, delete generated changelog file"
-        tryToRollbackDiff(strategy, argsMap)
-        deleteFile(testInput.pathToChangelogFile)
+        argsMap.put("changelogFile", testInput.pathToChangelogFile)
+        strategy.performRollback(argsMap)
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            deleteFile(entry.value)
+        }
 
         where:
         testInput << buildTestInput()
     }
 
+    @Unroll
+    def "apply diff test against #testInput.referenceDatabase.name #testInput.referenceDatabase.version to targetDatabase #testInput.targetDatabase.name #testInput.targetDatabase.version"() {
+        given: "read input data for diff test"
+        Map<String, Object> argsMap = new HashMap()
+        argsMap.put("url", testInput.targetDatabase.url)
+        argsMap.put("username", testInput.targetDatabase.username)
+        argsMap.put("password", testInput.targetDatabase.password)
+        argsMap.put("referenceUrl", testInput.referenceDatabase.url)
+        argsMap.put("referenceUsername", testInput.referenceDatabase.username)
+        argsMap.put("referencePassword", testInput.referenceDatabase.password)
+        argsMap.put("changelogFile", testInput.pathToChangelogFile)
+
+        and: "check databases are online"
+        assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection: "Target database " +
+                "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"
+        assert testInput.referenceDatabase.database.getConnection() instanceof JdbcConnection: "Reference database " +
+                "${testInput.referenceDatabase.name}${testInput.referenceDatabase.version} is offline!"
+
+        when: "execute update and diff commands"
+
+        executeCommandScope("update", argsMap)
+        argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")
+        String generatedDiffContent = executeCommandScope("diff", argsMap).toString().replaceAll("\\s+","")
+
+        then: "validate generated diff"
+        String expectedDiffContent = getResourceContent(testInput.pathToExpectedDiffFile).replaceAll("\\s+","")
+        assert expectedDiffContent == generatedDiffContent
+
+        cleanup: "rollback changes"
+        strategy.performRollback(argsMap)
+
+        where:
+        testInput << buildTestInput()
+    }
     def cleanupSpec() {
         strategy.cleanupDatabase(databases)
     }
