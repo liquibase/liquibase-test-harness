@@ -34,6 +34,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+  init-mysql:
+    runs-on: ubuntu-latest
+    container:
+      image: liquibase/liquibase:latest
+      env:
+        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - database: mysql
+            version: 5.7
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      #      This additional init step is required because of mysql driver issue on GH actions
+      - name: Install Dependencies
+        run: lpm update && lpm add mysql
+
   test:
     needs: [setup]
     runs-on: ubuntu-latest
@@ -56,6 +77,7 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - uses: liquibase-github-actions/drop-all@v4.17.2
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           url: "${{secrets.TH_AZURE_URL}}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -63,6 +85,7 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/azure"
@@ -72,6 +95,7 @@ jobs:
           url: "${{secrets.TH_AZURE_URL}}"
 
       - uses: liquibase-github-actions/drop-all@v4.17.2
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
         with:
           url: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_AZURE_MYSQL_URL) }}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -79,6 +103,7 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/azure"
