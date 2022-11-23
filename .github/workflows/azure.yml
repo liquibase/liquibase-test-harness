@@ -3,16 +3,57 @@ name: Azure Cloud Sql DB Test
 concurrency: azure-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
-  workflow_dispatch:
   schedule:
     - cron: '0 7 * * *'
+  workflow_dispatch:
+    inputs:
+      testClasses:
+        type: choice
+        description: Test Suite or test class to run
+        options:
+          - LiquibaseHarnessSuiteTest
+          - CompatibilityHarnessSuiteTest
+          - ChangeObjectTests
+          - ChangeDataTests
+          - SnapshotObjectTests
+          - CompatibilityTest
+          - FoundationalTest
+      databases:
+        description: Databases to start up. Comma separated list of "name:version"
+        required: true
+        default: "[\"mysql:5.7\",\"mssql:azure\"]"
 
 jobs:
-  test:
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
+    outputs:
+      databases: ${{ github.event.inputs.databases || '["mysql:5.7","mssql:azure"]' }}
+      testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+  test:
+    needs: [setup]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        database: ${{ fromJson(needs.setup.outputs.databases) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure Test
+          id: setup
+          uses: actions/github-script@v6.3.3
+          with:
+            script: |
+              let splitValues = "${{ matrix.database }}".split(":")
+              core.setOutput("databasePlatform", splitValues[0]);
+              core.setOutput("databaseVersion", splitValues[1]);
 
       - uses: liquibase-github-actions/drop-all@v4.17.2
         with:
@@ -30,14 +71,37 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_URL}}"
 
-      - name: Azure SQL DB Test Run
+      - uses: liquibase-github-actions/drop-all@v4.17.2
+        with:
+          url: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_AZURE_MYSQL_URL) }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/azure"
+          changeLogFile: "mysql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_AZURE_MYSQL_URL) }}"
+
+      - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=mssql -Dprefix=azure -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_URL}}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{TH_AZURE_MYSQL_URL}}' test
 
-      - name: Archive Azure Sql Database Test Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: azure-sqldb-test-results
-          path: build/spock-reports
+      - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_URL}}' test
+
+      - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
+          uses: actions/upload-artifact@v3
+          with:
+            name: aws-rds-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
+            path: build/spock-reports
 

@@ -52,6 +52,13 @@ databasesUnderTest:
     password: PASSWORD
 
   - name: mysql
+    prefix: azure
+    version: 5.7
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mysql
     prefix: aurora
     version: aurora
     url: DBENDPOINT
