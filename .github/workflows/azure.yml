@@ -55,6 +55,25 @@ jobs:
       - name: Install Dependencies
         run: lpm update && lpm add mysql
 
+      - name: Clean Azure MySQL Database
+        uses: liquibase-github-actions/drop-all@v4.17.2
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
+        with:
+          url: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_AZURE_MYSQL_URL) }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - name: Init Azure MySQL Database
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/azure"
+          changeLogFile: "mysql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_AZURE_MYSQL_URL) }}"
   test:
     needs: [setup]
     runs-on: ubuntu-latest
@@ -93,24 +112,6 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_URL}}"
-
-      - uses: liquibase-github-actions/drop-all@v4.17.2
-        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
-        with:
-          url: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_AZURE_MYSQL_URL) }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/azure"
-          changeLogFile: "mysql.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_AZURE_MYSQL_URL) }}"
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
