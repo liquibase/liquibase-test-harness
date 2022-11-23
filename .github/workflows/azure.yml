@@ -46,7 +46,6 @@ jobs:
         include:
           - database: mysql
             version: 5.7
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -57,7 +56,7 @@ jobs:
 
       - name: Clean Azure MySQL Database
         uses: liquibase-github-actions/drop-all@v4.17.2
-        if: ${{ matrix.version == 'mysql' }}
+        if: ${{ matrix.database == 'mysql' }}
         with:
           url: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_AZURE_MYSQL_URL) }}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -66,7 +65,7 @@ jobs:
 
       - name: Init Azure MySQL Database
         uses: liquibase/liquibase-github-action@v7
-        if: ${{ matrix.version == 'mysql' }}
+        if: ${{ matrix.database == 'mysql' }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/azure"
