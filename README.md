@@ -13,6 +13,8 @@
 | AWS MySQL                 | `8`                                   |
 | AWS MariaDB               | `10.6`                                |
 | AWS SQL Server            | `2019`                                |
+| Azure SQL DB              | `latest`                              |
+| Azure SQL MI              | `latest`                              |
 | MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
 | Postgres                  | `9, 9.5, 10, 11, 12, 13, 14, 15`      |
 | MySQL                     | `5.6, 5.7, 8`                         |
@@ -29,8 +31,6 @@
 | Firebird                  | `3.0, 4.0`                            |
 | HSQLDB                    | `2.4, 2.5`                            |
 | Snowflake                 | `latest`                              |
-| Azure SQL DB              | `latest`                              |
-| Azure SQL MI              | `latest`                              |
 
 ## Framework
 
