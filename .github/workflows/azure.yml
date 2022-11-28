@@ -21,14 +21,14 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"mysql:5.7\",\"mssql:azure\"]"
+        default: "[\"mysql:azure\",\"mssql:azure\"]"
 
 jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["mysql:5.7","mssql:azure"]' }}
+      databases: ${{ github.event.inputs.databases || '["mysql:azure","mssql:azure"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
@@ -45,7 +45,7 @@ jobs:
       matrix:
         include:
           - database: mysql
-            version: 5.7
+            version: azure
     steps:
       - name: Checkout
         uses: actions/checkout@v3
