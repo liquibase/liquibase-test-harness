@@ -53,7 +53,7 @@ databasesUnderTest:
 
   - name: mysql
     prefix: azure
-    version: 5.7
+    version: azure
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
