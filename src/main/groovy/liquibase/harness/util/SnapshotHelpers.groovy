@@ -10,12 +10,16 @@ import org.skyscreamer.jsonassert.JSONCompareResult
 import org.skyscreamer.jsonassert.comparator.DefaultComparator
 import org.skyscreamer.jsonassert.comparator.JSONCompareUtil
 
+import java.util.logging.Logger
+
 import static org.skyscreamer.jsonassert.comparator.JSONCompareUtil.getKeys
 import static org.skyscreamer.jsonassert.comparator.JSONCompareUtil.qualify
 
 class SnapshotHelpers {
 
     static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
+//        Logger.getLogger(this.class.name).info("Actual snapshot: " + actual)
+//        Logger.getLogger(this.class.name).info("Verifying that actual snapshot matches specified structure.")
         JSONAssert.assertEquals(expected, actual, new GeneralSnapshotComparator())
     }
 
