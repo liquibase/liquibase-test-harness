@@ -4,7 +4,7 @@
       "liquibase.structure.core.Table": [
         {
           "table": {
-            "name": "123snapshot_test_column"
+            "name": "snapshot_test_column"
           }
         }
       ],

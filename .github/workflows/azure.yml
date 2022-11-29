@@ -59,7 +59,7 @@ jobs:
         if: ${{ matrix.database == 'mysql' }}
         with:
           url: "${{secrets.TH_AZURE_MYSQL_URL}}"
-          username: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_DB_ADMIN) }}"
+          username: "${{ format('{0}@{1}', secrets.TH_DB_ADMIN, secrets.TH_AZURE_MYSQL_FQDN) }}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
@@ -70,7 +70,7 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/azure"
           changeLogFile: "mysql.sql"
-          username: "${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_DB_ADMIN) }}}"
+          username: "${{ format('{0}@{1}', secrets.TH_DB_ADMIN, secrets.TH_AZURE_MYSQL_FQDN) }}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_MYSQL_URL}}"
   test:
@@ -116,7 +116,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ format('{0}@azure-mysql-th.mysql.database.azure.com', secrets.TH_DB_ADMIN) }} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_MYSQL_URL}}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ format('{0}@{1}', secrets.TH_DB_ADMIN, secrets.TH_AZURE_MYSQL_FQDN) }} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_MYSQL_URL}}' test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
