@@ -74,6 +74,9 @@ case $db in
   "mssql-2019" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mssql -DdbVersion=2019 test
     ;;
+  "mssql-2022" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=mssql -DdbVersion=2022 test
+    ;;
   "H2Database-2.1" )
     test_command mvn -ntp -Dtest=$tc -DdbName=h2 test
     ;;
