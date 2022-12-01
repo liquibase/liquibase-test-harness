@@ -70,7 +70,7 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/azure"
           changeLogFile: "mysql.sql"
-          username: "${{secrets.TH_AZURE_MYSQL_FQDN}}"
+          username: "${{ format('{0}@{1}', secrets.TH_DB_ADMIN, secrets.TH_AZURE_MYSQL_FQDN) }}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_MYSQL_URL}}"
   test:
