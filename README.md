@@ -8,7 +8,7 @@
 |---------------------------|---------------------------------------|
 | Aurora MySQL              | `8`                                   |
 | Aurora Postgres           | `14`                                  |
-| AWS Postgres RDS          | `10, 11, 12, 13, 14`                  |
+| AWS Postgres RDS          | `10, 11, 12, 13, 14, 15`                  |
 | AWS Oracle RDS            | `19.0`                                |
 | AWS MySQL                 | `8`                                   |
 | AWS MariaDB               | `10.6`                                |
