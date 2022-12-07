@@ -19,8 +19,11 @@
     <modifySql>
       <append value=" -- append comment"/>
     </modifySql>
-    <modifySql applyToRollback="false">
+    <modifySql dbms="db2-luw,db2-z,derby,firebird,h2,hsqldb,mariadb,mssql,mysql,oracle,percona-xtradb-cluster,snowflake,sqlite" applyToRollback="false">
       <replace replace=", CONSTRAINT PK_cs_guaranteed_delivery PRIMARY KEY (test_id)" with=""/>
+    </modifySql>
+    <modifySql dbms="postgresql,cockroachdb,edb-postgres,edb-edb" applyToRollback="false">
+      <replace replace=", CONSTRAINT &quot;PK_cs_guaranteed_delivery&quot; PRIMARY KEY (test_id)" with=""/>
     </modifySql>
     <modifySql>
       <regExpReplace replace="[0-9]{3}[A-z]+[0-9]{2}" with="comment"/>
