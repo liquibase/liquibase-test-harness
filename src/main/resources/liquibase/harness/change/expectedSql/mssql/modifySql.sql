@@ -1,0 +1,1 @@
+/* prepend comment */ CREATE TABLE test_table (test_id int NOT NULL, test_column varchar(50) NOT NULL) -- append comment
