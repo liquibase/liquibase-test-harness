@@ -46,6 +46,7 @@ class TestUtils {
         }
         commandScope.setOutput(outputStream)
         try {
+            Logger.getLogger(this.class.name).info(String.format("Executing liquibase command: %s ", commandName))
             commandScope.execute()
         } catch (Exception exception) {
             if (exception instanceof CommandExecutionException && exception.toString().contains("is not available in SQL output mode")) {
