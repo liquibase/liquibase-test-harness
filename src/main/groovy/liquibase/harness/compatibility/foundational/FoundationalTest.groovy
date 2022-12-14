@@ -7,6 +7,7 @@ import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.ui.UIService
+import org.junit.Assume
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -46,19 +47,23 @@ class FoundationalTest extends Specification {
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
-        and: "testing generateChangelog command"
+        and: "ignore testcase if it's invalid for this combination of db type and/or version"
+        shouldRunChangeSet = !getResourceContent("/$testInput.sqlChangelogPath").toLowerCase()?.contains("invalid test")
+        Assume.assumeTrue("INFO: Test for $testInput.change is ignored", shouldRunChangeSet)
+
+        and: "testing generateChangelog command for all files format"
         def map = new LinkedHashMap<String, String>()
-        map.put("expectedXmlChangelog", testInput.expectedXmlChangelogPath)
-        map.put("expectedSqlChangelog", testInput.expectedSqlChangelogPath)
-        map.put("expectedYmlChangelog", testInput.expectedYmlChangelogPath)
-        map.put("expectedJsonChangelog", testInput.expectedJsonChangelogPath)
+        map.put("expectedXmlChangelog", testInput.xmlChangelogPath)
+        map.put("expectedSqlChangelog", testInput.sqlChangelogPath)
+        map.put("expectedYmlChangelog", testInput.xmlChangelogPath.replace(".xml", ".yml"))
+        map.put("expectedJsonChangelog", testInput.xmlChangelogPath.replace(".xml", ".json"))
         argsMap.put("excludeObjects", "(?i)posts, (?i)authors")//excluding static test-harness objects from generated changelog
-        String sqlSpecificChangelogFile = null
+        String sqlSpecificChangelogFile
 
         for (Map.Entry<String, String> entry : map.entrySet()) {
 
             when: "execute generateChangelog command using different changelog formats"
-            argsMap.put("changeLogFile", entry.value)
+            argsMap.put("changeLogFile", testInput.xmlChangelogPath)
             executeCommandScope("update", argsMap)
             argsMap.put("changeLogFile", testResourcesPath + entry.value)
             if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
@@ -75,21 +80,21 @@ class FoundationalTest extends Specification {
                 assert generatedChangelog.contains("$testInput.change")
             }
 
-            and: "rollback changes and delete generated changelog files"
-            argsMap.put("changeLogFile", entry.value)
+            and: "rollback changes"
+            argsMap.put("changeLogFile", testInput.xmlChangelogPath)
             strategy.performRollback(argsMap)
         }
 
-        cleanup: "try to rollback in case a test was failed"
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (shouldRunChangeSet) {
-                try {
-                    argsMap.put("changeLogFile", entry.value)
-                    strategy.performRollback(argsMap)
-                } catch (CommandExecutionException exception) {
+        cleanup: "try to rollback in case a test was failed and delete generated changelogs"
+        if (shouldRunChangeSet) {
+            try {
+                argsMap.put("changeLogFile", testInput.xmlChangelogPath)
+                strategy.performRollback(argsMap)
+            } catch (CommandExecutionException exception) {
                 //Ignore exception considering a test was successful
-                }
             }
+        }
+        for (Map.Entry<String, String> entry : map.entrySet()) {
             if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
                 deleteFile(testResourcesPath + sqlSpecificChangelogFile)
             } else {
@@ -101,7 +106,7 @@ class FoundationalTest extends Specification {
         testInput << buildTestInput()
     }
 
-    @Unroll
+    /*@Unroll
     def "apply stress test against #testInput.databaseName #testInput.version"() {
         given: "read input data for stress testing"
         Map<String, Object> argsMap = new HashMap()
@@ -138,7 +143,7 @@ class FoundationalTest extends Specification {
 
         where: "test input in next data table"
         testInput << buildTestInput()
-    }
+    }*/
 
     def cleanupSpec() {
         strategy.cleanupDatabase(databases)

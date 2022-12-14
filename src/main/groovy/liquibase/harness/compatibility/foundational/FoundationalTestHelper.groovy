@@ -15,37 +15,43 @@ class FoundationalTestHelper {
     final static UIService uiService = Scope.getCurrentScope().getUI()
 
     static List<TestInput> buildTestInput() {
+        String commandLineChanges = System.getProperty("change")
+        List commandLineChangesList = Collections.emptyList()
+        if (commandLineChanges) {
+            commandLineChangesList = Arrays.asList(commandLineChanges.contains(",")
+                    ? commandLineChanges.split(",")
+                    : commandLineChanges)
+        }
+
         List<TestInput> inputList = new ArrayList<>()
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
             for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                    "stress/setup", "xml").entrySet()) {
-                inputList.add(TestInput.builder()
-                        .databaseName(databaseUnderTest.name)
-                        .url(databaseUnderTest.url)
-                        .dbSchema(databaseUnderTest.dbSchema)
-                        .username(databaseUnderTest.username)
-                        .password(databaseUnderTest.password)
-                        .version(databaseUnderTest.version)
-                        .setupChangelogPath(changeLogEntry.value)
-                        .insertChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                "stress/insert", "xml").get(changeLogEntry.key))
-                        .updateChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                "stress/update", "xml").get(changeLogEntry.key))
-                        .selectChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                "stress/select", "xml").get(changeLogEntry.key))
-                        .expectedXmlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                "expectedChangeLog", "xml").get(changeLogEntry.key))
-                        .expectedSqlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                "expectedChangeLog", "sql").get(changeLogEntry.key))
-                        .expectedYmlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                "expectedChangeLog", "yml").get(changeLogEntry.key))
-                        .expectedJsonChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                "expectedChangeLog", "json").get(changeLogEntry.key))
-                        .change(changeLogEntry.key)
-                        .database(databaseUnderTest.database)
-                        .build())
+                    "expectedChangeLog", "sql").entrySet()) {
+                if (!commandLineChangesList || commandLineChangesList.contains(changeLogEntry.key)) {
+                    inputList.add(TestInput.builder()
+                            .databaseName(databaseUnderTest.name)
+                            .url(databaseUnderTest.url)
+                            .dbSchema(databaseUnderTest.dbSchema)
+                            .username(databaseUnderTest.username)
+                            .password(databaseUnderTest.password)
+                            .version(databaseUnderTest.version)
+                            .setupChangelogPath(changeLogEntry.value)
+                            .insertChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "stress/insert", "xml").get(changeLogEntry.key))
+                            .updateChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "stress/update", "xml").get(changeLogEntry.key))
+                            .selectChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "stress/select", "xml").get(changeLogEntry.key))
+                            .xmlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "expectedChangeLog", "xml").get(changeLogEntry.key))
+                            .sqlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "expectedChangeLog", "sql").get(changeLogEntry.key))
+                            .change(changeLogEntry.key)
+                            .database(databaseUnderTest.database)
+                            .build())
+                }
             }
         }
         return inputList
@@ -78,10 +84,8 @@ class FoundationalTestHelper {
         String insertChangelogPath
         String updateChangelogPath
         String selectChangelogPath
-        String expectedXmlChangelogPath
-        String expectedSqlChangelogPath
-        String expectedYmlChangelogPath
-        String expectedJsonChangelogPath
+        String xmlChangelogPath
+        String sqlChangelogPath
         String dbSchema
         String change
         Database database
