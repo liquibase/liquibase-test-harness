@@ -21,14 +21,14 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"mysql:azure\",\"mssql:azure\"]"
+        default: "[\"mysql:azure\",\"mssql:azure\", \"postgres:azure\"]"
 
 jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["mysql:azure","mssql:azure"]' }}
+      databases: ${{ github.event.inputs.databases || '["mysql:azure","mssql:azure"]' || '["mysql:azure","postgres:azure"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
@@ -112,6 +112,24 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_URL}}"
 
+      - uses: liquibase-github-actions/drop-all@v4.17.2
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgres' }}
+        with:
+          url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
+          username: "${{ format('{0}@{1}', secrets.TH_DB_ADMIN, secrets.TH_AZURE_POSTGRESQL_FQDN) }}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgres' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/azure"
+          changeLogFile: "postgresql.sql"
+          username: "${{ format('{0}@{1}', secrets.TH_DB_ADMIN, secrets.TH_AZURE_POSTGRESQL_FQDN) }}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
+
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
         env:
@@ -123,6 +141,12 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_URL}}' test
+
+      - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgres' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=azure -DdbUsername=${{ format('{0}@{1}', secrets.TH_DB_ADMIN, secrets.TH_AZURE_POSTGRESQL_FQDN) }} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_POSTGRESQL_URL}}' test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@v3
