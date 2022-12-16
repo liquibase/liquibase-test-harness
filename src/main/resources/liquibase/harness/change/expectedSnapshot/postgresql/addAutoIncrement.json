@@ -1,0 +1,25 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "autoincrement_test"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "autoIncrementInformation": {
+              "incrementBy": "2\\!\\{java.math.BigInteger\\}",
+              "startWith": "100\\!\\{java.math.BigInteger\\}"
+            },
+            "name": "intColumn",
+            "nullable": false
+          }
+        }
+      ]
+    }
+  }
+}

@@ -32,7 +32,7 @@ databasesUnderTest:
 
   - name: mariadb
     prefix: aws
-    version: 10.6
+    version: aws_10.6
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
@@ -47,6 +47,13 @@ databasesUnderTest:
   - name: mssql
     prefix: aws
     version: 2019
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mysql
+    prefix: azure
+    version: azure
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
