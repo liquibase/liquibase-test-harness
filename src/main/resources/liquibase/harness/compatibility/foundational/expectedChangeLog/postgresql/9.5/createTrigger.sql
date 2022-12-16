@@ -8,4 +8,4 @@ AS $function$
             END;
             $function$;
 
-CREATE TRIGGER test_trigger BEFORE INSERT ON "public".posts FOR EACH ROW EXECUTE FUNCTION test_function();
+CREATE TRIGGER test_trigger BEFORE INSERT ON "public".posts FOR EACH ROW EXECUTE PROCEDURE test_function();

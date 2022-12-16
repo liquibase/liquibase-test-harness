@@ -1,1 +1,5 @@
-CREATE VIEW test_view AS select `lbcat`.`authors`.`id` AS `id`,`lbcat`.`authors`.`first_name` AS `first_name`,`lbcat`.`authors`.`last_name` AS `last_name`,`lbcat`.`authors`.`email` AS `email` from `lbcat`.`authors`;
+CREATE VIEW "test_view" AS SELECT authors.id,
+    authors.first_name,
+    authors.last_name,
+    authors.email
+   FROM authors;;
