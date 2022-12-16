@@ -153,6 +153,17 @@ services:
     volumes:
       - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
+  postgres-15:
+    image: postgres:15
+    ports:
+      - "5439:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: LbRootPass1
+      POSTGRES_DB: lbcat
+    volumes:
+      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
+
   mariadb-10.2:
     image: mariadb:10.2
     ports:
@@ -255,6 +266,25 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-latest
     ports:
       - "1434:1433"
+    environment:
+      SA_PASSWORD: "LiquibasePass1"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - "./mssql-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
+      - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
+    entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$${SA_PASSWORD}" -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  mssql-2022:
+    container_name: sql-server-db-2022
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1435:1433"
     environment:
       SA_PASSWORD: "LiquibasePass1"
       ACCEPT_EULA: "Y"

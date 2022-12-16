@@ -47,6 +47,9 @@ case $db in
   "postgres-14" )
     test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=14 test
     ;;
+  "postgres-15" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=15 test
+    ;;
   "mariadb-10.2" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mariadb -DdbVersion=10.2 test
     ;;
@@ -70,6 +73,9 @@ case $db in
     ;;
   "mssql-2019" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mssql -DdbVersion=2019 test
+    ;;
+  "mssql-2022" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=mssql -DdbVersion=2022 test
     ;;
   "H2Database-2.1" )
     test_command mvn -ntp -Dtest=$tc -DdbName=h2 test

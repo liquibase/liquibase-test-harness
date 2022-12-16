@@ -19,7 +19,9 @@
             <column name="id" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="test_column" type="INT"/>
+            <column name="test_column" type="INT">
+                <constraints nullable="false" unique="true"/>
+            </column>
         </createTable>
         <rollback>
             <dropTable tableName="test_table_reference"/>

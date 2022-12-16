@@ -4,6 +4,13 @@ context: testContext
 databasesUnderTest:
   - name: postgresql
     prefix: docker
+    version: 15
+    url: jdbc:postgresql://localhost:5439/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
+    prefix: docker
     version: 14
     url: jdbc:postgresql://localhost:5438/lbcat
     username: lbuser
@@ -183,6 +190,13 @@ databasesUnderTest:
     prefix: docker
     version: 2019
     url: jdbc:sqlserver://localhost:1434;trustServerCertificate=true;databaseName=lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mssql
+    prefix: docker
+    version: 2022
+    url: jdbc:sqlserver://localhost:1435;trustServerCertificate=true;databaseName=lbcat
     username: lbuser
     password: LiquibasePass1
 
