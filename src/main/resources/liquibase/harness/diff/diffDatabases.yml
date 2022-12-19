@@ -10,6 +10,21 @@ references:
     referenceDatabaseName: mysql
     referenceDatabaseVersion: 8
 
+  - targetDatabaseName: oracle
+    targetDatabaseVersion: 18.3.0
+    referenceDatabaseName: oracle
+    referenceDatabaseVersion: 18.4.0
+
+  - targetDatabaseName: oracle
+    targetDatabaseVersion: 18.4.0
+    referenceDatabaseName: oracle
+    referenceDatabaseVersion: 21.3.0
+
+  - targetDatabaseName: oracle
+    targetDatabaseVersion: 21.3.0
+    referenceDatabaseName: oracle
+    referenceDatabaseVersion: 18.4.0
+
   - targetDatabaseName: postgresql
     targetDatabaseVersion: 13
     referenceDatabaseName: postgresql
