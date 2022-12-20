@@ -2,30 +2,32 @@ package liquibase.harness.compatibility.foundational
 
 import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
-import liquibase.exception.CommandExecutionException
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
-import liquibase.ui.UIService
-import org.junit.Assume
+import org.json.JSONArray
+import org.json.JSONObject
+import org.junit.Assert
+import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.ResultSet
+import java.sql.SQLException
 
-import static FoundationalTestHelper.*
-import static liquibase.harness.util.TestUtils.*
 import static liquibase.harness.util.FileUtils.*
+import static liquibase.harness.util.JSONUtils.*
+import static liquibase.harness.util.TestUtils.*
+import static FoundationalTestHelper.*
 
+@Unroll
 class FoundationalTest extends Specification {
     @Shared
     RollbackStrategy strategy
     @Shared
     List<DatabaseUnderTest> databases
-    @Shared
-    UIService uiService = Scope.getCurrentScope().getUI()
-    String testResourcesPath = System.getProperty("user.dir") + "/src/test/resources/"
-    long timeMillisBeforeTest
-    long timeMillisAfterTest
 
     def setupSpec() {
         databases = TestConfig.instance.getFilteredDatabasesUnderTest()
@@ -33,117 +35,135 @@ class FoundationalTest extends Specification {
         strategy.prepareForRollback(databases)
     }
 
-    @Unroll
-    def "apply generateChangelog test for #testInput.change against #testInput.databaseName #testInput.version"() {
-        given: "read input data for generateChangelog test"
+    def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
+        given: "read input data"
+        String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
+                "liquibase/harness/compatibility/basic/expectedResultSet")
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
+
+        String basePath = "liquibase/harness/compatibility/basic/"
+        ArrayList<String> changelogList = new ArrayList<>()
+        changelogList.add("${basePath}changelogs/${testInput.change}.xml")
+        changelogList.add("${basePath}changelogs/${testInput.change}.yml")
+        changelogList.add("${basePath}changelogs/${testInput.change}.json")
+        changelogList.add("${basePath}changelogs/${testInput.change}.sql")
+
+        ArrayList<String> checkingSqlList = new ArrayList<>()
+        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Xml.sql"))
+        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Yaml.sql"))
+        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Json.sql"))
+        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Sql.sql"))
+
         boolean shouldRunChangeSet
+
+        and: "fail test if expectedResultSet is not provided"
+        shouldRunChangeSet = expectedResultSet != null
+        assert shouldRunChangeSet: "No expectedResultSet for ${testInput.change} against " +
+                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
+                "${testInput.database.databaseMinorVersion}"
 
         and: "check database under test is online"
         def connection = testInput.database.getConnection()
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
-        and: "ignore testcase if it's invalid for this combination of db type and/or version"
-        shouldRunChangeSet = !getResourceContent("/$testInput.sqlChangelogPath").toLowerCase()?.contains("invalid test")
-        Assume.assumeTrue("INFO: Test for $testInput.change is ignored", shouldRunChangeSet)
+        and: "execute Liquibase validate command to ensure a chagelog is valid"
+        for (int i = 0; i < changelogList.size(); i++) {
+            argsMap.put("changeLogFile", changelogList.get(i))
+            executeCommandScope("validate", argsMap)
+        }
+        //Doesn't work for sql-formatted changelogs. https://github.com/liquibase/liquibase/issues/1675 , https://github.com/liquibase/liquibase/issues/1118
 
-        and: "testing generateChangelog command for all files format"
-        def map = new LinkedHashMap<String, String>()
-        map.put("expectedXmlChangelog", testInput.xmlChangelogPath)
-        map.put("expectedSqlChangelog", testInput.sqlChangelogPath)
-        map.put("expectedYmlChangelog", testInput.xmlChangelogPath.replace(".xml", ".yml"))
-        map.put("expectedJsonChangelog", testInput.xmlChangelogPath.replace(".xml", ".json"))
-        argsMap.put("excludeObjects", "(?i)posts, (?i)authors")//excluding static test-harness objects from generated changelog
-        String sqlSpecificChangelogFile
-
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-
-            when: "execute generateChangelog command using different changelog formats"
-            argsMap.put("changeLogFile", testInput.xmlChangelogPath)
+        when: "execute XML, YAML, SQL and JSON formatted changelogs using liquibase update command"
+        for (int i = 0; i < changelogList.size(); i++) {
+            argsMap.put("changeLogFile", changelogList.get(i))
             executeCommandScope("update", argsMap)
-            argsMap.put("changeLogFile", testResourcesPath + entry.value)
-            if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
-                sqlSpecificChangelogFile = entry.value.replace(".sql", ".$testInput.databaseName" + ".sql")
-                argsMap.put("changeLogFile", testResourcesPath + sqlSpecificChangelogFile)
-            }
-            executeCommandScope("generateChangelog", argsMap, testInput.databaseName)
-
-            then: "check if a changelog was actually generated and validate it's content"
-            String generatedChangelog = readFile((String) argsMap.get("changeLogFile"))
-            if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
-                validateSqlChangelog(getResourceContent("/$entry.value"), generatedChangelog)
-            } else {
-                assert generatedChangelog.contains("$testInput.change")
-            }
-
-            and: "rollback changes"
-            argsMap.put("changeLogFile", testInput.xmlChangelogPath)
-            strategy.performRollback(argsMap)
         }
 
-        cleanup: "try to rollback in case a test was failed and delete generated changelogs"
-        if (shouldRunChangeSet) {
+        and: "execute Liquibase tag command. Tagging last row of DATABASECHANGELOG table (SQL-formatted changelog)"
+        argsMap.remove("changeLogFile")
+        argsMap.put("tag", "test_tag")
+        executeCommandScope("tag", argsMap)
+        //Doesn't work properly for SQLite https://github.com/liquibase/liquibase/issues/3304
+
+        and: "execute Liquibase history command"
+        executeCommandScope("history", argsMap)
+
+        and: "execute Liquibase status command"
+        for (int i = 0; i < changelogList.size(); i++) {
+            argsMap.put("changeLogFile", changelogList.get(i))
+            assert executeCommandScope("status", argsMap).toString().contains("is up to date")
+        }
+
+        then: "execute metadata checking sql, obtain result set, compare it to expected result set"
+        JSONArray generatedResultSetArray
+        Connection newConnection
+        try {
+            ResultSet resultSet
+            if (shouldOpenNewConnection(connection, "sqlite")) {
+                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
+            } else {
+                resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
+                connection.autoCommit ?: connection.commit()
+            }
+            generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+
+            def expectedResultSetArray = new JSONObject(expectedResultSet).getJSONArray(testInput.change)
+            assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.LENIENT)
+        } catch (Exception exception) {
+            Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.printStackTrace())
+            Assert.fail exception.message
+        } finally {
+            newConnection == null ?: newConnection.close()
+
+        }
+
+        and: "check for actual presence of created object"
+        for (int i = 0; i < checkingSqlList.size(); i++) {
             try {
-                argsMap.put("changeLogFile", testInput.xmlChangelogPath)
-                strategy.performRollback(argsMap)
-            } catch (CommandExecutionException exception) {
-                //Ignore exception considering a test was successful
+                executeQuery(checkingSqlList.get(i), testInput)
+            } catch (SQLException sqlException) {
+                // Assume test object was not created after 'update' command execution and test failed.
+                Scope.getCurrentScope().getUI().sendMessage("Error executing test table checking sql! " +
+                        sqlException.printStackTrace())
+                Assert.fail sqlException.message
             }
         }
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
-                deleteFile(testResourcesPath + sqlSpecificChangelogFile)
-            } else {
-                deleteFile(testResourcesPath + entry.value)
+
+        cleanup: "rollback changes if we ran changeSet"
+        if (shouldRunChangeSet) {
+            for (int i = 0; i < changelogList.size(); i++) {//TODO rethink rollback logic to do it only once
+                argsMap.put("changeLogFile", changelogList.get(i))
+                strategy.performRollback(argsMap)
+            }
+        }
+
+        and: "check for actual absence of the object removed after 'rollback' command execution"
+        if (shouldRunChangeSet) {
+            for (int i = 0; i < checkingSqlList.size(); i++) {
+                try {
+                    ResultSet resultSet = executeQuery(checkingSqlList.get(i), testInput)
+                    if (resultSet.next()) {
+                        Scope.getCurrentScope().getUI().sendMessage("ERROR!: Rollback was not successful! " +
+                                "The object was not removed after 'rollback' command: " +
+                                resultSet.getMetaData().getTableName(0))
+                        Assert.fail()
+                    }
+                } catch (ignored) {
+                    (connection.isClosed() || connection.autoCommit) ?: connection.commit()
+                    // Assume test object does not exist and 'rollback' was successful. Ignore exception.
+                    Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
+                }
             }
         }
 
         where: "test input in next data table"
         testInput << buildTestInput()
     }
-
-    /*@Unroll
-    def "apply stress test against #testInput.databaseName #testInput.version"() {
-        given: "read input data for stress testing"
-        Map<String, Object> argsMap = new HashMap()
-        argsMap.put("url", testInput.url)
-        argsMap.put("username", testInput.username)
-        argsMap.put("password", testInput.password)
-        boolean shouldRunChangeSet
-
-        and: "check database under test is online"
-        def connection = testInput.database.getConnection()
-        shouldRunChangeSet = connection instanceof JdbcConnection
-        assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
-
-        and: "executing stress test with queries for 10000 rows"
-        def map = new LinkedHashMap<String, String>()
-        map.put("setup", testInput.setupChangelogPath)
-        map.put("insert", testInput.insertChangelogPath)
-        map.put("update", testInput.updateChangelogPath)
-        map.put("select", testInput.selectChangelogPath)
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            timeMillisBeforeTest = System.currentTimeMillis()
-            uiService.sendMessage("Executing $entry.key query: 10000 rows!")
-            argsMap.put("changeLogFile", entry.value)
-            executeCommandScope("update", argsMap)
-            timeMillisAfterTest = System.currentTimeMillis()
-            uiService.sendMessage("Execution time for $entry.key query: " + (timeMillisAfterTest - timeMillisBeforeTest) / 1000 + "s")
-        }
-
-        cleanup: "rollback changes if we ran changeSet"
-        if (shouldRunChangeSet) {
-            argsMap.put("changeLogFile", testInput.setupChangelogPath)
-            strategy.performRollback(argsMap)
-        }
-
-        where: "test input in next data table"
-        testInput << buildTestInput()
-    }*/
 
     def cleanupSpec() {
         strategy.cleanupDatabase(databases)
