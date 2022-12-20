@@ -30,6 +30,7 @@ on:
         options:
           - LiquibaseHarnessSuiteTest
           - CompatibilityHarnessSuiteTest
+          - AdvancedHarnessSuiteTest
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
