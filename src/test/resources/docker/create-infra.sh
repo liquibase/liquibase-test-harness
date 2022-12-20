@@ -20,7 +20,7 @@ case $db in
     ;;
 
   "diff")
-    docker-compose up -d postgres-14 postgres-13 mysql-5.7 mysql-8
+    docker-compose up -d postgres-14 postgres-13 postgres-11 postgres-12 postgres-10 mysql-5.7 mysql-8 mariadb-10.2 mariadb-10.3 mariadb-10.4 mariadb-10.5 mariadb-10.6 mariadb-10.7 mssql-2017 mssql-2019 mssql-2022
     ;;
 
   # crdb also has an init container

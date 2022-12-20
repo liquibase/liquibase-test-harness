@@ -38,13 +38,13 @@ class FoundationalTest extends Specification {
     def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/compatibility/basic/expectedResultSet")
+                "liquibase/harness/compatibility/foundational/expectedResultSet")
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
 
-        String basePath = "liquibase/harness/compatibility/basic/"
+        String basePath = "liquibase/harness/compatibility/foundational/"
         ArrayList<String> changelogList = new ArrayList<>()
         changelogList.add("${basePath}changelogs/${testInput.change}.xml")
         changelogList.add("${basePath}changelogs/${testInput.change}.yml")

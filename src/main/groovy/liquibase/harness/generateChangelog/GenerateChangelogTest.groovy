@@ -1,4 +1,4 @@
-package liquibase.harness.compatibility.generateChangelog
+package liquibase.harness.generateChangelog
 
 import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection

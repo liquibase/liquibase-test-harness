@@ -1,4 +1,4 @@
-package liquibase.harness.compatibility.generateChangelog
+package liquibase.harness.generateChangelog
 
 import groovy.transform.ToString
 import groovy.transform.builder.Builder
@@ -11,7 +11,7 @@ import liquibase.harness.util.FileUtils
 import liquibase.ui.UIService
 
 class GenerateChangelogTestHelper {
-    final static String baseChangelogPath = "liquibase/harness/compatibility/foundational/"
+    final static String baseChangelogPath = "liquibase/harness/generateChangelog/"
     final static UIService uiService = Scope.getCurrentScope().getUI()
 
     static List<TestInput> buildTestInput() {

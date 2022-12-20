@@ -17,7 +17,7 @@ import java.sql.SQLException
 
 class FoundationalTestHelper {
 
-    final static String baseChangelogPath = "liquibase/harness/compatibility/basic/changelogs"
+    final static String baseChangelogPath = "liquibase/harness/compatibility/foundational/changelogs"
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
 
     static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
