@@ -8,6 +8,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses([GenerateChangelogTest, SnapshotObjectTests, DiffCommandTest])
+@Suite.SuiteClasses([GenerateChangelogTest, SnapshotObjectTests])
 abstract class AdvancedHarnessSuite {
 }
