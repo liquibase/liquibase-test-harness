@@ -70,7 +70,7 @@ class FoundationalTest extends Specification {
                 sqlSpecificChangelogFile = entry.value.replace(".sql", ".$testInput.databaseName" + ".sql")
                 argsMap.put("changeLogFile", testResourcesPath + sqlSpecificChangelogFile)
             }
-            executeCommandScope("generateChangelog", argsMap)
+            executeCommandScope("generateChangelog", argsMap, testInput.databaseName)
 
             then: "check if a changelog was actually generated and validate it's content"
             String generatedChangelog = readFile((String) argsMap.get("changeLogFile"))
