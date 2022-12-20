@@ -5,10 +5,10 @@
 ---
 references:
 
-#  - targetDatabaseName: mysql
-#    targetDatabaseVersion: 5.7
-#    referenceDatabaseName: mysql
-#    referenceDatabaseVersion: 8
+  - targetDatabaseName: mysql
+    targetDatabaseVersion: 5.7
+    referenceDatabaseName: mysql
+    referenceDatabaseVersion: 8
 
 #  - targetDatabaseName: oracle
 #    targetDatabaseVersion: 18.3.0
@@ -25,10 +25,10 @@ references:
 #    referenceDatabaseName: oracle
 #    referenceDatabaseVersion: 18.4.0
 
-#  - targetDatabaseName: postgresql
-#    targetDatabaseVersion: 13
-#    referenceDatabaseName: postgresql
-#    referenceDatabaseVersion: 14
+  - targetDatabaseName: postgresql
+    targetDatabaseVersion: 13
+    referenceDatabaseName: postgresql
+    referenceDatabaseVersion: 14
 #
 #  - targetDatabaseName: postgresql
 #    targetDatabaseVersion: 11
@@ -65,7 +65,7 @@ references:
 #    referenceDatabaseName: mssql
 #    referenceDatabaseVersion: 2022
 
-  - targetDatabaseName: mssql
-    targetDatabaseVersion: 2022
-    referenceDatabaseName: mssql
-    referenceDatabaseVersion: 2019
+#  - targetDatabaseName: mssql
+#    targetDatabaseVersion: 2022
+#    referenceDatabaseName: mssql
+#    referenceDatabaseVersion: 2019
