@@ -106,7 +106,7 @@ class GenerateChangelogTest extends Specification {
         testInput << buildTestInput()
     }
 
-    /*@Unroll
+    @Unroll
     def "apply stress test against #testInput.databaseName #testInput.version"() {
         given: "read input data for stress testing"
         Map<String, Object> argsMap = new HashMap()
@@ -143,7 +143,7 @@ class GenerateChangelogTest extends Specification {
 
         where: "test input in next data table"
         testInput << buildTestInput()
-    }*/
+    }
 
     def cleanupSpec() {
         strategy.cleanupDatabase(databases)
