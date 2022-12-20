@@ -1,5 +1,5 @@
-Reference Database: lbuser@172.20.0.1 @ jdbc:mysql://localhost:33061/lbcat (Default Schema: lbcat)
-Comparison Database: lbuser@172.20.0.1 @ jdbc:mysql://localhost:33062/lbcat (Default Schema: lbcat)
+Reference Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33061/lbcat (Default Schema: lbcat)
+Comparison Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33062/lbcat (Default Schema: lbcat)
 Compared Schemas: lbcat
 Product Name: EQUAL
 Product Version:
