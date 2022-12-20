@@ -4,7 +4,7 @@ Compared Schemas: public
 Product Name: EQUAL
 Product Version:
      Reference:   '14.6 (Debian 14.6-1.pgdg110+1)'
-     Target: '10.20 (Debian 10.20-1.pgdg90+1)'
+     Target: '10.21(Debian10.21-1.pgdg90+1)'
 Missing Catalog(s): NONE
 Unexpected Catalog(s): NONE
 Changed Catalog(s): NONE
