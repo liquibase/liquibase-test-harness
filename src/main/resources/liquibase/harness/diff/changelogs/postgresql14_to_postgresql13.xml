@@ -14,10 +14,8 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
         </createTable>
-        <rollback>
-            <dropTable tableName="test_table_base"/>
-        </rollback>
     </changeSet>
+
     <changeSet id="2" author="as">
         <createTable tableName="test_table_reference">
             <column name="id" type="INT">
@@ -27,15 +25,8 @@
                 <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
-        <rollback>
-            <dropTable tableName="test_table_reference"/>
-        </rollback>
     </changeSet>
-    <changeSet id="3" author="as">
-        <createIndex tableName="test_table_reference" indexName="test_table_reference_index">
-            <column name="test_column"/>
-        </createIndex>
-    </changeSet>
+
     <changeSet id="4" author="as">
         <addForeignKeyConstraint  baseColumnNames="id"
           baseTableName="test_table_base"
@@ -64,26 +55,6 @@
             <column name="intColumn" type="int" valueNumeric="5"/>
             <column name="dateColumn" type="date" valueDate="2020-09-21"/>
         </addColumn>
-    </changeSet>
-
-    <!--          INDEX         -->
-    <changeSet id="7" author="as">
-        <createTable tableName="test_table_for_index">
-            <column name="id" type="INT"/>
-        </createTable>
-        <rollback>
-            <dropTable tableName="test_table_for_index"/>
-        </rollback>
-    </changeSet>
-
-    <changeSet id="8" author="as">
-        <createIndex indexName="idx_first_name" tableName="test_table_for_index">
-            <column name="id"/>
-        </createIndex>
-        <rollback>
-            <dropIndex tableName="test_table_for_index"
-              indexName="idx_first_name"/>
-        </rollback>
     </changeSet>
 
     <!--          SEQUENCE          -->
