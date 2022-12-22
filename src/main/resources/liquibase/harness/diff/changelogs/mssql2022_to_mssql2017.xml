@@ -4,6 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <!--          FOREIGN KEY CONSTRAINT            -->
     <changeSet id="1" author="as" labels="ref">
         <createTable tableName="test_table_base">
             <column name="id" type="INT">
@@ -78,6 +79,7 @@
         </rollback>
     </changeSet>
 
+    <!--          UNIQUE CONSTRAINT          -->
     <changeSet id="9" author="as">
         <addUniqueConstraint columnNames="id"
           constraintName="test_unique_constraint"
@@ -91,6 +93,7 @@
         </rollback>
     </changeSet>
 
+    <!--          SEQUENCE          -->
     <changeSet id="10" author="as">
         <createSequence incrementBy="1"
           minValue="1"
@@ -101,6 +104,7 @@
         </rollback>
     </changeSet>
 
+    <!--          VIEW          -->
     <changeSet id="11" author="as">
         <createView viewName="test_view">
             select * from test_table_reference
