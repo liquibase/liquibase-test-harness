@@ -73,6 +73,10 @@ class ChangeDataTestHelper {
         }
     }
 
+    static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
+        return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
+    }
+
     @Builder
     @ToString(includeNames=true, includeFields=true, includePackage = false, excludes ='database,password')
     static class TestInput {
@@ -86,9 +90,5 @@ class ChangeDataTestHelper {
         String changeData
         String pathToChangeLogFile
         Database database
-    }
-
-    static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
-        return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
     }
 }

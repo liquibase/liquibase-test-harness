@@ -1,0 +1,26 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "default_tablespace": true,
+            "name": "SNAPSHOT_TEST_TABLE",
+            "tablespace": "USERS"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "SNAPSHOT_TEST_COLUMN",
+            "nullable": true,
+            "type": {
+              "typeName": "NUMBER"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

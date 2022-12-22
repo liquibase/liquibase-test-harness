@@ -1,0 +1,30 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "as",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "test_table_json",
+              "columns": [
+                {
+                  "column": {
+                    "name": "test_column",
+                    "type": "INT"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "sql": "DROP TABLE test_table_json"
+          }
+        ]
+      }
+    }
+  ]
+}

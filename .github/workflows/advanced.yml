@@ -1,0 +1,229 @@
+# Advanced test workflow with Actions
+
+name: Advanced Test Execution
+on:
+  schedule:
+    - cron: '0 6 * * *' # Execute every day at noon
+  workflow_dispatch:
+    inputs:
+      runDescription:
+        description: 'Description of run'
+        required: false
+      runDetails:
+        description: 'JSON details of run. Provided by automation'
+        required: false
+      liquibaseBranch:
+        description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
+        required: false
+      ignoreLiquibaseSnapshot:
+        type: boolean
+        description: Don't autoconfigure Liquibase Snapshot
+      liquibaseRepo:
+        description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibase/liquibase-pro
+        required: true
+        default: "liquibase/liquibase"
+      databases:
+        description: Databases to start up. Comma separated list of "name"
+        required: true
+        default: "[\"mysql-5.6\",\"mysql-5.7\",\"mysql-8\",\"postgres-9.5\",\"postgres-9\",\"postgres-10\",
+        \"postgres-11\",\"postgres-12\",\"postgres-13\",\"postgres-14\",\"postgres-15\",\"mariadb-10.2\",\"mariadb-10.3\",\"mariadb-10.4\",\"mariadb-10.5\",\"mariadb-10.6\",
+        \"mariadb-10.7\",\"mssql-2017\",\"mssql-2019\",\"mssql-2022\",\"diff\"]"
+
+jobs:
+  check_build_safety:
+    name: Check if Build should be done
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Emit failure code if unsafe
+        if: github.event.pull_request && github.event.pull_request.head.repo.full_name != 'liquibase/liquibase-test-harness'
+        run: |
+          echo "PR from Fork is NOT safe to build"
+          exit 1
+
+  setup:
+    name: Setup
+    needs: check_build_safety
+    runs-on: ubuntu-22.04
+    outputs:
+      useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
+      liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
+      liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
+      databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","postgres-9.5",
+        "postgres-9","postgres-10","postgres-11","postgres-12","postgres-13","postgres-14","postgres-15","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
+        "mariadb-10.7","mssql-2017","mssql-2019","mssql-2022","diff"]' }}
+      testClasses: ${{ 'AdvancedHarnessSuiteTest' }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure Build
+        id: configure-build
+        uses: actions/github-script@v6.3.3
+        with:
+          github-token: ${{ secrets.BOT_TOKEN }}
+          script: |
+            const helper = require('./.github/util/workflow-helper.js')({github, context});
+
+            let testBranchName = helper.getCurrentBranch();
+            console.log("Running in liquibase-test-harness branch " + testBranchName);
+            core.notice("Running in liquibase-test-harness branch " + testBranchName);
+
+            let useLiquibaseSnapshot = testBranchName !== "main"
+            if ("${{ github.event.pull_request.base.ref }}" !== "") {
+              useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
+            }
+            if (${{ inputs.ignoreLiquibaseSnapshot == true }}) {
+              useLiquibaseSnapshot = false
+            }
+
+            console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
+            core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
+
+            console.log("liquibaseBranch == " + "${{ github.event.inputs.liquibaseBranch }}");
+            core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
+
+            console.log("liquibaseRepo == " + "${{ github.event.inputs.liquibaseRepo }}");
+            core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseRepo }}" || "liquibase/liquibase");
+
+            let runDescription = "${{ github.event.inputs.runDescription }}";
+            if (!runDescription) {
+                runDescription = "None given";
+            }
+            core.notice("Run Description: " + runDescription);
+
+            let runDetails = null;
+            if (context.payload && context.payload.inputs && context.payload.inputs.runDetails) {
+                runDetails = JSON.parse(context.payload.inputs.runDetails);
+            }
+            if (!runDetails) {
+              runDetails = {};
+
+            }            
+            if (runDetails.notices) {
+                for (let notice of runDetails.notices) {
+                    core.notice(notice);
+                }
+            }
+
+      - name: Install Snapshot Liquibase
+        if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+          mvn -B liquibase-sdk:install-snapshot \
+            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
+            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
+
+          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
+          echo "::notice :: Installed Snapshot Liquibase $buildOverview"
+          
+          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase-pro')"
+          echo "::notice :: Installed Snapshot Liquibase-pro $buildOverview"
+
+          mvn -B liquibase-sdk:set-commit-status \
+            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \
+            "-Dliquibase.sdk.status.context=Run Test Harness" \
+            "-Dliquibase.sdk.status.state=PENDING" \
+            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
+            "-Dliquibase.sdk.status.description=Internal functional tests" \
+            "-Dliquibase.sdk.status.commit=installed"
+
+      - name: Cache installed Liquibase
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository/org/liquibase/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+
+  test:
+    runs-on: ubuntu-20.04
+    needs: [ setup ]
+    strategy:
+      fail-fast: false
+      matrix:
+        database: ${{ fromJson(needs.setup.outputs.databases) }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Cache installed Liquibase
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository/org/liquibase/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Build ${{ matrix.database }} test infra
+        working-directory: src/test/resources/docker
+        run: ./create-infra.sh ${{ matrix.database }}
+        env:
+          ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
+          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+
+      - name: Configure Liquibase Version
+        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+
+      - name: ${{ matrix.database }} Test Run
+        run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+
+      - name: Archive ${{ matrix.database }} test results
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: ${{ matrix.database }}-test-results
+          path: build/spock-reports
+
+      # GitHub Actions has its own cleanup and this might be redundant
+      - name: Tear down ${{ matrix.database }} test infra
+        working-directory: src/test/resources/docker
+        run: ./teardown-infra.sh ${{ matrix.database }}
+
+  finish:
+    name: Finish
+    runs-on: ubuntu-22.04
+    needs: [ setup, test ]
+    if: ${{ always() }}
+    steps:
+      - uses: actions/checkout@v3
+        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
+
+      - name: Cache installed Liquibase
+        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository/org/liquibase/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Update status
+        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+
+          mvn -B liquibase-sdk:set-commit-status \
+            "-Dliquibase.sdk.status.commit=installed" \
+            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
+            "-Dliquibase.sdk.status.context=Run Test Harness" \
+            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
+            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
+            "-Dliquibase.sdk.status.description=Internal functional tests"
+          
+          mvn -B liquibase-sdk:set-commit-status \
+            "-Dliquibase.sdk.status.commit=installed" \
+            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
+            "-Dliquibase.sdk.status.context=Run Test Harness" \
+            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
+            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
+            "-Dliquibase.sdk.status.description=Test Harness tests complete"
