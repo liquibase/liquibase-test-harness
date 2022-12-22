@@ -24,16 +24,16 @@ references:
 #    targetDatabaseVersion: 21.3.0
 #    referenceDatabaseName: oracle
 #    referenceDatabaseVersion: 18.4.0
+
+  - targetDatabaseName: postgresql
+    targetDatabaseVersion: 13
+    referenceDatabaseName: postgresql
+    referenceDatabaseVersion: 14
 #
 #  - targetDatabaseName: postgresql
-#    targetDatabaseVersion: 13
+#    targetDatabaseVersion: 11
 #    referenceDatabaseName: postgresql
-#    referenceDatabaseVersion: 14
-#
-  - targetDatabaseName: postgresql
-    targetDatabaseVersion: 11
-    referenceDatabaseName: postgresql
-    referenceDatabaseVersion: 12
+#    referenceDatabaseVersion: 12
 #
 #  - targetDatabaseName: postgresql
 #    targetDatabaseVersion: 10

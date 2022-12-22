@@ -43,7 +43,7 @@
     </changeSet>
 
     <!--          COLUMN            -->
-    <changeSet id="5" author="as">
+    <changeSet id="5" author="as" labels="tablesForReferenceDB">
         <createTable tableName="test_table_for_column">
             <column name="id" type="INT"/>
         </createTable>
@@ -55,6 +55,23 @@
             <column name="intColumn" type="int" valueNumeric="5"/>
             <column name="dateColumn" type="date" valueDate="2020-09-21"/>
         </addColumn>
+    </changeSet>
+
+    <!--          INDEX            -->
+    <changeSet id="7" author="as" labels="tableForCreateIndex">
+        <createTable tableName="test_table_for_index">
+            <column name="id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="8" author="as">
+        <createIndex indexName="idx_first_name" tableName="test_table_for_index">
+            <column name="id"/>
+        </createIndex>
+        <rollback>
+            <dropIndex tableName="test_table_for_index"
+              indexName="idx_first_name"/>
+        </rollback>
     </changeSet>
 
     <!--          SEQUENCE          -->
