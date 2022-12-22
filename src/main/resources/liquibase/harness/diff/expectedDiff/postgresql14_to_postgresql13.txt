@@ -18,6 +18,7 @@ Unexpected Column(s):
      public.test_view.first_name
      public.test_table_base.id
      public.test_table_for_column.id
+     public.test_table_for_index.id
      public.test_table_for_uc.id
      public.test_table_reference.id
      public.test_view.id
@@ -41,6 +42,7 @@ Unexpected Function(s): NONE
 Changed Function(s): NONE
 Missing Index(s): NONE
 Unexpected Index(s):
+     idx_first_name ON public.test_table_for_index(id)
      test_table_base_pkey UNIQUE  ON public.test_table_base(id)
      test_table_reference_pkey UNIQUE  ON public.test_table_reference(id)
      test_table_reference_test_column_key UNIQUE  ON public.test_table_reference(test_column)
@@ -68,6 +70,7 @@ Missing Table(s): NONE
 Unexpected Table(s):
      test_table_base
      test_table_for_column
+     test_table_for_index
      test_table_for_uc
      test_table_reference
 Changed Table(s): NONE

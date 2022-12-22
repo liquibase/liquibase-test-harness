@@ -72,17 +72,6 @@
         </rollback>
     </changeSet>
 
-    <!--          SEQUENCE          -->
-    <changeSet id="9" author="as">
-        <createSequence incrementBy="1"
-          minValue="1"
-          sequenceName="test_sequence"
-          startValue="1"/>
-        <rollback>
-            <dropSequence sequenceName="test_sequence"/>
-        </rollback>
-    </changeSet>
-
     <!--          VIEW          -->
     <changeSet id="10" author="as">
         <createView viewName="test_view">
