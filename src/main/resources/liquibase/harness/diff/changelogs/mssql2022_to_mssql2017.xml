@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet id="1" author="as">
+    <changeSet id="1" author="as" labels="ref">
         <createTable tableName="test_table_base">
             <column name="id" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -14,7 +14,7 @@
             <dropTable tableName="test_table_base"/>
         </rollback>
     </changeSet>
-    <changeSet id="2" author="as">
+    <changeSet id="2" author="as" labels="ref">
         <createTable tableName="test_table_reference">
             <column name="id" type="INT"/>
             <column name="test_column" type="INT">
@@ -23,6 +23,25 @@
         </createTable>
         <rollback>
             <dropTable tableName="test_table_reference"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="asd" author="as" labels="ref">
+        <createTable tableName="test_table_sda">
+            <column name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="test_table_sda"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="dsadas" author="as">
+        <createIndex indexName="idx_first_name" tableName="test_table_reference">
+            <column name="id"/>
+        </createIndex>
+        <rollback>
+            <dropIndex tableName="test_table_reference"
+              indexName="idx_first_name"/>
         </rollback>
     </changeSet>
     <changeSet id="3" author="as">

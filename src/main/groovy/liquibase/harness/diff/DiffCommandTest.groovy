@@ -36,6 +36,12 @@ class DiffCommandTest extends Specification {
         argsMap.put("referencePassword", testInput.referenceDatabase.password)
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
 
+        Map<String, Object> argsMapRef = new HashMap()
+        argsMapRef.put("url", testInput.referenceDatabase.url)
+        argsMapRef.put("username", testInput.referenceDatabase.username)
+        argsMapRef.put("password", testInput.referenceDatabase.password)
+        argsMapRef.put("changelogFile", testInput.pathToReferenceChangelogFile)
+
         and: "check databases are online"
         assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection: "Target database " +
                 "${testInput.targetDatabase.name}${testInput.targetDatabase.version} is offline!"
@@ -45,6 +51,8 @@ class DiffCommandTest extends Specification {
         when: "update changelog against target database and generate diff changelog for different file formats"
 
         executeCommandScope("update", argsMap)
+        executeCommandScope("update", argsMapRef)
+
         argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")//excluding static test-harness objects from generated changelog
         def map = new LinkedHashMap<String, String>()
         map.put("changelogFileXml", testInput.pathToGeneratedXmlDiffChangelogFile)
@@ -62,6 +70,7 @@ class DiffCommandTest extends Specification {
         cleanup: "try to rollback changes out from target database, delete generated changelog file"
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
         strategy.performRollback(argsMap)
+        strategy.performRollback(argsMapRef)
         for (Map.Entry<String, String> entry : map.entrySet()) {
             deleteFile(entry.value)
         }
