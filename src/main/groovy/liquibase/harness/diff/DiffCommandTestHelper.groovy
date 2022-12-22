@@ -73,7 +73,7 @@ class DiffCommandTestHelper {
                             "${referenceDatabase.name}${referenceDatabase.version}_to_" +
                             "${targetDatabase.name}${targetDatabase.version}.txt")
                     .pathToReferenceChangelogFile("${baseDiffPath}" + "changelogs/" +
-                            "${referenceDatabase.name}.xml")
+                            "tablesForReferenceDb.xml")
                     .pathToChangelogFile("${baseDiffPath}" + "changelogs/" +
                             "${referenceDatabase.name}${referenceDatabase.version}_to_" +
                             "${targetDatabase.name}${targetDatabase.version}.xml")

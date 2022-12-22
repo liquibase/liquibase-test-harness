@@ -25,25 +25,7 @@
             <dropTable tableName="test_table_reference"/>
         </rollback>
     </changeSet>
-    <changeSet id="asd" author="as" labels="ref">
-        <createTable tableName="test_table_sda">
-            <column name="id" type="INT">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-        </createTable>
-        <rollback>
-            <dropTable tableName="test_table_sda"/>
-        </rollback>
-    </changeSet>
-    <changeSet id="dsadas" author="as">
-        <createIndex indexName="idx_first_name" tableName="test_table_reference">
-            <column name="id"/>
-        </createIndex>
-        <rollback>
-            <dropIndex tableName="test_table_reference"
-              indexName="idx_first_name"/>
-        </rollback>
-    </changeSet>
+
     <changeSet id="3" author="as">
         <createIndex tableName="test_table_reference" indexName="test_table_reference_index">
             <column name="test_column"/>
@@ -63,7 +45,40 @@
               constraintName="test_fk"/>
         </rollback>
     </changeSet>
+
+    <!--          COLUMN            -->
     <changeSet id="5" author="as">
+        <createTable tableName="test_table_for_column">
+            <column name="id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="6" author="as">
+        <addColumn tableName="test_table_for_column">
+            <column name="varcharColumn" type="varchar(25)" value="INITIAL_VALUE"/>
+            <column name="intColumn" type="int" valueNumeric="5"/>
+            <column name="dateColumn" type="date" valueDate="2020-09-21"/>
+        </addColumn>
+    </changeSet>
+
+    <!--          INDEX            -->
+    <changeSet id="7" author="as">
+        <createTable tableName="test_table_for_index">
+            <column name="id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="8" author="as">
+        <createIndex indexName="idx_first_name" tableName="test_table_for_index">
+            <column name="id"/>
+        </createIndex>
+        <rollback>
+            <dropIndex tableName="test_table_for_index"
+              indexName="idx_first_name"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="9" author="as">
         <addUniqueConstraint columnNames="id"
           constraintName="test_unique_constraint"
           deferrable="true"
@@ -75,7 +90,8 @@
               constraintName="test_unique_constraint"/>
         </rollback>
     </changeSet>
-    <changeSet id="6" author="as">
+
+    <changeSet id="10" author="as">
         <createSequence incrementBy="1"
           minValue="1"
           sequenceName="test_sequence"
@@ -84,7 +100,8 @@
             <dropSequence sequenceName="test_sequence"/>
         </rollback>
     </changeSet>
-    <changeSet id="7" author="as">
+
+    <changeSet id="11" author="as">
         <createView viewName="test_view">
             select * from test_table_reference
         </createView>
