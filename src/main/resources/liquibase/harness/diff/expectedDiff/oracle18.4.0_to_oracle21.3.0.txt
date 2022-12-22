@@ -1,5 +1,5 @@
 Reference Database: C##LIQUIBASE@jdbc:oracle:thin:@localhost:1522/xe (DefaultSchema:C##LIQUIBASE)
-Comparison Database: C##LIQUIBASE@jdbc:oracle:thin:@localhost:1520/xe (DefaultSchema:C##LIQUIBASE)
+Comparison Database: C##LIQUIBASE@jdbc:oracle:thin:@localhost:1523/xe (DefaultSchema:C##LIQUIBASE)
 Compared Schemas: C##LIQUIBASE
 Product Name: EQUAL
 Product Version:
