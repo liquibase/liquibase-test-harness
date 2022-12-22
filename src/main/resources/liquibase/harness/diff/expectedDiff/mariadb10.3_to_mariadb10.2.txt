@@ -18,6 +18,7 @@ Unexpected Column(s):
      lbcat.test_view.first_name
      lbcat.test_table_base.id
      lbcat.test_table_for_column.id
+     lbcat.test_table_for_index.id
      lbcat.test_table_for_uc.id
      lbcat.test_table_reference.id
      lbcat.test_view.id
@@ -43,6 +44,7 @@ Missing Index(s): NONE
 Unexpected Index(s):
      PRIMARY UNIQUE  ON lbcat.test_table_base(id)
      PRIMARY UNIQUE  ON lbcat.test_table_reference(id)
+     idx_first_name ON lbcat.test_table_for_index(id)
      test_column UNIQUE  ON lbcat.test_table_reference(test_column)
      test_unique_constraint UNIQUE  ON lbcat.test_table_for_uc(id)
 Changed Index(s): NONE
@@ -52,8 +54,7 @@ Unexpected Primary Key(s):
      PRIMARY on lbcat.test_table_reference(id)
 Changed Primary Key(s): NONE
 Missing Sequence(s): NONE
-Unexpected Sequence(s):
-     test_sequence
+Unexpected Sequence(s): NONE
 Changed Sequence(s): NONE
 Missing Stored Procedure(s): NONE
 Unexpected Stored Procedure(s): NONE
@@ -65,6 +66,7 @@ Missing Table(s): NONE
 Unexpected Table(s):
      test_table_base
      test_table_for_column
+     test_table_for_index
      test_table_for_uc
      test_table_reference
 Changed Table(s): NONE

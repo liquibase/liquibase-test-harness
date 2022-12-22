@@ -106,20 +106,28 @@ class DiffCommandTestHelper {
         String jsonDiffChangelogContent = readFile(testInput.getPathToGeneratedJsonDiffChangelogFile())
 
         return validateChangeTypes(changelogContent, xmlDiffChangelogContent, sqlDiffChangelogContent,
-                ymlDiffChangelogContent, jsonDiffChangelogContent)
+                ymlDiffChangelogContent, jsonDiffChangelogContent, testInput.referenceDatabase.name)
     }
 
     private static Boolean validateChangeTypes(String changelogContent, String xmlDiffChangelogContent,
                                                String sqlDiffChangelogContent, String ymlDiffChangelogContent,
-                                               String jsonDiffChangelogContent) {
+                                               String jsonDiffChangelogContent, String dbName) {
         def map = new LinkedHashMap<String, List>()
         map.put("createTable", new ArrayList<>(List.of("dropTable", "drop table")))
         map.put("createView", new ArrayList<>(List.of("dropView", "drop view")))
-        map.put("addForeignKey", new ArrayList<>(List.of("dropForeignKey", "drop constraint")))
-        map.put("addPrimaryKey", new ArrayList<>(List.of("dropPrimaryKey", "drop constraint")))
         map.put("createIndex", new ArrayList<>(List.of("dropIndex", "drop index")))
         map.put("createSequence", new ArrayList<>(List.of("dropSequence", "drop sequence")))
-        map.put("addUniqueConstraint", new ArrayList<>(List.of("dropUniqueConstraint", "drop constraint")))
+
+        if(dbName.equals("mariadb") || dbName.equals("mysql")) {
+            map.put("addForeignKey", new ArrayList<>(List.of("dropForeignKey", "drop foreign key")))
+            map.put("addPrimaryKey", new ArrayList<>(List.of("dropPrimaryKey", "drop key")))
+            map.put("addUniqueConstraint", new ArrayList<>(List.of("dropUniqueConstraint", "drop key")))
+        } else {
+            map.put("addForeignKey", new ArrayList<>(List.of("dropForeignKey", "drop constraint")))
+            map.put("addPrimaryKey", new ArrayList<>(List.of("dropPrimaryKey", "drop constraint")))
+            map.put("addUniqueConstraint", new ArrayList<>(List.of("dropUniqueConstraint", "drop constraint")))
+        }
+
         //Schema and Catalog to add. Also this will probably change while adding new types
         for (Map.Entry<String, List> entry : map.entrySet()) {
             if (changelogContent.contains(entry.key)) {
