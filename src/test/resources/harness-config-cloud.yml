@@ -72,13 +72,6 @@ databasesUnderTest:
     username: USERNAME
     password: PASSWORD
 
-  - name: mssql
-    prefix: azure
-    version: mi
-    url: DBENDPOINT
-    username: USERNAME
-    password: PASSWORD
-
   - name: postgresql
     prefix: azure
     version: azure
