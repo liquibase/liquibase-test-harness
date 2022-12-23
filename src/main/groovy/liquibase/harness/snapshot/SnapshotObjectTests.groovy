@@ -1,43 +1,74 @@
 package liquibase.harness.snapshot
 
-import liquibase.database.OfflineConnection
-import org.junit.Assume
+import liquibase.Scope
+import liquibase.database.jvm.JdbcConnection
+import liquibase.harness.config.DatabaseUnderTest
+import liquibase.harness.config.TestConfig
+import liquibase.harness.util.rollback.RollbackStrategy
+import liquibase.ui.UIService
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
 import static liquibase.harness.util.FileUtils.getResourceContent
+import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
 import static liquibase.harness.util.TestUtils.executeCommandScope
 import static liquibase.harness.snapshot.SnapshotObjectTestHelper.*
 
 class SnapshotObjectTests extends Specification {
 
-    @Unroll
-    def "Apply #testInput.snapshotObjectName against #testInput.database.name #testInput.database.version"() {
-        given: "create arguments map for executing command scope, read expected snapshot from file, " +
-                "apply changes to the database under test"
-        Map<String, Object> argsMap = new HashMap()
-        argsMap.put("url", testInput.database.url)
-        argsMap.put("username", testInput.database.username)
-        argsMap.put("password", testInput.database.password)
-        argsMap.put("snapshotFormat", "json")
-        String expectedSnapshot = getResourceContent(testInput.pathToExpectedSnapshotFile)
-        Assume.assumeFalse("Cannot test against offline database", testInput.database.database.getConnection()
-                instanceof OfflineConnection)
-        assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.snapshotObjectName} against " +
-                "${testInput.database.name}${testInput.database.version}"
+    @Shared
+    RollbackStrategy strategy
+    @Shared
+    List<DatabaseUnderTest> databases
+    @Shared
+    UIService uiService = Scope.getCurrentScope().getUI()
 
-        when: "execute inputSql, generate snapshot"
-        executeQuery(testInput.pathToInputSql, testInput)
+    def setupSpec() {
+        databases = TestConfig.instance.getFilteredDatabasesUnderTest()
+        strategy = chooseRollbackStrategy()
+        strategy.prepareForRollback(databases)
+    }
+
+    @Unroll
+    def "apply #testInput.snapshotObject against #testInput.databaseName #testInput.databaseVersion"() {
+        given: "read input data for snapshot command test"
+        Map<String, Object> argsMap = new HashMap()
+        argsMap.put("url", testInput.url)
+        argsMap.put("username", testInput.username)
+        argsMap.put("password", testInput.password)
+        argsMap.put("changeLogFile", testInput.pathToChangelogFile)
+        argsMap.put("snapshotFormat", "json")
+        boolean shouldRunChangeSet
+        String expectedSnapshot = getResourceContent(testInput.pathToExpectedSnapshotFile)
+
+        and: "check database under test is online"
+        def connection = testInput.database.getConnection()
+        shouldRunChangeSet = connection instanceof JdbcConnection
+        assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.databaseVersion} is offline!"
+
+        and: "check expected snapshot file is present"
+        assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.snapshotObject} against " +
+                "${testInput.databaseName}${testInput.databaseVersion}"
+
+        when: "execute update and generate snapshot"
+        executeCommandScope("update", argsMap)
         def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
 
         then: "compare generated to expected snapshot"
         snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
 
-        cleanup: "execute cleanupSql"
-        executeQuery(testInput.pathToCleanupSql, testInput)
+        cleanup: "rollback changes"
+        if (shouldRunChangeSet) {
+            strategy.performRollback(argsMap)
+        }
 
         where:
         testInput << buildTestInput()
+    }
+
+    def cleanupSpec() {
+        strategy.cleanupDatabase(databases)
     }
 }
