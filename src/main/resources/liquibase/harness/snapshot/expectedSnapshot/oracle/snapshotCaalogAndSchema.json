@@ -3,14 +3,14 @@
     "objects": {
       "liquibase.structure.core.Catalog": [
         {
-          "table": {
+          "catalog": {
             "name": "C##LIQUIBASE"
           }
         }
       ],
       "liquibase.structure.core.Schema": [
         {
-          "column": {
+          "schema": {
             "name": "C##LIQUIBASE"
           }
         }

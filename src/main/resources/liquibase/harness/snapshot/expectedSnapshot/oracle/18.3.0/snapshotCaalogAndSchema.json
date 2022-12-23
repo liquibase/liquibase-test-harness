@@ -3,14 +3,14 @@
     "objects": {
       "liquibase.structure.core.Catalog": [
         {
-          "table": {
+          "catalog": {
             "name": "DATICAL_ADMIN"
           }
         }
       ],
       "liquibase.structure.core.Schema": [
         {
-          "column": {
+          "schema": {
             "name": "DATICAL_ADMIN"
           }
         }

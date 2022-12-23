@@ -3,14 +3,14 @@
     "objects": {
       "liquibase.structure.core.Catalog": [
         {
-          "table": {
+          "catalog": {
             "name": "lbcat"
           }
         }
       ],
       "liquibase.structure.core.Schema": [
         {
-          "column": {
+          "schema": {
             "name": "public"
           }
         }
