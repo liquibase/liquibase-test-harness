@@ -1,0 +1,20 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Catalog": [
+        {
+          "table": {
+            "name": "C##LIQUIBASE"
+          }
+        }
+      ],
+      "liquibase.structure.core.Schema": [
+        {
+          "column": {
+            "name": "C##LIQUIBASE"
+          }
+        }
+      ]
+    }
+  }
+}
