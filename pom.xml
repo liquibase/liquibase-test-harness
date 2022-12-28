@@ -158,10 +158,10 @@
             <version>3.40.0.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <dependency> <!-- Derby driver is highly dependent on Jva version. Upgrade it, when necessary changes to liquibase-core are made -->
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <version>10.16.1.1</version>
+            <version>10.14.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
