@@ -78,3 +78,10 @@ databasesUnderTest:
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
+
+  - name: postgresql
+    prefix: azure
+    version: flexible
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
