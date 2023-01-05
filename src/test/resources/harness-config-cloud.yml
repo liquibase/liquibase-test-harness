@@ -85,3 +85,24 @@ databasesUnderTest:
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
+
+  - name: mysql
+    prefix: gcp
+    version: gcp
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mssql
+    prefix: gcp
+    version: 2019
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
+    prefix: gcp
+    version: DBVERSION
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
