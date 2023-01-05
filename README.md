@@ -63,6 +63,16 @@ Currently, there are five test types defined in the test harness:
 * Snapshot Command Test
 * Diff Command Test
 
+Currently, there are three test suites in the test harness:
+* BaseHarnessSuite, contains:
+    * ChangeObjectTest
+    * ChangeDataTest
+* FoundationalHarnessSuite, contains:
+    * FoundationalTest
+* AdvancedHarnessSuite, contains:
+    * GenerateChangelogTest
+    * SnapshotObjectTests
+
 This repository is configured to run against databases supported by Liquibase Core. 
 
 Extensions that add support for additional databases and/or define additional functionality can add this framework as a dependency and use the existing tests to:
