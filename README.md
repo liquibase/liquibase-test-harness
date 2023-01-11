@@ -4,38 +4,38 @@
 
 ## Test-Harness Support Matrix
 
-| Database                  | Versions Tested                       | Verification Level |
-|---------------------------|---------------------------------------|--------------------|
-| Aurora MySQL              | `8`                                   | Advanced           | 
-| Aurora Postgres           | `14`                                  |
-| AWS Postgres RDS          | `10, 11, 12, 13, 14`                  |
-| AWS Oracle RDS            | `19.0`                                |
-| AWS MySQL                 | `8`                                   |
-| AWS MariaDB               | `10.6`                                |
-| AWS SQL Server            | `2019`                                |
-| Azure SQL DB              | `latest`                              |
-| Azure SQL MI              | `latest`                              |
-| Azure PostgreSQL SS       | `11`                                  |
-| Azure PostgreSQL FlS      | `14`                                  |
-| GCP PostgreSQL            | `11, 12, 13, 14`                      |
-| GCP MySQL                 | `8`                                   |
-| GCP SQL Server            | `2019`                                |
-| MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
-| Postgres                  | `9, 9.5, 10, 11, 12, 13, 14, 15`      |
-| MySQL                     | `5.6, 5.7, 8`                         |
-| SQL Server                | `2017`, `2019`, `2022`                |
-| Percona XtraDB            | `5.7`, `8.0`                          | Foundational       |
-| Oracle                    | `18.3.0, 18.4.0, 21.3.0`              |
-| CockroachDB               | `20.2, 21.1, 21.2, 22.1`              |
-| EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        |
-| DB2 on z/OS               | `11.1, 12`                            |
-| DB2 on Linux/Unix/Windows | `11.5.7`                              |
-| H2                        | `2.1.210`                             |
-| SQLite                    | `3.34.0`                              |
-| Apache Derby              | `10.14.2.0`                           |
-| Firebird                  | `3.0, 4.0`                            |
-| HSQLDB                    | `2.4, 2.5`                            |
-| Snowflake                 | `latest`                              |
+| Database                  | Versions Tested                       | Verification Level             |
+|---------------------------|---------------------------------------|--------------------------------|
+| Aurora MySQL              | `8`                                   | BaseHarnessSuite               | 
+| Aurora Postgres           | `14`                                  | BaseHarnessSuite               |
+| AWS Postgres RDS          | `10, 11, 12, 13, 14`                  | BaseHarnessSuite               |
+| AWS Oracle RDS            | `19.0`                                | BaseHarnessSuite               |
+| AWS MySQL                 | `8`                                   | BaseHarnessSuite               |
+| AWS MariaDB               | `10.6`                                | BaseHarnessSuite               |
+| AWS SQL Server            | `2019`                                | BaseHarnessSuite               |
+| Azure SQL DB              | `latest`                              | BaseHarnessSuite               |
+| Azure SQL MI              | `latest`                              | BaseHarnessSuite               |
+| Azure PostgreSQL SS       | `11`                                  | BaseHarnessSuite               |
+| Azure PostgreSQL FlS      | `14`                                  | BaseHarnessSuite               |
+| GCP PostgreSQL            | `11, 12, 13, 14`                      | Advanced                       |
+| GCP MySQL                 | `8`                                   | Advanced                       |
+| GCP SQL Server            | `2019`                                | Advanced                       |
+| MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` | Advanced                       |
+| Postgres                  | `9, 9.5, 10, 11, 12, 13, 14, 15`      | Advanced                       |
+| MySQL                     | `5.6, 5.7, 8`                         | Advanced                       |
+| SQL Server                | `2017`, `2019`, `2022`                | Advanced                       |
+| Percona XtraDB            | `5.7`, `8.0`                          | Foundational, BaseHarnessSuite |
+| Oracle                    | `18.3.0, 18.4.0, 21.3.0`              | Advanced                       |
+| CockroachDB               | `20.2, 21.1, 21.2, 22.1`              | Foundational, BaseHarnessSuite |
+| EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        | BaseHarnessSuite               |
+| DB2 on z/OS               | `11.1, 12`                            | BaseHarnessSuite               |
+| DB2 on Linux/Unix/Windows | `11.5.7`                              | BaseHarnessSuite               |
+| H2                        | `2.1.210`                             | Foundational, BaseHarnessSuite |
+| SQLite                    | `3.34.0`                              | Foundational, BaseHarnessSuite |
+| Apache Derby              | `10.14.2.0`                           | Foundational, BaseHarnessSuite |
+| Firebird                  | `3.0, 4.0`                            | Foundational, BaseHarnessSuite |
+| HSQLDB                    | `2.4, 2.5`                            | Foundational, BaseHarnessSuite |
+| Snowflake                 | `latest`                              | BaseHarnessSuite               |
 
 ## Framework
 
