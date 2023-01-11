@@ -139,7 +139,7 @@ In case you want to set up your database instance using docker image then you ma
 
 Advanced test suite consists of 3 tests (GenerateChangelogTest, DiffCommandTest, SnapshotObjectTests)
 
-###GenerateChangelogTest
+### GenerateChangelogTest
 
 * This test validates work of generateChangelog command.
 
