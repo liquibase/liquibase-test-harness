@@ -12,9 +12,9 @@ on:
         type: choice
         description: Test Suite or test class to run
         options:
+          - AdvancedHarnessSuiteTest
           - LiquibaseHarnessSuiteTest
           - FoundationalHarnessSuiteTest
-          - AdvancedHarnessSuiteTest
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
