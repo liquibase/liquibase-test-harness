@@ -12,12 +12,13 @@ on:
         type: choice
         description: Test Suite or test class to run
         options:
+          - AdvancedHarnessSuiteTest
           - LiquibaseHarnessSuiteTest
-          - CompatibilityHarnessSuiteTest
+          - FoundationalHarnessSuiteTest
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
-          - CompatibilityTest
+          - GenerateChangelogTest
           - FoundationalTest
       databases:
         description: Databases to start up. Comma separated list of "name:version"
@@ -30,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       databases: ${{ github.event.inputs.databases || '["postgresql:11","postgresql:12","postgresql:13","postgresql:14","mysql:gcp","mssql:2019"]' }}
-      testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
+      testClasses: ${{ inputs.testClasses  || 'AdvancedHarnessSuiteTest' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -154,5 +155,5 @@ jobs:
       - name: Archive GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@v3
         with:
-          name: aws-rds-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
+          name: gcp-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
           path: build/spock-reports
