@@ -4,9 +4,9 @@
 
 ## Test-Harness Support Matrix
 
-| Database                  | Versions Tested                       |
-|---------------------------|---------------------------------------|
-| Aurora MySQL              | `8`                                   |
+| Database                  | Versions Tested                       | Verification Level |
+|---------------------------|---------------------------------------|--------------------|
+| Aurora MySQL              | `8`                                   | Advanced           | 
 | Aurora Postgres           | `14`                                  |
 | AWS Postgres RDS          | `10, 11, 12, 13, 14`                  |
 | AWS Oracle RDS            | `19.0`                                |
@@ -24,7 +24,7 @@
 | Postgres                  | `9, 9.5, 10, 11, 12, 13, 14, 15`      |
 | MySQL                     | `5.6, 5.7, 8`                         |
 | SQL Server                | `2017`, `2019`, `2022`                |
-| Percona XtraDB            | `5.7`, `8.0`                          |
+| Percona XtraDB            | `5.7`, `8.0`                          | Foundational       |
 | Oracle                    | `18.3.0, 18.4.0, 21.3.0`              |
 | CockroachDB               | `20.2, 21.1, 21.2, 22.1`              |
 | EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        |
