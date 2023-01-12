@@ -1,0 +1,159 @@
+# Terraform Action to test Cloud Databases with test-harness
+
+name: Google Cloud Database Test Execution
+concurrency: gcp-run
+on:
+  # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
+  schedule:
+    - cron: '0 6 * * *' # Execute every day at noon
+  workflow_dispatch:
+    inputs:
+      testClasses:
+        type: choice
+        description: Test Suite or test class to run
+        options:
+          - AdvancedHarnessSuiteTest
+          - LiquibaseHarnessSuiteTest
+          - FoundationalHarnessSuiteTest
+          - ChangeObjectTests
+          - ChangeDataTests
+          - SnapshotObjectTests
+          - GenerateChangelogTest
+          - FoundationalTest
+      databases:
+        description: Databases to start up. Comma separated list of "name:version"
+        required: true
+        default: "[\"postgresql:11\",\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"mysql:gcp\",\"mssql:2019\"]"
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      databases: ${{ github.event.inputs.databases || '["postgresql:11","postgresql:12","postgresql:13","postgresql:14","mysql:gcp","mssql:2019"]' }}
+      testClasses: ${{ inputs.testClasses  || 'AdvancedHarnessSuiteTest' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+  init-mysql:
+    runs-on: ubuntu-latest
+    container:
+      image: liquibase/liquibase:latest
+      env:
+        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - database: mysql
+            version: gcp
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+#      This additional init step is required because of mysql driver issue on GH actions
+      - name: Install Dependencies
+        run: lpm update && lpm add mysql
+
+      - name: Clean GCP MySQL Database
+        uses: liquibase-github-actions/drop-all@v4.18.0
+        if: ${{ matrix.version == 'gcp' }}
+        with:
+          url: "${{ secrets.TH_GCP_MYSQL_8_0_URL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - name: Init Database
+        if: ${{ matrix.version == 'gcp' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_GCP_MYSQL_8_0_URL }}" update
+
+  test:
+    needs: [init-mysql, setup]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        database: ${{ fromJson(needs.setup.outputs.databases) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure Test
+        id: setup
+        uses: actions/github-script@v6.3.3
+        with:
+          script: |
+            let splitValues = "${{ matrix.database }}".split(":")
+            core.setOutput("databasePlatform", splitValues[0]);
+            core.setOutput("databaseVersion", splitValues[1]);
+
+      - uses: liquibase-github-actions/drop-all@v4.18.0
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
+        with:
+          url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "postgresql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
+
+      - uses: liquibase-github-actions/drop-all@v4.18.0
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        with:
+          url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "mssql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=gcp -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}' test
+
+      - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_GCP_MYSQL_8_0_URL }}' test
+
+      - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=gcp -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_GCP_MSSQL_2019_URL }}' test
+
+      - name: Archive GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: gcp-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
+          path: build/spock-reports

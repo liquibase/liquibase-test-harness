@@ -4,7 +4,7 @@
 
     <groupId>org.liquibase</groupId>
     <artifactId>liquibase-test-harness</artifactId>
-    <version>1.0.9-SNAPSHOT</version>
+    <version>1.0.10-SNAPSHOT</version>
     <name>Liquibase Test Harness</name>
     <description>Test Harness For Liquibase</description>
     <url>https://github.com/liquibase/liquibase-test-harness</url>
@@ -193,7 +193,7 @@
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
             <artifactId>jaybird</artifactId>
-            <version>4.0.8.java11</version>
+            <version>5.0.0.java11</version>
         </dependency>
 
         <dependency>
@@ -266,7 +266,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.14.1</version>
+                <version>2.14.2</version>
                 <configuration>
                     <generateBackupPoms>false</generateBackupPoms>
                 </configuration>
