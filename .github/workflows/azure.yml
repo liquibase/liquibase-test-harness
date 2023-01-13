@@ -12,11 +12,12 @@ on:
         description: Test Suite or test class to run
         options:
           - LiquibaseHarnessSuiteTest
-          - CompatibilityHarnessSuiteTest
+          - FoundationalHarnessSuiteTest
+          - AdvancedHarnessSuiteTest
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
-          - CompatibilityTest
+          - GenerateChangelogTest
           - FoundationalTest
       databases:
         description: Databases to start up. Comma separated list of "name:version"
