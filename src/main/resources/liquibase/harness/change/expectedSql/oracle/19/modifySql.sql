@@ -1,0 +1,1 @@
+/* prepend comment */ CREATE TABLE LBUSER.test_table (test_id INTEGER NOT NULL, test_column VARCHAR2(50) NOT NULL) -- append comment
