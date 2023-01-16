@@ -1,0 +1,2 @@
+CREATE OR REPLACE PUBLIC SYNONYM test_synonym FOR LBUSER.authors
+DROP PUBLIC SYNONYM test_synonym

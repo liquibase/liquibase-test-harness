@@ -13,10 +13,10 @@
 | AWS MySQL                 | `8`                                   | BaseHarnessSuite               |
 | AWS MariaDB               | `10.6`                                | BaseHarnessSuite               |
 | AWS SQL Server            | `2019`                                | BaseHarnessSuite               |
-| Azure SQL DB              | `latest`                              | BaseHarnessSuite               |
+| Azure SQL DB              | `latest`                              | Advanced                       |
 | Azure SQL MI              | `latest`                              | BaseHarnessSuite               |
-| Azure PostgreSQL SS       | `11`                                  | BaseHarnessSuite               |
-| Azure PostgreSQL FlS      | `14`                                  | BaseHarnessSuite               |
+| Azure PostgreSQL SS       | `11`                                  | Advanced                       |
+| Azure PostgreSQL FlS      | `14`                                  | Advanced                       |
 | GCP PostgreSQL            | `11, 12, 13, 14`                      | Advanced                       |
 | GCP MySQL                 | `8`                                   | Advanced                       |
 | GCP SQL Server            | `2019`                                | Advanced                       |
