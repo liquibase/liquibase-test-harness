@@ -1,14 +1,4 @@
-CREATE OR REPLACE FUNCTION "public".test_function()
- RETURNS trigger
- LANGUAGE plpgsql
-AS $function$
-            BEGIN
-            RAISE NOTICE 'Test trigger function created';
-            RETURN NEW;
-            END;
-            $function$;
-
-CREATE TRIGGER test_trigger BEFORE INSERT ON "public".posts FOR EACH ROW EXECUTE PROCEDURE test_function();
+CREATE SEQUENCE  IF NOT EXISTS "test_sequence" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
 
 CREATE VIEW "pg_buffercache" AS SELECT p.bufferid,
     p.relfilenode,

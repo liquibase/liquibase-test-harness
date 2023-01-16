@@ -1,14 +1,8 @@
-CREATE OR REPLACE FUNCTION "public".test_function()
- RETURNS trigger
- LANGUAGE plpgsql
-AS $function$
-            BEGIN
-            RAISE NOTICE 'Test trigger function created';
-            RETURN NEW;
-            END;
-            $function$;
-
-CREATE TRIGGER test_trigger BEFORE INSERT ON "public".posts FOR EACH ROW EXECUTE PROCEDURE test_function();
+CREATE VIEW "test_view" AS SELECT authors.id,
+    authors.first_name,
+    authors.last_name,
+    authors.email
+   FROM authors;;
 
 CREATE VIEW "pg_buffercache" AS SELECT p.bufferid,
     p.relfilenode,

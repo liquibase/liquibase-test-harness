@@ -1,15 +1,3 @@
-CREATE OR REPLACE FUNCTION "public".test_function()
- RETURNS trigger
- LANGUAGE plpgsql
-AS $function$
-            BEGIN
-            RAISE NOTICE 'Test trigger function created';
-            RETURN NEW;
-            END;
-            $function$;
-
-CREATE TRIGGER test_trigger BEFORE INSERT ON "public".posts FOR EACH ROW EXECUTE PROCEDURE test_function();
-
 CREATE VIEW "pg_buffercache" AS SELECT p.bufferid,
     p.relfilenode,
     p.reltablespace,
@@ -63,3 +51,11 @@ CREATE OR REPLACE FUNCTION "public".pg_stat_statements_reset()
  LANGUAGE c
  PARALLEL SAFE
 AS '$libdir/pg_stat_statements', $function$pg_stat_statements_reset$function$;
+
+CREATE OR REPLACE PROCEDURE public.test_procedure()
+ LANGUAGE plpgsql
+AS $procedure$
+      BEGIN
+      END;
+      $procedure$;
+
