@@ -10,9 +10,7 @@
               <constraints nullable="false"/>
             </column>
         </createTable>
-        <rollback>
-            <dropTable tableName="test_table"/>
-        </rollback>
+        <rollback/>
     </changeSet>
     <changeSet id="2" author="as">
         <addPrimaryKey
@@ -21,8 +19,7 @@
                 tableName="test_table"
                 validate="true"/>
         <rollback>
-            <dropPrimaryKey tableName="test_table"
-                            constraintName="test_pk"/>
+            <dropTable tableName="test_table"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

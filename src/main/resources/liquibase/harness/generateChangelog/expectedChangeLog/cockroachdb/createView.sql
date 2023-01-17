@@ -1,5 +1,1 @@
-CREATE VIEW "test_view" AS SELECT authors.id,
-    authors.first_name,
-    authors.last_name,
-    authors.email
-   FROM authors;;
+CREATE VIEW "test_view" AS SELECT id, first_name, last_name, email FROM lbcat.public.authors;

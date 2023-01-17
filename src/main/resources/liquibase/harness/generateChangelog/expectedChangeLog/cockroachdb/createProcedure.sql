@@ -1,7 +1,5 @@
-CREATE OR REPLACE PROCEDURE public.test_procedure()
- LANGUAGE plpgsql
-AS $procedure$
-      BEGIN
-      END;
-      $procedure$;
+INVALID TEST
+
+Procedures are not supported by Cockroach DB
+-- https://www.cockroachlabs.com/docs/stable/sql-feature-support.html
 
