@@ -24,7 +24,7 @@
 | Postgres                  | `9, 9.5, 10, 11, 12, 13, 14, 15`      | Advanced                       |
 | MySQL                     | `5.6, 5.7, 8`                         | Advanced                       |
 | SQL Server                | `2017`, `2019`, `2022`                | Advanced                       |
-| Percona XtraDB            | `5.7`, `8.0`                          | Foundational, BaseHarnessSuite |
+| Percona XtraDB            | `5.7`, `8.0`                          | Advanced                       |
 | Oracle                    | `18.3.0, 18.4.0, 21.3.0`              | Advanced                       |
 | CockroachDB               | `20.2, 21.1, 21.2, 22.1`              | Advanced                       |
 | EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        | BaseHarnessSuite               |
