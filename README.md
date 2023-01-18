@@ -26,7 +26,7 @@
 | SQL Server                | `2017`, `2019`, `2022`                | Advanced                       |
 | Percona XtraDB            | `5.7`, `8.0`                          | Foundational, BaseHarnessSuite |
 | Oracle                    | `18.3.0, 18.4.0, 21.3.0`              | Advanced                       |
-| CockroachDB               | `20.2, 21.1, 21.2, 22.1`              | Foundational, BaseHarnessSuite |
+| CockroachDB               | `20.2, 21.1, 21.2, 22.1`              | Advanced                       |
 | EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        | BaseHarnessSuite               |
 | DB2 on z/OS               | `11.1, 12`                            | BaseHarnessSuite               |
 | DB2 on Linux/Unix/Windows | `11.5.7`                              | BaseHarnessSuite               |

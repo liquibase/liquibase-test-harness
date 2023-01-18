@@ -1,0 +1,1 @@
+CREATE TABLE test_table (test_column INT NOT NULL, varcharColumn VARCHAR(25) NULL, intColumn INT NULL, dateColumn date NULL, CONSTRAINT PK_TEST_TABLE PRIMARY KEY (test_column));
