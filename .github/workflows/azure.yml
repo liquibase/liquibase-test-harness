@@ -55,7 +55,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean Azure MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.18.0
+        uses: liquibase-github-actions/drop-all@v4.19.0
         if: ${{ matrix.database == 'mysql' }}
         with:
           url: "${{secrets.TH_AZURE_MYSQL_URL}}"
@@ -94,7 +94,7 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@v4.18.0
+      - uses: liquibase-github-actions/drop-all@v4.19.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           url: "${{secrets.TH_AZURE_URL}}"
@@ -112,7 +112,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_URL}}"
 
-      - uses: liquibase-github-actions/drop-all@v4.17.2
+      - uses: liquibase-github-actions/drop-all@v4.19.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
@@ -130,7 +130,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
 
-      - uses: liquibase-github-actions/drop-all@v4.17.2
+      - uses: liquibase-github-actions/drop-all@v4.19.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'flexible' }}
         with:
           url: "${{secrets.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL}}"
