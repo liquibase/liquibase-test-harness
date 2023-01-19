@@ -29,7 +29,7 @@
 | CockroachDB               | `20.2, 21.1, 21.2, 22.1`              | Advanced                       |
 | EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        | Advanced                       |
 | DB2 on z/OS               | `11.1, 12`                            | BaseHarnessSuite               |
-| DB2 on Linux/Unix/Windows | `11.5.7`                              | BaseHarnessSuite               |
+| DB2 on Linux/Unix/Windows | `11.5.7`                              | Advanced                       |
 | H2                        | `2.1.210`                             | Foundational, BaseHarnessSuite |
 | SQLite                    | `3.34.0`                              | Foundational, BaseHarnessSuite |
 | Apache Derby              | `10.14.2.0`                           | Foundational, BaseHarnessSuite |

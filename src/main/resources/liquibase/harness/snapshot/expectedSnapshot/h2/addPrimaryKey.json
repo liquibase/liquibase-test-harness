@@ -1,0 +1,20 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "TEST_TABLE"
+          }
+        }
+      ],
+      "liquibase.structure.core.PrimaryKey": [
+        {
+          "primaryKey": {
+            "name": "TEST_PK"
+          }
+        }
+      ]
+    }
+  }
+}
