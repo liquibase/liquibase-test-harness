@@ -33,8 +33,8 @@
 | H2                        | `2.1.210`                             | Advanced                       |
 | SQLite                    | `3.34.0`                              | Advanced                       |
 | Apache Derby              | `10.14.2.0`                           | Advanced                       |
-| Firebird                  | `3.0, 4.0`                            | Foundational, BaseHarnessSuite |
-| HSQLDB                    | `2.4, 2.5`                            | Foundational, BaseHarnessSuite |
+| Firebird                  | `3.0, 4.0`                            | Advanced                       |
+| HSQLDB                    | `2.4, 2.5`                            | Advanced                       |
 | Snowflake                 | `latest`                              | BaseHarnessSuite               |
 
 ## Framework
