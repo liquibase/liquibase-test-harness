@@ -7,7 +7,7 @@
     <changeSet id="1" author="as">
         <createTable tableName="test_table">
             <column name="id" type="INT">
-                <constraints nullable="false" primaryKey="true"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
         <rollback>
