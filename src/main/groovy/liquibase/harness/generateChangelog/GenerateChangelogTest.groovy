@@ -67,7 +67,8 @@ class GenerateChangelogTest extends Specification {
             executeCommandScope("update", argsMap)
             argsMap.put("changeLogFile", testResourcesPath + entry.value)
             if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
-                sqlSpecificChangelogFile = testInput.databaseName.equals("percona-xtradb-cluster") ? entry.value.replace(".sql", ".mysql.sql") : entry.value.replace(".sql", ".$testInput.databaseName" + ".sql")
+                def shortDbName = getShortDatabaseName(testInput.databaseName)
+                sqlSpecificChangelogFile = entry.value.replace(".sql", ".$shortDbName" + ".sql")
                 argsMap.put("changeLogFile", testResourcesPath + sqlSpecificChangelogFile)
             }
             executeCommandScope("generateChangelog", argsMap, testInput.databaseName)
