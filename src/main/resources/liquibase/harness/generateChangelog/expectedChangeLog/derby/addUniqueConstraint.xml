@@ -7,15 +7,25 @@
 
     <changeSet id="1" author="as">
         <createTable tableName="test_table">
-            <column name="test_column" type="varchar(25)"/>
+            <column name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="test_column" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <rollback>
             <dropTable tableName="test_table"/>
         </rollback>
     </changeSet>
+    <changeSet id="3" author="as">
+        <createIndex tableName="test_table" indexName="test_table_index">
+            <column name="test_column"/>
+        </createIndex>
+    </changeSet>
     <changeSet author="as" id="2">
         <addUniqueConstraint columnNames="test_column"
-          constraintName="test_unique_constraint"
+          constraintName="SOME_CONST"
           deferrable="false"
           initiallyDeferred="false"
           tableName="test_table"
