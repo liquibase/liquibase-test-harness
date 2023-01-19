@@ -1,29 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet id="1" author="as">
-        <createTable tableName="test_table">
-            <column name="id" type="INT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <rollback>
-            <dropTable tableName="test_table"/>
-        </rollback>
-    </changeSet>
-    <changeSet id="2" author="as">
-        <addUniqueConstraint columnNames="id"
-                             constraintName="uc_test"
-                             deferrable="true"
-                             initiallyDeferred="true"
-                             tableName="test_table"
-                             validate="true"/>
-        <rollback>
-            <dropUniqueConstraint tableName="test_table"
-                                  constraintName="uc_test"/>
-        </rollback>
+
+    <changeSet author="oleh" id="1">
+        <addUniqueConstraint columnNames="email"
+          constraintName="test_unique_constraint"
+          deferrable="true"
+          initiallyDeferred="true"
+          tableName="authors"
+          validate="true"/>
     </changeSet>
 </databaseChangeLog>
