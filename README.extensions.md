@@ -30,7 +30,7 @@ If you are using maven, you can add the dependency as follows:
 - Your database under test will need to be created prior to the Harness tests running. The test harness also requires certain objects to be pre-created in your database.
 - If possible, provide a docker-compose.yml file that starts and configures your test databases. 
 - Add a `harness.initScript.sql` file located in the same `src/test/resources` directory to do this preparatory step.
- - *You can refer to an example script file here : https://github.com/liquibase/liquibase-test-harness/blob/main/src/test/resources/sqlite/sqlite-init.sql*
+ - *You can refer to an example script file here : https://github.com/liquibase/liquibase-test-harness/blob/main/src/test/resources/docker/mysql-init.sql*
 
 #### Adding a LiquibaseHarnessSuite file
 
