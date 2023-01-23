@@ -5,11 +5,11 @@ on:
   # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers
   push:
     branches: [ main, develop ]
-#  pull_request:
-#    types:
-#      - opened
-#      - reopened
-#      - synchronize
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
 
   schedule:
     - cron: '0 6 * * *' # Execute every day at noon
