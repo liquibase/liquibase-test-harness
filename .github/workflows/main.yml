@@ -12,7 +12,7 @@ on:
       - synchronize
 
   schedule:
-    - cron: '0 12 * * *' # Execute every day at noon
+    - cron: '0 6 * * *' # Execute every day at noon
   workflow_dispatch:
     inputs:
       runDescription:
@@ -21,16 +21,36 @@ on:
       runDetails:
         description: 'JSON details of run. Provided by automation'
         required: false
-      liquibaseCommit:
-        description: DEPRECATED
-        required: false
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
+      testClasses:
+        type: choice
+        description: Test Suite or test class to run
+        options:
+          - LiquibaseHarnessSuiteTest
+          - CompatibilityHarnessSuiteTest
+          - AdvancedHarnessSuiteTest
+          - ChangeObjectTests
+          - ChangeDataTests
+          - SnapshotObjectTests
+          - CompatibilityTest
+          - FoundationalTest
+      ignoreLiquibaseSnapshot:
+        type: boolean
+        description: Don't autoconfigure Liquibase Snapshot
       liquibaseRepo:
         description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibase/liquibase-pro
         required: true
         default: "liquibase/liquibase"
+      databases:
+        description: Databases to start up. Comma separated list of "name"
+        required: true
+        default: "[\"mysql-5.6\",\"mysql-5.7\",\"mysql-8\",\"percona-xtradb-cluster-5.7\",\"percona-xtradb-cluster-8.0\",\"postgres-9.5\",\"postgres-9\",\"postgres-10\",
+        \"postgres-11\",\"postgres-12\",\"postgres-13\",\"postgres-14\",\"postgres-15\",\"mariadb-10.2\",\"mariadb-10.3\",\"mariadb-10.4\",\"mariadb-10.5\",\"mariadb-10.6\",
+        \"mariadb-10.7\",\"mssql-2017\",\"mssql-2019\",\"mssql-2022\",\"H2Database-2.1\",\"crdb-20.2\",\"crdb-21.1\",\"crdb-21.2\",\"crdb-22.1\",\"edb-postgres-9.5\",\"edb-postgres-9.6\",
+        \"edb-postgres-10\",\"edb-postgres-11\",\"edb-postgres-12\",\"edb-postgres-13\",\"edb-postgres-14\",\"edb-edb-9.5\",\"edb-edb-9.6\",\"edb-edb-10\",\"edb-edb-11\",
+        \"edb-edb-12\",\"edb-edb-13\",\"edb-edb-14\",\"derby\",\"sqlite\",\"hsqldb-2.4\",\"hsqldb-2.5\",\"firebird-3\",\"firebird-4\",\"db2-luw\"]"
 
 jobs:
   check_build_safety:
@@ -51,6 +71,12 @@ jobs:
       useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
+      databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","postgres-9.5",
+        "postgres-9","postgres-10","postgres-11","postgres-12","postgres-13","postgres-14","postgres-15","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
+        "mariadb-10.7","mssql-2017","mssql-2019","mssql-2022","H2Database-2.1","crdb-20.2","crdb-21.1","crdb-21.2","crdb-22.1","edb-postgres-9.5","edb-postgres-9.6",
+        "edb-postgres-10","edb-postgres-11","edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-edb-9.5","edb-edb-9.6","edb-edb-10","edb-edb-11",
+        "edb-edb-12","edb-edb-13","edb-edb-14","derby","sqlite","hsqldb-2.4","hsqldb-2.5","firebird-3","firebird-4","db2-luw"]' }}
+      testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - uses: actions/checkout@v3
 
@@ -69,6 +95,9 @@ jobs:
             let useLiquibaseSnapshot = testBranchName !== "main"
             if ("${{ github.event.pull_request.base.ref }}" !== "") {
               useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
+            }
+            if (${{ inputs.ignoreLiquibaseSnapshot == true }}) {
+              useLiquibaseSnapshot = false
             }
 
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
@@ -136,62 +165,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        database: [
-            "mysql-5.6",
-            "mysql-5.7",
-            "mysql-8",
-            "percona-xtradb-cluster-5.7",
-            "percona-xtradb-cluster-8.0",
-            "postgres-9.5",
-            "postgres-9",
-            "postgres-10",
-            "postgres-11",
-            "postgres-12",
-            "postgres-13",
-            "postgres-14",
-            "mariadb-10.2",
-            "mariadb-10.3",
-            "mariadb-10.4",
-            "mariadb-10.5",
-            "mariadb-10.6",
-            "mariadb-10.7",
-            "mssql-2017",
-            "mssql-2019",
-            "H2Database-2.1",
-            "crdb-20.2",
-            "crdb-21.1",
-            "crdb-21.2",
-            "crdb-22.1",
-            "edb-postgres-9.5",
-            "edb-postgres-9.6",
-            "edb-postgres-10",
-            "edb-postgres-11",
-            "edb-postgres-12",
-            "edb-postgres-13",
-            "edb-postgres-14",
-            "edb-edb-9.5",
-            "edb-edb-9.6",
-            "edb-edb-10",
-            "edb-edb-11",
-            "edb-edb-12",
-            "edb-edb-13",
-            "edb-edb-14",
-            "derby",
-            "sqlite",
-            "diff",
-            "hsqldb-2.4",
-            "hsqldb-2.5",
-            "firebird-3",
-            "firebird-4",
-            "db2-luw"
-        ]
+        database: ${{ fromJson(needs.setup.outputs.databases) }}
 
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '11'
           distribution: 'temurin'
           cache: 'maven'
 
@@ -217,7 +198,7 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
       - name: ${{ matrix.database }} Test Run
-        run: ./src/test/resources/automation-runner.sh ${{ matrix.database }}
+        run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 

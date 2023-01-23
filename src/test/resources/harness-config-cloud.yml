@@ -32,7 +32,7 @@ databasesUnderTest:
 
   - name: mariadb
     prefix: aws
-    version: 10.6
+    version: aws_10.6
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
@@ -52,6 +52,13 @@ databasesUnderTest:
     password: PASSWORD
 
   - name: mysql
+    prefix: azure
+    version: azure
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mysql
     prefix: aurora
     version: aurora
     url: DBENDPOINT
@@ -61,6 +68,41 @@ databasesUnderTest:
   - name: postgresql
     prefix: aurora
     version: 13
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
+    prefix: azure
+    version: azure
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
+    prefix: azure
+    version: flexible
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mysql
+    prefix: gcp
+    version: gcp
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: mssql
+    prefix: gcp
+    version: 2019
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
+    prefix: gcp
+    version: DBVERSION
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD

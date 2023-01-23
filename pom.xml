@@ -4,15 +4,16 @@
 
     <groupId>org.liquibase</groupId>
     <artifactId>liquibase-test-harness</artifactId>
-    <version>1.0.8-SNAPSHOT</version>
+    <version>1.0.10-SNAPSHOT</version>
     <name>Liquibase Test Harness</name>
     <description>Test Harness For Liquibase</description>
     <url>https://github.com/liquibase/liquibase-test-harness</url>
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
-        <liquibase-core.version>[4.3.0,)</liquibase-core.version>
+        <liquibase-core.version>[4.18.0,)</liquibase-core.version>
+        <!-- `[X,)` syntax means open-ended version range, version X or higher -->
     </properties>
     <organization>
         <name>Liquibase.org</name>
@@ -72,19 +73,17 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-<!-- This syntax means open-ended version range. Take newest accessible starting from 4.3.0 -->
             <version>${liquibase-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-commercial</artifactId>
-            <!-- This syntax means open-ended version range. Take newest accessible starting from 4.14.0 -->
             <version>${liquibase-core.version}</version>
         </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.5.15</version>
+            <version>2.5.19</version>
             <type>pom</type>
             <exclusions>
                 <exclusion>
@@ -113,9 +112,14 @@
             <version>1.33</version>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.5.0</version>
+            <version>42.5.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -134,18 +138,18 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>3.0.8</version>
+            <version>3.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc8</artifactId>
-            <version>21.7.0.0</version>
+            <version>21.8.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>11.2.1.jre8</version>
+            <version>11.2.3.jre11</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -156,7 +160,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.39.3.0</version>
+            <version>3.40.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -177,19 +181,19 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>2.5.2</version>
+            <version>2.7.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.snowflake</groupId>
             <artifactId>snowflake-jdbc</artifactId>
-            <version>3.13.23</version>
+            <version>3.13.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
             <artifactId>jaybird</artifactId>
-            <version>4.0.6.java8</version>
+            <version>5.0.0.java11</version>
         </dependency>
 
         <dependency>
@@ -231,13 +235,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.3</version>
+            <version>2.0.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>2.0.3</version>
+            <version>2.0.6</version>
             <scope>test</scope>
         </dependency>
 
@@ -262,7 +266,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.13.0</version>
+                <version>2.14.2</version>
                 <configuration>
                     <generateBackupPoms>false</generateBackupPoms>
                 </configuration>
@@ -324,7 +328,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M7</version>
+                <version>3.0.0-M8</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

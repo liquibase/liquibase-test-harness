@@ -1,8 +1,9 @@
 name: Snowflake Cloud
+concurrency: snowflake-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
-    - cron: '0 12 * * *' # Execute every day at noon
+    - cron: '0 7 * * *' # Execute every day at noon
   workflow_dispatch:
 
 jobs:
@@ -12,6 +13,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - uses: liquibase-github-actions/drop-all@v4.19.0
+        with:
+          url: "${{secrets.TH_SNOW_URL}}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7
         with:
@@ -32,4 +40,3 @@ jobs:
         with:
           name: snowflake-test-results
           path: build/spock-reports
-

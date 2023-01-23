@@ -5,16 +5,16 @@ import liquibase.Scope
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
-import liquibase.harness.util.rollback.RollbackStrategy
-import org.json.JSONArray
-import org.json.JSONObject
+import liquibase.ui.UIService
 import org.yaml.snakeyaml.Yaml
 import java.util.stream.Collectors
 
+import static liquibase.harness.util.FileUtils.*
 import static liquibase.util.StringUtil.isNotEmpty
 
 class DiffCommandTestHelper {
 
+    final static UIService uiService = Scope.getCurrentScope().getUI()
     final static String baseDiffPath = "/liquibase/harness/diff/"
 
     static List<TestInput> buildTestInput() {
@@ -69,9 +69,26 @@ class DiffCommandTestHelper {
             databasesToConnect.add(referenceDatabase)
 
             inputList.add(TestInput.builder()
-                    .pathToChangelogFile("src/main/resources${baseDiffPath}" +
+                    .pathToExpectedDiffFile("${baseDiffPath}" + "expectedDiff/" +
+                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
+                            "${targetDatabase.name}${targetDatabase.version}.txt")
+                    .pathToReferenceChangelogFile("${baseDiffPath}" + "changelogs/" +
+                            "tablesForReferenceDb.xml")
+                    .pathToChangelogFile("${baseDiffPath}" + "changelogs/" +
                             "${referenceDatabase.name}${referenceDatabase.version}_to_" +
                             "${targetDatabase.name}${targetDatabase.version}.xml")
+                    .pathToGeneratedXmlDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
+                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
+                            "${targetDatabase.name}${targetDatabase.version}.xml")
+                    .pathToGeneratedSqlDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
+                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
+                            "${targetDatabase.name}${targetDatabase.version}.sql")
+                    .pathToGeneratedYmlDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
+                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
+                            "${targetDatabase.name}${targetDatabase.version}.yml")
+                    .pathToGeneratedJsonDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
+                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
+                            "${targetDatabase.name}${targetDatabase.version}.json")
                     .targetDatabase(targetDatabase)
                     .referenceDatabase(referenceDatabase)
                     .build())
@@ -80,55 +97,60 @@ class DiffCommandTestHelper {
         return inputList
     }
 
-    static String getExpectedDiffPath(TestInput testInput) {
-        return "${baseDiffPath}expectedDiff/${testInput.referenceDatabase.name}${testInput.referenceDatabase.version}" +
-                "_to_${testInput.targetDatabase.name}${testInput.targetDatabase.version}.json"
+    static validateGeneratedDiffChangelog(TestInput testInput) {
+        String changelogContent = getResourceContent("$testInput.pathToChangelogFile")
+        String xmlDiffChangelogContent = readFile(testInput.getPathToGeneratedXmlDiffChangelogFile())
+        String sqlDiffChangelogContent = readFile(testInput.getPathToGeneratedSqlDiffChangelogFile().replace(".sql",
+                ".$testInput.targetDatabase.name" + ".sql"))
+        String ymlDiffChangelogContent = readFile(testInput.getPathToGeneratedYmlDiffChangelogFile())
+        String jsonDiffChangelogContent = readFile(testInput.getPathToGeneratedJsonDiffChangelogFile())
+
+        return validateChangeTypes(changelogContent, xmlDiffChangelogContent, sqlDiffChangelogContent,
+                ymlDiffChangelogContent, jsonDiffChangelogContent, testInput.referenceDatabase.name)
     }
 
-    /** This method creates diffToCompare without JSONObjects referenced to databasechangelog* tables
-     because --excludeObjects flag doesn't work with --format=json extension for 'diff' command
-     */
-    static JSONObject createDiffToCompare(OutputStream diffOutput) {
-        def generatedDiff = new JSONObject(diffOutput.toString().replaceAll("!!int", ""))
-                .getJSONObject("diff")// Replacement because of a bug in diff --format=json generation
-        def diffToCompare = new JSONObject()
-        def arrays = ["missingObjects", "unexpectedObjects", "changedObjects"]
-        def objects = ["missingObject", "unexpectedObject", "changedObject"]
-        for (int i = 0; i < arrays.size(); i++) {
-            if (generatedDiff.has(arrays[i])) {
-                def generatedDiffObjects = generatedDiff.getJSONArray(arrays[i])
-                def diffToCompareObjects = new JSONArray()
-                for (int j = 0; j < generatedDiffObjects.length(); j++) {
-                    def object = generatedDiffObjects.getJSONObject(j).getJSONObject(objects[i])
-                    if (object.has("name") && object.getString("name")
-                            .toLowerCase().contains("databasechangelog")
-                            || object.has("relationName") && object.getString("relationName")
-                            .toLowerCase().contains("databasechangelog")) {
-                        continue
-                    }
-                    def checkedObject = new JSONObject()
-                    checkedObject.put(objects[i], object)
-                    diffToCompareObjects.put(checkedObject)
-                }
-                if (diffToCompareObjects.length() > 0) {
-                    diffToCompare.put(arrays[i], diffToCompareObjects)
-                }
+    private static Boolean validateChangeTypes(String changelogContent, String xmlDiffChangelogContent,
+                                               String sqlDiffChangelogContent, String ymlDiffChangelogContent,
+                                               String jsonDiffChangelogContent, String dbName) {
+        def map = new LinkedHashMap<String, List>()
+        map.put("createTable", new ArrayList<>(List.of("dropTable", "drop table")))
+        map.put("createView", new ArrayList<>(List.of("dropView", "drop view")))
+        map.put("createIndex", new ArrayList<>(List.of("dropIndex", "drop index")))
+        map.put("createSequence", new ArrayList<>(List.of("dropSequence", "drop sequence")))
+
+        if(dbName.equals("mariadb") || dbName.equals("mysql")) {
+            map.put("addForeignKey", new ArrayList<>(List.of("dropForeignKey", "drop foreign key")))
+            map.put("addPrimaryKey", new ArrayList<>(List.of("dropPrimaryKey", "drop key")))
+            map.put("addUniqueConstraint", new ArrayList<>(List.of("dropUniqueConstraint", "drop key")))
+        } else {
+            map.put("addForeignKey", new ArrayList<>(List.of("dropForeignKey", "drop constraint")))
+            map.put("addPrimaryKey", new ArrayList<>(List.of("dropPrimaryKey", "drop constraint")))
+            map.put("addUniqueConstraint", new ArrayList<>(List.of("dropUniqueConstraint", "drop constraint")))
+        }
+
+        //Schema and Catalog to add. Also this will probably change while adding new types
+        for (Map.Entry<String, List> entry : map.entrySet()) {
+            if (changelogContent.contains(entry.key)) {
+                assert xmlDiffChangelogContent.contains(entry.value.get(0).toString()) &&
+                        sqlDiffChangelogContent.toLowerCase().contains(entry.value.get(1).toString())
+                        ymlDiffChangelogContent.contains(entry.value.get(0).toString()) &&
+                        jsonDiffChangelogContent.contains(entry.value.get(0).toString()) &&
+
+                uiService.sendMessage("INFO: $entry.key change type was validated successfully for .XML, .YML, .JSON formats!")
             }
         }
-        return diffToCompare
-    }
-    static void tryToRollbackDiff(RollbackStrategy strategy, Map argsMap) {
-        try {
-            strategy.performRollback(argsMap)
-        } catch (Error error) {
-            Scope.getCurrentScope().getUI().sendErrorMessage("*** Failed to rollback changes from generated diff changelog! " +
-                    "State of the target database will remain changed! \n" + error.message)
-        }
+        return true
     }
 
     @Builder
     static class TestInput {
+        String pathToExpectedDiffFile
         String pathToChangelogFile
+        String pathToReferenceChangelogFile
+        String pathToGeneratedXmlDiffChangelogFile
+        String pathToGeneratedSqlDiffChangelogFile
+        String pathToGeneratedYmlDiffChangelogFile
+        String pathToGeneratedJsonDiffChangelogFile
         DatabaseUnderTest referenceDatabase
         DatabaseUnderTest targetDatabase
     }

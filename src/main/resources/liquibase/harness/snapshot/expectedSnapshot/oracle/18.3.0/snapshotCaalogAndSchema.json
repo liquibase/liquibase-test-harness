@@ -1,0 +1,20 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Catalog": [
+        {
+          "catalog": {
+            "name": "DATICAL_ADMIN"
+          }
+        }
+      ],
+      "liquibase.structure.core.Schema": [
+        {
+          "schema": {
+            "name": "DATICAL_ADMIN"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -6,17 +6,29 @@
 
 | Database                  | Versions Tested                       |
 |---------------------------|---------------------------------------|
-| Postgres                  | `9, 9.5, 10, 11, 12, 13, 14`          |
+| Aurora MySQL              | `8`                                   |
+| Aurora Postgres           | `14`                                  |
 | AWS Postgres RDS          | `10, 11, 12, 13, 14`                  |
-| MySQL                     | `5.6, 5.7, 8`                         |
+| AWS Oracle RDS            | `19.0`                                |
+| AWS MySQL                 | `8`                                   |
+| AWS MariaDB               | `10.6`                                |
+| AWS SQL Server            | `2019`                                |
+| Azure SQL DB              | `latest`                              |
+| Azure SQL MI              | `latest`                              |
+| Azure PostgreSQL SS       | `11`                                  |
+| Azure PostgreSQL FlS      | `14`                                  |
+| GCP PostgreSQL            | `11, 12, 13, 14`                      |
+| GCP MySQL                 | `8`                                   |
+| GCP SQL Server            | `2019`                                |
 | MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` |
-| SQL Server                | `2017`, `2019`                        |
+| Postgres                  | `9, 9.5, 10, 11, 12, 13, 14, 15`      |
+| MySQL                     | `5.6, 5.7, 8`                         |
+| SQL Server                | `2017`, `2019`, `2022`                |
 | Percona XtraDB            | `5.7`, `8.0`                          |
 | Oracle                    | `18.3.0, 18.4.0, 21.3.0`              |
-| AWS Oracle RDS            | `19.0`                                |
 | CockroachDB               | `20.2, 21.1, 21.2, 22.1`              |
 | EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        |
-| DB2 on z/OS               | `11.1, 12`                          |
+| DB2 on z/OS               | `11.1, 12`                            |
 | DB2 on Linux/Unix/Windows | `11.5.7`                              |
 | H2                        | `2.1.210`                             |
 | SQLite                    | `3.34.0`                              |
@@ -24,8 +36,6 @@
 | Firebird                  | `3.0, 4.0`                            |
 | HSQLDB                    | `2.4, 2.5`                            |
 | Snowflake                 | `latest`                              |
-| Azure SQL DB              | `latest`                              |
-| Azure SQL MI              | `latest`                              |
 
 ## Framework
 
@@ -51,11 +61,22 @@ The general pattern is that for each directory containing configuration files:
 At each level in that hierarchy, new configurations can be added and/or can override configurations from a lower level. 
 
 Currently, there are five test types defined in the test harness:
-* Base Compatibility test
+* Foundational test
+* GenerateChangelog Command test
 * Change Object Tests
 * Change Data Tests
 * Snapshot Command Test
 * Diff Command Test
+
+Currently, there are three test suites in the test harness:
+* BaseHarnessSuite, contains:
+    * ChangeObjectTest
+    * ChangeDataTest
+* FoundationalHarnessSuite, contains:
+    * FoundationalTest
+* AdvancedHarnessSuite, contains:
+    * GenerateChangelogTest
+    * SnapshotObjectTests
 
 This repository is configured to run against databases supported by Liquibase Core. 
 
@@ -79,7 +100,7 @@ For more information on using the test harness in your extension, see [README.ex
 
 # Framework Tests
 
-## BasicCompatibilityTest
+## FoundationalTest
 
 This test validates work of basic Liquibase functions. 
 1) runs Liquibase validate command to ensure the changelog is valid;
@@ -94,8 +115,8 @@ it is not present in test**)
 8) runs Liquibase rollback command;
 9) runs verification query to ensure a test object was actually removed during Liquibase rollback command;
 
-### Running BaseCompatibilityTest against your database
-As far as this test validates work of Basic Liquibase functions it is essential to keep its configuration as simple as possible:
+### Running FoundationalTest against your database
+As far as this test validates work of basic Liquibase functions it is essential to keep its configuration as simple as possible:
 1. If you have your database instance up and running you need to just add appropriate configuration details to `src/test/resources/harness-config.yml` file.
 Following the example:
    - **name**: `database_name` (**mandatory**) </br>
@@ -107,16 +128,79 @@ Following the example:
 2. Add driver dependency for you database to POM.xml file
 
 3. To run the test go to you IDE run configurations and add new JUnit configuration. Add 
-`liquibase.harness.base.BaseCompatibilityTest` as target class and use -DdbName, -DdbVersion to set up
+`liquibase.harness.compatibility.foundational.FoundationalTest` as target class and use -DdbName, -DdbVersion to set up
 appropriate parameters. Or you may just comment out/delete all existing configurations in harness-config.yml
-file leaving just your configuration and run BaseCompatibilityTest directly from the class file. 
+file leaving just your configuration and run FoundationalTest directly from the class file. 
 
 In case you want to set up your database instance using docker image then you may use 
 `src/test/resources/docker/docker-compose.yml` file for configuration.
 
-## FoundationalCompatibilityTest
+## Advanced test suite
 
-Checks if your database doesn't "choke" while Liquibase tries to deploy very long queries (inserts and updates with 10k rows).
+Advanced test suite consists of 3 tests (GenerateChangelogTest, DiffCommandTest, SnapshotObjectTests)
+
+### GenerateChangelogTest
+
+* This test validates work of generateChangelog command.
+
+* The test behavior is as follows:
+    * It reads the changesets from the changelogs provided in `src/main/resources/liquibase/harness/generateChangelog/expectedChangeLog` folders (recursively)
+    * Runs Liquibase 'update' command to create objects on database
+    * Runs Liquibase 'generateChangelog' command to generate changelog (all supported formats: XML, YAML, JSON, SQL)
+    * Validates if generated changelogs contain changeset corresponding name for XML, YAML, JSON formats or if generated query is correct for SQL format
+    * Finally, deployed changes are then rolled back
+    
+### DiffCommandTest
+
+This test executes the following steps:
+* Reads `src/test/resources/harness-config.yml` and `src/main/resources/liquibase/harness/diff/diffDatabases.yml` to locate the
+  databases that need to be compared
+* Creates a diff based on 2 databases (targetDatabase and referenceDatabase) from `diffDatabases.yml`
+* Generates the changelog based on diff
+* Applies the generated changelog to the targetDatabase
+* Checks the diff between the target and reference databases again
+* If some diffs still exist, then they are matched with the expected diff from `liquibase/harness/diff/expectedDiff` folder
+
+#### Warning: This is a destructive test -- it will alter the state of targetDatabase to match the referenceDatabase.
+
+### SnapshotCommandTests
+
+This test validates work of Liquibase 'snapshot' command by comparing expected and generated snapshots
+after a DB object was created.
+
+### Running Advanced test suite against your database
+1. Since this test suite contains DiffCommandTest you will need to have two database instances up and running, 
+   and you need to add appropriate configuration details to `src/test/resources/harness-config.yml` file.
+   Following the example:
+  - **name**: `database_name` (**mandatory**) </br>
+    **version**: `database_version` (optional) </br>
+    **prefix**: `local` (optional parameter required for CI/CD tests, leave it empty or set `local`) </br>
+    **url**: `db_connection_url` (**mandatory**) </br>
+    **username**: `username` (optional if your database authentication config doesn't require it) </br>
+    **password**: `password` (optional if your database authentication config doesn't require it) </br>
+
+2. Add driver dependency for you database to POM.xml file
+
+
+3. To run the test go to you IDE run configurations and add new JUnit configuration. Add
+   `liquibase.harness.AdvancedHarnessSuiteTest` as target class and use -DdbName, -DdbVersion to set up
+   appropriate parameters.
+   
+**WARNING:** As for now `liquibase.harness.AdvancedHarnessSuiteTest` will run only GenerateChangelogTest & SnapshotObjectTests.
+                You will need to create a separate run configuration for DiffCommandTest.
+                DiffCommandTest will be added to `liquibase.harness.AdvancedHarnessSuiteTest` in the nearest releases.
+
+   To run **DiffCommandTest** create a new JUnit configuration. Add
+   `liquibase.harness.diff.DiffCommandTest` as target class and **DO NOT** use -DdbName, -DdbVersion to set up
+   appropriate parameters. To set up target database & reference database for the DiffCommandTest, use **diffDatabases.yml** file
+   located at `src/main/resources/liquibase/harness/diff/diffDatabases.yml` following the example:
+-  **targetDatabaseName**: `target database_name` (**mandatory**) </br>
+   **targetDatabaseVersion**: `target database_version` (**mandatory**) </br>
+   **referenceDatabaseName**: `reference database_name` (**mandatory**) </br>
+   **referenceDatabaseVersion**: `reference database_version` (**mandatory**) </br>
+
+In case you want to set up your database instance using docker image then you may use
+`src/test/resources/docker/docker-compose.yml` file for configuration.
 
 ## Change Objects Test
 
@@ -159,7 +243,7 @@ Additionally the `_noMatchField` parameter can be used to define the exact prope
 see [createTableWithNumericColumn.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/createTableWithNumericColumn.json)
   - You will need to add this under the database specific folder.
   - If you would like to test another DB type, please add the requisite folder.
-4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (You can also choose to run `BaseTestHarnessSuite`, or `LiquibaseHarnessSuiteTest` -- at present they all work the same).
+4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (You can also choose to run `BaseTestHarnessSuite`, `AdvancedHarnessSuite`, or `FoundationalHarnessSuite`).
 
 ## Change Data Test
 
@@ -170,29 +254,14 @@ Generally it is similar to ChangeObjectTests except it doesn't use Liquibase sna
  - `src/main/resources/liquibase/harness/data/expectedResultSet` - add JSON formatted expected result set from required DB object;
     where left part of a JSON node is the name of a change type and right part is JSON Array with a result set;
  - `src/main/resources/liquibase/harness/data/expectedSql` - add query which is expected to be generated by Liquibase;
+ 
 
-## DiffCommandTest
-
-This test executes the following steps: 
-   * Reads `src/test/resources/harness-config.yml` and `src/main/resources/liquibase/harness/diff/diffDatabases.yml` to locate the
-    databases that need to be compared
-   * Creates a diff based on 2 databases (targetDatabase and referenceDatabase) from `diffDatabases.yml`
-   * Generates the changelog based on diff 
-   * Applies the generated changelog to the targetDatabase
-   * Checks the diff between the target and reference databases again
-   * If some diffs still exist, then they are matched with the expected diff from `liquibase/harness/diff/expectedDiff` folder
-
-#### Warning: This is a destructive test -- it will alter the state of targetDatabase to match the referenceDatabase. 
-
-## SnapshotCommandTests
-
-This test validates work of Liquibase 'snapshot' command by comparing expected and generated snapshots
-after a DB object was created.
+## Minimum Requirements
+ - Java 11. Java 8 should actually work for most of the platforms that don't have jdbc drivers that require Java 11, those that do are
+Firebird, HyperSQL(HSQLDB), Microsoft SQL Server. Downgrade java and jdbc driver versions in pom at your own risk.
+ - Maven >=3.5
 
 ## Running the Tests
-
-### Minimum Requirements
-Java 1.8
 
 1) Make sure you have a docker container up and running first
 2) Go to `src/test/resources/docker` and run `docker-compose up -d`. 

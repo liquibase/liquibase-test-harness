@@ -1,5 +1,6 @@
 
 name: IBM DB2/Z Cloud
+concurrency: db2z-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   # schedule:
