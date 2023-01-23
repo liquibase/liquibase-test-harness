@@ -1,0 +1,1 @@
+CREATE TABLE "PUBLIC".createTableDataTypeDoubleIsFloat (floatCol FLOAT)
