@@ -29,12 +29,12 @@ on:
         description: Test Suite or test class to run
         options:
           - LiquibaseHarnessSuiteTest
-          - CompatibilityHarnessSuiteTest
+          - FoundationalHarnessSuiteTest
           - AdvancedHarnessSuiteTest
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
-          - CompatibilityTest
+          - GenerateChangelogTest
           - FoundationalTest
       ignoreLiquibaseSnapshot:
         type: boolean

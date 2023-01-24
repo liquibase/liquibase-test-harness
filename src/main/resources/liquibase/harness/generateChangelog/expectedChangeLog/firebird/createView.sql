@@ -1,0 +1,3 @@
+CREATE TABLE TEST_TABLE (TEST_COLUMN INT);
+
+CREATE VIEW TEST_VIEW AS select test_column from test_table;

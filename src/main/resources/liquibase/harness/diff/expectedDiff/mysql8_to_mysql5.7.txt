@@ -4,7 +4,7 @@ Compared Schemas: lbcat
 Product Name: EQUAL
 Product Version:
      Reference:   '8.0.26'
-     Target: '5.7.40'
+     Target: '5.7.41'
 Missing Catalog(s): NONE
 Unexpected Catalog(s): NONE
 Changed Catalog(s): NONE

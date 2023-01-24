@@ -1,0 +1,24 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "TEST_TABLE"
+          }
+        }
+      ],
+      "liquibase.structure.core.UniqueConstraint": [
+        {
+          "uniqueConstraint": {
+            "deferrable": false,
+            "disabled": false,
+            "initiallyDeferred": false,
+            "name": "TEST_UNIQUE_CONSTRAINT",
+            "validate": true
+          }
+        }
+      ]
+    }
+  }
+}
