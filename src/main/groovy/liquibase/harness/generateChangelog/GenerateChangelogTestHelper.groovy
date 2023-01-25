@@ -72,6 +72,17 @@ class GenerateChangelogTestHelper {
         uiService.sendMessage("GENERATED SQL CHANGELOG: \n $cleanGeneratedChangelog \n EXPECTED SQL CHANGELOG: \n $cleanExpectedChangelog")
     }
 
+    static String getShortDatabaseName(String dbName) {
+        switch (dbName) {
+            case "percona-xtradb-cluster":
+                return "mysql"
+            case "db2-luw":
+                return "db2"
+            default:
+                return dbName
+        }
+    }
+
     @Builder
     @ToString(includeNames = true, includeFields = true, includePackage = false, excludes = 'database,password')
     static class TestInput {
