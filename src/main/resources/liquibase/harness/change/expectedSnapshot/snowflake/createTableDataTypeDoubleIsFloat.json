@@ -1,0 +1,23 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "CREATETABLEDATATYPEDOUBLEISFLOAT"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "FLOATCOL",
+            "type": {
+              "typeName": "FLOAT"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
