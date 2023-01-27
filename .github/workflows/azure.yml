@@ -95,7 +95,8 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@v4.19.0
+      - name: Azure MSSQL dropAll
+        uses: liquibase-github-actions/drop-all@v4.19.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           url: "${{secrets.TH_AZURE_URL}}"
@@ -103,7 +104,8 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Azure MSSQL init changelogs update
+        uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           operation: "update"
@@ -113,7 +115,8 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_URL}}"
 
-      - uses: liquibase-github-actions/drop-all@v4.19.0
+      - name: Azure MSSQL MI dropAll
+        uses: liquibase-github-actions/drop-all@v4.19.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
         with:
           url: "${{secrets.TH_AZURE_MSSQL_MI_URL}}"
@@ -121,7 +124,8 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Azure MSSQL MI init changelogs update
+        uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
         with:
           operation: "update"
@@ -131,7 +135,8 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_MSSQL_MI_URL}}"
 
-      - uses: liquibase-github-actions/drop-all@v4.19.0
+      - name: Azure PostgreSQL Single Server dropAll
+        uses: liquibase-github-actions/drop-all@v4.19.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
@@ -139,7 +144,8 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Azure PostgreSQL Single Server init changelogs update
+        uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           operation: "update"
@@ -149,7 +155,8 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
 
-      - uses: liquibase-github-actions/drop-all@v4.19.0
+      - name: Azure PostgreSQL Flexible Server dropAll
+        uses: liquibase-github-actions/drop-all@v4.19.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'flexible' }}
         with:
           url: "${{secrets.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL}}"
@@ -157,7 +164,8 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Azure PostgreSQL Flexible Server init changelogs update
+        uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'flexible' }}
         with:
           operation: "update"
