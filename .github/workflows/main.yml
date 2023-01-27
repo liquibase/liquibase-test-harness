@@ -82,7 +82,7 @@ jobs:
 
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v6.3.3
+        uses: actions/github-script@v6.4.0
         with:
           github-token: ${{ secrets.BOT_TOKEN }}
           script: |
