@@ -100,7 +100,7 @@ jobs:
 
       - name: Configure Test
         id: setup
-        uses: actions/github-script@v6.3.3
+        uses: actions/github-script@v6.4.0
         with:
           script: |
             let splitValues = "${{ matrix.database }}".split(":")
