@@ -1,0 +1,6 @@
+--liquibase formatted sql
+
+--changeset as:1
+CREATE TABLE dbo.test_table_xml (test_column int);
+
+--rollback DROP TABLE test_table_sql;

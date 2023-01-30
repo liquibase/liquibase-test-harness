@@ -1,0 +1,1 @@
+CREATE TABLE dbo.test_table (id int NOT NULL, CONSTRAINT test_pk PRIMARY KEY (id));

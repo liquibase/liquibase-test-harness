@@ -24,6 +24,7 @@ class GenerateChangelogTest extends Specification {
     @Shared
     UIService uiService = Scope.getCurrentScope().getUI()
     String testResourcesPath = System.getProperty("user.dir") + "/src/test/resources/"
+    String generatedResourcesPath = "/src/test/resources/"
     long timeMillisBeforeTest
     long timeMillisAfterTest
 
@@ -80,6 +81,30 @@ class GenerateChangelogTest extends Specification {
             } else {
                 assert generatedChangelog.contains("$testInput.change")
             }
+
+            when: "get sql generated for the change set"
+            String generatedSql
+            argsMap.put("changeLogFile", generatedResourcesPath + entry.value)
+            if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
+//                argsMap.put("changeLogFile", generatedResourcesPath + getSqlSpecificChangelogFile(testInput.databaseName, entry.value))
+                generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
+            }
+
+
+            then: "execute updateSql command on generated changelogs"
+            if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
+                def expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+                        "liquibase/harness/generateChangelog/expectedSql"))
+                def generatedSqlIsCorrect = generatedSql == expectedSql
+                if (!generatedSqlIsCorrect) {
+                    Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
+                            "match generated sql! Deleting expectedSql file will test that new sql works correctly and " +
+                            "will auto-generate a new version if it passes. \nEXPECTED SQL: \n" + expectedSql + " \n" +
+                            "GENERATED SQL: \n" + generatedSql)
+                    assert generatedSql == expectedSql
+                }
+            }
+
 
             and: "rollback changes"
             argsMap.put("changeLogFile", testInput.xmlChangelogPath)

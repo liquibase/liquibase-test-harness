@@ -1,0 +1,1 @@
+CREATE TABLE lbcat.test_table (id INT NULL, UNIQUE (id));

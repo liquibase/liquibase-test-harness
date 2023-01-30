@@ -83,6 +83,11 @@ class GenerateChangelogTestHelper {
         }
     }
 
+    static String getSqlSpecificChangelogFile (String dbName, String changelogFileName) {
+        def replacementName = String.format(".%s.sql", getShortDatabaseName(dbName))
+        return changelogFileName.replace(".sql", replacementName)
+    }
+
     @Builder
     @ToString(includeNames = true, includeFields = true, includePackage = false, excludes = 'database,password')
     static class TestInput {
