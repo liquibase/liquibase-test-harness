@@ -1,1 +1,0 @@
-CREATE OR REPLACE FORCE VIEW "TEST_VIEW" ("ID", "FIRST_NAME", "LAST_NAME", "EMAIL") AS select id, first_name, last_name, email from authors;

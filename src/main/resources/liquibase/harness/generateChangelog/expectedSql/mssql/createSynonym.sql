@@ -1,1 +1,1 @@
-CREATE SYNONYM dbo.test_synonym FOR test_table_xml;
+CREATE SYNONYM test_synonym FOR test_table_xml;

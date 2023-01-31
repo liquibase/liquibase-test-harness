@@ -1,3 +1,3 @@
-CREATE TABLE dbo. (id int);
+CREATE TABLE test_table (id int);
 
-ALTER TABLE dbo. ADD CONSTRAINT test_unique_constraint UNIQUE (id);
+ALTER TABLE test_table ADD CONSTRAINT test_unique_constraint UNIQUE (id);

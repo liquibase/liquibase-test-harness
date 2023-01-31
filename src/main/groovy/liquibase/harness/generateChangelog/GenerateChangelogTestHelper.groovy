@@ -28,7 +28,7 @@ class GenerateChangelogTestHelper {
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
             for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                    "expectedChangeLog", "sql").entrySet()) {
+                    "expectedChangeLog", "xml").entrySet()) {
                 if (!commandLineChangesList || commandLineChangesList.contains(changeLogEntry.key)) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
@@ -47,7 +47,7 @@ class GenerateChangelogTestHelper {
                             .xmlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedChangeLog", "xml").get(changeLogEntry.key))
                             .sqlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "expectedChangeLog", "sql").get(changeLogEntry.key))
+                                    "expectedSql", "sql").get(changeLogEntry.key))
                             .change(changeLogEntry.key)
                             .database(databaseUnderTest.database)
                             .build())
@@ -86,6 +86,14 @@ class GenerateChangelogTestHelper {
     static String getSqlSpecificChangelogFile (String dbName, String changelogFileName) {
         def replacementName = String.format(".%s.sql", getShortDatabaseName(dbName))
         return changelogFileName.replace(".sql", replacementName)
+    }
+
+    static String removeSchemaNames(String generatedSql, Database database) {
+        String schemaName = database.getDefaultSchemaName()
+        def cleanSql = generatedSql.replace(schemaName + ".", "")
+//        schemaName = "\'" + schemaName + "\'."
+//        return cleanSql.replaceAll(schemaName, "")
+        return cleanSql
     }
 
     @Builder

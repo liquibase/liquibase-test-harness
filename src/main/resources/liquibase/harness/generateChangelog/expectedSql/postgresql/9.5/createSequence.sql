@@ -1,1 +1,1 @@
-CREATE SEQUENCE  IF NOT EXISTS public."test_sequence";
+CREATE SEQUENCE  IF NOT EXISTS "test_sequence";
