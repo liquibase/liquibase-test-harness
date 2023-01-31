@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION =test_function()
+CREATE OR REPLACE FUNCTION test_function()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$

@@ -8,4 +8,3 @@ CREATE OR REPLACE PACKAGE BODY test_package IS
             DELETE FROM posts WHERE author_id = '15';
             END;
             END
-/

@@ -87,8 +87,7 @@ class GenerateChangelogTest extends Specification {
             argsMap.put("changeLogFile", generatedResourcesPath + entry.value)
             if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
                 generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
-//                        .replaceAll(testInput.database.getDefaultSchemaName() + ".", "")
-                generatedSql = removeSchemaNames(generatedSql, testInput.database).toLowerCase()
+                generatedSql = removeSchemaNames(generatedSql, testInput.database)
             }
 
 
