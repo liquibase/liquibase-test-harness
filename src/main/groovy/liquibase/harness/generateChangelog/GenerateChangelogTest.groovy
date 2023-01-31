@@ -94,8 +94,14 @@ class GenerateChangelogTest extends Specification {
 
             then: "execute updateSql command on generated changelogs"
             if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
-                def expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                        "liquibase/harness/generateChangelog/expectedSql")).toLowerCase()
+                def expectedSql
+                try {
+                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+                            "liquibase/harness/generateChangelog/verificationSql")).toLowerCase()
+                } catch (NullPointerException exception) {
+                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+                            "liquibase/harness/generateChangelog/expectedSql")).toLowerCase()
+                }
                 def generatedSqlIsCorrect = generatedSql == expectedSql
                 if (!generatedSqlIsCorrect) {
                     Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
