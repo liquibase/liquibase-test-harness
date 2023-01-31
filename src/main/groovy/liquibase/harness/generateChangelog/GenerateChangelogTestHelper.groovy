@@ -90,11 +90,7 @@ class GenerateChangelogTestHelper {
 
     static String removeSchemaNames(String generatedSql, Database database) {
         def schemaName = database.getDefaultSchemaName()
-        def cleanSql = generatedSql.toLowerCase()
-        cleanSql.replace(schemaName + ".", "")
-        schemaName = "\"" + schemaName + "\"."
-        cleanSql.replace(schemaName, "")
-        return cleanSql
+        return generatedSql.toLowerCase().replace(schemaName + ".", "").replace("\"" + schemaName + "\".", "")
     }
 
     @Builder
