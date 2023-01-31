@@ -88,14 +88,14 @@ class GenerateChangelogTest extends Specification {
             if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
                 generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
 //                        .replaceAll(testInput.database.getDefaultSchemaName() + ".", "")
-                generatedSql = removeSchemaNames(generatedSql, testInput.database)
+                generatedSql = removeSchemaNames(generatedSql, testInput.database).toLowerCase()
             }
 
 
             then: "execute updateSql command on generated changelogs"
             if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
                 def expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                        "liquibase/harness/generateChangelog/expectedSql"))
+                        "liquibase/harness/generateChangelog/expectedSql")).toLowerCase()
                 def generatedSqlIsCorrect = generatedSql == expectedSql
                 if (!generatedSqlIsCorrect) {
                     Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
