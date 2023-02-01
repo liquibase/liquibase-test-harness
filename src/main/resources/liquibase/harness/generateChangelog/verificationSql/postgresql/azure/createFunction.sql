@@ -7,7 +7,7 @@ CREATE VIEW pg_buffercache AS SELECT p.bufferid,
     p.isdirty,
     p.usagecount,
     p.pinning_backends
-   FROM pg_buffercache_pages() p(bufferid integer, relfilenode oid, reltablespace oid, reldatabase oid, relforknumber smallint, relblocknumber bigint, isdirty boolean, usagecount smallint, pinning_backends integer);;
+   FROM pg_buffercache_pages() p(bufferid integer, relfilenode oid, reltablespace oid, reldatabase oid, relforknumber smallint, relblocknumber bigint, isdirty boolean, usagecount smallint, pinning_backends integer);
 
 CREATE VIEW pg_stat_statements AS SELECT pg_stat_statements.userid,
     pg_stat_statements.dbid,
@@ -32,7 +32,7 @@ CREATE VIEW pg_stat_statements AS SELECT pg_stat_statements.userid,
     pg_stat_statements.temp_blks_written,
     pg_stat_statements.blk_read_time,
     pg_stat_statements.blk_write_time
-   FROM pg_stat_statements(true) pg_stat_statements(userid, dbid, queryid, query, calls, total_time, min_time, max_time, mean_time, stddev_time, rows, shared_blks_hit, shared_blks_read, shared_blks_dirtied, shared_blks_written, local_blks_hit, local_blks_read, local_blks_dirtied, local_blks_written, temp_blks_read, temp_blks_written, blk_read_time, blk_write_time);;
+   FROM pg_stat_statements(true) pg_stat_statements(userid, dbid, queryid, query, calls, total_time, min_time, max_time, mean_time, stddev_time, rows, shared_blks_hit, shared_blks_read, shared_blks_dirtied, shared_blks_written, local_blks_hit, local_blks_read, local_blks_dirtied, local_blks_written, temp_blks_read, temp_blks_written, blk_read_time, blk_write_time);
 
 CREATE OR REPLACE FUNCTION pg_buffercache_pages()
  RETURNS SETOF record
