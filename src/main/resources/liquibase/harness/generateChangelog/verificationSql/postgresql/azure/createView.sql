@@ -2,7 +2,7 @@ CREATE VIEW test_view AS SELECT authors.id,
     authors.first_name,
     authors.last_name,
     authors.email
-   FROM authors;;
+   FROM authors;
 
 CREATE VIEW pg_buffercache AS SELECT p.bufferid,
     p.relfilenode,
