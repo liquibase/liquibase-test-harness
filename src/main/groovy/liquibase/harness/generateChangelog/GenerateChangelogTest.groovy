@@ -104,8 +104,7 @@ class GenerateChangelogTest extends Specification {
                 def generatedSqlIsCorrect = generatedSql == expectedSql
                 if (!generatedSqlIsCorrect) {
                     Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
-                            "match generated sql! Deleting expectedSql file will test that new sql works correctly and " +
-                            "will auto-generate a new version if it passes. \nEXPECTED SQL: \n" + expectedSql + " \n" +
+                            "match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" +
                             "GENERATED SQL: \n" + generatedSql)
                     assert generatedSql == expectedSql
                 }
