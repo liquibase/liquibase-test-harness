@@ -23,7 +23,8 @@ class GenerateChangelogTest extends Specification {
     List<DatabaseUnderTest> databases
     @Shared
     UIService uiService = Scope.getCurrentScope().getUI()
-    String testResourcesPath = System.getProperty("user.dir") + "/src/test/resources/"
+    String resourcesDirFullPath = System.getProperty("user.dir") + "/src/test/resources/"
+    String resourcesDirPath = "/src/test/resources/"
     long timeMillisBeforeTest
     long timeMillisAfterTest
 
@@ -65,11 +66,12 @@ class GenerateChangelogTest extends Specification {
             when: "execute generateChangelog command using different changelog formats"
             argsMap.put("changeLogFile", testInput.xmlChangelogPath)
             executeCommandScope("update", argsMap)
-            argsMap.put("changeLogFile", testResourcesPath + entry.value)
+            argsMap.put("changeLogFile", resourcesDirFullPath + entry.value)
+            argsMap.put("excludeObjects", "(?i)posts, (?i)authors")//excluding static test-harness objects from generated changelog
             if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
                 def shortDbName = getShortDatabaseName(testInput.databaseName)
                 sqlSpecificChangelogFile = entry.value.replace(".sql", ".$shortDbName" + ".sql")
-                argsMap.put("changeLogFile", testResourcesPath + sqlSpecificChangelogFile)
+                argsMap.put("changeLogFile", resourcesDirFullPath + sqlSpecificChangelogFile)
             }
             executeCommandScope("generateChangelog", argsMap, testInput.databaseName)
 
@@ -80,6 +82,35 @@ class GenerateChangelogTest extends Specification {
             } else {
                 assert generatedChangelog.contains("$testInput.change")
             }
+
+            when: "get sql generated for the change set"
+            String generatedSql
+            argsMap.put("changeLogFile", resourcesDirPath + entry.value)
+            if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
+                generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
+                generatedSql = removeSchemaNames(generatedSql, testInput.database)
+            }
+
+
+            then: "execute updateSql command on generated changelogs"
+            if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
+                def expectedSql
+                try {
+                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+                            "liquibase/harness/generateChangelog/verificationSql")).toLowerCase()
+                } catch (NullPointerException exception) {
+                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+                            "liquibase/harness/generateChangelog/expectedSql")).toLowerCase()
+                }
+                def generatedSqlIsCorrect = generatedSql == expectedSql
+                if (!generatedSqlIsCorrect) {
+                    Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
+                            "match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" +
+                            "GENERATED SQL: \n" + generatedSql)
+                    assert generatedSql == expectedSql
+                }
+            }
+
 
             and: "rollback changes"
             argsMap.put("changeLogFile", testInput.xmlChangelogPath)
@@ -97,9 +128,9 @@ class GenerateChangelogTest extends Specification {
         }
         for (Map.Entry<String, String> entry : map.entrySet()) {
             if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
-                deleteFile(testResourcesPath + sqlSpecificChangelogFile)
+                deleteFile(resourcesDirFullPath + sqlSpecificChangelogFile)
             } else {
-                deleteFile(testResourcesPath + entry.value)
+                deleteFile(resourcesDirFullPath + entry.value)
             }
         }
 

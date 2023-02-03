@@ -28,7 +28,7 @@ class GenerateChangelogTestHelper {
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
             for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                    "expectedChangeLog", "sql").entrySet()) {
+                    "expectedChangeLog", "xml").entrySet()) {
                 if (!commandLineChangesList || commandLineChangesList.contains(changeLogEntry.key)) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
@@ -46,8 +46,12 @@ class GenerateChangelogTestHelper {
                                     "stress/select", "xml").get(changeLogEntry.key))
                             .xmlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedChangeLog", "xml").get(changeLogEntry.key))
+                            .jsonChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "expectedChangeLog", "json").get(changeLogEntry.key))
+                            .ymlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "expectedChangeLog", "yml").get(changeLogEntry.key))
                             .sqlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "expectedChangeLog", "sql").get(changeLogEntry.key))
+                                    "expectedSql", "sql").get(changeLogEntry.key))
                             .change(changeLogEntry.key)
                             .database(databaseUnderTest.database)
                             .build())
@@ -83,6 +87,19 @@ class GenerateChangelogTestHelper {
         }
     }
 
+    static String getSqlSpecificChangelogFile (String dbName, String changelogFileName) {
+        def replacementName = String.format(".%s.sql", getShortDatabaseName(dbName))
+        return changelogFileName.replace(".sql", replacementName)
+    }
+
+    static String removeSchemaNames(String generatedSql, Database database) {
+        if (database.getShortName().equals("sqlite")) {
+            return generatedSql.toLowerCase()
+        }
+        def schemaName = database.getDefaultSchemaName().toLowerCase()
+        return generatedSql.toLowerCase().replace(schemaName + ".", "").replace("\"" + schemaName + "\".", "")
+    }
+
     @Builder
     @ToString(includeNames = true, includeFields = true, includePackage = false, excludes = 'database,password')
     static class TestInput {
@@ -96,6 +113,8 @@ class GenerateChangelogTestHelper {
         String updateChangelogPath
         String selectChangelogPath
         String xmlChangelogPath
+        String jsonChangelogPath
+        String ymlChangelogPath
         String sqlChangelogPath
         String dbSchema
         String change
