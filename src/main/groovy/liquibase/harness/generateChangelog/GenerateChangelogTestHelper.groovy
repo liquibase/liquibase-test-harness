@@ -46,6 +46,10 @@ class GenerateChangelogTestHelper {
                                     "stress/select", "xml").get(changeLogEntry.key))
                             .xmlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedChangeLog", "xml").get(changeLogEntry.key))
+                            .jsonChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "expectedChangeLog", "json").get(changeLogEntry.key))
+                            .ymlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "expectedChangeLog", "yml").get(changeLogEntry.key))
                             .sqlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedSql", "sql").get(changeLogEntry.key))
                             .change(changeLogEntry.key)
@@ -109,6 +113,8 @@ class GenerateChangelogTestHelper {
         String updateChangelogPath
         String selectChangelogPath
         String xmlChangelogPath
+        String jsonChangelogPath
+        String ymlChangelogPath
         String sqlChangelogPath
         String dbSchema
         String change
