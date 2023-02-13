@@ -1,2 +1,2 @@
-CREATE TABLE public."MixedCase1" (id INTEGER NOT NULL, CONSTRAINT "MixedCase1_pkey" PRIMARY KEY (id))
-CREATE TABLE public."MixedCase2" (id INTEGER, ref_id INTEGER, CONSTRAINT fk_mixed FOREIGN KEY (ref_id) REFERENCES public."MixedCase1"(id))
+CREATE TABLE IF NOT EXISTS public."MixedCase1" (id INTEGER NOT NULL, CONSTRAINT "MixedCase1_pkey" PRIMARY KEY (id))
+CREATE TABLE IF NOT EXISTS public."MixedCase2" (id INTEGER, ref_id INTEGER, CONSTRAINT fk_mixed FOREIGN KEY (ref_id) REFERENCES public."MixedCase1"(id))

@@ -1,1 +1,1 @@
-CREATE TABLE public."datatypes.money_test_table" (money DECIMAL)
+CREATE TABLE IF NOT EXISTS public."datatypes.money_test_table" (money DECIMAL)

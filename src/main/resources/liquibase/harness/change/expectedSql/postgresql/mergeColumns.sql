@@ -1,4 +1,4 @@
-CREATE TABLE public.full_name_table (first_name VARCHAR(50), last_name VARCHAR(50))
+CREATE TABLE IF NOT EXISTS public.full_name_table (first_name VARCHAR(50), last_name VARCHAR(50))
 INSERT INTO public.full_name_table (first_name) VALUES ('John')
 UPDATE public.full_name_table SET last_name = 'Doe' WHERE first_name='John'
 INSERT INTO public.full_name_table (first_name) VALUES ('Jane')

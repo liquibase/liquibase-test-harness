@@ -1,1 +1,1 @@
-CREATE TABLE public."datatypes.json_test_table" (json JSON)
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS public."datatypes.json_test_table" (json JSON)
