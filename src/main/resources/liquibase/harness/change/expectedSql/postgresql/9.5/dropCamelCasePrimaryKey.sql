@@ -1,4 +1,4 @@
-CREATE TABLE public."camelCase" (id SERIAL NOT NULL, CONSTRAINT "camelCase_pkey" PRIMARY KEY (id))
+CREATE TABLE IF NOT EXISTS public."camelCase" (id SERIAL NOT NULL, CONSTRAINT "camelCase_pkey" PRIMARY KEY (id))
 DO $$ DECLARE constraint_name varchar
 BEGIN
 SELECT tc.CONSTRAINT_NAME into strict constraint_name

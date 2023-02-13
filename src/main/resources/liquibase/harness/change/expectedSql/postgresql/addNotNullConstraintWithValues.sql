@@ -1,4 +1,4 @@
-CREATE TABLE public.lb45 (name CHAR(20))
+CREATE TABLE IF NOT EXISTS public.lb45 (name CHAR(20))
 INSERT INTO public.lb45 (name) VALUES ('marcel')
 ALTER TABLE public.lb45 ADD "columnWithInitialValue" BIGINT
 UPDATE public.lb45 SET "columnWithInitialValue" = 0
