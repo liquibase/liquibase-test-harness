@@ -10,9 +10,13 @@ import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
 import liquibase.ui.UIService
 
+import static liquibase.harness.util.FileUtils.getSqlFileContent
+import static liquibase.harness.util.TestUtils.parseQuery
+
 class AdvancedTestHelper {
     final static String baseChangelogPath = "liquibase/harness/compatibility/advanced/"
     final static UIService uiService = Scope.getCurrentScope().getUI()
+    final static String secondaryDbName = "secondarydb"
 
     static List<TestInput> buildTestInput() {
         String commandLineChanges = System.getProperty("change")
@@ -31,26 +35,32 @@ class AdvancedTestHelper {
                     "changelogs", "xml").entrySet()) {
                 if (!commandLineChangesList || commandLineChangesList.contains(changeLogEntry.key)) {
                     inputList.add(TestInput.builder()
+                            .database(databaseUnderTest.database)
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)
-                            .referenceUrl(databaseUnderTest.url.replace(databaseUnderTest.database.getDefaultSchemaName(), "secondarydb"))
+                            .referenceUrl(databaseUnderTest.url.replace(databaseUnderTest.database.getDefaultSchemaName(), secondaryDbName))
                             .primaryDbSchemaName(databaseUnderTest.database.getDefaultSchemaName())
+                            .secondaryDbSchemaName(secondaryDbName)
                             .username(databaseUnderTest.username)
                             .password(databaseUnderTest.password)
                             .version(databaseUnderTest.version)
-                            .generatedResourcesPath(baseChangelogPath + "generatedChangelogs/" + changeLogEntry.key)
-                            .diffResourcesPath(baseChangelogPath + "diffChangelogs/" + changeLogEntry.key)
-                            .changelogPath(changeLogEntry.value)
+                            .primarySetupChangelogPath(changeLogEntry.value)
+                            .secondarySetupChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "setup", "xml").get(changeLogEntry.key))
+                            .generateCLResourcesPath(baseChangelogPath + "generatedChangelogs/" + changeLogEntry.key)
+                            .diffCLResourcesPath(baseChangelogPath + "diffChangelogs/" + changeLogEntry.key)
                             .pathToExpectedDiffFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedDiff", "txt").get(changeLogEntry.key))
                             .pathToEmptyDiffFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedDiff", "txt").get("empty"))
-                            .secondarySetupChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "setup", "xml").get(changeLogEntry.key))
-                            .secondaryDbScemaName("secondarydb")
                             .change(changeLogEntry.key)
-                            .changeReversed(changeLogEntry.key.replace("create", "drop"))
-                            .database(databaseUnderTest.database)
+                            .changeReversed(changeLogEntry.key.replace("create", "drop").replace("add", "drop"))
+                            .expectedSnapshot(FileUtils.getJSONFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
+                                    baseChangelogPath + "expectedSnapshot"))
+                            .verificationGenCLSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
+                                    baseChangelogPath + "verificationSql/generateChangelog")))
+                            .verificationDiffCLSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
+                                    baseChangelogPath + "verificationSql/diffChangelog")))
                             .build())
                 }
             }
@@ -110,6 +120,39 @@ class AdvancedTestHelper {
         return map
     }
 
+    static validateChangelog( String changelogFormat, String changelogContent, String verificationSql, String change, String changeReversed) {
+        if (changelogFormat.equalsIgnoreCase("sqlChangelog")) {
+            validateSqlChangelog(verificationSql, changelogContent)
+        } else {
+            assert changelogContent.contains("$change")
+            if (changeReversed != null) {
+                assert changelogContent.contains("$changeReversed")
+            }
+        }
+    }
+
+    static String getChangelogValidationSql(String searchPath, String change, String dbName, String dbVersion) {
+        def validationSql
+        try {
+            validationSql = parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "expectedSql/" + searchPath)).toLowerCase()
+        } catch (NullPointerException exception) {
+            validationSql = parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "verificationSql/" + searchPath)).toLowerCase()
+        }
+        return validationSql
+    }
+
+    static validateSql(String generatedSql, String expectedSql) {
+        def message
+        if (generatedSql == expectedSql) {
+            message = "Generated sql is correct!"
+        } else {
+            message ="FAIL! Expected sql doesn't match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" + "GENERATED SQL: \n" + generatedSql
+        }
+        Scope.getCurrentScope().getUI().sendMessage(message)
+        generatedSql == expectedSql
+    }
+
+
     @Builder
     @ToString(includeNames = true, includeFields = true, includePackage = false, excludes = 'database,password')
     static class TestInput {
@@ -119,16 +162,19 @@ class AdvancedTestHelper {
         String password
         String url
         String referenceUrl
-        String generatedResourcesPath
-        String diffResourcesPath
-        String changelogPath
+        String generateCLResourcesPath
+        String diffCLResourcesPath
+        String primarySetupChangelogPath
+        String secondarySetupChangelogPath
         String pathToExpectedDiffFile
         String pathToEmptyDiffFile
-        String secondarySetupChangelogPath
         String primaryDbSchemaName
-        String secondaryDbScemaName
+        String secondaryDbSchemaName
         String change
         String changeReversed
+        String expectedSnapshot
+        String verificationGenCLSql
+        String verificationDiffCLSql
         Database database
     }
 }

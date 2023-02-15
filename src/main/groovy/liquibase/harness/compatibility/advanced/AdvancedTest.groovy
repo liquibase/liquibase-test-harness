@@ -22,7 +22,6 @@ class AdvancedTest extends Specification{
     @Shared
     List<DatabaseUnderTest> databases;
     String resourcesDirFullPath = System.getProperty("user.dir") + "/src/test/resources/"
-    String resourcesFullPath = System.getProperty("user.dir") + "/src/main/resources/"
     String resourcesDirPath = "/src/test/resources/"
 
     def setupSpec() {
@@ -36,19 +35,14 @@ class AdvancedTest extends Specification{
         given: "read input data for advanced test"
         String expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
                 "liquibase/harness/compatibility/advanced/expectedSql/setup"))
-        String expectedSnapshot = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/compatibility/advanced/expectedSnapshot")
-        String verificationSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/compatibility/advanced/verificationSql/generateChangelog"))
-        String verificationDiffSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/compatibility/advanced/verificationSql/diffChangelog"))
-        Map<String, Object> argsMap = new HashMap()
-        argsMap.put("url", testInput.url)
-        argsMap.put("username", testInput.username)
-        argsMap.put("password", testInput.password)
-        argsMap.put("changelogFile", testInput.changelogPath)
-        argsMap.put("snapshotFormat", "json")
-        argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")//excluding static test-harness objects
+
+        Map<String, Object> argsMapPrimary = new HashMap()
+        argsMapPrimary.put("url", testInput.url)
+        argsMapPrimary.put("username", testInput.username)
+        argsMapPrimary.put("password", testInput.password)
+        argsMapPrimary.put("changelogFile", testInput.primarySetupChangelogPath)
+        argsMapPrimary.put("snapshotFormat", "json")
+        argsMapPrimary.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")//excluding static test-harness objects
 
         Map<String, Object> argsMapSecondary = new HashMap()
         argsMapSecondary.put("url", testInput.referenceUrl)
@@ -71,63 +65,41 @@ class AdvancedTest extends Specification{
 
         and: "configuring test data for generateChangelog command for all files format"
         def shortDbName = getShortDatabaseName(testInput.databaseName)
-        def generateChangelogMap = configureChangelogMap(testInput.generatedResourcesPath, shortDbName)
-        def diffChangelogMap = configureChangelogMap(testInput.diffResourcesPath, shortDbName)
+        def generateChangelogMap = configureChangelogMap(testInput.generateCLResourcesPath, shortDbName)
+        def diffChangelogMap = configureChangelogMap(testInput.diffCLResourcesPath, shortDbName)
 
         when: "get sql generated for the change set"
-        def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
+        def generatedSql = parseQuery(executeCommandScope("updateSql", argsMapPrimary).toString())
 
         then: "verify expected sql matches generated sql"
-        def generatedSqlIsCorrect = generatedSql == expectedSql
-        if (!generatedSqlIsCorrect) {
-            Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
-                    "match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" +
-                    "GENERATED SQL: \n" + generatedSql)
-            assert generatedSql == expectedSql
-        }
+        validateSql(generatedSql, expectedSql)
 
         when: "apply changeSet to DB"
-        executeCommandScope("update", argsMap)
+        executeCommandScope("update", argsMapPrimary)
 
         then: "get DB snapshot, check if actual snapshot matches expected snapshot"
-        def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
-        snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
+        def generatedSnapshot = executeCommandScope("snapshot", argsMapPrimary).toString()
+        snapshotMatchesSpecifiedStructure(testInput.expectedSnapshot, generatedSnapshot)
 
         for (Map.Entry<String, String> entry : generateChangelogMap.entrySet()) {
 
             when: "execute generateChangelog command using different changelog formats"
-            argsMap.put("changelogFile", resourcesDirFullPath + entry.value)
-            executeCommandScope("generateChangelog", argsMap)
+            argsMapPrimary.put("changelogFile", resourcesDirFullPath + entry.value)
+            executeCommandScope("generateChangelog", argsMapPrimary)
 
             then: "check if a changelog was actually generated and validate it's content"
-            String generatedChangelog = parseQuery(readFile((String) argsMap.get("changelogFile")))
-            if (entry.key.equalsIgnoreCase("sqlChangelog")) {
-                validateSqlChangelog(verificationSql, generatedChangelog)
-            } else {
-                assert generatedChangelog.contains("$testInput.change")
-            }
+            String generatedChangelog = parseQuery(readFile((String) argsMapPrimary.get("changelogFile")))
+            validateChangelog(entry.key, generatedChangelog, testInput.verificationGenCLSql, testInput.change, null)
 
             when: "execute updateSql command on generated changelogs"
-            argsMap.put("changelogFile", resourcesDirPath + entry.value)
-            generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
+            argsMapPrimary.put("changelogFile", resourcesDirPath + entry.value)
+            generatedSql = parseQuery(executeCommandScope("updateSql", argsMapPrimary).toString())
             generatedSql = removeSchemaNames(generatedSql, testInput.database, testInput.primaryDbSchemaName)
 
 
             then: "execute updateSql command on generated changelogs"
-            try {
-                expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                        "liquibase/harness/compatibility/advanced/expectedSql/generateChangelog")).toLowerCase()
-            } catch (NullPointerException exception) {
-                expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                        "liquibase/harness/compatibility/advanced/verificationSql/generateChangelog")).toLowerCase()
-            }
-            generatedSqlIsCorrect = generatedSql == expectedSql
-            if (!generatedSqlIsCorrect) {
-                Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
-                        "match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" +
-                        "GENERATED SQL: \n" + generatedSql)
-                assert generatedSql == expectedSql
-            }
+            expectedSql = getChangelogValidationSql("generateChangelog", testInput.change, testInput.databaseName, testInput.version)
+            validateSql(generatedSql, expectedSql)
         }
 
         when: "execute diff command"
@@ -162,33 +134,16 @@ class AdvancedTest extends Specification{
 
             then: "check if a changelog was actually generated and validate it's content"
             String diffChangelog = parseQuery(readFile((String) argsMapSecondary.get("changelogFile")))
-            if (entry.key.equalsIgnoreCase("sqlChangelog")) {
-                validateSqlChangelog(verificationDiffSql, diffChangelog)
-            } else {
-                assert diffChangelog.contains("$testInput.change")
-                assert diffChangelog.contains("$testInput.changeReversed")
-            }
+            validateChangelog(entry.key, diffChangelog, testInput.verificationDiffCLSql, testInput.change, testInput.changeReversed)
 
             when: "execute updateSql command on generated changelogs"
             argsMapSecondary.put("changelogFile", resourcesDirPath + entry.value)
             generatedSql = parseQuery(executeCommandScope("updateSql", argsMapSecondary).toString())
-            generatedSql = removeSchemaNames(generatedSql, testInput.database, testInput.secondaryDbScemaName)
+            generatedSql = removeSchemaNames(generatedSql, testInput.database, testInput.secondaryDbSchemaName)
 
             then: "execute updateSql command on generated changelogs"
-            try {
-                expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                        "liquibase/harness/compatibility/advanced/expectedSql/diffChangelog")).toLowerCase()
-            } catch (NullPointerException exception) {
-                expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                        "liquibase/harness/compatibility/advanced/verificationSql/diffChangelog")).toLowerCase()
-            }
-            generatedSqlIsCorrect = generatedSql == expectedSql
-            if (!generatedSqlIsCorrect) {
-                Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
-                        "match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" +
-                        "GENERATED SQL: \n" + generatedSql)
-                assert generatedSql == expectedSql
-            }
+            expectedSql = getChangelogValidationSql("diffChangelog", testInput.change, testInput.databaseName, testInput.version)
+            validateSql(generatedSql, expectedSql)
         }
 
         when: "apply generated diffChangelog to secondary database instance and execute diff command"
@@ -203,8 +158,8 @@ class AdvancedTest extends Specification{
         cleanup: "try to rollback in case a test was failed and delete generated changelogs"
         if (shouldRunChangeSet) {
             try {
-                argsMap.put("changeLogFile", testInput.changelogPath)
-                strategy.performRollback(argsMap)
+                argsMapPrimary.put("changeLogFile", testInput.primarySetupChangelogPath)
+                strategy.performRollback(argsMapPrimary)
             } catch (CommandExecutionException exception) {
                 //Ignore exception considering a test was successful
             }
