@@ -1,6 +1,7 @@
 package liquibase.harness.util
 
 import groovy.json.JsonSlurper
+import liquibase.util.StringUtil
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -24,7 +25,7 @@ class JSONUtils {
             JSONObject jsonObject = new JSONObject()
             for (int index = 1; index <= columnCount; index++) {
                 String column = rsmd.getColumnName(index)
-                 Object value = resultSet.getObject(column)
+                Object value = resultSet.getObject(column)
                 if (value == null) {
                     jsonObject.put(column, "")
                 } else if (value instanceof Integer) {
@@ -62,27 +63,36 @@ class JSONUtils {
      * Compares exactly number and values of elements in JSON arrays. Ignores order of elements.
      */
     static boolean compareJSONArrays(JSONArray jsonArray, JSONArray jsonArrayToCompare, JSONCompareMode jsonCompareMode) {
-        if (jsonArray.length() != jsonArrayToCompare.length()) {
-            return false
-        }
-        def compareMarker = true
+        assert jsonArray.length() == jsonArrayToCompare.length(): "Expected ${jsonArray.length()} entries but got ${jsonArrayToCompare.length()}"
+
         for (int i = 0; i < jsonArray.length(); i++) {
-            if (!compareMarker) {
-                return false
-            }
+            def foundMatch = false
+            def unmatchedEntries = new LinkedHashMap()
             for (int j = 0; j < jsonArrayToCompare.length(); j++) {
                 def jsonObjectRight = new JSONObject(jsonArray.get(i).toString())
                 def jsonObjectLeft = new JSONObject(jsonArrayToCompare.get(j).toString())
                 def result = JSONCompare.compareJSON(jsonObjectLeft, jsonObjectRight, new CustomComparator(
                         jsonCompareMode, new Customization("***", new RegularExpressionValueMatcher<>())
                 ))
-                compareMarker = result.passed()
+
                 if (result.passed()) {
+                    foundMatch = true
                     break
                 }
+
+                unmatchedEntries.put(jsonArrayToCompare.get(j), StringUtil.limitSize(result.getMessage().replaceAll("\n ; \n", "\n"), 500))
+            }
+
+            if (!foundMatch) {
+                String finalMessage = "Unexpected JSON entry: " + jsonArray.get(i).toString() + "\n"
+                for (def unmatchedEntry : unmatchedEntries.entrySet()) {
+                    finalMessage = finalMessage + "  DID NOT MATCH: " + unmatchedEntry.key + "\n  BECAUSE:\n" + StringUtil.indent((String) unmatchedEntry.value, 4) + "\n\n"
+                }
+                throw new AssertionError((Object) finalMessage)
             }
         }
-        return compareMarker
+
+        return true
     }
 
     static JSONObject getJsonFromResource(String resourceName) {
