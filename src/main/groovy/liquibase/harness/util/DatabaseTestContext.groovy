@@ -9,6 +9,7 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.exception.DatabaseException
 import liquibase.listener.SqlListener
 import liquibase.resource.ClassLoaderResourceAccessor
+
 import java.sql.SQLException
 
 class DatabaseTestContext {
@@ -28,35 +29,41 @@ class DatabaseTestContext {
      *
      * @param databaseConnection
      */
-    private static void shutdownConnection(JdbcConnection databaseConnection) {
+    private static void shutdownConnection(DatabaseConnection databaseConnection) {
         try {
-            try {
-                if (!databaseConnection.getUnderlyingConnection().getAutoCommit()) {
-                    databaseConnection.getUnderlyingConnection().rollback()
+            if (databaseConnection instanceof JdbcConnection) {
+                try {
+                    if (!databaseConnection.getUnderlyingConnection().getAutoCommit()) {
+                        databaseConnection.getUnderlyingConnection().rollback()
+                    }
+                } catch (SQLException e) {
+                    // Ignore. If rollback fails or is impossible, there is nothing we can do about it.
                 }
-            } catch (SQLException e) {
-                // Ignore. If rollback fails or is impossible, there is nothing we can do about it.
-            }
 
-            // Close the JDBC connection
-            databaseConnection.getUnderlyingConnection().close()
-        } catch (SQLException e) {
+                // Close the JDBC connection
+                databaseConnection.getUnderlyingConnection().close()
+
+            } else {
+                databaseConnection.close()
+            }
+        } catch (SQLException | DatabaseException e) {
             Scope.getCurrentScope().getLog(DatabaseTestContext.class).warning("Could not close the following connection: "
                     + databaseConnection.getURL(), e)
         }
     }
 
-    /**
-     * Returns a DatabaseConnection for a givenUrl is one is already open. If not, attempts to create it, but only
-     * if a previous attempt at creating the connection has NOT failed (to prevent unnecessary connection attempts
-     * during the integration tests).
-     *
-     * @param givenUrl The JDBC URL to connect to
-     * @param username the user name to use to log in to the instance (may be null, esp. for embedded DBMS)
-     * @param password the password for the username (may be null)
-     * @return a DatabaseConnection if one has been established or fetched from the cache successfully, null otherwise
-     * @throws Exception if an error occurs while trying to get the connection
-     */
+
+/**
+ * Returns a DatabaseConnection for a givenUrl is one is already open. If not, attempts to create it, but only
+ * if a previous attempt at creating the connection has NOT failed (to prevent unnecessary connection attempts
+ * during the integration tests).
+ *
+ * @param givenUrl The JDBC URL to connect to
+ * @param username the user name to use to log in to the instance (may be null, esp. for embedded DBMS)
+ * @param password the password for the username (may be null)
+ * @return a DatabaseConnection if one has been established or fetched from the cache successfully, null otherwise
+ * @throws Exception if an error occurs while trying to get the connection
+ */
     private DatabaseConnection openConnection(final String givenUrl,
                                               final String username, final String password) throws Exception {
         // Insert the temp dir path and ensure our replacement ends with /
@@ -148,7 +155,7 @@ class DatabaseTestContext {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             void run() {
-                shutdownConnection((JdbcConnection) databaseConnection)
+                shutdownConnection(databaseConnection)
             }
         }))
         return databaseConnection
