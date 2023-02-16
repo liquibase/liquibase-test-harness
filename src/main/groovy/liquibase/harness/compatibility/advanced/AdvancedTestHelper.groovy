@@ -79,8 +79,14 @@ class AdvancedTestHelper {
                 .replaceAll(replacementRegexp, "")
                 .replaceAll(replacementRegexpNoEOL, "")
                 .trim()
+        def message
+        if (cleanExpectedChangelog.equalsIgnoreCase(cleanGeneratedChangelog)) {
+            message = "GENERATED SQL CHANGELOG IS CORRECT"
+        } else {
+            message = "GENERATED SQL CHANGELOG: \n $cleanGeneratedChangelog \n DOES NOT MATCH EXPECTED SQL CHANGELOG: \n $cleanExpectedChangelog"
+        }
+        uiService.sendMessage(message)
         assert cleanExpectedChangelog.equalsIgnoreCase(cleanGeneratedChangelog)
-        uiService.sendMessage("GENERATED SQL CHANGELOG: \n $cleanGeneratedChangelog \n EXPECTED SQL CHANGELOG: \n $cleanExpectedChangelog")
     }
 
     static String getShortDatabaseName(String dbName) {
@@ -124,8 +130,18 @@ class AdvancedTestHelper {
         if (changelogFormat.equalsIgnoreCase("sqlChangelog")) {
             validateSqlChangelog(verificationSql, changelogContent)
         } else {
+            if (!changelogContent.contains("$change")) {
+                uiService.sendMessage("FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $change CHANGE")
+            } else {
+                uiService.sendMessage("GENERATED CHANGELOG CONTAINS $change CHANGE")
+            }
             assert changelogContent.contains("$change")
-            if (changeReversed != null) {
+            if ((changeReversed != null)) {
+                if (!changelogContent.contains("$changeReversed")) {
+                    uiService.sendMessage("FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $changeReversed CHANGE")
+                } else {
+                    uiService.sendMessage("GENERATED CHANGELOG CONTAINS $changeReversed CHANGE")
+                }
                 assert changelogContent.contains("$changeReversed")
             }
         }
@@ -144,12 +160,23 @@ class AdvancedTestHelper {
     static validateSql(String generatedSql, String expectedSql) {
         def message
         if (generatedSql == expectedSql) {
-            message = "Generated sql is correct!"
+            message = "GENERATED SQL IS CORRECT"
         } else {
             message ="FAIL! Expected sql doesn't match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" + "GENERATED SQL: \n" + generatedSql
         }
         Scope.getCurrentScope().getUI().sendMessage(message)
         generatedSql == expectedSql
+    }
+
+    static validateDiff(String generatedDiff, String expectedDiff) {
+        def message
+        if (generatedDiff == expectedDiff) {
+            message = "GENERATED DIFF IS CORRECT"
+        } else {
+            message ="FAIL! EXPECTED DIFF DOESN'T MATCH GENERATED DIFF!"
+        }
+        uiService.sendMessage(message)
+        generatedDiff == expectedDiff
     }
 
 

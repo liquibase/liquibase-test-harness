@@ -107,23 +107,26 @@ class AdvancedTest extends Specification{
 
         then: "validate generated diff"
         String expectedDiff = cleanDiff(getResourceContent("/$testInput.pathToExpectedDiffFile"))
-        assert generatedDiff == expectedDiff
+        validateDiff(generatedDiff, expectedDiff)
 
         when: "apply generated changelog to secondary database instance and execute diff command"
         argsMapSecondary.put("changelogFile", resourcesDirPath + generateChangelogMap.get("xmlChangelog"))
+        Scope.getCurrentScope().getUI().sendMessage("APPLY GENERATED CHANGELOG TO SECONDARY DATABASE")
         executeCommandScope("update", argsMapSecondary)
         generatedDiff = cleanDiff(executeCommandScope("diff", argsMapSecondary).toString())
         expectedDiff = cleanDiff(getResourceContent("/$testInput.pathToEmptyDiffFile"))
 
         then: "validate diff command shows no differences"
-        assert generatedDiff == expectedDiff
+        validateDiff(generatedDiff, expectedDiff)
 
         when: "clear secondary instance"
         argsMapSecondary.remove("changelogFile")
+        Scope.getCurrentScope().getUI().sendMessage("CLEAN SECONDARY DATABASE INSTANCE")
         executeCommandScope("dropAll", argsMapSecondary)
         argsMapSecondary.put("changelogFile", testInput.secondarySetupChangelogPath)
 
         then: "apply specific test data to secondary instance"
+        Scope.getCurrentScope().getUI().sendMessage("SETUP SECONDARY DATABASE INSTANCE FOR DIFFCHANGELOG COMMAND")
         executeCommandScope("update", argsMapSecondary)
 
         for (Map.Entry<String, String> entry : diffChangelogMap.entrySet()) {
@@ -148,12 +151,13 @@ class AdvancedTest extends Specification{
 
         when: "apply generated diffChangelog to secondary database instance and execute diff command"
         argsMapSecondary.put("changelogFile", resourcesDirPath + diffChangelogMap.get("xmlChangelog"))
+        Scope.getCurrentScope().getUI().sendMessage("APPLY GENERATED DIFFCHANGELOG TO SECONDARY DATABASE")
         executeCommandScope("update", argsMapSecondary)
         generatedDiff = cleanDiff(executeCommandScope("diff", argsMapSecondary).toString())
         expectedDiff = cleanDiff(getResourceContent("/$testInput.pathToEmptyDiffFile"))
 
         then: "validate diff command shows no differences"
-        assert generatedDiff == expectedDiff
+        validateDiff(generatedDiff, expectedDiff)
 
         cleanup: "try to rollback in case a test was failed and delete generated changelogs"
         if (shouldRunChangeSet) {
