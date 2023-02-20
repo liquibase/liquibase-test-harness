@@ -47,8 +47,8 @@ class AdvancedTestHelper {
                             .primarySetupChangelogPath(changeLogEntry.value)
                             .secondarySetupChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "setup", "xml").get(changeLogEntry.key))
-                            .generateCLResourcesPath(baseChangelogPath + "generatedChangelogs/" + changeLogEntry.key)
-                            .diffCLResourcesPath(baseChangelogPath + "diffChangelogs/" + changeLogEntry.key)
+                            .generateChangelogResourcesPath(baseChangelogPath + "generatedChangelogs/" + changeLogEntry.key)
+                            .diffChangelogResourcesPath(baseChangelogPath + "diffChangelogs/" + changeLogEntry.key)
                             .pathToExpectedDiffFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedDiff", "txt").get(changeLogEntry.key))
                             .pathToEmptyDiffFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
@@ -107,7 +107,7 @@ class AdvancedTestHelper {
         return generatedSql.toLowerCase().replace(schemaName + ".", "").replace("\"" + schemaName + "\".", "")
     }
 
-    static String cleanDiff(String diff) {
+    static String removeDatabaseInfoFromDiff(String diff) {
         String replacementRegexpRef = "Reference Database(.*?)\r?\n" //removes Reference Database diff line to generalize test data
         String replacementRegexpComp = "Comparison Database(.*?)\r?\n" //removes Comparison Database diff line to generalize test data
         String replacementRegexpWS = "\\s+" //removes whitespaces
@@ -126,24 +126,24 @@ class AdvancedTestHelper {
         return map
     }
 
-    static validateChangelog( String changelogFormat, String changelogContent, String verificationSql, String change, String changeReversed) {
+    static validateGenerateChangelog(String changelogFormat, String changelogContent, String verificationSql, String change) {
         if (changelogFormat.equalsIgnoreCase("sqlChangelog")) {
             validateSqlChangelog(verificationSql, changelogContent)
         } else {
-            if (!changelogContent.contains("$change")) {
-                uiService.sendMessage("FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $change CHANGE")
-            } else {
-                uiService.sendMessage("GENERATED CHANGELOG CONTAINS $change CHANGE")
-            }
+            def message = changelogContent.contains("$change") ? "GENERATED CHANGELOG CONTAINS $change CHANGE" :
+                    "FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $change CHANGE"
+            uiService.sendMessage(message)
             assert changelogContent.contains("$change")
-            if ((changeReversed != null)) {
-                if (!changelogContent.contains("$changeReversed")) {
-                    uiService.sendMessage("FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $changeReversed CHANGE")
-                } else {
-                    uiService.sendMessage("GENERATED CHANGELOG CONTAINS $changeReversed CHANGE")
-                }
-                assert changelogContent.contains("$changeReversed")
-            }
+        }
+    }
+
+    static validateDiffChangelog(String changelogFormat, String changelogContent, String verificationSql, String change, String changeReversed) {
+        validateGenerateChangelog(changelogFormat, changelogContent, verificationSql, change)
+        if (!changelogFormat.equalsIgnoreCase("sqlChangelog")) {
+            def message = changelogContent.contains("$change") ? "GENERATED CHANGELOG CONTAINS $changeReversed CHANGE" :
+                    "FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $changeReversed CHANGE"
+            uiService.sendMessage(message)
+            assert changelogContent.contains("$changeReversed")
         }
     }
 
@@ -179,7 +179,6 @@ class AdvancedTestHelper {
         generatedDiff == expectedDiff
     }
 
-
     @Builder
     @ToString(includeNames = true, includeFields = true, includePackage = false, excludes = 'database,password')
     static class TestInput {
@@ -189,8 +188,8 @@ class AdvancedTestHelper {
         String password
         String url
         String referenceUrl
-        String generateCLResourcesPath
-        String diffCLResourcesPath
+        String generateChangelogResourcesPath
+        String diffChangelogResourcesPath
         String primarySetupChangelogPath
         String secondarySetupChangelogPath
         String pathToExpectedDiffFile

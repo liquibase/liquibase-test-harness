@@ -16,7 +16,7 @@ import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
 import static liquibase.harness.util.TestUtils.*
 
-class AdvancedTest extends Specification{
+class AdvancedTest extends Specification {
     @Shared
     RollbackStrategy strategy;
     @Shared
@@ -65,8 +65,8 @@ class AdvancedTest extends Specification{
 
         and: "configuring test data for generateChangelog command for all files format"
         def shortDbName = getShortDatabaseName(testInput.databaseName)
-        def generateChangelogMap = configureChangelogMap(testInput.generateCLResourcesPath, shortDbName)
-        def diffChangelogMap = configureChangelogMap(testInput.diffCLResourcesPath, shortDbName)
+        def generateChangelogMap = configureChangelogMap(testInput.generateChangelogResourcesPath, shortDbName)
+        def diffChangelogMap = configureChangelogMap(testInput.diffChangelogResourcesPath, shortDbName)
 
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMapPrimary).toString())
@@ -87,9 +87,9 @@ class AdvancedTest extends Specification{
             argsMapPrimary.put("changelogFile", resourcesDirFullPath + entry.value)
             executeCommandScope("generateChangelog", argsMapPrimary)
 
-            then: "check if a changelog was actually generated and validate it's content"
+            then: "verify changelog was actually generated and validate it's content"
             String generatedChangelog = parseQuery(readFile((String) argsMapPrimary.get("changelogFile")))
-            validateChangelog(entry.key, generatedChangelog, testInput.verificationGenCLSql, testInput.change, null)
+            validateGenerateChangelog(entry.key, generatedChangelog, testInput.verificationGenCLSql, testInput.change)
 
             when: "execute updateSql command on generated changelogs"
             argsMapPrimary.put("changelogFile", resourcesDirPath + entry.value)
@@ -103,18 +103,18 @@ class AdvancedTest extends Specification{
         }
 
         when: "execute diff command"
-        String generatedDiff = cleanDiff(executeCommandScope("diff", argsMapSecondary).toString())
+        String generatedDiff = removeDatabaseInfoFromDiff(executeCommandScope("diff", argsMapSecondary).toString())
 
         then: "validate generated diff"
-        String expectedDiff = cleanDiff(getResourceContent("/$testInput.pathToExpectedDiffFile"))
+        String expectedDiff = removeDatabaseInfoFromDiff(getResourceContent("/$testInput.pathToExpectedDiffFile"))
         validateDiff(generatedDiff, expectedDiff)
 
         when: "apply generated changelog to secondary database instance and execute diff command"
         argsMapSecondary.put("changelogFile", resourcesDirPath + generateChangelogMap.get("xmlChangelog"))
         Scope.getCurrentScope().getUI().sendMessage("APPLY GENERATED CHANGELOG TO SECONDARY DATABASE")
         executeCommandScope("update", argsMapSecondary)
-        generatedDiff = cleanDiff(executeCommandScope("diff", argsMapSecondary).toString())
-        expectedDiff = cleanDiff(getResourceContent("/$testInput.pathToEmptyDiffFile"))
+        generatedDiff = removeDatabaseInfoFromDiff(executeCommandScope("diff", argsMapSecondary).toString())
+        expectedDiff = removeDatabaseInfoFromDiff(getResourceContent("/$testInput.pathToEmptyDiffFile"))
 
         then: "validate diff command shows no differences"
         validateDiff(generatedDiff, expectedDiff)
@@ -135,9 +135,9 @@ class AdvancedTest extends Specification{
             argsMapSecondary.put("changelogFile", resourcesDirFullPath + entry.value)
             executeCommandScope("diffChangelog", argsMapSecondary)
 
-            then: "check if a changelog was actually generated and validate it's content"
+            then: "verify diff changelog was actually generated and validate it's content"
             String diffChangelog = parseQuery(readFile((String) argsMapSecondary.get("changelogFile")))
-            validateChangelog(entry.key, diffChangelog, testInput.verificationDiffCLSql, testInput.change, testInput.changeReversed)
+            validateDiffChangelog(entry.key, diffChangelog, testInput.verificationDiffCLSql, testInput.change, testInput.changeReversed)
 
             when: "execute updateSql command on generated changelogs"
             argsMapSecondary.put("changelogFile", resourcesDirPath + entry.value)
@@ -153,8 +153,8 @@ class AdvancedTest extends Specification{
         argsMapSecondary.put("changelogFile", resourcesDirPath + diffChangelogMap.get("xmlChangelog"))
         Scope.getCurrentScope().getUI().sendMessage("APPLY GENERATED DIFFCHANGELOG TO SECONDARY DATABASE")
         executeCommandScope("update", argsMapSecondary)
-        generatedDiff = cleanDiff(executeCommandScope("diff", argsMapSecondary).toString())
-        expectedDiff = cleanDiff(getResourceContent("/$testInput.pathToEmptyDiffFile"))
+        generatedDiff = removeDatabaseInfoFromDiff(executeCommandScope("diff", argsMapSecondary).toString())
+        expectedDiff = removeDatabaseInfoFromDiff(getResourceContent("/$testInput.pathToEmptyDiffFile"))
 
         then: "validate diff command shows no differences"
         validateDiff(generatedDiff, expectedDiff)
@@ -176,7 +176,6 @@ class AdvancedTest extends Specification{
         for (Map.Entry<String, String> entry : diffChangelogMap.entrySet()) {
             deleteFile(resourcesDirFullPath + entry.value)
         }
-
 
         where: "test input in next data table"
         testInput << buildTestInput()
