@@ -46,7 +46,7 @@ class AdvancedTestHelper {
                             .version(databaseUnderTest.version)
                             .primarySetupChangelogPath(changeLogEntry.value)
                             .secondarySetupChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "setup", "xml").get(changeLogEntry.key))
+                                    "secondaryInstanceChangelogs", "xml").get(changeLogEntry.key))
                             .generateChangelogResourcesPath(baseChangelogPath + "generatedChangelogs/" + changeLogEntry.key)
                             .diffChangelogResourcesPath(baseChangelogPath + "diffChangelogs/" + changeLogEntry.key)
                             .pathToExpectedDiffFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
@@ -57,9 +57,11 @@ class AdvancedTestHelper {
                             .changeReversed(changeLogEntry.key.replace("create", "drop").replace("add", "drop"))
                             .expectedSnapshot(FileUtils.getJSONFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
                                     baseChangelogPath + "expectedSnapshot"))
-                            .verificationGenCLSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
+                            .verificationSetupSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
+                                    baseChangelogPath + "verificationSql/setup")))
+                            .verificationGenerateChangelogSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
                                     baseChangelogPath + "verificationSql/generateChangelog")))
-                            .verificationDiffCLSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
+                            .verificationDiffChangelogSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
                                     baseChangelogPath + "verificationSql/diffChangelog")))
                             .build())
                 }
@@ -148,13 +150,13 @@ class AdvancedTestHelper {
     }
 
     static String getChangelogValidationSql(String searchPath, String change, String dbName, String dbVersion) {
-        def validationSql
-        try {
-            validationSql = parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "expectedSql/" + searchPath)).toLowerCase()
-        } catch (NullPointerException exception) {
-            validationSql = parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "verificationSql/" + searchPath)).toLowerCase()
-        }
-        return validationSql
+//        def validationSql
+//        try {
+//            validationSql = parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "expectedSql/" + searchPath)).toLowerCase()
+//        } catch (NullPointerException exception) {
+//            validationSql = parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "verificationSql/" + searchPath)).toLowerCase()
+//        }
+        return parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "verificationSql/" + searchPath)).toLowerCase()
     }
 
     static validateSql(String generatedSql, String expectedSql) {
@@ -199,8 +201,9 @@ class AdvancedTestHelper {
         String change
         String changeReversed
         String expectedSnapshot
-        String verificationGenCLSql
-        String verificationDiffCLSql
+        String verificationSetupSql
+        String verificationGenerateChangelogSql
+        String verificationDiffChangelogSql
         Database database
     }
 }

@@ -6,10 +6,14 @@ import liquibase.exception.CommandExecutionException
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
+import org.apache.commons.io.FileUtils
 import org.junit.Assume
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import java.nio.file.Path
+import java.nio.file.Paths
 
 import static liquibase.harness.compatibility.advanced.AdvancedTestHelper.*
 import static liquibase.harness.util.FileUtils.*
@@ -33,8 +37,8 @@ class AdvancedTest extends Specification {
     @Unroll
     def "apply end2end test for #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data for advanced test"
-        String expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/compatibility/advanced/expectedSql/setup"))
+//        String expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+//                "liquibase/harness/compatibility/advanced/expectedSql/setup"))
 
         Map<String, Object> argsMapPrimary = new HashMap()
         argsMapPrimary.put("url", testInput.url)
@@ -60,6 +64,7 @@ class AdvancedTest extends Specification {
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
+        def expectedSql = testInput.verificationSetupSql
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
         Assume.assumeTrue(expectedSql, shouldRunChangeSet)
 
@@ -83,13 +88,21 @@ class AdvancedTest extends Specification {
 
         for (Map.Entry<String, String> entry : generateChangelogMap.entrySet()) {
 
-            when: "execute generateChangelog command using different changelog formats"
+            when: "clean 'objects' directory if created"
+            String testResourcesPath = resourcesDirFullPath + "liquibase/harness/compatibility/advanced/generatedChangelogs/objects/"
+            Path path = Paths.get(testResourcesPath)
+            if (path.toFile().isDirectory()) {
+                FileUtils.forceDelete(new File(testResourcesPath))
+            }
+//            FileUtils.forceDelete(new File(resourcesDirFullPath + "liquibase/harness/compatibility/advanced/generatedChangelogs/objects/"))
+
+            and: "execute generateChangelog command using different changelog formats"
             argsMapPrimary.put("changelogFile", resourcesDirFullPath + entry.value)
             executeCommandScope("generateChangelog", argsMapPrimary)
 
             then: "verify changelog was actually generated and validate it's content"
             String generatedChangelog = parseQuery(readFile((String) argsMapPrimary.get("changelogFile")))
-            validateGenerateChangelog(entry.key, generatedChangelog, testInput.verificationGenCLSql, testInput.change)
+            validateGenerateChangelog(entry.key, generatedChangelog, testInput.verificationGenerateChangelogSql, testInput.change)
 
             when: "execute updateSql command on generated changelogs"
             argsMapPrimary.put("changelogFile", resourcesDirPath + entry.value)
@@ -98,8 +111,15 @@ class AdvancedTest extends Specification {
 
 
             then: "execute updateSql command on generated changelogs"
-            expectedSql = getChangelogValidationSql("generateChangelog", testInput.change, testInput.databaseName, testInput.version)
+            expectedSql = testInput.verificationGenerateChangelogSql
+//            expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+//                    "liquibase/harness/compatibility/advanced/expectedSql/verificationSql/generateChangelog")).toLowerCase()
+//            expectedSql = getChangelogValidationSql("generateChangelog", testInput.change, testInput.databaseName, testInput.version)
             validateSql(generatedSql, expectedSql)
+
+//            and: "clean 'objects' directory if created"
+//            FileUtils.forceDelete(new File(resourcesDirFullPath + "liquibase/harness/compatibility/advanced/generatedChangelogs/objects/"))
+////            deleteFile(resourcesDirFullPath + "liquibase/harness/compatibility/advanced/generatedChangelogs/objects/")
         }
 
         when: "execute diff command"
@@ -137,7 +157,7 @@ class AdvancedTest extends Specification {
 
             then: "verify diff changelog was actually generated and validate it's content"
             String diffChangelog = parseQuery(readFile((String) argsMapSecondary.get("changelogFile")))
-            validateDiffChangelog(entry.key, diffChangelog, testInput.verificationDiffCLSql, testInput.change, testInput.changeReversed)
+            validateDiffChangelog(entry.key, diffChangelog, testInput.verificationDiffChangelogSql, testInput.change, testInput.changeReversed)
 
             when: "execute updateSql command on generated changelogs"
             argsMapSecondary.put("changelogFile", resourcesDirPath + entry.value)
@@ -145,7 +165,10 @@ class AdvancedTest extends Specification {
             generatedSql = removeSchemaNames(generatedSql, testInput.database, testInput.secondaryDbSchemaName)
 
             then: "execute updateSql command on generated changelogs"
-            expectedSql = getChangelogValidationSql("diffChangelog", testInput.change, testInput.databaseName, testInput.version)
+            expectedSql = testInput.verificationDiffChangelogSql
+//            expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+//                    "liquibase/harness/compatibility/advanced/expectedSql/verificationSql/diffChangelog")).toLowerCase()
+//            expectedSql = getChangelogValidationSql("diffChangelog", testInput.change, testInput.databaseName, testInput.version)
             validateSql(generatedSql, expectedSql)
         }
 
