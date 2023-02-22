@@ -9,7 +9,7 @@
         <pro:createFunction
                 encoding="UTF-8"
                 replaceIfExists="true"
-                functionName="secondary_function">CREATE FUNCTION test_function()
+                functionName="secondary_function">CREATE FUNCTION secondary_function()
                                                 RETURNS VARCHAR(20)
                                                 BEGIN
                                                 RETURN 'Hello';

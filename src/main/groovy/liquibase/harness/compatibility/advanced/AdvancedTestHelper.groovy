@@ -161,13 +161,13 @@ class AdvancedTestHelper {
 
     static validateSql(String generatedSql, String expectedSql) {
         def message
-        if (generatedSql == expectedSql) {
+        if (expectedSql.equalsIgnoreCase(generatedSql)) {
             message = "GENERATED SQL IS CORRECT"
         } else {
             message ="FAIL! Expected sql doesn't match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" + "GENERATED SQL: \n" + generatedSql
         }
         Scope.getCurrentScope().getUI().sendMessage(message)
-        generatedSql == expectedSql
+        expectedSql.equalsIgnoreCase(generatedSql)
     }
 
     static validateDiff(String generatedDiff, String expectedDiff) {
