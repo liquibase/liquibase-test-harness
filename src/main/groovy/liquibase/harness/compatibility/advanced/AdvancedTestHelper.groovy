@@ -150,12 +150,6 @@ class AdvancedTestHelper {
     }
 
     static String getChangelogValidationSql(String searchPath, String change, String dbName, String dbVersion) {
-//        def validationSql
-//        try {
-//            validationSql = parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "expectedSql/" + searchPath)).toLowerCase()
-//        } catch (NullPointerException exception) {
-//            validationSql = parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "verificationSql/" + searchPath)).toLowerCase()
-//        }
         return parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "verificationSql/" + searchPath)).toLowerCase()
     }
 
