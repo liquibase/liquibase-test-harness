@@ -126,8 +126,6 @@
             <groupId>com.edb</groupId>
             <artifactId>edb-jdbc18</artifactId>
             <version>42.3.2.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/drivers/edb/edb-jdbc18.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -206,7 +204,7 @@
             <artifactId>db2-z-licence</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/drivers/db2/db2jcc_license_cisuz.jar</systemPath>
+            <systemPath>${basedir}/lib/db2jcc_license_cisuz.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -214,7 +212,7 @@
             <artifactId>sybase</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/drivers/sybase/jconn4.jar</systemPath>
+            <systemPath>${basedir}/lib/jconn4.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -377,6 +375,12 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    <repositories>
+        <repository>
+            <id>local-repo</id>
+            <url>file://${project.basedir}/lib</url>
+        </repository>
+    </repositories>
     <profiles>
         <profile>
             <!-- Required for deployment to Sonatype -->
