@@ -141,9 +141,9 @@ The `groovy/liquibase/harness/compatibility/advanced/AdvancedTest.groovy` test v
 
 ### Configuring Advanced test
 1) Go to `src/main/resources/liquibase/harness/compatibility/advanced/initSql/primary` and add sql script for the change type you want to test.
-- Use change type as changelog name (createTable.xml, addCheckConstraint.xml, etc.) as the test will use it for generated changelog validation.
-- Some change types (addColumn, addPrimaryKey, addUniqueConstraint) don't always produce separate changeset during generateChangelog/diffChangelog execution, use column.xml, primary.xml, unique.xml
-for changelog name instead
+- Use change type as file name (createTable.sql, addCheckConstraint.sql, etc.) as the test will use it for generated changelog validation.
+- Some change types (addColumn, addPrimaryKey, addUniqueConstraint) don't always produce separate changeset during generateChangelog/diffChangelog execution, use column.sql, primary.sql, unique.sql
+for initSql file name instead
 2) Go to `src/main/resources/liquibase/harness/compatibility/advanced/initSql/secondary` and add sql script to setup secondary DB instance for diffChangelog command verification.
 - Configure this script to contain change type under test, that will differ from the one in initial changelog.
 4) Go to `src/main/resources/liquibase/harness/compatibility/advanced/expectedSql/generateChangelog` and add sql script you expect liquibase to generate during updateSql command execution for generated changelog.
@@ -153,9 +153,11 @@ for changelog name instead
 6) Go to `src/main/resources/liquibase/harness/compatibility/advanced/expectedSnapshot` and add expected DB Snapshot results.
 - To verify the absence of an object in a snapshot (such as with drop* commands) add `"_noMatch": true,` to that tree level where the missing object should be verified.
   See [dropSequence.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/dropSequence.json) as an example.
-  Additionally the `_noMatchField` parameter can be used to define the exact property which should be absent or different for that particular database object (for example Column, Table etc.)
+  Additionally, the `_noMatchField` parameter can be used to define the exact property which should be absent or different for that particular database object (for example Column, Table etc.)
   see [createTableWithNumericColumn.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/createTableWithNumericColumn.json)
+- You can use `src/main/resources/liquibase/harness/compatibility/advanced/expectedSnapshot/example.json ` as an example of expected snapshot configuration. 
 7) Go to `src/main/resources/liquibase/harness/compatibility/advanced/expectedDiff` and add expected diff results.
+- You can use `src/main/resources/liquibase/harness/compatibility/advanced/expectedDiff/empty.json ` as an example of expected diff configuration.
 
 - NOTE: All test data should be added under the database specific folder. If you would like to test another DB type, please add the requisite folder.
 - More information on Advanced test behavior can be found in README.advanced-test.md
