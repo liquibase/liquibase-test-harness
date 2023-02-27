@@ -14,7 +14,7 @@ import static liquibase.harness.util.FileUtils.getSqlFileContent
 import static liquibase.harness.util.TestUtils.parseQuery
 
 class AdvancedTestHelper {
-    final static String baseChangelogPath = "liquibase/harness/compatibility/advanced/"
+    final static String baseResourcePath = "liquibase/harness/compatibility/advanced/"
     final static UIService uiService = Scope.getCurrentScope().getUI()
     final static String secondaryDbName = "secondarydb"
 
@@ -31,9 +31,9 @@ class AdvancedTestHelper {
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
-            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                    "changelogs", "xml").entrySet()) {
-                if (!commandLineChangesList || commandLineChangesList.contains(changeLogEntry.key)) {
+            for (def changeUnderTest : FileUtils.resolveInputFilePaths(databaseUnderTest, baseResourcePath +
+                    "initSql/primary", "sql").entrySet()) {
+                if (!commandLineChangesList || commandLineChangesList.contains(changeUnderTest.key)) {
                     inputList.add(TestInput.builder()
                             .database(databaseUnderTest.database)
                             .databaseName(databaseUnderTest.name)
@@ -44,25 +44,23 @@ class AdvancedTestHelper {
                             .username(databaseUnderTest.username)
                             .password(databaseUnderTest.password)
                             .version(databaseUnderTest.version)
-                            .primarySetupChangelogPath(changeLogEntry.value)
-                            .secondarySetupChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "secondaryInstanceChangelogs", "xml").get(changeLogEntry.key))
-                            .generateChangelogResourcesPath(baseChangelogPath + "generatedChangelogs/" + changeLogEntry.key)
-                            .diffChangelogResourcesPath(baseChangelogPath + "diffChangelogs/" + changeLogEntry.key)
-                            .pathToExpectedDiffFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "expectedDiff", "txt").get(changeLogEntry.key))
-                            .pathToEmptyDiffFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                            .primaryInitSqlPath(changeUnderTest.value)
+                            .secondaryInitSqlPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseResourcePath +
+                                    "initSql/secondary", "sql").get(changeUnderTest.key))
+                            .generateChangelogResourcesPath(baseResourcePath + "generatedChangelogs/" + changeUnderTest.key)
+                            .diffChangelogResourcesPath(baseResourcePath + "diffChangelogs/" + changeUnderTest.key)
+                            .pathToExpectedDiffFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseResourcePath +
+                                    "expectedDiff", "txt").get(changeUnderTest.key))
+                            .pathToEmptyDiffFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseResourcePath +
                                     "expectedDiff", "txt").get("empty"))
-                            .change(changeLogEntry.key)
-                            .changeReversed(changeLogEntry.key.replace("create", "drop").replace("add", "drop"))
-                            .expectedSnapshot(FileUtils.getJSONFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
-                                    baseChangelogPath + "expectedSnapshot"))
-                            .verificationSetupSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
-                                    baseChangelogPath + "verificationSql/setup")))
-                            .verificationGenerateChangelogSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
-                                    baseChangelogPath + "verificationSql/generateChangelog")))
-                            .verificationDiffChangelogSql(parseQuery(getSqlFileContent(changeLogEntry.key, databaseUnderTest.name, databaseUnderTest.version,
-                                    baseChangelogPath + "verificationSql/diffChangelog")))
+                            .change(changeUnderTest.key)
+                            .changeReversed(changeUnderTest.key.replace("create", "drop").replace("add", "drop"))
+                            .expectedSnapshot(FileUtils.getJSONFileContent(changeUnderTest.key, databaseUnderTest.name, databaseUnderTest.version,
+                                    baseResourcePath + "expectedSnapshot"))
+                            .expectedGenerateChangelogSql(parseQuery(getSqlFileContent(changeUnderTest.key, databaseUnderTest.name, databaseUnderTest.version,
+                                    baseResourcePath + "expectedSql/generateChangelog")))
+                            .expectedDiffChangelogSql(parseQuery(getSqlFileContent(changeUnderTest.key, databaseUnderTest.name, databaseUnderTest.version,
+                                    baseResourcePath + "expectedSql/diffChangelog")))
                             .build())
                 }
             }
@@ -128,29 +126,29 @@ class AdvancedTestHelper {
         return map
     }
 
-    static validateGenerateChangelog(String changelogFormat, String changelogContent, String verificationSql, String change) {
+    static validateGenerateChangelog(String changelogFormat, String changelogContent, String expectedSql, String change, String commandName) {
         if (changelogFormat.equalsIgnoreCase("sqlChangelog")) {
-            validateSqlChangelog(verificationSql, changelogContent)
+            if (expectedSql == null) {
+                uiService.sendMessage("WARNING! No expectedSql was found! The test will auto-generate new expectedSql file to\n" +
+                        "src/test/resources/liquibase/harness/compatibility/advanced/expectedSql/${commandName}\n" +
+                        "folder. Please verify its content and use it as expectedSql test data.")
+            } else {
+                validateSqlChangelog(expectedSql, changelogContent)
+            }
         } else {
-            def message = changelogContent.contains("$change") ? "GENERATED CHANGELOG CONTAINS $change CHANGE" :
-                    "FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $change CHANGE"
-            uiService.sendMessage(message)
+            uiService.sendMessage(changelogContent.contains("$change") ? "GENERATED CHANGELOG CONTAINS $change CHANGE" :
+                    "FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $change CHANGE")
             assert changelogContent.contains("$change")
         }
     }
 
-    static validateDiffChangelog(String changelogFormat, String changelogContent, String verificationSql, String change, String changeReversed) {
-        validateGenerateChangelog(changelogFormat, changelogContent, verificationSql, change)
+    static validateDiffChangelog(String changelogFormat, String changelogContent, String expectedSql, String change, String changeReversed, String commandName) {
+        validateGenerateChangelog(changelogFormat, changelogContent, expectedSql, change, commandName)
         if (!changelogFormat.equalsIgnoreCase("sqlChangelog")) {
-            def message = changelogContent.contains("$change") ? "GENERATED CHANGELOG CONTAINS $changeReversed CHANGE" :
-                    "FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $changeReversed CHANGE"
-            uiService.sendMessage(message)
+            uiService.sendMessage(changelogContent.contains("$change") ? "GENERATED CHANGELOG CONTAINS $changeReversed CHANGE" :
+                    "FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $changeReversed CHANGE")
             assert changelogContent.contains("$changeReversed")
         }
-    }
-
-    static String getChangelogValidationSql(String searchPath, String change, String dbName, String dbVersion) {
-        return parseQuery(getSqlFileContent(change, dbName, dbVersion, baseChangelogPath + "verificationSql/" + searchPath)).toLowerCase()
     }
 
     static validateSql(String generatedSql, String expectedSql) {
@@ -158,7 +156,8 @@ class AdvancedTestHelper {
         if (expectedSql.equalsIgnoreCase(generatedSql)) {
             message = "GENERATED SQL IS CORRECT"
         } else {
-            message ="FAIL! Expected sql doesn't match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" + "GENERATED SQL: \n" + generatedSql
+            message = "FAIL! Expected sql doesn't match generated sql! Deleting expectedSql file will test that new sql works correctly and " +
+                    "will auto-generate a new version if it passes. \nEXPECTED SQL: \n" + expectedSql + " \n GENERATED SQL: \n" + generatedSql
         }
         Scope.getCurrentScope().getUI().sendMessage(message)
         expectedSql.equalsIgnoreCase(generatedSql)
@@ -169,10 +168,24 @@ class AdvancedTestHelper {
         if (generatedDiff == expectedDiff) {
             message = "GENERATED DIFF IS CORRECT"
         } else {
-            message ="FAIL! EXPECTED DIFF DOESN'T MATCH GENERATED DIFF!"
+            message = "FAIL! EXPECTED DIFF DOESN'T MATCH GENERATED DIFF!"
         }
         uiService.sendMessage(message)
         generatedDiff == expectedDiff
+    }
+
+    static void saveAsExpectedSql(String generatedSql, TestInput testInput, String commandName) {
+        uiService.sendMessage("WARNING! No expectedSql was found! The test will auto-generate new expectedSql file to\n" +
+                "src/test/resources/liquibase/harness/compatibility/advanced/expectedSql/${commandName}\n" +
+                "folder. Please verify its content and use it as expectedSql test data.")
+        File outputFile = "${TestConfig.instance.outputResourcesBase}/liquibase/harness/compatibility/advanced/expectedSql/" +
+                "${commandName}/${testInput.databaseName}/${testInput.change}.sql" as File
+        outputFile.parentFile.mkdirs()
+        try {
+            outputFile.write(generatedSql)
+        } catch (IOException exception) {
+            Scope.getCurrentScope().getUI().sendErrorMessage("Failed to save generated sql file! " + exception.message)
+        }
     }
 
     @Builder
@@ -186,8 +199,8 @@ class AdvancedTestHelper {
         String referenceUrl
         String generateChangelogResourcesPath
         String diffChangelogResourcesPath
-        String primarySetupChangelogPath
-        String secondarySetupChangelogPath
+        String primaryInitSqlPath
+        String secondaryInitSqlPath
         String pathToExpectedDiffFile
         String pathToEmptyDiffFile
         String primaryDbSchemaName
@@ -195,9 +208,8 @@ class AdvancedTestHelper {
         String change
         String changeReversed
         String expectedSnapshot
-        String verificationSetupSql
-        String verificationGenerateChangelogSql
-        String verificationDiffChangelogSql
+        String expectedGenerateChangelogSql
+        String expectedDiffChangelogSql
         Database database
     }
 }

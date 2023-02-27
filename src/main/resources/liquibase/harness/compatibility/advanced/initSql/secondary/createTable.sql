@@ -1,0 +1,1 @@
+CREATE TABLE test_table_secondary (test_column INT NULL);
