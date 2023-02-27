@@ -11,6 +11,8 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
         <liquibase-core.version>[4.18.0,)</liquibase-core.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
@@ -123,11 +125,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.edb</groupId>
-            <artifactId>edb-jdbc18</artifactId>
-            <version>42.3.2.1</version>
-        </dependency>
-        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.30</version>
@@ -204,17 +201,22 @@
             <artifactId>db2-z-licence</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/db2jcc_license_cisuz.jar</systemPath>
+            <systemPath>${pom.basedir}/src/main/resources/drivers/db2/db2jcc_license_cisuz.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>com.sybase.jdbc4.jdbc.sybdriver</groupId>
             <artifactId>sybase</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/jconn4.jar</systemPath>
+            <systemPath>${pom.basedir}/src/main/resources/drivers/sybase/jconn4.jar</systemPath>
         </dependency>
-
+        <dependency>
+            <groupId>com.edb</groupId>
+            <artifactId>edb-jdbc18</artifactId>
+            <version>42.3.2.1</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/drivers/edb/edb-jdbc18.jar</systemPath>
+        </dependency>
         <dependency>
             <groupId>com.athaydes</groupId>
             <artifactId>spock-reports</artifactId>
@@ -337,7 +339,6 @@
                     <doctitle>Liquibase Test Harness ${project.version}</doctitle>
                     <quiet>true</quiet>
                     <doclint>none</doclint>
-                    <encoding>UTF-8</encoding>
                     <jarOutputDirectory>${project.basedir}/target</jarOutputDirectory>
                 </configuration>
                 <executions>
@@ -375,12 +376,6 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-    <repositories>
-        <repository>
-            <id>local-repo</id>
-            <url>file://${project.basedir}/lib</url>
-        </repository>
-    </repositories>
     <profiles>
         <profile>
             <!-- Required for deployment to Sonatype -->
