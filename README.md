@@ -137,13 +137,12 @@ In case you want to set up your database instance using docker image then you ma
 
 ## Advanced test
 
-The `groovy/liquibase/harness/compatibility/advanced/AdvancedTest.groovy` test validates work of snapshot, generateChangelog, diffChangelog and diff commands.
+The `groovy/liquibase/harness/compatibility/advanced/AdvancedTest.groovy` test validates Liquibase `snapshot`, `generateChangelog`, `diffChangelog` and `diff` commands.
 
 ### Configuring Advanced test
 1) Go to `src/main/resources/liquibase/harness/compatibility/advanced/initSql/primary` and add sql script for the change type you want to test.
 - Use change type as file name (createTable.sql, addCheckConstraint.sql, etc.) as the test will use it for generated changelog validation.
-- Some change types (addColumn, addPrimaryKey, addUniqueConstraint) don't always produce separate changeset during generateChangelog/diffChangelog execution, use column.sql, primary.sql, unique.sql
-for initSql file name instead
+- Some change types (addColumn, addPrimaryKey, addUniqueConstraint) do not always produce separate changesets during generateChangelog/diffChangelog execution, so use column.sql, primary.sql, unique.sql for initSql file name instead
 2) Go to `src/main/resources/liquibase/harness/compatibility/advanced/initSql/secondary` and add sql script to setup secondary DB instance for diffChangelog command verification.
 - Configure this script to contain change type under test, that will differ from the one in initial changelog.
 4) Go to `src/main/resources/liquibase/harness/compatibility/advanced/expectedSql/generateChangelog` and add sql script you expect liquibase to generate during updateSql command execution for generated changelog.
