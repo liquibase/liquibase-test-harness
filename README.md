@@ -60,8 +60,9 @@ The general pattern is that for each directory containing configuration files:
 
 At each level in that hierarchy, new configurations can be added and/or can override configurations from a lower level. 
 
-Currently, there are five test types defined in the test harness:
+Currently, there are six test types defined in the test harness:
 * Foundational test
+* Advanced test
 * GenerateChangelog Command test
 * Change Object Tests
 * Change Data Tests
@@ -75,8 +76,7 @@ Currently, there are three test suites in the test harness:
 * FoundationalHarnessSuite, contains:
     * FoundationalTest
 * AdvancedHarnessSuite, contains:
-    * GenerateChangelogTest
-    * SnapshotObjectTests
+    * AdvancedTest
 
 This repository is configured to run against databases supported by Liquibase Core. 
 
@@ -135,9 +135,51 @@ file leaving just your configuration and run FoundationalTest directly from the 
 In case you want to set up your database instance using docker image then you may use 
 `src/test/resources/docker/docker-compose.yml` file for configuration.
 
-## Advanced test suite
+## Advanced test
 
-Advanced test suite consists of 3 tests (GenerateChangelogTest, DiffCommandTest, SnapshotObjectTests)
+The `groovy/liquibase/harness/compatibility/advanced/AdvancedTest.groovy` test validates Liquibase `snapshot`, `generateChangelog`, `diffChangelog` and `diff` commands.
+
+### Configuring Advanced test
+1) Go to `src/main/resources/liquibase/harness/compatibility/advanced/initSql/primary` and add sql script for the change type you want to test.
+- Use change type as file name (createTable.sql, addCheckConstraint.sql, etc.) as the test will use it for generated changelog validation.
+- Some change types (addColumn, addPrimaryKey, addUniqueConstraint) do not always produce separate changesets during generateChangelog/diffChangelog execution, so use column.sql, primary.sql, unique.sql for initSql file name instead.
+2) Go to `src/main/resources/liquibase/harness/compatibility/advanced/initSql/secondary` and add sql script to setup secondary DB instance for diffChangelog command verification.
+- Configure this script to contain the change type under test, one that will differ from the one in initial changelog.
+3) Go to `src/main/resources/liquibase/harness/compatibility/advanced/expectedSql/generateChangelog` and add the sql script you expect liquibase to generate during updateSql command execution for generated changelog.
+- If expectedSql is not provided, the test will auto-generate one in the `src/test/resources/liquibase/harness/compatibility/advanced/expectedSql/generateChangelog` folder. Please verify its content and use it as expectedSql test data.
+4) Go to `src/main/resources/liquibase/harness/compatibility/advanced/expectedSql/diffChangelog` and add the sql query you expect liquibase to generate during updateSql command execution for generated diff changelog.
+- If expectedSql is not provided, the test will auto-generate one in the `src/test/resources/liquibase/harness/compatibility/advanced/expectedSql/diffChangelog` folder. Please verify its content and use it as expectedSql test data.
+5) Go to `src/main/resources/liquibase/harness/compatibility/advanced/expectedSnapshot` and add expected DB Snapshot results.
+- See [example.json](src/main/resources/liquibase/harness/compatibility/advanced/expectedSnapshot/example.json) as an example.
+  This file contains snapshots for table, column, check constraint & function db objects. Use their structure as an example for your own db objects.
+- To verify the absence of an object in a snapshot (such as with drop* commands) add `"_noMatch": true,` in the applicable tree level where the missing object should be verified.
+  See [dropSequence.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/dropSequence.json) as an example.
+  Additionally, the `_noMatchField` parameter can be used to define the exact property which should be absent or different for that particular database object (for example Column, Table etc.)
+  see [createTableWithNumericColumn.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/createTableWithNumericColumn.json)
+6) Go to `src/main/resources/liquibase/harness/compatibility/advanced/expectedDiff` and add expected diff results.
+- See [example.txt](src/main/resources/liquibase/harness/compatibility/advanced/expectedDiff/example.txt) as an example.
+  This file contains example of missing and unexpected objects representation in typical diff file.
+
+- NOTE: All test data should be added under the database specific folder. If you would like to test another DB type, please add the requisite folder.
+- More information on Advanced test behavior can be found in README.advanced-test.md
+
+### Running AdvancedTest against your database
+1. If you have your database instance up and running you need to just add appropriate configuration details to `src/test/resources/harness-config.yml` file.
+   Following the example:
+    - **name**: `database_name` (**mandatory**) </br>
+      **version**: `database_version` (optional) </br>
+      **prefix**: `local` (optional parameter required for CI/CD tests, leave it empty or set `local`) </br>
+      **url**: `db_connection_url` (**mandatory**) </br>
+      **username**: `username` (optional if your database authentication config doesn't require it) </br>
+      **password**: `password` (optional if your database authentication config doesn't require it) </br>
+2. Add driver dependency for you database to POM.xml file
+3. Make sure, your database has two instances. Please name your secondary instance as `secondarydb`
+4. To run the test go to you IDE run configurations and add new JUnit configuration. Add
+   `liquibase.harness.compatibility.advanced.AdvancedTest` as target class and use -DdbName, -DdbVersion to set up
+   appropriate parameters. Or you may just comment out/delete all existing configurations in harness-config.yml
+   file leaving just your configuration and run FoundationalTest directly from the class file.
+5. In case you want to set up your database instance using docker image then you may use
+`src/test/resources/docker/docker-compose.yml` file for configuration.
 
 ### GenerateChangelogTest
 
@@ -167,40 +209,6 @@ This test executes the following steps:
 
 This test validates work of Liquibase 'snapshot' command by comparing expected and generated snapshots
 after a DB object was created.
-
-### Running Advanced test suite against your database
-1. Since this test suite contains DiffCommandTest you will need to have two database instances up and running, 
-   and you need to add appropriate configuration details to `src/test/resources/harness-config.yml` file.
-   Following the example:
-  - **name**: `database_name` (**mandatory**) </br>
-    **version**: `database_version` (optional) </br>
-    **prefix**: `local` (optional parameter required for CI/CD tests, leave it empty or set `local`) </br>
-    **url**: `db_connection_url` (**mandatory**) </br>
-    **username**: `username` (optional if your database authentication config doesn't require it) </br>
-    **password**: `password` (optional if your database authentication config doesn't require it) </br>
-
-2. Add driver dependency for you database to POM.xml file
-
-
-3. To run the test go to you IDE run configurations and add new JUnit configuration. Add
-   `liquibase.harness.AdvancedHarnessSuiteTest` as target class and use -DdbName, -DdbVersion to set up
-   appropriate parameters.
-   
-**WARNING:** As for now `liquibase.harness.AdvancedHarnessSuiteTest` will run only GenerateChangelogTest & SnapshotObjectTests.
-                You will need to create a separate run configuration for DiffCommandTest.
-                DiffCommandTest will be added to `liquibase.harness.AdvancedHarnessSuiteTest` in the nearest releases.
-
-   To run **DiffCommandTest** create a new JUnit configuration. Add
-   `liquibase.harness.diff.DiffCommandTest` as target class and **DO NOT** use -DdbName, -DdbVersion to set up
-   appropriate parameters. To set up target database & reference database for the DiffCommandTest, use **diffDatabases.yml** file
-   located at `src/main/resources/liquibase/harness/diff/diffDatabases.yml` following the example:
--  **targetDatabaseName**: `target database_name` (**mandatory**) </br>
-   **targetDatabaseVersion**: `target database_version` (**mandatory**) </br>
-   **referenceDatabaseName**: `reference database_name` (**mandatory**) </br>
-   **referenceDatabaseVersion**: `reference database_version` (**mandatory**) </br>
-
-In case you want to set up your database instance using docker image then you may use
-`src/test/resources/docker/docker-compose.yml` file for configuration.
 
 ## Change Objects Test
 
@@ -276,6 +284,7 @@ Execute `mvn test` with the (optional) flags outlined below:
 * `-DchangeObjects=createTable,dropTable` flag allows you to run specific changeObjects rather than all. Use comma
  separated lists.
 * `-DchangeData=insert,delete` flag that allows to run specific changeData through ChangeDataTests. Use comma separated list
+* `-Dchange=createTable,createView` flag that allows to run specific change type through AdvancedTest. Use comma separated list
 * `-DconfigFile=customConfigFile.yml` enables to override default config file which is(`src/test/resources/harness-config.yml`)
 * `-Dprefix=docker` filters database from config file by some common platform identifier. E.g. all AWS based platforms, all Titan managed platforms, all from default docker file.
 * `-DdbName=mysql` overrides the database type. This is only a single value property for now.

@@ -1,0 +1,40 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "test_column",
+            "type": {
+              "typeName": "INT"
+            }
+          }
+        }
+      ],
+      "com.datical.liquibase.ext.storedlogic.checkconstraint.CheckConstraint": [
+        {
+          "checkConstraint": {
+            "body": "`test_column` > 0",
+            "disabled": false,
+            "name": "test_check_constraint"
+          }
+        }
+      ],
+      "com.datical.liquibase.ext.storedlogic.function.Function": [
+        {
+          "function": {
+            "body": "CREATE FUNCTION `test_function`() RETURNS varchar(20) CHARSET utf8mb4\nBEGIN\n                                                RETURN 'Hello';\n                                                END",
+            "name": "test_function"
+          }
+        }
+      ]
+    }
+  }
+}

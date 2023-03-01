@@ -1,0 +1,1 @@
+create table test_table_xml (test_column int default null null)
