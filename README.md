@@ -209,40 +209,6 @@ This test executes the following steps:
 This test validates work of Liquibase 'snapshot' command by comparing expected and generated snapshots
 after a DB object was created.
 
-### Running Advanced test suite against your database
-1. Since this test suite contains DiffCommandTest you will need to have two database instances up and running, 
-   and you need to add appropriate configuration details to `src/test/resources/harness-config.yml` file.
-   Following the example:
-  - **name**: `database_name` (**mandatory**) </br>
-    **version**: `database_version` (optional) </br>
-    **prefix**: `local` (optional parameter required for CI/CD tests, leave it empty or set `local`) </br>
-    **url**: `db_connection_url` (**mandatory**) </br>
-    **username**: `username` (optional if your database authentication config doesn't require it) </br>
-    **password**: `password` (optional if your database authentication config doesn't require it) </br>
-
-2. Add driver dependency for you database to POM.xml file
-
-
-3. To run the test go to you IDE run configurations and add new JUnit configuration. Add
-   `liquibase.harness.AdvancedHarnessSuiteTest` as target class and use -DdbName, -DdbVersion to set up
-   appropriate parameters.
-   
-**WARNING:** As for now `liquibase.harness.AdvancedHarnessSuiteTest` will run only GenerateChangelogTest & SnapshotObjectTests.
-                You will need to create a separate run configuration for DiffCommandTest.
-                DiffCommandTest will be added to `liquibase.harness.AdvancedHarnessSuiteTest` in the nearest releases.
-
-   To run **DiffCommandTest** create a new JUnit configuration. Add
-   `liquibase.harness.diff.DiffCommandTest` as target class and **DO NOT** use -DdbName, -DdbVersion to set up
-   appropriate parameters. To set up target database & reference database for the DiffCommandTest, use **diffDatabases.yml** file
-   located at `src/main/resources/liquibase/harness/diff/diffDatabases.yml` following the example:
--  **targetDatabaseName**: `target database_name` (**mandatory**) </br>
-   **targetDatabaseVersion**: `target database_version` (**mandatory**) </br>
-   **referenceDatabaseName**: `reference database_name` (**mandatory**) </br>
-   **referenceDatabaseVersion**: `reference database_version` (**mandatory**) </br>
-
-In case you want to set up your database instance using docker image then you may use
-`src/test/resources/docker/docker-compose.yml` file for configuration.
-
 ## Change Objects Test
 
 The test-harness validates most of the Data Definition Language related Change Types as listed on [Home Page](https://docs.liquibase.com/change-types/home.html). 
