@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
-        <liquibase-core.version>[4.18.0,)</liquibase-core.version>
+        <liquibase-standard.version>[4.18.0,)</liquibase-standard.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
     </properties>
     <organization>
@@ -74,13 +74,13 @@
     <dependencies>
         <dependency>
             <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>${liquibase-core.version}</version>
+            <artifactId>liquibase-standard</artifactId>
+            <version>${liquibase-standard.version}</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-commercial</artifactId>
-            <version>${liquibase-core.version}</version>
+            <version>${liquibase-standard.version}</version>
         </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.codehaus.groovy</groupId>
