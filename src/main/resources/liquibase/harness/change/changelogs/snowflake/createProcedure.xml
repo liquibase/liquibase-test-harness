@@ -24,7 +24,7 @@
                     $$;
         </createProcedure>
         <rollback>
-            <dropProcedure procedureName="test_procedure()"/>
+            <dropProcedure procedureName="test_procedure"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
