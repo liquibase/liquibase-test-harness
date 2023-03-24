@@ -5,6 +5,7 @@ target/
 /.apt_generated_tests/
 bin/
 build/
+src/test/resources/liquibase/
 .project
 .DS_Store
 src/test/resources/derby/lbcat/*
