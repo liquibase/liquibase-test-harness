@@ -13,7 +13,7 @@
           "column": {
             "name": "FLOATCOL",
             "type": {
-              "typeName": "FLOAT"
+              "typeName": "DOUBLE"
             }
           }
         }
