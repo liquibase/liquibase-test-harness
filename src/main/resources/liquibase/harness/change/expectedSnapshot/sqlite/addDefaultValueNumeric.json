@@ -8,7 +8,7 @@
             "name": "numericColumn",
             "nullable": true,
             "type": {
-              "typeName": "NUMBER(2000000000, 10)"
+              "typeName": "NUMBER"
             }
           }
         }
