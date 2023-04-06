@@ -141,7 +141,7 @@ databasesUnderTest:
 
   - name: oracle
     version: 19.3.0
-    url: 'jdbc:oracle:thin:@localhost:1521/PDBORCL'
+    url: 'jdbc:oracle:thin:@localhost:1521/PDBORCL?oracle.net.disableOob=true'
     username: DATICAL_ADMIN
     password: DATICAL_ADMIN_PW
 
