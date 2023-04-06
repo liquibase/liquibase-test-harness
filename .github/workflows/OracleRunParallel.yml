@@ -50,8 +50,8 @@ jobs:
 
       - name: Oracle ${{ matrix.plan }} Test Run
         run: |
-        docker ps
-        mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
+          docker ps
+          mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
