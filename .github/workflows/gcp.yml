@@ -133,7 +133,6 @@ jobs:
           username: "sqlserver"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
-        continue-on-error: true
 
       - name: Cache local Maven repository
         uses: actions/cache@v3

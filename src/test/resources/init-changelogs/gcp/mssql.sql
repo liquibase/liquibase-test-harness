@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset liquibase:1 runAlways:true
+--changeset liquibase:1 runAlways:true failOnError:false
 
 USE lbcat;
 
