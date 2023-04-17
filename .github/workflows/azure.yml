@@ -56,7 +56,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean Azure MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.20.0
+        uses: liquibase-github-actions/drop-all@v4.21.1
         if: ${{ matrix.database == 'mysql' }}
         with:
           url: "${{secrets.TH_AZURE_MYSQL_URL}}"
@@ -96,7 +96,7 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Azure MSSQL dropAll
-        uses: liquibase-github-actions/drop-all@v4.20.0
+        uses: liquibase-github-actions/drop-all@v4.21.1
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           url: "${{secrets.TH_AZURE_URL}}"
@@ -116,7 +116,7 @@ jobs:
           url: "${{secrets.TH_AZURE_URL}}"
 
       - name: Azure MSSQL MI dropAll
-        uses: liquibase-github-actions/drop-all@v4.20.0
+        uses: liquibase-github-actions/drop-all@v4.21.1
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
         with:
           url: "${{secrets.TH_AZURE_MSSQL_MI_URL}}"
@@ -136,7 +136,7 @@ jobs:
           url: "${{secrets.TH_AZURE_MSSQL_MI_URL}}"
 
       - name: Azure PostgreSQL Single Server dropAll
-        uses: liquibase-github-actions/drop-all@v4.20.0
+        uses: liquibase-github-actions/drop-all@v4.21.1
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
@@ -156,7 +156,7 @@ jobs:
           url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
 
       - name: Azure PostgreSQL Flexible Server dropAll
-        uses: liquibase-github-actions/drop-all@v4.20.0
+        uses: liquibase-github-actions/drop-all@v4.21.1
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'flexible' }}
         with:
           url: "${{secrets.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL}}"
