@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       databases: ${{ github.event.inputs.databases || '["postgresql:11","postgresql:12","postgresql:13","postgresql:14","mysql:gcp","mssql:2019"]' }}
-      testClasses: ${{ inputs.testClasses  || 'AdvancedHarnessSuiteTest' }}
+      testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
