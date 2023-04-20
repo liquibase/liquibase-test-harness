@@ -7,6 +7,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses([GenerateChangelogTest, SnapshotObjectTests])
+@Suite.SuiteClasses([AdvancedTest])
 abstract class AdvancedHarnessSuite {
 }
