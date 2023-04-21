@@ -120,7 +120,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
+          classpath: "src/test/resources/init-changelogs/gcp"
           changeLogFile: "mssql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
