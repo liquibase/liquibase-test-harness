@@ -67,7 +67,7 @@ jobs:
 
       - name: Init Database
         if: ${{ matrix.version == 'gcp' }}
-        run: liquibase --classpath="src/test/resources/init-changelogs/gcp" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_GCP_MYSQL_8_0_URL }}" update
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_GCP_MYSQL_8_0_URL }}" update
 
   test:
     needs: [init-mysql, setup]
