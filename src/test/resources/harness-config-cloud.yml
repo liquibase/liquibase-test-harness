@@ -95,7 +95,7 @@ databasesUnderTest:
 
   - name: mssql
     prefix: gcp
-    version: 2019
+    version: gcp
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD
