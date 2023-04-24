@@ -23,14 +23,14 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:11\",\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"mysql:gcp\",\"mssql:2019\"]"
+        default: "[\"postgresql:11\",\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"mysql:gcp\",\"mssql:gcp\"]"
 
 jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["postgresql:11","postgresql:12","postgresql:13","postgresql:14","mysql:gcp","mssql:2019"]' }}
+      databases: ${{ github.event.inputs.databases || '["postgresql:11","postgresql:12","postgresql:13","postgresql:14","mysql:gcp","mssql:gcp"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
@@ -120,7 +120,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
+          classpath: "src/test/resources/init-changelogs/gcp"
           changeLogFile: "mssql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
