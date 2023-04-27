@@ -126,16 +126,6 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
 
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/gcp"
-          changeLogFile: "mssql.sql"
-          username: "sqlserver"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
-
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
