@@ -126,10 +126,12 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
 
-      - uses: liquibase-github-actions/update@v4.20.0
+      - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
-          changelogFile: "src/test/resources/init-changelogs/gcp/mssql.sql"
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/gcp"
+          changeLogFile: "mssql.sql"
           username: "sqlserver"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
