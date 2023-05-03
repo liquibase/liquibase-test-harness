@@ -83,35 +83,35 @@ class GenerateChangelogTest extends Specification {
                 assert generatedChangelog.contains("$testInput.change")
             }
 
-//            when: "get sql generated for the change set"
-//            String generatedSql
-//            argsMap.put("changeLogFile", resourcesDirFullPath + entry.value)
-//            if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
-//                generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
-//                generatedSql = removeSchemaNames(generatedSql, testInput.database)
-//            }
-//
-//
-//            then: "execute updateSql command on generated changelogs"
-//            if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
-//                def expectedSql
-//                try {
-//                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-//                            "liquibase/harness/generateChangelog/verificationSql")).toLowerCase()
-//                } catch (NullPointerException exception) {
-//                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-//                            "liquibase/harness/generateChangelog/expectedSql")).toLowerCase()
-//                }
-//                def generatedSqlIsCorrect = generatedSql == expectedSql
-//                if (!generatedSqlIsCorrect) {
-//                    Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
-//                            "match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" +
-//                            "GENERATED SQL: \n" + generatedSql)
-//                    assert generatedSql == expectedSql
-//                }
-//            }
-//
+//TODO will be fixed in DAT-14675.
+/*
+            when: "get sql generated for the change set"
+            String generatedSql
+            argsMap.put("changeLogFile", resourcesDirFullPath + entry.value)
+            if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
+                generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
+                generatedSql = removeSchemaNames(generatedSql, testInput.database)
+            }
 
+            then: "execute updateSql command on generated changelogs"
+            if (!entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
+                def expectedSql
+                try {
+                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+                            "liquibase/harness/generateChangelog/verificationSql")).toLowerCase()
+                } catch (NullPointerException exception) {
+                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+                            "liquibase/harness/generateChangelog/expectedSql")).toLowerCase()
+                }
+                def generatedSqlIsCorrect = generatedSql == expectedSql
+                if (!generatedSqlIsCorrect) {
+                    Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
+                            "match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" +
+                            "GENERATED SQL: \n" + generatedSql)
+                    assert generatedSql == expectedSql
+                }
+            }
+ */
             and: "rollback changes"
             argsMap.put("changeLogFile", testInput.xmlChangelogPath)
             strategy.performRollback(argsMap)
