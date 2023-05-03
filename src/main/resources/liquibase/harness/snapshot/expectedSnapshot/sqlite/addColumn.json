@@ -23,7 +23,7 @@
             "name": "varcharColumn",
             "nullable": true,
             "type": {
-              "typeName": "VARCHAR(25)"
+              "typeName": "VARCHAR"
             }
           }
         },
