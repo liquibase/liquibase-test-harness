@@ -5,7 +5,7 @@
         {
           "column": {
             "name": "default_computed_value",
-            "defaultValue": "test_value / \\(2\\)::numeric!\\{liquibase.statement.DatabaseFunction}"
+            "defaultValue": "GENERATED ALWAYS AS \\(test_value / 2\\) STORED!\\{liquibase.statement.DatabaseFunction}"
           }
         }]
     }
