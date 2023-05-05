@@ -41,21 +41,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: liquibase-github-actions/drop-all@v4.21.1
-        with:
-          url: "${{ secrets.TH_OCI_ORACLE_19c_URL }}"
-          username: "ADMIN"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
-      - uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "oracle.sql"
-          username: "ADMIN"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets.TH_OCI_ORACLE_19c_URL }}"
+#      - uses: liquibase-github-actions/drop-all@v4.21.1
+#        with:
+#          url: "${{ secrets.TH_OCI_ORACLE_19c_URL }}"
+#          username: "ADMIN"
+#          password: "${{secrets.TH_DB_PASSWD}}"
+#          licenseKey: "${{secrets.LICENSE_KEY}}"
+#
+#      - uses: liquibase/liquibase-github-action@v7
+#        with:
+#          operation: "update"
+#          classpath: "src/test/resources/init-changelogs/aws"
+#          changeLogFile: "oracle.sql"
+#          username: "ADMIN"
+#          password: "${{secrets.TH_DB_PASSWD}}"
+#          url: "${{ secrets.TH_OCI_ORACLE_19c_URL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
