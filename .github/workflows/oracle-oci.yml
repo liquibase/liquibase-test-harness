@@ -77,5 +77,5 @@ jobs:
       - name: Archive Oracle OCI Test Results
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
+          name: oracle-oci-test-results
           path: build/spock-reports
