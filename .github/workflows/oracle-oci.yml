@@ -1,0 +1,78 @@
+# Terraform Action to test Cloud Databases with test-harness
+
+name: Oracle OCI Test Execution
+concurrency: oracle-oci-run
+on:
+  # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
+  schedule:
+    - cron: '0 6 * * *' # Execute every day at noon
+  workflow_dispatch:
+    inputs:
+      testClasses:
+        type: choice
+        description: Test Suite or test class to run
+        options:
+          - LiquibaseHarnessSuiteTest
+          - FoundationalHarnessSuiteTest
+          - ChangeObjectTests
+          - ChangeDataTests
+          - SnapshotObjectTests
+          - GenerateChangelogTest
+          - FoundationalTest
+          - AdvancedHarnessSuiteTest
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+  test:
+    needs: [setup]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: liquibase-github-actions/drop-all@v4.21.1
+        with:
+          url: "${{ secrets.TH_OCI_ORACLE_19c_URL }}"
+          username: "ADMIN"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "oracle.sql"
+          username: "ADMIN"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets.TH_OCI_ORACLE_19c_URL }}"
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Oracle OCI Test Run
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -DdbUsername=ADMIN -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_OCI_ORACLE_19c_URL }}' test
+
+
+      - name: Archive Oracle OCI Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: oracle-oci-test-results
+          path: build/spock-reports

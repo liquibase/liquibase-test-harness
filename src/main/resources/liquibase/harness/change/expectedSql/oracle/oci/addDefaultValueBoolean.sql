@@ -1,0 +1,2 @@
+ALTER TABLE ADMIN.authors ADD booleanColumn NUMBER(1)
+ALTER TABLE ADMIN.authors MODIFY booleanColumn DEFAULT 1
