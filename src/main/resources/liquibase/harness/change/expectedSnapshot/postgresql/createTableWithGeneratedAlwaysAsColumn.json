@@ -5,7 +5,7 @@
         {
           "column": {
             "name": "default_computed_value",
-            "defaultValue": "GENERATED ALWAYS AS.*"
+            "defaultValue": "GENERATED ALWAYS AS \\(test_value / 2\\) STORED.*"
           }
         }]
     }
