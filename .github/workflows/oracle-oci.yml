@@ -20,17 +20,12 @@ on:
           - GenerateChangelogTest
           - FoundationalTest
           - AdvancedHarnessSuiteTest
-      databases:
-        description: Databases to start up. Comma separated list of "name:version"
-        required: true
-        default: "[\"oracle:oci\"]"
 
 jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["oracle:oci"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
@@ -47,15 +42,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Configure Test
-        id: setup
-        uses: actions/github-script@v6.4.1
-        with:
-          script: |
-            let splitValues = "${{ matrix.database }}".split(":")
-            core.setOutput("databasePlatform", splitValues[0]);
-            core.setOutput("databaseVersion", splitValues[1]);
 
       - uses: liquibase-github-actions/drop-all@v4.21.1
         with:
@@ -82,13 +68,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+      - name: Oracle OCI Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=ADMIN -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_OCI_ORACLE_19c_URL }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -DdbUsername=ADMIN -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_OCI_ORACLE_19c_URL }}' test
 
 
-      - name: Archive ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
+      - name: Archive Oracle OCI Test Results
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
