@@ -51,7 +51,6 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
