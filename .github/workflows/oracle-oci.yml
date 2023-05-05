@@ -36,8 +36,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        database: ${{ fromJson(needs.setup.outputs.databases) }}
 
     steps:
       - name: Checkout
