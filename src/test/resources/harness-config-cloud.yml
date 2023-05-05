@@ -23,6 +23,13 @@ databasesUnderTest:
     username: USERNAME
     password: PASSWORD
 
+  - name: oracle
+    prefix: oci
+    version: oci
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
   - name: snowflake
     prefix: cloud
     version:
