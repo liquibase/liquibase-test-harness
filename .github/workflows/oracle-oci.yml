@@ -41,6 +41,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
@@ -52,8 +53,8 @@ jobs:
       - name: Oracle OCI Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_OCI_ORACLE_19c_URL }}' test
 
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_OCI_ORACLE_19c_URL }}' test
 
       - name: Archive Oracle OCI Test Results
         uses: actions/upload-artifact@v3
