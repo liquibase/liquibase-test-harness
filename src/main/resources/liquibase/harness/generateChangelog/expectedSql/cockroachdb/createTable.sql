@@ -1,0 +1,1 @@
+CREATE TABLE "test_table_xml" ("test_column" BIGINT, "rowid" BIGINT DEFAULT unique_rowid() NOT NULL, CONSTRAINT "primary" PRIMARY KEY ("rowid"));

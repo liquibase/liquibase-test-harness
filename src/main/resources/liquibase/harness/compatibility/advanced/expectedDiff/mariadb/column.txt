@@ -1,0 +1,55 @@
+ComparedSchemas:lbcat->secondarydb
+ProductName:EQUAL
+ProductVersion:EQUAL
+MissingCatalog(s):NONE
+UnexpectedCatalog(s):NONE
+ChangedCatalog(s):NONE
+MissingCheckConstraint(s):NONE
+UnexpectedCheckConstraint(s):NONE
+ChangedCheckConstraint(s):NONE
+MissingColumn(s):
+  lbcat.test_table.dateColumn
+  lbcat.test_table.intColumn
+  lbcat.test_table.test_column
+  lbcat.test_table.varcharColumn
+UnexpectedColumn(s):NONE
+ChangedColumn(s):NONE
+MissingDatabasePackage(s):NONE
+UnexpectedDatabasePackage(s):NONE
+ChangedDatabasePackage(s):NONE
+MissingDatabasePackageBody(s):NONE
+UnexpectedDatabasePackageBody(s):NONE
+ChangedDatabasePackageBody(s):NONE
+MissingForeignKey(s):NONE
+UnexpectedForeignKey(s):NONE
+ChangedForeignKey(s):NONE
+MissingFunction(s):NONE
+UnexpectedFunction(s):NONE
+ChangedFunction(s):NONE
+MissingIndex(s):NONE
+UnexpectedIndex(s):NONE
+ChangedIndex(s):NONE
+MissingPrimaryKey(s):NONE
+UnexpectedPrimaryKey(s):NONE
+ChangedPrimaryKey(s):NONE
+MissingSequence(s):NONE
+UnexpectedSequence(s):NONE
+ChangedSequence(s):NONE
+MissingStoredProcedure(s):NONE
+UnexpectedStoredProcedure(s):NONE
+ChangedStoredProcedure(s):NONE
+MissingSynonym(s):NONE
+UnexpectedSynonym(s):NONE
+ChangedSynonym(s):NONE
+MissingTable(s):test_table
+UnexpectedTable(s):NONE
+ChangedTable(s):NONE
+MissingTrigger(s):NONE
+UnexpectedTrigger(s):NONE
+ChangedTrigger(s):NONE
+MissingUniqueConstraint(s):NONE
+UnexpectedUniqueConstraint(s):NONE
+ChangedUniqueConstraint(s):NONE
+MissingView(s):NONE
+UnexpectedView(s):NONE
+ChangedView(s):NONE

@@ -8,7 +8,8 @@
             "name": "varcharColumn",
             "nullable": true,
             "type": {
-              "typeName": "VARCHAR(255)"
+              "columnSize": "255\\!\\{java.lang.Integer\\}",
+              "typeName": "VARCHAR"
             }
           }
         }

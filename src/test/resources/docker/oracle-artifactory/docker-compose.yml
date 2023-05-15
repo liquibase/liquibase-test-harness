@@ -2,8 +2,8 @@ version: '3.3'
 
 services:
 
-  oracle-ee-18.3.0:
-    image: docker-dev.artifactory.datical.net/datical/oracle-ee:18.3.0-local
+  oracle-ee-19.3.0:
+    image: docker-dev.artifactory.datical.net/datical/oracle-ee:19.3.0-local
     ports:
         - "1521:1521"
     restart: always

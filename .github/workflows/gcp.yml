@@ -23,15 +23,15 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:11\",\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"mysql:gcp\",\"mssql:2019\"]"
+        default: "[\"postgresql:11\",\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"mysql:gcp\",\"mssql:gcp\"]"
 
 jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["postgresql:11","postgresql:12","postgresql:13","postgresql:14","mysql:gcp","mssql:2019"]' }}
-      testClasses: ${{ inputs.testClasses  || 'AdvancedHarnessSuiteTest' }}
+      databases: ${{ github.event.inputs.databases || '["postgresql:11","postgresql:12","postgresql:13","postgresql:14","mysql:gcp","mssql:gcp"]' }}
+      testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -57,7 +57,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean GCP MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.19.0
+        uses: liquibase-github-actions/drop-all@v4.21.1
         if: ${{ matrix.version == 'gcp' }}
         with:
           url: "${{ secrets.TH_GCP_MYSQL_8_0_URL }}"
@@ -83,14 +83,14 @@ jobs:
 
       - name: Configure Test
         id: setup
-        uses: actions/github-script@v6.3.3
+        uses: actions/github-script@v6.4.1
         with:
           script: |
             let splitValues = "${{ matrix.database }}".split(":")
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@v4.19.0
+      - uses: liquibase-github-actions/drop-all@v4.21.1
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         with:
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
@@ -108,7 +108,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.19.0
+      - uses: liquibase-github-actions/drop-all@v4.21.1
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
@@ -120,7 +120,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
+          classpath: "src/test/resources/init-changelogs/gcp"
           changeLogFile: "mssql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"

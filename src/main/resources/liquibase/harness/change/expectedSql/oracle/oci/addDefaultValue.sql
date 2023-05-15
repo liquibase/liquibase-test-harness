@@ -1,0 +1,1 @@
+ALTER TABLE ADMIN.posts MODIFY title DEFAULT 'title_test'

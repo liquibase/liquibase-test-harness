@@ -1,0 +1,3 @@
+ALTER TABLE ADMIN.posts ADD varcharColumn VARCHAR2(25)
+UPDATE ADMIN.posts SET varcharColumn = 'INITIAL_VALUE'
+ALTER TABLE ADMIN.posts DROP COLUMN varcharColumn
