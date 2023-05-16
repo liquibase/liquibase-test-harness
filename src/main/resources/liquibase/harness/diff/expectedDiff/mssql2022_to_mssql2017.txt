@@ -3,7 +3,7 @@ Comparison Database: lbuser@jdbc:sqlserver://localhost:1433;connectRetryInterval
 Compared Schemas: dbo
 Product Name: EQUAL
 Product Version:
-     Reference:   '16.00.4025'
+     Reference:   '16.00.4035'
      Target: '14.00.3460'
 Missing Catalog(s): NONE
 Unexpected Catalog(s): NONE
