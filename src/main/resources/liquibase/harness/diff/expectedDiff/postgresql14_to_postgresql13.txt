@@ -3,8 +3,8 @@ Comparison Database: lbuser @ jdbc:postgresql://localhost:5437/lbcat (Default Sc
 Compared Schemas: public
 Product Name: EQUAL
 Product Version:
-     Reference:   '14.7 (Debian 14.7-1.pgdg110+1)'
-     Target: '13.10 (Debian 13.10-1.pgdg110+1)'
+     Reference:   '14.7 (Debian 14.8-1.pgdg110+1)'
+     Target: '13.10 (Debian 13.11-1.pgdg110+1)'
 Missing Catalog(s): NONE
 Unexpected Catalog(s): NONE
 Changed Catalog(s): NONE
