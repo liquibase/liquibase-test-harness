@@ -41,6 +41,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+    - uses: liquibase-github-actions/execute-sql@v4.22.0
+        with:
+          classpath: "src/test/resources/init-changelogs/aws"
+          sqlFile: "oracle.sql"
+          username: "ADMIN"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets.TH_OCI_ORACLE_19c_URL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
