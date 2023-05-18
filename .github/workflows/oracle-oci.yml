@@ -43,7 +43,7 @@ jobs:
 
       - uses: liquibase-github-actions/execute-sql@v4.22.0
         with:
-          classpath: "src/test/resources/init-changelogs/aws"
+          searchPath: "src/test/resources/init-changelogs/aws"
           sqlFile: "oracle.sql"
           username: "ADMIN"
           password: "${{secrets.TH_DB_PASSWD}}"
