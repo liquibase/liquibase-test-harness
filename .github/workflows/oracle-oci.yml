@@ -43,7 +43,8 @@ jobs:
 
       - uses: liquibase-github-actions/execute-sql@v4.22.0
         with:
-          sqlFile: "src/test/resources/init-changelogs/aws/oracle.sql"
+          sqlFile: "src/test/resources/init-changelogs/oci/oracle.sql"
+          delimiter: "XX"
           username: "ADMIN"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_OCI_ORACLE_19c_URL }}"
