@@ -41,7 +41,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-    - uses: liquibase-github-actions/execute-sql@v4.22.0
+      - uses: liquibase-github-actions/execute-sql@v4.22.0
         with:
           classpath: "src/test/resources/init-changelogs/aws"
           sqlFile: "oracle.sql"
