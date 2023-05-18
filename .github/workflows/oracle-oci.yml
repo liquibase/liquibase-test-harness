@@ -41,9 +41,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: liquibase-github-actions/execute-sql@v4.22.0
+      - uses: liquibase/liquibase-github-action@v7
         with:
-          searchPath: "src/test/resources/init-changelogs/aws"
+          operation: "execute-sql"
+          classpath: "src/test/resources/init-changelogs/aws"
           sqlFile: "oracle.sql"
           username: "ADMIN"
           password: "${{secrets.TH_DB_PASSWD}}"
