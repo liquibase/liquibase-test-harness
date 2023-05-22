@@ -142,6 +142,20 @@ class DiffCommandTestHelper {
         return true
     }
 
+    static String removeDatabaseInfoFromDiff(String diff) {
+        String replacementRegexpRef = "Reference Database(.*?)\r?\n" //removes Reference Database diff line to generalize test data
+        String replacementRegexpComp = "Comparison Database(.*?)\r?\n" //removes Comparison Database diff line to generalize test data        String replacementRegexpRef = "Reference Database(.*?)\r?\n" //removes Reference Database diff line to generalize test data
+        String replacementRegexpRefDbVersion = "Reference:.*'.*'"
+        String replacementRegexpTargetDbVersion = "Target:.s*'.*'"
+        String replacementRegexpWS = "\\s+" //removes whitespaces
+        return diff
+                .replaceAll(replacementRegexpRef, "")
+                .replaceAll(replacementRegexpComp, "")
+                .replaceAll(replacementRegexpRefDbVersion, "")
+                .replaceAll(replacementRegexpTargetDbVersion, "")
+                .replaceAll(replacementRegexpWS, "")
+    }
+
     @Builder
     static class TestInput {
         String pathToExpectedDiffFile
