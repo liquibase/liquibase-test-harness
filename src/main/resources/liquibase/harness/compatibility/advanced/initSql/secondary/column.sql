@@ -1,1 +1,1 @@
-CREATE TABLE test_table (test_column INT NULL, secondary_column INT NULL)
+CREATE TABLE test_table (test_column INT NULL, secondary_column INT NULL);
