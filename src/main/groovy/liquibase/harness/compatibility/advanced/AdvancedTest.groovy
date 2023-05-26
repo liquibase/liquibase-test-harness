@@ -90,7 +90,7 @@ class AdvancedTest extends Specification {
             validateGenerateChangelog(entry.key, generatedChangelog, testInput.expectedGenerateChangelogSql, testInput.change, "generateChangelog")
 
             when: "execute updateSql command on generated changelogs"
-            argsMapPrimary.put("changelogFile", outputResourcesDirPath + entry.value)
+            argsMapPrimary.put("changelogFile", outputResourcesDirFullPath + entry.value)
             def generatedSql = parseQuery(executeCommandScope("updateSql", argsMapPrimary).toString())
             generatedSql = removeSchemaNames(generatedSql, testInput.database, testInput.primaryDbSchemaName)
             def expectedSql = testInput.expectedGenerateChangelogSql

@@ -132,12 +132,6 @@ jobs:
             "-Dliquibase.sdk.status.description=Internal functional tests" \
             "-Dliquibase.sdk.status.commit=installed"
 
-          whereis liquibase
-
-          which liquibase
-
-          liquibase --version
-
       - name: Cache installed Liquibase
         uses: actions/cache@v3
         with:
