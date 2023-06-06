@@ -1,6 +1,6 @@
 # A Harness of Integration Tests
 
-![Default Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Default%20Test%20Execution/badge.svg) ![Oracle Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Oracle%20Parallel%20Test%20Execution/badge.svg)
+![Default Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Default%20Test%20Execution/badge.svg) ![Advanced Test Execution](https://github.com/liquibase/liquibase-test-harness/blob/main/.github/workflows/advanced.yml/badge.svg) ![Oracle Test Execution](https://github.com/liquibase/liquibase-test-harness/workflows/Oracle%20Parallel%20Test%20Execution/badge.svg)
 
 ## Test-Harness Support Matrix
 
