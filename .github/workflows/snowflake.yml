@@ -1,13 +1,6 @@
 name: Snowflake Cloud
 concurrency: snowflake-run
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
     - cron: '0 7 * * *' # Execute every day at noon
