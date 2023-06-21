@@ -4,10 +4,10 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "1!{liquibase.statement.DatabaseFunction}",
+            "defaultValue": "1!{java.lang.Integer}",
             "name": "booleanColumn",
             "nullable": true,
-            "typeName": "BOOLEAN"
+            "typeName": "BIT"
           }
         }
       ]
