@@ -7,7 +7,9 @@
             "defaultValue": "1\\!\\{java.lang.Integer\\}",
             "name": "booleanColumn",
             "nullable": true,
-            "typeName": "BIT"
+            "type": {
+              "typeName": "BIT"
+            }
           }
         }
       ]
