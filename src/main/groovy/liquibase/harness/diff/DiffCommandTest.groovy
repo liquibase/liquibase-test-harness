@@ -101,10 +101,10 @@ class DiffCommandTest extends Specification {
 
         executeCommandScope("update", argsMap)
         argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")
-        String generatedDiffContent = executeCommandScope("diff", argsMap).toString().replaceAll("\\s+","")
+        String generatedDiffContent = removeDatabaseInfoFromDiff(executeCommandScope("diff", argsMap).toString())
 
         then: "validate generated diff"
-        String expectedDiffContent = getResourceContent(testInput.pathToExpectedDiffFile).replaceAll("\\s+","")
+        String expectedDiffContent = removeDatabaseInfoFromDiff(getResourceContent(testInput.pathToExpectedDiffFile))
         assert expectedDiffContent == generatedDiffContent
 
         cleanup: "rollback changes"

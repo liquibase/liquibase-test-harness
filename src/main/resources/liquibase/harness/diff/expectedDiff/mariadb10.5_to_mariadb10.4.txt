@@ -3,8 +3,8 @@ Comparison Database: lbuser @ jdbc:mariadb://localhost:33067/lbcat (Default Sche
 Compared Schemas: lbcat
 Product Name: EQUAL
 Product Version:
-     Reference:   '10.5.19-MariaDB-1:10.5.19+maria~ubu2004'
-     Target: '10.4.28-MariaDB-1:10.4.28+maria~ubu2004'
+     Reference:   '10.5.20-MariaDB-1:10.5.20+maria~ubu2004'
+     Target: '10.4.29-MariaDB-1:10.4.29+maria~ubu2004'
 Missing Catalog(s): NONE
 Unexpected Catalog(s): NONE
 Changed Catalog(s): NONE
