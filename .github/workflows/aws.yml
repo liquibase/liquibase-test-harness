@@ -61,7 +61,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean AWS MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.21.1
+        uses: liquibase-github-actions/drop-all@v4.23.0
         if: ${{ matrix.version == 'aws' }}
         with:
           url: "${{ secrets.TH_MYSQLURL_8_0 }}"
@@ -74,7 +74,7 @@ jobs:
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
 
       - name: Clean Aurora MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.21.1
+        uses: liquibase-github-actions/drop-all@v4.23.0
         if: ${{ matrix.version == 'aurora' }}
         with:
           url: "${{ secrets.TH_AURORA_MYSQLURL }}"
@@ -107,7 +107,7 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@v4.21.1
+      - uses: liquibase-github-actions/drop-all@v4.23.0
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         with:
           url: "${{ secrets.TH_ORACLEURL_19 }}"
@@ -125,7 +125,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_ORACLEURL_19 }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.21.1
+      - uses: liquibase-github-actions/drop-all@v4.23.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
         with:
           url: "${{ secrets[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
@@ -143,7 +143,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.21.1
+      - uses: liquibase-github-actions/drop-all@v4.23.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         with:
           url: "${{ secrets.TH_MARIADBURL_10_6 }}"
@@ -161,7 +161,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_MARIADBURL_10_6 }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.21.1
+      - uses: liquibase-github-actions/drop-all@v4.23.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           url: "${{ secrets.TH_MSSQLURL }}"
@@ -179,7 +179,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_MSSQLURL }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.21.1
+      - uses: liquibase-github-actions/drop-all@v4.23.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         with:
           url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
