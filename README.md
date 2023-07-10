@@ -30,7 +30,7 @@
 | EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        | Advanced                       |
 | DB2 on z/OS               | `11.1, 12`                            | BaseHarnessSuite               |
 | DB2 on Linux/Unix/Windows | `11.5.7`                              | Advanced                       |
-| H2                        | `2.1.210`                             | Advanced                       |
+| H2                        | `2.2.220`                             | Advanced                       |
 | SQLite                    | `3.34.0`                              | Advanced                       |
 | Apache Derby              | `10.14.2.0`                           | Advanced                       |
 | Firebird                  | `3.0, 4.0`                            | Advanced                       |
