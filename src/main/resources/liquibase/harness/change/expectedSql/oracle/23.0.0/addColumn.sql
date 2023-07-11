@@ -1,0 +1,6 @@
+ALTER TABLE LIQUIBASE.authors ADD varcharColumn VARCHAR2(25)
+ALTER TABLE LIQUIBASE.authors ADD intColumn INTEGER
+ALTER TABLE LIQUIBASE.authors ADD dateColumn date
+UPDATE LIQUIBASE.authors SET varcharColumn = 'INITIAL_VALUE'
+UPDATE LIQUIBASE.authors SET intColumn = 5
+UPDATE LIQUIBASE.authors SET dateColumn = TO_DATE('2020-09-21', 'YYYY-MM-DD')
