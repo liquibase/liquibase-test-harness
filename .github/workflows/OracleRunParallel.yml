@@ -18,11 +18,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - run:  | 
-               sudo rm -rf /usr/share/dotnet
-               sudo rm -rf /opt/ghc
-               sudo rm -rf "/usr/local/share/boost"
-               sudo rm -rf "$AGENT_TOOLSDIRECTORY" 
+      - run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - uses: actions/setup-java@v3
         with:
@@ -68,16 +68,20 @@ jobs:
         working-directory: src/test/resources/docker/oracle-xe
         run: docker-compose down --volumes
 
-  Oracle 23c test:
+  Oracle23c:
     runs-on: ubuntu-latest
+    container:
+      image: liquibase/liquibase:latest
+      env:
+        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
     services:
       oracle:
-        image: gvenzl/oracle-free:23-full-faststart
+        image: gvenzl/oracle-free:23-faststart
         env:
           ORACLE_RANDOM_PASSWORD: true
           APP_USER: LIQUIBASE
-          APP_USER_PASSWORD: Secret123
+          APP_USER_PASSWORD: Secret321
 
         # Forward Oracle port
         ports:
@@ -90,22 +94,21 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
-    steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Apply init script to Oracle 23c
-        uses: liquibase/liquibase-github-action@v7
+        uses: liquibase-github-actions/update@v4.23.0
         with:
-          operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
           changeLogFile: "oracle.sql"
           username: "LIQUIBASE"
           password: "Secret321"
-          url: "jdbc:oracle:thin:@//localhost:1524/FREEPDB1"
+          url: "jdbc:oracle:thin:@localhost:1524/FREEPDB1"
 
       - name: Oracle 23.0.0 Test Run
         run: |
+          docker ps
           mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=23.0.0 test
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
