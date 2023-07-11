@@ -7,29 +7,9 @@ on:
     - cron: '0 8 * * *' # Execute every day at 8am
   workflow_dispatch:
 
-
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    services:
-      oracle:
-        image: gvenzl/oracle-free:23-full-faststart
-        env:
-          ORACLE_RANDOM_PASSWORD: true
-          APP_USER: LIQUIBASE
-          APP_USER_PASSWORD: Secret123
-
-        # Forward Oracle port
-        ports:
-          - 1524:1521
-
-        # Provide healthcheck script options for startup
-        options: >-
-          --health-cmd healthcheck.sh
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
 
     strategy:
       fail-fast: false
@@ -49,16 +29,6 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: 'maven'
-
-      - name: Apply init script to Oracle 23c
-        uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "oracle.sql"
-          username: "LIQUIBASE"
-          password: "Secret321"
-          url: "jdbc:oracle:thin:@//localhost:1524/FREEPDB1"
 
       - name: Docker login to retrive Oracle images from private repo
         run: docker login "${{ secrets.ARTIFACTORY_URL }}" -u "${{ secrets.ARTIFACTORY_USER }}" -p "${{ secrets.ARTIFACTORY_TOKEN }}"
@@ -84,22 +54,10 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
-      - name: Oracle 23.0.0 Test Run
-        run: |
-          mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=23.0.0 test
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-
       - name: Archive Oracle ${{ matrix.plan }} test results
         uses: actions/upload-artifact@v3
         with:
           name: oracle-${{ matrix.plan }}-test-results
-          path: build/spock-reports
-
-      - name: Archive Oracle 23.0.0 test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: oracle-23.0.0-test-results
           path: build/spock-reports
 
       - name: Tear down Oracle test infra
@@ -109,3 +67,51 @@ jobs:
       - name: Tear down Oracle XE test infra
         working-directory: src/test/resources/docker/oracle-xe
         run: docker-compose down --volumes
+
+  Oracle 23c test:
+    runs-on: ubuntu-latest
+
+    services:
+      oracle:
+        image: gvenzl/oracle-free:23-full-faststart
+        env:
+          ORACLE_RANDOM_PASSWORD: true
+          APP_USER: LIQUIBASE
+          APP_USER_PASSWORD: Secret123
+
+        # Forward Oracle port
+        ports:
+          - 1524:1521
+
+        # Provide healthcheck script options for startup
+        options: >-
+          --health-cmd healthcheck.sh
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Apply init script to Oracle 23c
+        uses: liquibase/liquibase-github-action@v7
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "oracle.sql"
+          username: "LIQUIBASE"
+          password: "Secret321"
+          url: "jdbc:oracle:thin:@//localhost:1524/FREEPDB1"
+
+      - name: Oracle 23.0.0 Test Run
+        run: |
+          mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=23.0.0 test
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+
+      - name: Archive Oracle 23.0.0 test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: oracle-23.0.0-test-results
+          path: build/spock-reports
