@@ -70,9 +70,14 @@ jobs:
 
   Oracle23c:
     runs-on: ubuntu-latest
+    container:
+      image: liquibase/liquibase:latest
+      env:
+        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
     services:
       oracle:
+
         image: gvenzl/oracle-free:23-faststart
         env:
           ORACLE_RANDOM_PASSWORD: true
