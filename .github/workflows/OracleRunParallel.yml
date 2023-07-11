@@ -99,7 +99,7 @@ jobs:
       - name: Sleep for 180 seconds
         uses: whatnick/wait-action@master
         with:
-          time: '30s'
+          time: '180s'
 
       - name: Checkout
         uses: actions/checkout@v3
