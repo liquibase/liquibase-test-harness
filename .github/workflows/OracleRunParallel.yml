@@ -94,15 +94,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Apply init script to Oracle 23c
-        uses: liquibase-github-actions/update@v4.23.0
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "oracle.sql"
-          username: "LIQUIBASE"
-          password: "Secret321"
-          url: "jdbc:oracle:thin:@localhost:1524/FREEPDB1"
+#      - name: Apply init script to Oracle 23c
+#        uses: liquibase-github-actions/update@v4.23.0
+#        with:
+#          operation: "update"
+#          classpath: "src/test/resources/init-changelogs/aws"
+#          changeLogFile: "oracle.sql"
+#          username: "LIQUIBASE"
+#          password: "Secret321"
+#          url: "jdbc:oracle:thin:@localhost:1524/FREEPDB1"
 
       - name: Oracle 23.0.0 Test Run
         run: |
