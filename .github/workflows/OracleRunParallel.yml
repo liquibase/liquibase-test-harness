@@ -68,7 +68,7 @@ jobs:
         working-directory: src/test/resources/docker/oracle-xe
         run: docker-compose down --volumes
 
-  Oracle 23c test:
+  Oracle23c:
     runs-on: ubuntu-latest
 
     services:
