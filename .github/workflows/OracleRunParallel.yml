@@ -111,7 +111,7 @@ jobs:
           changeLogFile: "oracle.sql"
           username: "LIQUIBASE"
           password: "Secret321"
-          url: "jdbc:oracle:thin:@localhost:1524/FREEPDB1"
+          url: "'jdbc:oracle:thin:@localhost:1524/FREEPDB1'"
 
       - name: Oracle 23.0.0 Test Run
         run: |
