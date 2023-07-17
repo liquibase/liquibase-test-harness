@@ -18,11 +18,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - run:  | 
-               sudo rm -rf /usr/share/dotnet
-               sudo rm -rf /opt/ghc
-               sudo rm -rf "/usr/local/share/boost"
-               sudo rm -rf "$AGENT_TOOLSDIRECTORY" 
+      - run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - uses: actions/setup-java@v3
         with:
@@ -96,16 +96,23 @@ jobs:
           --health-retries 10
 
     steps:
-      - name: Sleep for 180 seconds
+      - name: Sleep for 60 seconds
         uses: whatnick/wait-action@master
         with:
-          time: '180s'
+          time: '60s'
 
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Apply init script to Oracle 23c
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="oracle.sql" --username="LIQUIBASE" --password="Secret321" --url="jdbc:oracle:thin:@localhost:1524/FREEPDB1" update
+        uses: liquibase-github-actions/update@v4.23.0
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "oracle.sql"
+          username: "LIQUIBASE"
+          password: "Secret321"
+          url: "jdbc:oracle:thin:@localhost:1524/FREEPDB1"
 
       - name: Oracle 23.0.0 Test Run
         run: |
