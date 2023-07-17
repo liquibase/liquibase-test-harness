@@ -107,7 +107,6 @@ jobs:
       - name: Apply init script to Oracle 23c
         uses: liquibase-github-actions/update@v4.23.0
         with:
-          operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
           changeLogFile: "oracle.sql"
           username: "LIQUIBASE"
