@@ -94,6 +94,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
+    steps:
       - name: Checkout
         uses: actions/checkout@v3
 
