@@ -24,7 +24,7 @@ services:
     volumes:
       - "./startup:/container-entrypoint-initdb.d"
 
-  oracle-free-23.2.0:
+  oracle-xe-23.2.0:
     image: gvenzl/oracle-free:23.2-faststart
     ports:
       - "1524:1521"
