@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [ 18.4.0, 19.3.0, 21.3.0 ]
+        plan: [ 18.4.0, 19.3.0, 21.3.0, 23.2.0 ]
 
     steps:
       - uses: actions/checkout@v3
@@ -67,55 +67,3 @@ jobs:
       - name: Tear down Oracle XE test infra
         working-directory: src/test/resources/docker/oracle-xe
         run: docker-compose down --volumes
-
-  Oracle23c:
-    runs-on: ubuntu-latest
-    container:
-      image: liquibase/liquibase:latest
-      env:
-        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-
-    services:
-      oracle:
-        image: gvenzl/oracle-free:23-faststart
-        env:
-          ORACLE_RANDOM_PASSWORD: true
-          APP_USER: LIQUIBASE
-          APP_USER_PASSWORD: Secret321
-
-        # Forward Oracle port
-        ports:
-          - 1524:1521
-
-        # Provide healthcheck script options for startup
-        options: >-
-          --health-cmd healthcheck.sh
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Apply init script to Oracle 23c
-        uses: liquibase-github-actions/update@v4.23.0
-        with:
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "oracle.sql"
-          username: "LIQUIBASE"
-          password: "Secret321"
-          url: "jdbc:oracle:thin:@localhost:1524/FREEPDB1"
-
-      - name: Oracle 23.0.0 Test Run
-        run: |
-          docker ps
-          mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=23.0.0 test
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-
-      - name: Archive Oracle 23.0.0 test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: oracle-23.0.0-test-results
-          path: build/spock-reports

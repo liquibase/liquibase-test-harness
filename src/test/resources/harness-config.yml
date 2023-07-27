@@ -152,9 +152,9 @@ databasesUnderTest:
     password: Secret321
 
   - name: oracle
-    version: 23.0.0
+    version: 23.2.0
     url: 'jdbc:oracle:thin:@localhost:1524/FREEPDB1'
-    username: LIQUIBASE
+    username: C##LIQUIBASE
     password: Secret321
 
   - name: cockroachdb
