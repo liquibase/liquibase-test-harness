@@ -153,7 +153,7 @@ databasesUnderTest:
 
   - name: oracle
     version: 23.2.0
-    url: 'jdbc:oracle:thin:@localhost:1524/FREEPDB1'
+    url: 'jdbc:oracle:thin:@localhost:1524/FREE'
     username: C##LIQUIBASE
     password: Secret321
 

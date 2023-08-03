@@ -39,6 +39,7 @@ jobs:
         run: docker-compose up -d
 
       - name: Build Oracle XE test infra
+        if: ${{ matrix.plan != '19.3.0' }}
         working-directory: src/test/resources/docker/oracle-xe
         run: |
           # Constructing service name from version
