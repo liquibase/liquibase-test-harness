@@ -7,7 +7,6 @@ on:
     - cron: '0 8 * * *' # Execute every day at 8am
   workflow_dispatch:
 
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,15 +14,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [ 18.4.0, 19.3.0, 21.3.0 ]
+        plan: [ 18.4.0, 19.3.0, 21.3.0, 23.2.0 ]
 
     steps:
       - uses: actions/checkout@v3
-      - run:  | 
-               sudo rm -rf /usr/share/dotnet
-               sudo rm -rf /opt/ghc
-               sudo rm -rf "/usr/local/share/boost"
-               sudo rm -rf "$AGENT_TOOLSDIRECTORY" 
+      - run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - uses: actions/setup-java@v3
         with:
@@ -35,12 +34,17 @@ jobs:
         run: docker login "${{ secrets.ARTIFACTORY_URL }}" -u "${{ secrets.ARTIFACTORY_USER }}" -p "${{ secrets.ARTIFACTORY_TOKEN }}"
 
       - name: Build Oracle Artifactory test infra
+        if: ${{ matrix.plan == '19.3.0' }}
         working-directory: src/test/resources/docker/oracle-artifactory
         run: docker-compose up -d
 
       - name: Build Oracle XE test infra
+        if: ${{ matrix.plan != '19.3.0' }}
         working-directory: src/test/resources/docker/oracle-xe
-        run: docker-compose up -d
+        run: |
+          # Constructing service name from version
+          SERVICE_NAME="oracle-xe-${{ matrix.plan }}"
+          docker-compose up -d $SERVICE_NAME
 
       # Adding sleep to avoid ORA-12514 error when database & listeners are still in the middle of startup
       - name: Sleep for 180 seconds
