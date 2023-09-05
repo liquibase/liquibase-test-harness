@@ -36,7 +36,7 @@ jobs:
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
   init-mysql:
     runs-on: ubuntu-latest
@@ -54,7 +54,7 @@ jobs:
             version: aurora
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
 #      This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
@@ -96,7 +96,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure Test
         id: setup
