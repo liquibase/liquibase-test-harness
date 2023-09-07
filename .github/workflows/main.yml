@@ -10,6 +10,8 @@ on:
       - opened
       - reopened
       - synchronize
+  repository_dispatch:
+    types: [run-test-harness]     
 
   schedule:
     - cron: '0 6 * * *' # Execute every day at noon
