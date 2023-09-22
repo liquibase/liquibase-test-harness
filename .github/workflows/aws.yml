@@ -58,7 +58,7 @@ jobs:
       - name: Start LocalStack
         env:
           LOCALSTACK_API_KEY: ${{ secrets.LOCALSTACK_API_KEY }}
-          TF_TOKEN: ${{ secrets.TF_API_TOKEN }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: |
           pip install localstack awscli-local terraform-local
           docker pull localstack/localstack-pro
