@@ -78,6 +78,9 @@ jobs:
           echo "TH_DB_PASSWD=$password" >> $GITHUB_ENV
           echo "TH_AURORA_MYSQLURL=$aurora_mysql_jdbc_url" >> $GITHUB_ENV
 
+      - name: Install Dependencies	        
+        run: lpm update && lpm add mysql
+
       - name: Init Database
         if: ${{ matrix.version == 'aurora' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
