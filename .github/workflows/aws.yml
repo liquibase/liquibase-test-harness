@@ -177,6 +177,24 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
 
+      - uses: liquibase-github-actions/drop-all@v4.23.2
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        with:
+          url: "${{ env.AURORA_MYSQL_JDBC_URL }}"
+          username: "${{env.DB_USERNAME}}"
+          password: "${{env.DB_PASSWORD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+  
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "mysql.sql"
+          url: "${{ env.AURORA_MYSQL_JDBC_URL }}"
+          username: "${{env.DB_USERNAME}}"
+          password: "${{env.DB_PASSWORD}}"
+
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
