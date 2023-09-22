@@ -55,6 +55,17 @@ jobs:
         with:
           python-version: '3.11.5'
     
+      - name: Install liquibase and lpm
+        run: |
+          wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg && \
+          cat liquibase-keyring.gpg | sudo tee /usr/share/keyrings/liquibase-keyring.gpg > /dev/null && \
+          echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | sudo tee /etc/apt/sources.list.d/liquibase.list
+          sudo apt-get update
+          sudo apt-get install liquibase
+          curl -L -o lpm-0.2.3-linux.zip https://github.com/liquibase/liquibase-package-manager/releases/download/v0.2.3/lpm-0.2.3-linux.zip
+          sudo unzip -o lpm-0.2.3-linux.zip -d /usr/bin
+          sudo lpm update && sudo lpm add mysql
+    
       - name: Start LocalStack
         env:
           LOCALSTACK_API_KEY: ${{ secrets.LOCALSTACK_API_KEY }}
@@ -69,17 +80,6 @@ jobs:
           echo "Startup complete"
           cd ./localstack && tflocal init && tflocal apply -auto-approve
 
-      - name: Install liquibase and lpm
-        run: |
-          wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg && \
-          cat liquibase-keyring.gpg | sudo tee /usr/share/keyrings/liquibase-keyring.gpg > /dev/null && \
-          echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | sudo tee /etc/apt/sources.list.d/liquibase.list
-          sudo apt-get update
-          sudo apt-get install liquibase
-          curl -L -o lpm-0.2.3-linux.zip https://github.com/liquibase/liquibase-package-manager/releases/download/v0.2.3/lpm-0.2.3-linux.zip
-          sudo unzip -o lpm-0.2.3-linux.zip -d /usr/bin
-          lpm update && lpm add mysql
-  
       - name: Get LocalStack DB secrets
         run: |
           username=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_username --query SecretString --output text)
