@@ -74,9 +74,13 @@ jobs:
           username=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_username --query SecretString --output text)
           password=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_password --query SecretString --output text)
           aurora_mysql_jdbc_url=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/aurora_mysql_jdbc --query SecretString --output text)
-          echo "DB_USERNAME=$username" >> $GITHUB_ENV
-          echo "DB_PASSWORD=$password" >> $GITHUB_ENV
-          echo "AURORA_MYSQL_JDBC_URL=$aurora_mysql_jdbc_url" >> $GITHUB_ENV
+          echo "TH_DB_ADMIN=$username" >> $GITHUB_ENV
+          echo "TH_DB_PASSWD=$password" >> $GITHUB_ENV
+          echo "TH_AURORA_MYSQLURL=$aurora_mysql_jdbc_url" >> $GITHUB_ENV
+
+      - name: Init Database
+        if: ${{ matrix.version == 'aurora' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
 
       - name: Configure Test
         id: setup
@@ -177,24 +181,6 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.23.2
-        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        with:
-          url: "${{ env.AURORA_MYSQL_JDBC_URL }}"
-          username: "${{env.DB_USERNAME}}"
-          password: "${{env.DB_PASSWORD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-  
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "mysql.sql"
-          url: "${{ env.AURORA_MYSQL_JDBC_URL }}"
-          username: "${{env.DB_USERNAME}}"
-          password: "${{env.DB_PASSWORD}}"
-
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
@@ -237,7 +223,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ env.DB_USERNAME }} -DdbPassword=${{ env.DB_PASSWORD }} -DdbUrl='${{ env.AURORA_MYSQL_JDBC_URL }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ env.TH_DB_ADMIN }} -DdbPassword=${{ env.TH_DB_PASSWD }} -DdbUrl='${{ env.TH_AURORA_MYSQLURL }}' test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
