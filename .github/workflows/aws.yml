@@ -41,6 +41,8 @@ jobs:
   test:
     needs: [setup]
     runs-on: ubuntu-latest
+    env:
+      LPM_VERSION: 0.2.3
     strategy:
       fail-fast: false
       matrix:
@@ -62,8 +64,8 @@ jobs:
           echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | sudo tee /etc/apt/sources.list.d/liquibase.list
           sudo apt-get update
           sudo apt-get install liquibase
-          curl -L -o lpm-0.2.3-linux.zip https://github.com/liquibase/liquibase-package-manager/releases/download/v0.2.3/lpm-0.2.3-linux.zip
-          sudo unzip -o lpm-0.2.3-linux.zip -d /usr/bin
+          curl -L -o lpm-${{ env.LPM_VERSION }}-linux.zip https://github.com/liquibase/liquibase-package-manager/releases/download/v${{ env.LPM_VERSION }}/lpm-${{ env.LPM_VERSION }}-linux.zip
+          sudo unzip -o lpm-${{ env.LPM_VERSION }}-linux.zip -d /usr/bin
           sudo lpm update && sudo lpm add mysql
     
       - name: Start LocalStack
