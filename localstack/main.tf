@@ -24,6 +24,8 @@ provider "github" {
 }
 
 module "test-automation" {
-  source  = "app.terraform.io/liquibase/test-automation/aws"
-  version = "0.1.0"
+  source                 = "app.terraform.io/liquibase/test-automation/aws"
+  version                = "0.1.0"
+  create_aurora_postgres = false
+  create_redshift        = false
 }
