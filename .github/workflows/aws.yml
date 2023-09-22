@@ -102,7 +102,7 @@ jobs:
 
       - name: Init Aurora MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
 
       - uses: liquibase-github-actions/drop-all@v4.23.2
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
