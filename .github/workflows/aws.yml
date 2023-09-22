@@ -69,15 +69,6 @@ jobs:
           echo "Startup complete"
           cd ./localstack && tflocal init && tflocal apply -auto-approve
 
-      - name: Get LocalStack DB secrets
-        run: |
-          username=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_username --query SecretString --output text)
-          password=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_password --query SecretString --output text)
-          aurora_mysql_jdbc_url=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/aurora_mysql_jdbc --query SecretString --output text)
-          echo "TH_DB_ADMIN=$username" >> $GITHUB_ENV
-          echo "TH_DB_PASSWD=$password" >> $GITHUB_ENV
-          echo "TH_AURORA_MYSQLURL=$aurora_mysql_jdbc_url" >> $GITHUB_ENV
-
       - name: Install liquibase and lpm
         run: |
           wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg && \
@@ -86,8 +77,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install liquibase
           curl -L -o lpm-0.2.3-linux.zip https://github.com/liquibase/liquibase-package-manager/releases/download/v0.2.3/lpm-0.2.3-linux.zip
-          unzip -o lpm-0.2.3-linux.zip -d /usr/bin
+          sudo unzip -o lpm-0.2.3-linux.zip -d /usr/bin
           lpm update && lpm add mysql
+  
+      - name: Get LocalStack DB secrets
+        run: |
+          username=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_username --query SecretString --output text)
+          password=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_password --query SecretString --output text)
+          aurora_mysql_jdbc_url=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/aurora_mysql_jdbc --query SecretString --output text)
+          echo "TH_DB_ADMIN=$username" >> $GITHUB_ENV
+          echo "TH_DB_PASSWD=$password" >> $GITHUB_ENV
+          echo "TH_AURORA_MYSQLURL=$aurora_mysql_jdbc_url" >> $GITHUB_ENV
 
       - name: Init Database
         if: ${{ matrix.version == 'aurora' }}
