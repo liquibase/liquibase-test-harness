@@ -73,7 +73,7 @@ jobs:
           LOCALSTACK_API_KEY: ${{ secrets.LOCALSTACK_API_KEY }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-          RDS_MYSQL_DOCKER: 1 #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
+          #RDS_MYSQL_DOCKER: 1 #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
         run: |
           pip install localstack awscli-local terraform-local
           docker pull localstack/localstack-pro
