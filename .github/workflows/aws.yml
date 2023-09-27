@@ -88,9 +88,11 @@ jobs:
           username=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_username --query SecretString --output text)
           password=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_password --query SecretString --output text)
           aurora_mysql_jdbc_url=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/aurora_mysql_jdbc --query SecretString --output text)
+          aurora_postgresql_jdbc_url=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/aurora_postgresql_jdbc --query SecretString --output text)
           echo "TH_DB_ADMIN=$username" >> $GITHUB_ENV
           echo "TH_DB_PASSWD=$password" >> $GITHUB_ENV
           echo "TH_AURORA_MYSQLURL=$aurora_mysql_jdbc_url" >> $GITHUB_ENV
+          echo "TH_AURORA_POSTGRESQLURL=$aurora_postgresql_jdbc_url" >> $GITHUB_ENV
 
       - name: Configure Test
         id: setup
@@ -131,16 +133,6 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "postgresql.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
-
       - uses: liquibase-github-actions/drop-all@v4.23.2
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         with:
@@ -177,23 +169,15 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_MSSQLURL }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.23.2
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        with:
-          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
           changeLogFile: "postgresql.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
+          username: "${{env.TH_DB_ADMIN}}"
+          password: "${{env.TH_DB_PASSWD}}"
+          url: "${{ env.TH_AURORA_POSTGRESQLURL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
@@ -243,7 +227,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=13 -Dprefix=aurora -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_AURORA_POSTGRESQLURL }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=13 -Dprefix=aurora -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_POSTGRESQLURL }}' test
 
       - name: Archive AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@v3
