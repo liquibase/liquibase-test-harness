@@ -66,7 +66,7 @@ jobs:
           sudo apt-get install liquibase
           curl -L -o lpm-${{ env.LPM_VERSION }}-linux.zip https://github.com/liquibase/liquibase-package-manager/releases/download/v${{ env.LPM_VERSION }}/lpm-${{ env.LPM_VERSION }}-linux.zip
           sudo unzip -o lpm-${{ env.LPM_VERSION }}-linux.zip -d /usr/bin
-          sudo lpm update && sudo lpm add mysql
+          sudo lpm update && sudo lpm add mysql postgresql
     
       - name: Start LocalStack
         env:
@@ -106,6 +106,10 @@ jobs:
       - name: Init Aurora MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
+
+      - name: Init Aurora Postgresql Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_POSTGRESQLURL }}" update
 
       - uses: liquibase-github-actions/drop-all@v4.23.2
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
@@ -168,16 +172,6 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_MSSQLURL }}"
-
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "postgresql.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_AURORA_POSTGRESQLURL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
