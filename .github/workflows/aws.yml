@@ -99,7 +99,7 @@ jobs:
           awslocal rds create-db-cluster --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --engine-version 8.0 --database-name lbcat --master-username lbuser --master-user-password test
           awslocal rds create-db-instance --db-instance-identifier aurora-mysql-primary-cluster-instance --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --db-instance-class db.t3.medium
           aurora_mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-mysql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          aurora_mysql_url="jdbc:mysql://localhost:$aurora_mysql_port/lbcat"
+          aurora_mysql_url="jdbc:mysql://localhost:$aurora_mysql_port/lbcat?allowPublicKeyRetrieval=true&useSSL=false"
           echo "TH_AURORA_MYSQLURL=$aurora_mysql_url" >> $GITHUB_ENV  
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_mysql_url" update
 
