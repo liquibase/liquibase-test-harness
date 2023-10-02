@@ -75,7 +75,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           RDS_MYSQL_DOCKER: 1 #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
         run: |
-          pip install localstack awscli-local terraform-local
+          pip install localstack awscli-local
           docker pull localstack/localstack-pro
           localstack start -d
           echo "Waiting for LocalStack startup..."
