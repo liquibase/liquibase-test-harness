@@ -81,18 +81,6 @@ jobs:
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
-          cd ./localstack && tflocal init && tflocal apply -auto-approve
-
-      - name: Get LocalStack DB secrets
-        run: |
-          username=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_username --query SecretString --output text)
-          password=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/th_dbs_password --query SecretString --output text)
-          aurora_mysql_jdbc_url=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/aurora_mysql_jdbc --query SecretString --output text)
-          aurora_postgresql_jdbc_url=$(awslocal secretsmanager get-secret-value --secret-id /testautomation/db_details/aurora_postgresql_jdbc --query SecretString --output text)
-          echo "TH_DB_ADMIN=$username" >> $GITHUB_ENV
-          echo "TH_DB_PASSWD=$password" >> $GITHUB_ENV
-          echo "TH_AURORA_MYSQLURL=$aurora_mysql_jdbc_url" >> $GITHUB_ENV
-          echo "TH_AURORA_POSTGRESQLURL=$aurora_postgresql_jdbc_url" >> $GITHUB_ENV
 
       - name: Configure Test
         id: setup
@@ -102,14 +90,28 @@ jobs:
             let splitValues = "${{ matrix.database }}".split(":")
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
+            echo "TH_DB_ADMIN=lbuser" >> $GITHUB_ENV  
+            echo "TH_DB_PASSWD=test" >> $GITHUB_ENV  
+
 
       - name: Init Aurora MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
+        run: |
+          awslocal rds create-db-cluster --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --engine-version 8.0 --database-name lbcat --master-username lbuser --master-user-password test
+          awslocal rds create-db-instance --db-instance-identifier aurora-mysql-primary-cluster-instance --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --db-instance-class db.t3.medium
+          aurora_mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-mysql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
+          aurora_mysql_url="jdbc:mysql://localhost:$aurora_mysql_port/lbcat"
+          echo "TH_AURORA_MYSQLURL=$aurora_mysql_url" >> $GITHUB_ENV  
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
 
       - name: Init Aurora Postgresql Database
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_POSTGRESQLURL }}" update
+        run: |
+          awslocal rds create-db-cluster --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --engine-version 14.5 --database-name lbcat --master-username lbuser --master-user-password test
+          awslocal rds create-db-instance --db-instance-identifier aurora-postgresql-primary-cluster-instance --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --db-instance-class db.t3.medium
+          aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-mysql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
+          echo "TH_AURORA_POSTGRESQLURL=$aurora_postgresql_port" >> $GITHUB_ENV  
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_POSTGRESQLURL }}" update
 
       - uses: liquibase-github-actions/drop-all@v4.23.2
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
@@ -215,7 +217,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ env.TH_DB_ADMIN }} -DdbPassword=${{ env.TH_DB_PASSWD }} -DdbUrl='${{ env.TH_AURORA_MYSQLURL }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=lbuser -DdbPassword=test -DdbUrl='${{ env.TH_AURORA_MYSQLURL }}' test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
