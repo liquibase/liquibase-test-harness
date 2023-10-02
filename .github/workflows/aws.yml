@@ -81,6 +81,8 @@ jobs:
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
+          echo "TH_DB_ADMIN=lbuser" >> $GITHUB_ENV  
+          echo "TH_DB_PASSWD=test" >> $GITHUB_ENV  
 
       - name: Configure Test
         id: setup
@@ -90,9 +92,6 @@ jobs:
             let splitValues = "${{ matrix.database }}".split(":")
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
-            echo "TH_DB_ADMIN=lbuser" >> $GITHUB_ENV  
-            echo "TH_DB_PASSWD=test" >> $GITHUB_ENV  
-
 
       - name: Init Aurora MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
