@@ -99,20 +99,17 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         run: |
           awslocal rds create-db-cluster --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --engine-version 8.0 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
-          awslocal rds create-db-instance --db-instance-identifier aurora-mysql-primary-cluster-instance --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --db-instance-class db.t3.medium --publicly-accessible
-          aurora_mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-mysql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          aurora_mysql_url="jdbc:mysql://localhost:$aurora_mysql_port/${{ env.TH_DB }}?allowPublicKeyRetrieval=true&useSSL=false"
+          awslocal rds create-db-instance --db-instance-identifier aurora-mysql-primary-cluster-instance --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --db-instance-class db.t3.medium --port 3306
+          aurora_mysql_url="jdbc:mysql://localhost:3306/${{ env.TH_DB }}?allowPublicKeyRetrieval=true&useSSL=false"
           echo "TH_AURORA_MYSQLURL=$aurora_mysql_url" >> $GITHUB_ENV
-          sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_mysql_url" update
 
       - name: Init Aurora Postgresql Database
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         run: |
           awslocal rds create-db-cluster --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --engine-version 14.5 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
-          awslocal rds create-db-instance --db-instance-identifier aurora-postgresql-primary-cluster-instance --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --db-instance-class db.t3.medium --publicly-accessible
-          aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-postgresql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          aurora_postgresql_url="jdbc:postgresql://localhost:$aurora_postgresql_port/${{ env.TH_DB }}"
+          awslocal rds create-db-instance --db-instance-identifier aurora-postgresql-primary-cluster-instance --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --db-instance-class db.t3.medium --port 5432
+          aurora_postgresql_url="jdbc:postgresql://localhost:5432/${{ env.TH_DB }}"
           echo "TH_AURORA_POSTGRESQLURL=$aurora_postgresql_url" >> $GITHUB_ENV  
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_url" update
 
