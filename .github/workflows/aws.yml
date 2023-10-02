@@ -109,8 +109,9 @@ jobs:
         run: |
           awslocal rds create-db-cluster --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --engine-version 14.5 --database-name lbcat --master-username lbuser --master-user-password test
           awslocal rds create-db-instance --db-instance-identifier aurora-postgresql-primary-cluster-instance --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --db-instance-class db.t3.medium
-          aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-mysql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          echo "TH_AURORA_POSTGRESQLURL=$aurora_postgresql_port" >> $GITHUB_ENV  
+          aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-postgresql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
+          aurora_postgresql_url="jdbc:postgresql://localhost:$aurora_postgresql_port/lbcat"
+          echo "TH_AURORA_POSTGRESQLURL=$aurora_postgresql_url" >> $GITHUB_ENV  
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_POSTGRESQLURL }}" update
 
       - uses: liquibase-github-actions/drop-all@v4.23.2
