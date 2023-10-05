@@ -34,7 +34,7 @@ jobs:
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
   init-mysql:
     runs-on: ubuntu-latest
@@ -50,14 +50,14 @@ jobs:
             version: gcp
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
 #      This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
         run: lpm update && lpm add mysql
 
       - name: Clean GCP MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.23.0
+        uses: liquibase-github-actions/drop-all@v4.23.2
         if: ${{ matrix.version == 'gcp' }}
         with:
           url: "${{ secrets.TH_GCP_MYSQL_8_0_URL }}"
@@ -79,7 +79,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure Test
         id: setup
@@ -90,7 +90,7 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@v4.23.0
+      - uses: liquibase-github-actions/drop-all@v4.23.2
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         with:
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
@@ -108,7 +108,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.23.0
+      - uses: liquibase-github-actions/drop-all@v4.23.2
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
