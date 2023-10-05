@@ -17,7 +17,7 @@ jobs:
         plan: [ 18.4.0, 19.3.0, 21.3.0, 23.2.0 ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc

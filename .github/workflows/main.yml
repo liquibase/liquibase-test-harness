@@ -10,6 +10,8 @@ on:
       - opened
       - reopened
       - synchronize
+  repository_dispatch:
+    types: [run-test-harness]     
 
   schedule:
     - cron: '0 6 * * *' # Execute every day at noon
@@ -78,7 +80,7 @@ jobs:
         "edb-edb-12","edb-edb-13","edb-edb-14","derby","sqlite","hsqldb-2.4","hsqldb-2.5","firebird-3","firebird-4","db2-luw"]' }}
       testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure Build
         id: configure-build
@@ -168,7 +170,7 @@ jobs:
         database: ${{ fromJson(needs.setup.outputs.databases) }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-java@v3
         with:
@@ -220,7 +222,7 @@ jobs:
     needs: [ setup, test ]
     if: ${{ always() }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
       - name: Cache installed Liquibase

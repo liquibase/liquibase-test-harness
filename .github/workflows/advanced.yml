@@ -57,7 +57,7 @@ jobs:
         "hsqldb-2.4","hsqldb-2.5","diff"]' }}
       testClasses: ${{ 'AdvancedHarnessSuiteTest' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure Build
         id: configure-build
@@ -147,7 +147,7 @@ jobs:
         database: ${{ fromJson(needs.setup.outputs.databases) }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-java@v3
         with:
@@ -199,7 +199,7 @@ jobs:
     needs: [ setup, test ]
     if: ${{ always() }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
       - name: Cache installed Liquibase
