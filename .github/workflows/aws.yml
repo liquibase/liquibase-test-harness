@@ -61,7 +61,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean AWS MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.23.2
+        uses: liquibase-github-actions/drop-all@v4.24.0
         if: ${{ matrix.version == 'aws' }}
         with:
           url: "${{ secrets.TH_MYSQLURL_8_0 }}"
