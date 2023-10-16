@@ -39,6 +39,7 @@ jobs:
         uses: actions/checkout@v4
 
   init-mysql:
+    needs: [setup]
     runs-on: ubuntu-latest
     container:
       image: liquibase/liquibase:latest
