@@ -38,57 +38,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-  init-mysql:
-    needs: [setup]
-    runs-on: ubuntu-latest
-    container:
-      image: liquibase/liquibase:latest
-      env:
-        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - database: mysql
-            version: aws
-          - database: mysql
-            version: aurora
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-#      This additional init step is required because of mysql driver issue on GH actions
-      - name: Install Dependencies
-        run: lpm update && lpm add mysql
-
-      - name: Clean AWS MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.24.0
-        if: ${{ matrix.version == 'aws' }}
-        with:
-          url: "${{ secrets.TH_MYSQLURL_8_0 }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
-      - name: Init Database
-        if: ${{ matrix.version == 'aws' }}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
-
-      - name: Clean Aurora MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.24.0
-        if: ${{ matrix.version == 'aurora' }}
-        with:
-          url: "${{ secrets.TH_AURORA_MYSQLURL }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
-      - name: Init Database
-        if: ${{ matrix.version == 'aurora' }}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
-
   test:
-    needs: [setup, init-mysql]
+    needs: [setup]
     runs-on: ubuntu-latest
     env:
       LPM_VERSION: 0.2.3
