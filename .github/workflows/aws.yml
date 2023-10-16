@@ -38,6 +38,54 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+  init-mysql:
+    runs-on: ubuntu-latest
+    container:
+      image: liquibase/liquibase:latest
+      env:
+        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - database: mysql
+            version: aws
+          - database: mysql
+            version: aurora
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+#      This additional init step is required because of mysql driver issue on GH actions
+      - name: Install Dependencies
+        run: lpm update && lpm add mysql
+
+      - name: Clean AWS MySQL Database
+        uses: liquibase-github-actions/drop-all@v4.24.0
+        if: ${{ matrix.version == 'aws' }}
+        with:
+          url: "${{ secrets.TH_MYSQLURL_8_0 }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - name: Init Database
+        if: ${{ matrix.version == 'aws' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_MYSQLURL_8_0 }}" update
+
+      - name: Clean Aurora MySQL Database
+        uses: liquibase-github-actions/drop-all@v4.24.0
+        if: ${{ matrix.version == 'aurora' }}
+        with:
+          url: "${{ secrets.TH_AURORA_MYSQLURL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - name: Init Database
+        if: ${{ matrix.version == 'aurora' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ secrets.TH_AURORA_MYSQLURL }}" update
+
   test:
     needs: [setup]
     runs-on: ubuntu-latest
@@ -145,6 +193,16 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "postgresql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
+
       - uses: liquibase-github-actions/drop-all@v4.24.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         with:
@@ -180,6 +238,24 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_MSSQLURL }}"
+
+      - uses: liquibase-github-actions/drop-all@v4.24.0
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        with:
+          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "postgresql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
