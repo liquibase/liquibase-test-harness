@@ -133,8 +133,8 @@ jobs:
           echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
           echo "TH_DB=lbcat" >> $GITHUB_ENV  
           echo "TH_AURORA_MYSQL_ENGINE=8.0" >> $GITHUB_ENV  
-          echo "TH_AURORA_POSTGRESQL_ENGINE=14.5" >> $GITHUB_ENV  
-
+          echo "TH_AURORA_POSTGRESQL_ENGINE=14.5" >> $GITHUB_ENV
+          echo "TH_MARIADB_ENGINE=10.6" >> $GITHUB_ENV  
 
       - name: Configure Test
         id: setup
@@ -166,6 +166,17 @@ jobs:
           echo "TH_AURORA_POSTGRESQLURL=$aurora_postgresql_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_url" update
+
+      - name: Init MariaDB Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
+        run: |
+          awslocal rds create-db-cluster --db-cluster-identifier mariadb-primary-cluster --engine mariadb --engine-version ${{ env.TH_MARIADB_ENGINE }} --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
+          awslocal rds create-db-instance --db-instance-identifier mariadb-primary-cluster-instance --db-cluster-identifier mariadb-primary-cluster --engine mariadb --db-instance-class db.t3.medium
+          mariadb_port=$(awslocal rds describe-db-instances --db-instance-identifier mariadb-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
+          mariadb_url="jdbc:mariadb://localhost:$mariadb_port/${{ env.TH_DB }}"
+          echo "TH_MARIADBURL_10_6=$mariadb_url" >> $GITHUB_ENV
+          sleep 30
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mariadb_url" update
 
       - uses: liquibase-github-actions/drop-all@v4.24.0
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
@@ -202,24 +213,6 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
-
-      - uses: liquibase-github-actions/drop-all@v4.24.0
-        if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
-        with:
-          url: "${{ secrets.TH_MARIADBURL_10_6 }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "mariadb.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets.TH_MARIADBURL_10_6 }}"
 
       - uses: liquibase-github-actions/drop-all@v4.24.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
@@ -281,7 +274,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_MARIADBURL_10_6 }}'  test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_MARIADBURL_10_6 }}'  test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
@@ -299,7 +292,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=lbuser -DdbPassword=test -DdbUrl='${{ env.TH_AURORA_MYSQLURL }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_MYSQLURL }}' test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
