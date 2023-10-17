@@ -136,7 +136,7 @@ jobs:
           awslocal rds create-db-cluster --db-cluster-identifier postgres11-primary-cluster --engine postgres --engine-version 11 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
           awslocal rds create-db-instance --db-instance-identifier postgres11-primary-cluster-instance --db-cluster-identifier postgres11-primary-cluster --engine postgres --db-instance-class db.t3.medium
           postgres11_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres11-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          postgres11_url="jdbc:postgres://localhost:$postgres11_port/${{ env.TH_DB }}"
+          postgres11_url="jdbc:postgresql://localhost:$postgres11_port/${{ env.TH_DB }}"
           echo "TH_PGRESURL_11=$postgres11_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres11_url" update
@@ -147,7 +147,7 @@ jobs:
           awslocal rds create-db-cluster --db-cluster-identifier postgres12-primary-cluster --engine postgres --engine-version 12 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
           awslocal rds create-db-instance --db-instance-identifier postgres12-primary-cluster-instance --db-cluster-identifier postgres12-primary-cluster --engine postgres --db-instance-class db.t3.medium
           postgres12_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres12-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          postgres12_url="jdbc:postgres://localhost:$postgres12_port/${{ env.TH_DB }}"
+          postgres12_url="jdbc:postgresql://localhost:$postgres12_port/${{ env.TH_DB }}"
           echo "TH_PGRESURL_12=$postgres12_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres12_url" update
@@ -158,7 +158,7 @@ jobs:
           awslocal rds create-db-cluster --db-cluster-identifier postgres13-primary-cluster --engine postgres --engine-version 13 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
           awslocal rds create-db-instance --db-instance-identifier postgres13-primary-cluster-instance --db-cluster-identifier postgres13-primary-cluster --engine postgres --db-instance-class db.t3.medium
           postgres13_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres13-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          postgres13_url="jdbc:postgres://localhost:$postgres13_port/${{ env.TH_DB }}"
+          postgres13_url="jdbc:postgresql://localhost:$postgres13_port/${{ env.TH_DB }}"
           echo "TH_PGRESURL_13=$postgres13_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres13_url" update
@@ -169,7 +169,7 @@ jobs:
           awslocal rds create-db-cluster --db-cluster-identifier postgres14-primary-cluster --engine postgres --engine-version 14 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
           awslocal rds create-db-instance --db-instance-identifier postgres14-primary-cluster-instance --db-cluster-identifier postgres14-primary-cluster --engine postgres --db-instance-class db.t3.medium
           postgres14_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres14-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          postgres14_url="jdbc:postgres://localhost:$postgres14_port/${{ env.TH_DB }}"
+          postgres14_url="jdbc:postgresql://localhost:$postgres14_port/${{ env.TH_DB }}"
           echo "TH_PGRESURL_14=$postgres14_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres14_url" update
