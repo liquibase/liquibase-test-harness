@@ -1,0 +1,2 @@
+ALTER TABLE "C##LIQUIBASE".authors ADD booleanColumn BOOLEAN
+ALTER TABLE "C##LIQUIBASE".authors MODIFY booleanColumn DEFAULT 1
