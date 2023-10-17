@@ -184,7 +184,7 @@ jobs:
           mssql2019_url="jdbc:sqlserver://;serverName=localhost;port=$mssql2019_port;trustServerCertificate=true;databaseName=${{ env.TH_DB }}"
           echo "TH_MSSQLURL=$mssql2019_url" >> $GITHUB_ENV
           sleep 30
-          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mssql2019_url" update
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD_MSSQL }}" --url="$mssql2019_url" update
 
       - name: Init AWS RDS MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
