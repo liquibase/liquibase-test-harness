@@ -181,7 +181,7 @@ jobs:
         run: |
           awslocal rds create-db-instance --db-instance-identifier mssql2019 --engine sqlserver-ee --engine-version ${{ env.TH_MSSQL_ENGINE }}  --db-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD_MSSQL }} --db-instance-class db.t3.medium
           mssql2019_port=$(awslocal rds describe-db-instances --db-instance-identifier mssql2019  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          mssql2019_url="jdbc:sqlserver://localhost:$mssql2019_port/${{ env.TH_DB }}"
+          mssql2019_url="jdbc:sqlserver://;serverName=localhost;port=$mssql2019_port;databaseName=${{ env.TH_DB }}"
           echo "TH_MSSQLURL=$mssql2019_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mssql2019_url" update
@@ -194,7 +194,7 @@ jobs:
           mysql_url="jdbc:mysql://localhost:$mysql_port/${{ env.TH_DB }}"
           echo "TH_MYSQLURL_8_0=$mysql_url" >> $GITHUB_ENV
           sleep 30
-          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
 
       - uses: liquibase-github-actions/drop-all@v4.24.0
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
