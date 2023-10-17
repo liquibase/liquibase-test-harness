@@ -130,6 +130,50 @@ jobs:
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mariadb_url" update
 
+      - name: Init PostgreSQL 11 Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '11' }}
+        run: |
+          awslocal rds create-db-cluster --db-cluster-identifier postgres11-primary-cluster --engine postgres --engine-version 11 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
+          awslocal rds create-db-instance --db-instance-identifier postgres11-primary-cluster-instance --db-cluster-identifier postgres11-primary-cluster --engine postgres --db-instance-class db.t3.medium
+          postgres11_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres11-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
+          postgres11_url="jdbc:postgres://localhost:$postgres11_port/${{ env.TH_DB }}"
+          echo "TH_PGRESURL_11=$postgres11_url" >> $GITHUB_ENV
+          sleep 30
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres11_url" update
+
+      - name: Init PostgreSQL 12 Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '12' }}
+        run: |
+          awslocal rds create-db-cluster --db-cluster-identifier postgres12-primary-cluster --engine postgres --engine-version 12 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
+          awslocal rds create-db-instance --db-instance-identifier postgres12-primary-cluster-instance --db-cluster-identifier postgres12-primary-cluster --engine postgres --db-instance-class db.t3.medium
+          postgres12_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres12-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
+          postgres12_url="jdbc:postgres://localhost:$postgres12_port/${{ env.TH_DB }}"
+          echo "TH_PGRESURL_12=$postgres12_url" >> $GITHUB_ENV
+          sleep 30
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres12_url" update
+
+      - name: Init PostgreSQL 13 Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '13' }}
+        run: |
+          awslocal rds create-db-cluster --db-cluster-identifier postgres13-primary-cluster --engine postgres --engine-version 13 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
+          awslocal rds create-db-instance --db-instance-identifier postgres13-primary-cluster-instance --db-cluster-identifier postgres13-primary-cluster --engine postgres --db-instance-class db.t3.medium
+          postgres13_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres13-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
+          postgres13_url="jdbc:postgres://localhost:$postgres13_port/${{ env.TH_DB }}"
+          echo "TH_PGRESURL_13=$postgres13_url" >> $GITHUB_ENV
+          sleep 30
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres13_url" update
+
+      - name: Init PostgreSQL 14 Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '14' }}
+        run: |
+          awslocal rds create-db-cluster --db-cluster-identifier postgres14-primary-cluster --engine postgres --engine-version 14 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
+          awslocal rds create-db-instance --db-instance-identifier postgres14-primary-cluster-instance --db-cluster-identifier postgres14-primary-cluster --engine postgres --db-instance-class db.t3.medium
+          postgres14_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres14-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
+          postgres14_url="jdbc:postgres://localhost:$postgres14_port/${{ env.TH_DB }}"
+          echo "TH_PGRESURL_14=$postgres14_url" >> $GITHUB_ENV
+          sleep 30
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres14_url" update
+
       - uses: liquibase-github-actions/drop-all@v4.24.0
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         with:
@@ -147,24 +191,6 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_ORACLEURL_19 }}"
-
-      - uses: liquibase-github-actions/drop-all@v4.24.0
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
-        with:
-          url: "${{ secrets[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "postgresql.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
 
       - uses: liquibase-github-actions/drop-all@v4.24.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
@@ -211,10 +237,28 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '11' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_11 }}' test
+
+      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '12' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_12 }}' test
+
+      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '13' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_13 }}' test
+
+      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '14' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_14 }}' test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
