@@ -4,7 +4,7 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "1\\!\\{java.math.BigDecimal\\}",
+            "defaultValue": "1\\!\\{liquibase.statement.DatabaseFunction\\}",
             "name": "BOOLEANCOLUMN",
             "nullable": true
           }
