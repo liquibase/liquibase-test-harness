@@ -1,0 +1,26 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "BIT_COL",
+            "nullable": false,
+            "type": {
+              "typeName": "BOOLEAN"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "BOOLEAN_COL",
+            "nullable": false,
+            "type": {
+              "typeName": "BOOLEAN"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
