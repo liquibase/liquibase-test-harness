@@ -181,7 +181,7 @@ jobs:
         run: |
           awslocal rds create-db-instance --db-instance-identifier mssql2019 --engine sqlserver-ee --engine-version ${{ env.TH_MSSQL_ENGINE }}  --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }} --db-instance-class db.t3.medium
           mssql2019_port=$(awslocal rds describe-db-instances --db-instance-identifier mssql2019  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          mssql2019_url="jdbc:sqlserver://localhost:$mssql2019_port/${{ env.TH_DB }}"
+          mssql2019_url="jdbc:sqlserver://localhost:$mssql2019_port"
           echo "TH_MSSQLURL=$mssql2019_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mssql2019_url" update
@@ -191,7 +191,7 @@ jobs:
         run: |
           awslocal rds create-db-instance --db-instance-identifier mysql --engine mysql --engine-version ${{ env.TH_MYSQL_ENGINE }}  --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }} --db-instance-class db.t3.medium
           mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier mysql  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          mysql_url="jdbc:mysql://localhost:$mysql_port/${{ env.TH_DB }}"
+          mysql_url="jdbc:mysql://localhost:$mysql_port"
           echo "TH_MYSQLURL_8_0=$mysql_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
@@ -213,24 +213,6 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_ORACLEURL_19 }}"
-
-      - uses: liquibase-github-actions/drop-all@v4.24.0
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        with:
-          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
-      - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "postgresql.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets.TH_AURORA_POSTGRESQLURL }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
