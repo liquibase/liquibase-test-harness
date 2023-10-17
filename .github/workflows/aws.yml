@@ -23,8 +23,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:11\",\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",
-        \"mysql:aurora\",\"mssql:2019\",\"postgresql:aurora\"]"
+        default: "[\"postgresql:11\",\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:2019\",\"postgresql:aurora\"]"
 
 jobs:
   setup:
@@ -190,7 +189,7 @@ jobs:
       - name: Init AWS RDS MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
         run: |
-          awslocal rds create-db-instance --db-instance-identifier mysql --engine mysql --engine-version ${{ env.TH_MYSQL_ENGINE }}  --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --db-instance-class db.t3.medium
+          awslocal rds create-db-instance --db-instance-identifier mysql --engine mysql --engine-version ${{ env.TH_MYSQL_ENGINE }}  --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }} --db-instance-class db.t3.medium
           mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier mysql  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           mysql_url="jdbc:mysql://localhost:$mysql_port/${{ env.TH_DB }}"
           echo "TH_MYSQLURL_8_0=$mysql_url" >> $GITHUB_ENV
