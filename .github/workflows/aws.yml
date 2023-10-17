@@ -73,16 +73,16 @@ jobs:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           RDS_MYSQL_DOCKER: 1     #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
-          MSSQL_ACCEPT_EULA: 'Y'  #https://docs.localstack.cloud/user-guide/aws/rds/#microsoft-sql-server-engine
         run: |
           pip install localstack awscli-local
           docker pull localstack/localstack-pro
-          localstack start -d
+          DOCKER_FLAGS='-e MSSQL_ACCEPT_EULA=Y' localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
           echo "TH_DB_ADMIN=lbuser" >> $GITHUB_ENV  
           echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
+          echo "TH_DB_PASSWD_MSSQL=Test.2024" >> $GITHUB_ENV
           echo "TH_DB=lbcat" >> $GITHUB_ENV  
           echo "TH_AURORA_MYSQL_ENGINE=8.0" >> $GITHUB_ENV  
           echo "TH_AURORA_POSTGRESQL_ENGINE=14.5" >> $GITHUB_ENV
@@ -179,9 +179,9 @@ jobs:
       - name: Init AWS RDS MSSQL 2019 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql'}}
         run: |
-          awslocal rds create-db-instance --db-instance-identifier mssql2019 --engine sqlserver-ee --engine-version ${{ env.TH_MSSQL_ENGINE }}  --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }} --db-instance-class db.t3.medium
+          awslocal rds create-db-instance --db-instance-identifier mssql2019 --engine sqlserver-ee --engine-version ${{ env.TH_MSSQL_ENGINE }}  --db-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD_MSSQL }} --db-instance-class db.t3.medium
           mssql2019_port=$(awslocal rds describe-db-instances --db-instance-identifier mssql2019  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          mssql2019_url="jdbc:sqlserver://localhost:$mssql2019_port"
+          mssql2019_url="jdbc:sqlserver://localhost:$mssql2019_port/${{ env.TH_DB }}"
           echo "TH_MSSQLURL=$mssql2019_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mssql2019_url" update
@@ -189,9 +189,9 @@ jobs:
       - name: Init AWS RDS MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
         run: |
-          awslocal rds create-db-instance --db-instance-identifier mysql --engine mysql --engine-version ${{ env.TH_MYSQL_ENGINE }}  --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }} --db-instance-class db.t3.medium
+          awslocal rds create-db-instance --db-instance-identifier mysql --engine mysql --engine-version ${{ env.TH_MYSQL_ENGINE }}  --db-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }} --db-instance-class db.t3.medium
           mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier mysql  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          mysql_url="jdbc:mysql://localhost:$mysql_port"
+          mysql_url="jdbc:mysql://localhost:$mysql_port/${{ env.TH_DB }}"
           echo "TH_MYSQLURL_8_0=$mysql_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
@@ -268,7 +268,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_MSSQLURL }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD_MSSQL}} -DdbUrl='${{ env.TH_MSSQLURL }}' test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
