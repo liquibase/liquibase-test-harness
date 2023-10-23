@@ -70,7 +70,7 @@ jobs:
     needs: check_build_safety
     runs-on: ubuntu-22.04
     env:
-      GITHUB_TOKEN: {{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+      GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
       useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
