@@ -26,6 +26,9 @@ on:
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
+      liquibaseCommit:
+        description: Liquibase commit to pull artifacts from. Leave empty to use "liquibaseBranch" setting.
+        required: false
       testClasses:
         type: choice
         description: Test Suite or test class to run
@@ -72,6 +75,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
+      liquibaseSha: ${{ steps.configure-build.outputs.liquibaseSha }}
       useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
@@ -91,11 +95,19 @@ jobs:
           github-token: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
-
+            
             let testBranchName = helper.getCurrentBranch();
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
-
+            
+            let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}";
+            core.setOutput("liquibaseBranch", liquibaseBranchName);
+            
+            let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
+            let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}";
+            let repoOwnerName = liquibaseRepo.split("/")[0]
+            let repoName = liquibaseRepo.split("/")[1]
+            
             let useLiquibaseSnapshot = testBranchName !== "main"
             if ("${{ github.event.pull_request.base.ref }}" !== "") {
               useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
@@ -103,7 +115,21 @@ jobs:
             if (${{ inputs.ignoreLiquibaseSnapshot == true }}) {
               useLiquibaseSnapshot = false
             }
+            
+            if (!liquibaseSha) {
+              if (!liquibaseBranchName) {
+                liquibaseBranchName = testBranchName;
+              }
+              console.log("No liquibaseSha passed. Looking for branch "+liquibaseBranchName);
 
+              let liquibaseBranch = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
+              liquibaseSha = liquibaseBranch.sha;
+              repoName = liquibaseBranch.repo;
+              core.setOutput("liquibaseBranch", liquibaseBranch.name);
+            }
+            
+            core.setOutput("liquibaseSha", liquibaseSha)
+            
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
             core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
@@ -149,7 +175,7 @@ jobs:
           buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase-pro')"
           echo "::notice :: Installed Snapshot Liquibase-pro $buildOverview"
 
-          mvn -B liquibase-sdk:set-commit-status \
+          mvn -B liquibase-sdk:${{ needs.setup.outputs.liquibaseSha }} \
             "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \
             "-Dliquibase.sdk.status.context=Run Test Harness" \
             "-Dliquibase.sdk.status.state=PENDING" \
