@@ -5,6 +5,7 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
+import liquibase.resource.SearchPathResourceAccessor
 import org.apache.commons.io.FileUtils
 import spock.lang.Shared
 import spock.lang.Specification
@@ -24,8 +25,8 @@ class AdvancedTest extends Specification {
     @Shared
     List<DatabaseUnderTest> databases;
     String inputResourcesDirFullPath = System.getProperty("user.dir") + "/src/main/resources/"
-    String outputResourcesDirFullPath = System.getProperty("user.dir") + "/src/test/resources/"
-    String outputResourcesDirPath = "/src/test/resources/"
+    String outputResourcesDirFullPath = System.getProperty("user.dir") + "/target/test-classes/"
+    String outputResourcesDirPath = "/target/test-classes/"
 
     def setupSpec() {
         databases = TestConfig.instance.getFilteredDatabasesUnderTest()
@@ -91,7 +92,7 @@ class AdvancedTest extends Specification {
 
             when: "execute updateSql command on generated changelogs"
             argsMapPrimary.put("changelogFile", outputResourcesDirPath + entry.value)
-            def generatedSql = parseQuery(executeCommandScope("updateSql", argsMapPrimary).toString())
+            def generatedSql = parseQuery(executeCommandScopeWithSearchPathResourceAccessor("updateSql", argsMapPrimary).toString())
             generatedSql = removeSchemaNames(generatedSql, testInput.database, testInput.primaryDbSchemaName)
             def expectedSql = testInput.expectedGenerateChangelogSql
 
@@ -113,7 +114,7 @@ class AdvancedTest extends Specification {
         when: "apply generated changelog to secondary database instance and execute diff command"
         argsMapSecondary.put("changelogFile", outputResourcesDirPath + generateChangelogMap.get("jsonChangelog"))
         Scope.getCurrentScope().getUI().sendMessage("APPLY GENERATED CHANGELOG TO SECONDARY DATABASE")
-        executeCommandScope("update", argsMapSecondary)
+        executeCommandScopeWithSearchPathResourceAccessor("update", argsMapSecondary)
         generatedDiff = removeDatabaseInfoFromDiff(executeCommandScope("diff", argsMapSecondary).toString())
         expectedDiff = removeDatabaseInfoFromDiff(getResourceContent("/$testInput.pathToEmptyDiffFile"))
 
@@ -142,7 +143,7 @@ class AdvancedTest extends Specification {
 
             when: "execute updateSql command on generated changelogs"
             argsMapSecondary.put("changelogFile", outputResourcesDirPath + entry.value)
-            def generatedSql = parseQuery(executeCommandScope("updateSql", argsMapSecondary).toString())
+            def generatedSql = parseQuery(executeCommandScopeWithSearchPathResourceAccessor("updateSql", argsMapSecondary).toString())
             generatedSql = removeSchemaNames(generatedSql, testInput.database, testInput.secondaryDbSchemaName)
             def expectedSql = testInput.expectedDiffChangelogSql
 
@@ -157,7 +158,7 @@ class AdvancedTest extends Specification {
         when: "apply generated diffChangelog to secondary database instance and execute diff command"
         argsMapSecondary.put("changelogFile", outputResourcesDirPath + diffChangelogMap.get("xmlChangelog"))
         Scope.getCurrentScope().getUI().sendMessage("APPLY GENERATED DIFFCHANGELOG TO SECONDARY DATABASE")
-        executeCommandScope("update", argsMapSecondary)
+        executeCommandScopeWithSearchPathResourceAccessor("update", argsMapSecondary)
         generatedDiff = removeDatabaseInfoFromDiff(executeCommandScope("diff", argsMapSecondary).toString())
         expectedDiff = removeDatabaseInfoFromDiff(getResourceContent("/$testInput.pathToEmptyDiffFile"))
 
