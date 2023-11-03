@@ -3,7 +3,7 @@ version: '3.3'
 services:
 
   oracle-xe-18.4.0:
-    image: gvenzl/oracle-xe:18.4.0
+    image: gvenzl/oracle-xe:18.4.0-slim-faststart
     ports:
         - "1522:1521"
         - "5500:5500"
@@ -13,12 +13,21 @@ services:
     volumes:
         - "./startup:/container-entrypoint-initdb.d"
 
-
   oracle-xe-21.3.0:
-    image: gvenzl/oracle-xe:21.3.0-full
+    image: gvenzl/oracle-xe:21.3.0-slim-faststart
     ports:
       - "1523:1521"
       - "5503:5500"
+    restart: always
+    environment:
+      ORACLE_PASSWORD: Secret321
+    volumes:
+      - "./startup:/container-entrypoint-initdb.d"
+
+  oracle-xe-23.2.0:
+    image: gvenzl/oracle-free:23.2-slim-faststart
+    ports:
+      - "1524:1521"
     restart: always
     environment:
       ORACLE_PASSWORD: Secret321

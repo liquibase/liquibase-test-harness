@@ -10,6 +10,8 @@ on:
       - opened
       - reopened
       - synchronize
+  repository_dispatch:
+    types: [run-test-harness]     
 
   schedule:
     - cron: '0 6 * * *' # Execute every day at noon
@@ -48,7 +50,7 @@ on:
         required: true
         default: "[\"mysql-5.6\",\"mysql-5.7\",\"mysql-8\",\"percona-xtradb-cluster-5.7\",\"percona-xtradb-cluster-8.0\",\"postgres-9.5\",\"postgres-9\",\"postgres-10\",
         \"postgres-11\",\"postgres-12\",\"postgres-13\",\"postgres-14\",\"postgres-15\",\"mariadb-10.2\",\"mariadb-10.3\",\"mariadb-10.4\",\"mariadb-10.5\",\"mariadb-10.6\",
-        \"mariadb-10.7\",\"mssql-2017\",\"mssql-2019\",\"mssql-2022\",\"H2Database-2.1\",\"crdb-20.2\",\"crdb-21.1\",\"crdb-21.2\",\"crdb-22.1\",\"edb-postgres-9.5\",\"edb-postgres-9.6\",
+        \"mariadb-10.7\",\"mssql-2017\",\"mssql-2019\",\"mssql-2022\",\"H2Database-2.2\",\"crdb-20.2\",\"crdb-21.1\",\"crdb-21.2\",\"crdb-22.1\",\"edb-postgres-9.5\",\"edb-postgres-9.6\",
         \"edb-postgres-10\",\"edb-postgres-11\",\"edb-postgres-12\",\"edb-postgres-13\",\"edb-postgres-14\",\"edb-edb-9.5\",\"edb-edb-9.6\",\"edb-edb-10\",\"edb-edb-11\",
         \"edb-edb-12\",\"edb-edb-13\",\"edb-edb-14\",\"derby\",\"sqlite\",\"hsqldb-2.4\",\"hsqldb-2.5\",\"firebird-3\",\"firebird-4\",\"db2-luw\"]"
 
@@ -73,18 +75,18 @@ jobs:
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
       databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","postgres-9.5",
         "postgres-9","postgres-10","postgres-11","postgres-12","postgres-13","postgres-14","postgres-15","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
-        "mariadb-10.7","mssql-2017","mssql-2019","mssql-2022","H2Database-2.1","crdb-20.2","crdb-21.1","crdb-21.2","crdb-22.1","edb-postgres-9.5","edb-postgres-9.6",
+        "mariadb-10.7","mssql-2017","mssql-2019","mssql-2022","H2Database-2.2","crdb-20.2","crdb-21.1","crdb-21.2","crdb-22.1","edb-postgres-9.5","edb-postgres-9.6",
         "edb-postgres-10","edb-postgres-11","edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-edb-9.5","edb-edb-9.6","edb-edb-10","edb-edb-11",
         "edb-edb-12","edb-edb-13","edb-edb-14","derby","sqlite","hsqldb-2.4","hsqldb-2.5","firebird-3","firebird-4","db2-luw"]' }}
       testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure Build
         id: configure-build
         uses: actions/github-script@v6.4.1
         with:
-          github-token: ${{ secrets.BOT_TOKEN }}
+          github-token: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
 
@@ -132,7 +134,7 @@ jobs:
       - name: Install Snapshot Liquibase
         if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
@@ -168,7 +170,7 @@ jobs:
         database: ${{ fromJson(needs.setup.outputs.databases) }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-java@v3
         with:
@@ -193,7 +195,7 @@ jobs:
       - name: Configure Liquibase Version
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
@@ -220,7 +222,7 @@ jobs:
     needs: [ setup, test ]
     if: ${{ always() }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
       - name: Cache installed Liquibase
@@ -233,7 +235,7 @@ jobs:
       - name: Update status
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 

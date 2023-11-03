@@ -4,16 +4,16 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "bit_col",
+            "name": "BIT_COL",
             "nullable": false,
             "type": {
-              "typeName": "BIT"
+              "typeName": "BOOLEAN"
             }
           }
         },
         {
           "column": {
-            "name": "boolean_col",
+            "name": "BOOLEAN_COL",
             "nullable": false,
             "type": {
               "typeName": "BOOLEAN"
