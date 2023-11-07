@@ -8,7 +8,7 @@ MissingCheckConstraint(s):NONE
 UnexpectedCheckConstraint(s):NONE
 ChangedCheckConstraint(s):NONE
 MissingColumn(s):NONE
-UnexpectedColumn(s):
+UnexpectedColumn(s):NONE
 ChangedColumn(s):NONE
 MissingDatabasePackage(s):NONE
 UnexpectedDatabasePackage(s):NONE
@@ -23,10 +23,10 @@ MissingFunction(s):NONE
 UnexpectedFunction(s):NONE
 ChangedFunction(s):NONE
 MissingIndex(s):NONE
-UnexpectedIndex(s):
+UnexpectedIndex(s):NONE
 ChangedIndex(s):NONE
 MissingPrimaryKey(s):NONE
-UnexpectedPrimaryKey(s):
+UnexpectedPrimaryKey(s):NONE
 ChangedPrimaryKey(s):NONE
 MissingSequence(s):NONE
 UnexpectedSequence(s):NONE
@@ -38,7 +38,7 @@ MissingSynonym(s):NONE
 UnexpectedSynonym(s):NONE
 ChangedSynonym(s):NONE
 MissingTable(s):NONE
-UnexpectedTable(s):
+UnexpectedTable(s):NONE
 ChangedTable(s):NONE
 MissingTrigger(s):NONE
 UnexpectedTrigger(s):NONE
