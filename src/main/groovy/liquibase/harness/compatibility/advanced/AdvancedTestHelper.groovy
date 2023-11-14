@@ -38,7 +38,7 @@ class AdvancedTestHelper {
                             .database(databaseUnderTest.database)
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)
-                            .referenceUrl(databaseUnderTest.url.replace(databaseUnderTest.database.getDefaultSchemaName(), secondaryDbName))
+                            .referenceUrl(databaseUnderTest.url.replace(databaseUnderTest.database.getDefaultCatalogName(), secondaryDbName))
                             .primaryDbSchemaName(databaseUnderTest.database.getDefaultSchemaName())
                             .secondaryDbSchemaName(secondaryDbName)
                             .username(databaseUnderTest.username)

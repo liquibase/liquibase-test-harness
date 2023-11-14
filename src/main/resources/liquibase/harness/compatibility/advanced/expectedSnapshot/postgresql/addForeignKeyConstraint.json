@@ -1,0 +1,29 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.ForeignKey": [
+        {
+          "foreignKey": {
+            "initiallyDeferred": false,
+            "name": "test_fk"
+          }
+        }
+      ],
+      "liquibase.structure.core.Index": [
+        {
+          "index": {
+            "columns": [
+              {
+                "column": {
+                  "name": "test_column"
+                }
+              }
+            ],
+            "name": "test_table_reference_test_column_key",
+            "unique": true
+          }
+        }
+      ]
+    }
+  }
+}

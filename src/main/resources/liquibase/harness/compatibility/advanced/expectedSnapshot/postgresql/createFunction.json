@@ -1,0 +1,14 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.function.Function": [
+        {
+          "function": {
+            "body": "CREATE OR REPLACE FUNCTION public.test_function()\n RETURNS character varying\n LANGUAGE sql\nRETURN 'Hello'::text\n",
+            "name": "test_function()"
+          }
+        }
+      ]
+    }
+  }
+}
