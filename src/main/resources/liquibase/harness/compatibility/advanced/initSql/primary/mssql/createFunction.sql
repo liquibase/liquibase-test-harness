@@ -1,0 +1,8 @@
+DROP FUNCTION IF EXISTS [test_function];
+CREATE FUNCTION [test_function]()
+RETURNS VARCHAR(20)
+AS
+BEGIN
+    RETURN 'Hello'
+END;
+

@@ -1,0 +1,14 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.function.Function": [
+        {
+          "function": {
+            "body": "CREATE FUNCTION [test_function]()\r\nRETURNS VARCHAR(20)\r\nAS\r\nBEGIN\r\n    RETURN 'Hello'\r\nEND",
+            "name": "test_function"
+          }
+        }
+      ]
+    }
+  }
+}

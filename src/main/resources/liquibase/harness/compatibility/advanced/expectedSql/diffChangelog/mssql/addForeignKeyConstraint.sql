@@ -1,0 +1,2 @@
+alter table test_table_reference drop constraint secondary_test_fk
+alter table test_table_base add constraint test_fk foreign key (id) references test_table_reference (test_column) on update cascade on delete cascade

@@ -1,0 +1,3 @@
+create table test_table_base (id int not null, test_column int not null, constraint pk_test_table_base primary key (test_column))
+create table test_table_reference (id int not null, test_column int not null, constraint pk_test_table_reference primary key (test_column))
+alter table test_table_base add constraint test_fk foreign key (id) references test_table_reference (test_column) on update cascade on delete cascade
