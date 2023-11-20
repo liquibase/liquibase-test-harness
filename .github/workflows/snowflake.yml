@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: liquibase-github-actions/drop-all@v4.23.2
+      - uses: liquibase-github-actions/drop-all@v4.24.0
         with:
           url: "${{secrets.TH_SNOW_URL}}"
           username: "${{secrets.TH_DB_ADMIN}}"
