@@ -26,6 +26,9 @@ on:
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
+      liquibaseCommit:
+        description: Liquibase commit to pull artifacts from. Leave empty to use "liquibaseBranch" setting.  
+        required: false
       testClasses:
         type: choice
         description: Test Suite or test class to run
@@ -69,6 +72,8 @@ jobs:
     name: Setup
     needs: check_build_safety
     runs-on: ubuntu-22.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
       useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
