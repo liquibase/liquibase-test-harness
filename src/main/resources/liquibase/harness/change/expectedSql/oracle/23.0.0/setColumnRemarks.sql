@@ -1,1 +1,0 @@
-COMMENT ON COLUMN LIQUIBASE.authors.id IS 'A Test Column Remark'

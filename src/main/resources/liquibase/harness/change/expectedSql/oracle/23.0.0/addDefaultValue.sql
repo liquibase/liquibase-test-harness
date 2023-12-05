@@ -1,1 +1,0 @@
-ALTER TABLE LIQUIBASE.posts MODIFY title DEFAULT 'title_test'

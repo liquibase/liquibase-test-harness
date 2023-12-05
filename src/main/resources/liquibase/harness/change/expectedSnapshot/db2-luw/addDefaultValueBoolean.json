@@ -4,11 +4,11 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "1\\!\\{java.lang.Integer\\}",
+            "defaultValue": true,
             "name": "BOOLEAN_TEST",
             "nullable": true,
             "type": {
-              "typeName": "SMALLINT"
+              "typeName": "BOOLEAN"
             }
           }
         }
