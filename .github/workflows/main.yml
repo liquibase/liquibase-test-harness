@@ -89,7 +89,7 @@ jobs:
 
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v7.0.0
+        uses: actions/github-script@v7.0.1
         with:
           github-token: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
           script: |
