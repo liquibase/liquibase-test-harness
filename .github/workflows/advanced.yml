@@ -155,7 +155,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=4.25
           mvn -B liquibase-sdk:install-snapshot \
             "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
             "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
@@ -216,7 +216,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=4.25
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
@@ -256,7 +256,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=4.25
 
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.status.commit=installed" \
