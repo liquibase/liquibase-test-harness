@@ -188,6 +188,7 @@ jobs:
                 }
             }
             
+
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v21
         with:
@@ -229,6 +230,12 @@ jobs:
                   "password": "${{ secrets.LIQUIBOT_PAT }}"
                 }
               ]
+
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
 
       - name: Install Snapshot Liquibase
         if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
