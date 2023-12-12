@@ -9,14 +9,15 @@ on:
     types:
       - opened
       - reopened
-      - synchronize
-  repository_dispatch:
-    types: [run-test-harness]     
+      - synchronize     
 
   schedule:
     - cron: '0 6 * * *' # Execute every day at noon
   workflow_dispatch:
     inputs:
+      distinct_id:
+        description: 'distinct id for the triggered run from OSS'
+        required: false
       runDescription:
         description: 'Description of run'
         required: false
@@ -51,11 +52,58 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name"
         required: true
-        default: "[\"mysql-5.6\",\"mysql-5.7\",\"mysql-8\",\"percona-xtradb-cluster-5.7\",\"percona-xtradb-cluster-8.0\",\"postgres-9.5\",\"postgres-9\",\"postgres-10\",
-        \"postgres-11\",\"postgres-12\",\"postgres-13\",\"postgres-14\",\"postgres-15\",\"mariadb-10.2\",\"mariadb-10.3\",\"mariadb-10.4\",\"mariadb-10.5\",\"mariadb-10.6\",
-        \"mariadb-10.7\",\"mssql-2017\",\"mssql-2019\",\"mssql-2022\",\"H2Database-2.2\",\"crdb-20.2\",\"crdb-21.1\",\"crdb-21.2\",\"crdb-22.1\",\"edb-postgres-9.5\",\"edb-postgres-9.6\",
-        \"edb-postgres-10\",\"edb-postgres-11\",\"edb-postgres-12\",\"edb-postgres-13\",\"edb-postgres-14\",\"edb-edb-9.5\",\"edb-edb-9.6\",\"edb-edb-10\",\"edb-edb-11\",
-        \"edb-edb-12\",\"edb-edb-13\",\"edb-edb-14\",\"derby\",\"sqlite\",\"hsqldb-2.4\",\"hsqldb-2.5\",\"firebird-3\",\"firebird-4\",\"db2-luw\"]"
+        default: |
+          [
+            "mysql-5.6",
+            "mysql-5.7",
+            "mysql-8",
+            "percona-xtradb-cluster-5.7",
+            "percona-xtradb-cluster-8.0",
+            "postgres-9.5",
+            "postgres-9",
+            "postgres-10",
+            "postgres-11",
+            "postgres-12",
+            "postgres-13",
+            "postgres-14",
+            "postgres-15",
+            "mariadb-10.2",
+            "mariadb-10.3",
+            "mariadb-10.4",
+            "mariadb-10.5",
+            "mariadb-10.6",
+            "mariadb-10.7",
+            "mssql-2017",
+            "mssql-2019",
+            "mssql-2022",
+            "H2Database-2.2",
+            "crdb-20.2",
+            "crdb-21.1",
+            "crdb-21.2",
+            "crdb-22.1",
+            "edb-postgres-9.5",
+            "edb-postgres-9.6",
+            "edb-postgres-10",
+            "edb-postgres-11",
+            "edb-postgres-12",
+            "edb-postgres-13",
+            "edb-postgres-14",
+            "edb-edb-9.5",
+            "edb-edb-9.6",
+            "edb-edb-10",
+            "edb-edb-11",
+            "edb-edb-12",
+            "edb-edb-13",
+            "edb-edb-14",
+            "derby",
+            "sqlite",
+            "hsqldb-2.4",
+            "hsqldb-2.5",
+            "firebird-3",
+            "firebird-4",
+            "db2-luw"
+          ]
+
 
 jobs:
   check_build_safety:
@@ -87,9 +135,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+        #https://github.com/Codex-/return-dispatch
+      - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
+        run: echo ${{ github.event.inputs.distinct_id }}
+        
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v7.0.0
+        uses: actions/github-script@v7.0.1
         with:
           github-token: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
           script: |
@@ -137,7 +189,7 @@ jobs:
             }
             
       - name: maven-settings-xml-action
-        uses: whelk-io/maven-settings-xml-action@v20
+        uses: whelk-io/maven-settings-xml-action@v21
         with:
             repositories: |
               [
@@ -191,9 +243,15 @@ jobs:
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
-            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
-
+            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
+            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro" \
+            "-Dliquibase.sdk.proWorkflowId=build.yml"\
+            "-Dliquibase.sdk.workflowId=run-tests.yml"
+          
+          chmod -R 777 bin
+          ls -l ./bin
+          bin/liquibase --version
+          
           buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
           echo "::notice :: Installed Snapshot Liquibase $buildOverview"
           
@@ -225,7 +283,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
