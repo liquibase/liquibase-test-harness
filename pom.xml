@@ -257,10 +257,10 @@
             <plugin>
                 <groupId>org.liquibase.ext</groupId>
                 <artifactId>liquibase-sdk-maven-plugin</artifactId>
-                <version>0.10.22</version>
+                <version>0.10.23</version>
                 <configuration>
                     <githubToken>${env.GITHUB_TOKEN}</githubToken>
-                    <repo>liquibase,liquibase-pro</repo>
+                    <repo>liquibase</repo>
                     <liquibaseHome>bin</liquibaseHome>
                     <allowInstall>true</allowInstall>
                 </configuration>
