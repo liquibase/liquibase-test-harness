@@ -250,6 +250,10 @@ jobs:
           chmod -R 777 bin
           ls -l ./bin
           bin/liquibase --version
+
+          mvn liquibase-sdk:install-snapshot \
+          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
+          "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
           
           buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
           echo "::notice :: Installed Snapshot Liquibase $buildOverview"
