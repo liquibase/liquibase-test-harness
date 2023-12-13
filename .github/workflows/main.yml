@@ -244,7 +244,7 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
           mvn liquibase-sdk:install-snapshot-cli \
-          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
+          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
           "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
             
           chmod -R 777 bin
@@ -252,7 +252,7 @@ jobs:
           bin/liquibase --version
 
           mvn liquibase-sdk:install-snapshot \
-          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
+          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
           "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
           
           # buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
