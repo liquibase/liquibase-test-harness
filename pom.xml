@@ -260,7 +260,6 @@
                 <version>0.10.23</version>
                 <configuration>
                     <githubToken>${env.GITHUB_TOKEN}</githubToken>
-                    <repo>liquibase</repo>
                     <liquibaseHome>bin</liquibaseHome>
                     <allowInstall>true</allowInstall>
                 </configuration>
