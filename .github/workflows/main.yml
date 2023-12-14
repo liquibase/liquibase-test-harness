@@ -242,7 +242,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
-
           mvn liquibase-sdk:install-snapshot-cli \
           "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
           "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
