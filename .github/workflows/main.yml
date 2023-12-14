@@ -230,21 +230,29 @@ jobs:
                 }
               ]
 
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
       - name: Install Snapshot Liquibase
         if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
-          mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
-            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro" \
-            "-Dliquibase.sdk.proWorkflowId=build.yml"\
-            "-Dliquibase.sdk.workflowId=run-tests.yml"
-          
+          mvn liquibase-sdk:install-snapshot-cli \
+          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
+          "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
+            
           chmod -R 777 bin
           ls -l ./bin
           bin/liquibase --version
+
+          mvn liquibase-sdk:install-snapshot \
+          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
+          "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
           
           buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
           echo "::notice :: Installed Snapshot Liquibase $buildOverview"
@@ -279,7 +287,7 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
 
