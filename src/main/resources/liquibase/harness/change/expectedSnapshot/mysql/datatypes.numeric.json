@@ -55,7 +55,7 @@
           "column": {
             "name": "bool",
             "type": {
-              "typeName": "BIT"
+              "typeName": "TINYINT"
             }
           }
         },
