@@ -339,8 +339,8 @@ jobs:
 
   finish:
     name: Finish
-    runs-on: ubuntu-latest
-    needs: [ setup, test ]
+    runs-on: ubuntu-22.04
+    needs: [ setup, test]
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v3
