@@ -168,13 +168,15 @@ jobs:
             console.log("liquibaseRepo == " + "${{ github.event.inputs.liquibaseRepo }}");
             core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseRepo }}" || "liquibase/liquibase");
             
-            let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
+            let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}";
+            core.setOutput("liquibaseBranch", liquibaseBranchName);
             if (!liquibaseSha) {
-              if (!liquibaseBranch) {
-                liquibaseBranch = testBranchName;
+              if (!liquibaseBranchName) {
+                liquibaseBranchName = testBranchName;
               }
-              console.log("No liquibaseSha passed. Looking for branch "+liquibaseBranch);
-              let liquibaseBranch = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranch, "master", "main"]);
+              console.log("No liquibaseSha passed. Looking for branch "+liquibaseBranchName);
+
+              let liquibaseBranch = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
               liquibaseSha = liquibaseBranch.sha;
             }
             core.setOutput("liquibaseSha", liquibaseSha);
