@@ -256,6 +256,7 @@ jobs:
           "-Dliquibase.sdk.proWorkflowId=build.yml" \
           "-Dliquibase.sdk.workflowId=run-tests.yml"
 
+          
           chmod -R 777 bin
           ls -l ./bin
           bin/liquibase --version
@@ -324,7 +325,7 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
       - name: Archive ${{ matrix.database }} test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: ${{ matrix.database }}-test-results

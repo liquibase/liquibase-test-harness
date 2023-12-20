@@ -20,7 +20,7 @@ jobs:
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbUsername=${{secrets.DB2_USER}} -DdbPassword=${{secrets.DB2_PASS}} -DdbName=db2-z -DrollbackStrategy=rollbackByTag test
 
       - name: Archive IBM DB2/Z Cloud Database Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ibm-db2z-cloud-test-results
           path: build/spock-reports
