@@ -8,7 +8,7 @@
             "name": "booleanColumn",
             "nullable": true,
             "type": {
-              "typeName": "BIT"
+              "typeName": "TINYINT"
             }
           }
         }
