@@ -171,6 +171,10 @@ jobs:
             let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}";
             core.setOutput("liquibaseBranch", liquibaseBranchName);
             
+            let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}";
+            let repoOwnerName = liquibaseRepo.split("/")[0]
+            let repoName = liquibaseRepo.split("/")[1]
+            
             let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
             if (!liquibaseSha) {
               if (!liquibaseBranchName) {
@@ -178,10 +182,11 @@ jobs:
               }
               console.log("No liquibaseSha passed. Looking for branch "+liquibaseBranchName);
 
-              let liquibaseBranch = await helper.findMatchingBranch(liquibase, liquibase, [liquibaseBranchName, "master", "main"]);
+              let liquibaseBranch = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
               liquibaseSha = liquibaseBranch.sha;
             }
             core.setOutput("liquibaseSha", liquibaseSha);
+            core.setOutput("liquibaseOwner", repoOwnerName);
             
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
@@ -375,8 +380,8 @@ jobs:
 
             console.log("Mark tests as "+result);
             await github.rest.repos.createCommitStatus({
-              "owner": "liquibase",
-              "repo": "liquibase",
+              "owner": repoOwnerName,
+              "repo": repoName,
               "sha": "${{ needs.setup.outputs.liquibaseSha }}",
               "state": result,
               "context": "Run Test-Harness Tests",
