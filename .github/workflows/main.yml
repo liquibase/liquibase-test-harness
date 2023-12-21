@@ -170,6 +170,8 @@ jobs:
             
             let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}";
             core.setOutput("liquibaseBranch", liquibaseBranchName);
+            
+            let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
             if (!liquibaseSha) {
               if (!liquibaseBranchName) {
                 liquibaseBranchName = testBranchName;
