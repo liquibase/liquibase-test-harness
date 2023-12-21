@@ -180,7 +180,7 @@ jobs:
               if (!liquibaseBranchName) {
                 liquibaseBranchName = testBranchName;
               }
-              console.log("No liquibaseSha passed. Looking for branch "+liquibaseBranch);
+              console.log("No liquibaseSha passed. Looking for branch "+liquibaseBranchName);
 
               let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
               liquibaseSha = liquibaseBranchResponse.sha;
