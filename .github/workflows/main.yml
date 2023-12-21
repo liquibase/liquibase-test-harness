@@ -381,7 +381,7 @@ jobs:
             console.log("Mark tests as "+result);
             await github.rest.repos.createCommitStatus({
               "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
-              "repo": "${{ needs.setup.outputs.liquibaseRepo }}",
+              "repo": "liquibase",
               "sha": "${{ needs.setup.outputs.liquibaseSha }}",
               "state": result,
               "context": "Run Test-Harness Tests",
