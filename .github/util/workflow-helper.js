@@ -115,7 +115,7 @@ module.exports = ({github, context}) => {
                             let runs = await github.rest.actions.listWorkflowRuns({
                                 "owner": owner,
                                 "repo": repo,
-                                "workflow_id": "build.yml",
+                                "workflow_id": "run-tests.yml",
                                 "per_page": 100,
                                 "page": pageNumber,
                             });
