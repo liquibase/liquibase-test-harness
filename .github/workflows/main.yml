@@ -178,7 +178,7 @@ jobs:
               }
               console.log("No liquibaseSha passed. Looking for branch "+liquibaseBranchName);
 
-              let liquibaseBranch = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
+              let liquibaseBranch = await helper.findMatchingBranch(liquibase, liquibase, [liquibaseBranchName, "master", "main"]);
               liquibaseSha = liquibaseBranch.sha;
             }
             core.setOutput("liquibaseSha", liquibaseSha);
