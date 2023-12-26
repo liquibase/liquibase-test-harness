@@ -188,6 +188,10 @@ jobs:
                 }
             }
             
+            const ossWorkflowURL = ${{ github.event.inputs.oss_workflow_url }}
+            if (ossWorkflowURL) {
+              core.notice("Triggered by this OSS PR ${{ github.event.inputs.oss_workflow_url }}");
+            }
 
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v21
