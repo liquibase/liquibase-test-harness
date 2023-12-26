@@ -188,9 +188,9 @@ jobs:
                 }
             }
             
-            const ossWorkflowURL = "${{ github.event.inputs.oss_workflow_url }}";
+            const ossWorkflowURL = "${{ github.event.inputs.ossWorkflowUrl }}";
             if (ossWorkflowURL) {
-              core.notice("Triggered by this OSS PR ${{ github.event.inputs.oss_workflow_url }}");
+              core.notice("Triggered by this OSS PR ${{ github.event.inputs.ossWorkflowUrl }}");
             }
 
       - name: maven-settings-xml-action
