@@ -105,6 +105,9 @@ on:
           ]
 
 
+      ossWorkflowUrl:
+        description: Triggered by which OSS run. Leave empty when manually triggered.
+        required: false
 jobs:
   check_build_safety:
     name: Check if Build should be done
