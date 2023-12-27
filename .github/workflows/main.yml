@@ -105,6 +105,9 @@ on:
           ]
 
 
+      ossWorkflowUrl:
+        description: Triggered by which OSS run. Leave empty when manually triggered.
+        required: false
 jobs:
   check_build_safety:
     name: Check if Build should be done
@@ -208,6 +211,10 @@ jobs:
                 }
             }
             
+            const ossWorkflowURL = "${{ github.event.inputs.ossWorkflowUrl }}";
+            if (ossWorkflowURL) {
+              core.notice("Triggered by this OSS PR ${{ github.event.inputs.ossWorkflowUrl }}");
+            }
 
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v21
