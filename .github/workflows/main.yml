@@ -104,10 +104,6 @@ on:
             "db2-luw"
           ]
 
-
-      ossWorkflowUrl:
-        description: Triggered by which OSS run. Leave empty when manually triggered.
-        required: false
 jobs:
   check_build_safety:
     name: Check if Build should be done
@@ -195,7 +191,7 @@ jobs:
             if (!runDescription) {
                 runDescription = "None given";
             }
-            core.notice("Run Description: " + runDescription);
+            core.notice("Triggered by this OSS PR: " + runDescription);
       
             let runDetails = null;
             if (context.payload && context.payload.inputs && context.payload.inputs.runDetails) {
@@ -209,11 +205,6 @@ jobs:
                 for (let notice of runDetails.notices) {
                     core.notice(notice);
                 }
-            }
-            
-            const ossWorkflowURL = "${{ github.event.inputs.ossWorkflowUrl }}";
-            if (ossWorkflowURL) {
-              core.notice("Triggered by this OSS PR ${{ github.event.inputs.ossWorkflowUrl }}");
             }
 
       - name: maven-settings-xml-action
