@@ -9,14 +9,15 @@ on:
     types:
       - opened
       - reopened
-      - synchronize
-  repository_dispatch:
-    types: [run-test-harness]     
+      - synchronize     
 
   schedule:
     - cron: '0 6 * * *' # Execute every day at noon
   workflow_dispatch:
     inputs:
+      distinct_id:
+        description: 'distinct id for the triggered run from OSS'
+        required: false
       runDescription:
         description: 'Description of run'
         required: false
@@ -25,6 +26,9 @@ on:
         required: false
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
+        required: false
+      liquibaseCommit:
+        description: Liquibase commit to pull artifacts from. Leave empty to use "liquibaseBranch" setting.  
         required: false
       testClasses:
         type: choice
@@ -48,11 +52,57 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name"
         required: true
-        default: "[\"mysql-5.6\",\"mysql-5.7\",\"mysql-8\",\"percona-xtradb-cluster-5.7\",\"percona-xtradb-cluster-8.0\",\"postgres-9.5\",\"postgres-9\",\"postgres-10\",
-        \"postgres-11\",\"postgres-12\",\"postgres-13\",\"postgres-14\",\"postgres-15\",\"mariadb-10.2\",\"mariadb-10.3\",\"mariadb-10.4\",\"mariadb-10.5\",\"mariadb-10.6\",
-        \"mariadb-10.7\",\"mssql-2017\",\"mssql-2019\",\"mssql-2022\",\"H2Database-2.2\",\"crdb-20.2\",\"crdb-21.1\",\"crdb-21.2\",\"crdb-22.1\",\"edb-postgres-9.5\",\"edb-postgres-9.6\",
-        \"edb-postgres-10\",\"edb-postgres-11\",\"edb-postgres-12\",\"edb-postgres-13\",\"edb-postgres-14\",\"edb-edb-9.5\",\"edb-edb-9.6\",\"edb-edb-10\",\"edb-edb-11\",
-        \"edb-edb-12\",\"edb-edb-13\",\"edb-edb-14\",\"derby\",\"sqlite\",\"hsqldb-2.4\",\"hsqldb-2.5\",\"firebird-3\",\"firebird-4\",\"db2-luw\"]"
+        default: |
+          [
+            "mysql-5.6",
+            "mysql-5.7",
+            "mysql-8",
+            "percona-xtradb-cluster-5.7",
+            "percona-xtradb-cluster-8.0",
+            "postgres-9.5",
+            "postgres-9",
+            "postgres-10",
+            "postgres-11",
+            "postgres-12",
+            "postgres-13",
+            "postgres-14",
+            "postgres-15",
+            "mariadb-10.2",
+            "mariadb-10.3",
+            "mariadb-10.4",
+            "mariadb-10.5",
+            "mariadb-10.6",
+            "mariadb-10.7",
+            "mssql-2017",
+            "mssql-2019",
+            "mssql-2022",
+            "H2Database-2.2",
+            "crdb-20.2",
+            "crdb-21.1",
+            "crdb-21.2",
+            "crdb-22.1",
+            "edb-postgres-9.5",
+            "edb-postgres-9.6",
+            "edb-postgres-10",
+            "edb-postgres-11",
+            "edb-postgres-12",
+            "edb-postgres-13",
+            "edb-postgres-14",
+            "edb-edb-9.5",
+            "edb-edb-9.6",
+            "edb-edb-10",
+            "edb-edb-11",
+            "edb-edb-12",
+            "edb-edb-13",
+            "edb-edb-14",
+            "derby",
+            "sqlite",
+            "hsqldb-2.4",
+            "hsqldb-2.5",
+            "firebird-3",
+            "firebird-4",
+            "db2-luw"
+          ]
 
 jobs:
   check_build_safety:
@@ -69,10 +119,14 @@ jobs:
     name: Setup
     needs: check_build_safety
     runs-on: ubuntu-22.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
+      liquibaseOwner: ${{ steps.configure-build.outputs.liquibaseOwner }}
       useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
+      liquibaseSha: ${{ steps.configure-build.outputs.liquibaseSha }}
       databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","postgres-9.5",
         "postgres-9","postgres-10","postgres-11","postgres-12","postgres-13","postgres-14","postgres-15","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
         "mariadb-10.7","mssql-2017","mssql-2019","mssql-2022","H2Database-2.2","crdb-20.2","crdb-21.1","crdb-21.2","crdb-22.1","edb-postgres-9.5","edb-postgres-9.6",
@@ -82,14 +136,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+        #https://github.com/Codex-/return-dispatch
+      - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
+        run: echo ${{ github.event.inputs.distinct_id }}
+        
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v6.4.1
+        uses: actions/github-script@v7.0.1
         with:
           github-token: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
-
+            
             let testBranchName = helper.getCurrentBranch();
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
@@ -101,7 +159,7 @@ jobs:
             if (${{ inputs.ignoreLiquibaseSnapshot == true }}) {
               useLiquibaseSnapshot = false
             }
-
+        
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
             core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
@@ -110,13 +168,31 @@ jobs:
 
             console.log("liquibaseRepo == " + "${{ github.event.inputs.liquibaseRepo }}");
             core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseRepo }}" || "liquibase/liquibase");
+            
+            let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}";
+            let repoOwnerName = liquibaseRepo.split("/")[0]
+            let repoName = liquibaseRepo.split("/")[1]
+            
+            let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}";
+            let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
+            if (!liquibaseSha) {
+              if (!liquibaseBranchName) {
+                liquibaseBranchName = testBranchName;
+              }
+              console.log("No liquibaseSha passed. Looking for branch "+liquibaseBranchName);
 
+              let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
+              liquibaseSha = liquibaseBranchResponse.sha;
+            }
+            core.setOutput("liquibaseSha", liquibaseSha);
+            core.setOutput("liquibaseOwner", repoOwnerName);
+            
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
                 runDescription = "None given";
             }
-            core.notice("Run Description: " + runDescription);
-
+            core.notice("Triggered by this OSS PR: " + runDescription);
+      
             let runDetails = null;
             if (context.payload && context.payload.inputs && context.payload.inputs.runDetails) {
                 runDetails = JSON.parse(context.payload.inputs.runDetails);
@@ -131,6 +207,54 @@ jobs:
                 }
             }
 
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v21
+        with:
+            repositories: |
+              [
+                {
+                  "id": "liquibase",
+                  "url": "https://maven.pkg.github.com/liquibase/liquibase",
+                  "releases": {
+                    "enabled": "true"
+                  },
+                  "snapshots": {
+                    "enabled": "true",
+                    "updatePolicy": "always"
+                  }
+                },
+                {
+                  "id": "liquibase-pro",
+                  "url": "https://maven.pkg.github.com/liquibase/liquibase-pro",
+                  "releases": {
+                    "enabled": "true"
+                  },
+                  "snapshots": {
+                    "enabled": "true",
+                    "updatePolicy": "always"
+                  }
+                }
+              ]
+            servers: |
+              [
+                {
+                  "id": "liquibase-pro",
+                  "username": "liquibot",
+                  "password": "${{ secrets.LIQUIBOT_PAT }}"
+                },
+                {
+                  "id": "liquibase",
+                  "username": "liquibot",
+                  "password": "${{ secrets.LIQUIBOT_PAT }}"
+                }
+              ]
+
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
       - name: Install Snapshot Liquibase
         if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
         env:
@@ -138,9 +262,23 @@ jobs:
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
-            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
+            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
+            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro" \
+            "-Dliquibase.sdk.proWorkflowId=build.yml"\
+            "-Dliquibase.sdk.workflowId=run-tests.yml"
 
+          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+          mvn liquibase-sdk:install-snapshot-cli \
+          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
+          "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro" \
+          "-Dliquibase.sdk.proWorkflowId=build.yml" \
+          "-Dliquibase.sdk.workflowId=run-tests.yml"
+
+          
+          chmod -R 777 bin
+          ls -l ./bin
+          bin/liquibase --version
+          
           buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
           echo "::notice :: Installed Snapshot Liquibase $buildOverview"
           
@@ -172,9 +310,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
 
@@ -205,7 +343,7 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
       - name: Archive ${{ matrix.database }} test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: ${{ matrix.database }}-test-results
@@ -223,34 +361,28 @@ jobs:
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
-        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
-      - name: Cache installed Liquibase
-        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
-        uses: actions/cache@v3
+      - name: Coordinate Liquibase-Test-Harness
+        uses: actions/github-script@v6.4.1
         with:
-          path: ~/.m2/repository/org/liquibase/
-          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+          github-token: ${{ secrets.BOT_TOKEN }}
+          script: |
+            const helper = require('./.github/util/workflow-helper.js')({github, context});
 
-      - name: Update status
-        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
-        run: |
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+            console.log("result is ${{ needs.test.result }}");
 
-          mvn -B liquibase-sdk:set-commit-status \
-            "-Dliquibase.sdk.status.commit=installed" \
-            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
-            "-Dliquibase.sdk.status.context=Run Test Harness" \
-            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
-            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Internal functional tests"
-            
-          mvn -B liquibase-sdk:set-commit-status \
-            "-Dliquibase.sdk.status.commit=installed" \
-            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
-            "-Dliquibase.sdk.status.context=Run Test Harness" \
-            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
-            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Test Harness tests complete"
+            let result = "success"
+            if ("${{ needs.test.result }}" != "success") {
+              result = "failure";
+            }
+
+            console.log("Mark tests as "+result);
+            await github.rest.repos.createCommitStatus({
+              "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
+              "repo": "liquibase",
+              "sha": "${{ needs.setup.outputs.liquibaseSha }}",
+              "state": result,
+              "context": "Run Test-Harness Tests",
+              "description": "Test-Harness tests complete",
+              "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
+            });

@@ -166,26 +166,6 @@
               "typeName": "FLOAT"
             }
           }
-        },
-        {
-          "column": {
-            "name": "double_precision_column",
-            "type": {
-              "columnSize": "5\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "2\\!\\{java.lang.Integer\\}",
-              "typeName": "DOUBLE"
-            }
-          }
-        },
-        {
-          "column": {
-            "name": "precision_column",
-            "type": {
-              "columnSize": "5\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "2\\!\\{java.lang.Integer\\}",
-              "typeName": "DOUBLE"
-            }
-          }
         }
       ]
     }

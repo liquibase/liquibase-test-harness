@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: liquibase-github-actions/drop-all@v4.24.0
+      - uses: liquibase-github-actions/drop-all@v4.25.1
         with:
           url: "${{secrets.TH_SNOW_URL}}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -36,7 +36,7 @@ jobs:
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=snowflake -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: snowflake-test-results
           path: build/spock-reports

@@ -56,7 +56,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean Azure MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.24.0
+        uses: liquibase-github-actions/drop-all@v4.25.1
         if: ${{ matrix.database == 'mysql' }}
         with:
           url: "${{secrets.TH_AZURE_MYSQL_URL}}"
@@ -88,7 +88,7 @@ jobs:
 
       - name: Configure Test
         id: setup
-        uses: actions/github-script@v6.4.1
+        uses: actions/github-script@v7.0.1
         with:
           script: |
             let splitValues = "${{ matrix.database }}".split(":")
@@ -96,7 +96,7 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Azure MSSQL dropAll
-        uses: liquibase-github-actions/drop-all@v4.24.0
+        uses: liquibase-github-actions/drop-all@v4.25.1
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           url: "${{secrets.TH_AZURE_URL}}"
@@ -116,7 +116,7 @@ jobs:
           url: "${{secrets.TH_AZURE_URL}}"
 
       - name: Azure MSSQL MI dropAll
-        uses: liquibase-github-actions/drop-all@v4.24.0
+        uses: liquibase-github-actions/drop-all@v4.25.1
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
         with:
           url: "${{secrets.TH_AZURE_MSSQL_MI_URL}}"
@@ -136,7 +136,7 @@ jobs:
           url: "${{secrets.TH_AZURE_MSSQL_MI_URL}}"
 
       - name: Azure PostgreSQL Single Server dropAll
-        uses: liquibase-github-actions/drop-all@v4.24.0
+        uses: liquibase-github-actions/drop-all@v4.25.1
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
@@ -156,7 +156,7 @@ jobs:
           url: "${{secrets.TH_AZURE_POSTGRESQL_URL}}"
 
       - name: Azure PostgreSQL Flexible Server dropAll
-        uses: liquibase-github-actions/drop-all@v4.24.0
+        uses: liquibase-github-actions/drop-all@v4.25.1
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'flexible' }}
         with:
           url: "${{secrets.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL}}"
@@ -206,7 +206,7 @@ jobs:
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=flexible -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL}}' test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: azure-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
           path: build/spock-reports
