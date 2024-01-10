@@ -6,7 +6,6 @@ target/
 bin/
 build/
 src/test/resources/liquibase/
-.project
 .DS_Store
 src/test/resources/derby/lbcat/*
 src/test/resources/sqlite/*
