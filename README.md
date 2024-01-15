@@ -301,3 +301,7 @@ To run the test suite itself, you can execute `mvn -Dtest=LiquibaseHarnessSuiteT
 
 When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
 gracefully and to allow the tests to start from a clean slate on the next run.
+
+## Local testing
+
+The Liquibase Test Harness repository uses [localstack](https://www.localstack.cloud/) and the [awslocal CLI](https://github.com/localstack/awscli-local) to run tests against different `AWS RDS` (`MySQL`, `PostgreSQL`, `MariaDB`, and `Microsoft SQL Server`) databases locally. Read more about it and how to execute tests against local `AWS` database instances [here](README.localstack.md).
