@@ -294,7 +294,7 @@ jobs:
             "-Dliquibase.sdk.status.commit=installed"
 
       - name: Cache installed Liquibase
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository/org/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
@@ -317,7 +317,7 @@ jobs:
           cache: 'maven'
 
       - name: Cache installed Liquibase
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository/org/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
