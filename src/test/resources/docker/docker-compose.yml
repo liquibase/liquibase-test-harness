@@ -322,7 +322,7 @@ services:
     networks:
       - roachnet
     volumes:
-      - ./setup_db.sh:/setup_db.sh
+      - ./setup_db.sh:/setup_db.sh --insecure
     entrypoint: "/bin/bash"
     command: /setup_db.sh crdb-20.2
     depends_on:
@@ -344,7 +344,7 @@ services:
     networks:
       - roachnet
     volumes:
-      - ./setup_db.sh:/setup_db.sh
+      - ./setup_db.sh:/setup_db.sh --insecure
     entrypoint: "/bin/bash"
     command: /setup_db.sh crdb-21.1
     depends_on:
@@ -367,7 +367,7 @@ services:
     networks:
       - roachnet
     volumes:
-      - ./setup_db.sh:/setup_db.sh
+      - ./setup_db.sh:/setup_db.sh --insecure
     entrypoint: "/bin/bash"
     command: /setup_db.sh crdb-21.2
     depends_on:
@@ -390,7 +390,7 @@ services:
     networks:
       - roachnet
     volumes:
-      - ./setup_db.sh:/setup_db.sh
+      - ./setup_db.sh:/setup_db.sh --insecure
     entrypoint: "/bin/bash"
     command: /setup_db.sh crdb-22.1
     depends_on:
