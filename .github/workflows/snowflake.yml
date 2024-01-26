@@ -14,15 +14,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/snowflake"
-          changeLogFile: "snowflake.sql"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          url: "jdbc:snowflake://snowflake.localhost.localstack.cloud"
-
       - name: Setup Python
         uses: actions/setup-python@v5.0.0
         with:
@@ -43,11 +34,21 @@ jobs:
           echo "TH_DB_ADMIN=test" >> $GITHUB_ENV  
           echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
           echo "TH_DB=snowflake" >> $GITHUB_ENV
+          echo "TH_SNOW_URL=jdbc:snowflake://snowflake.localhost.localstack.cloud" >> $GITHUB_ENV
+
+      - uses: liquibase/liquibase-github-action@v7
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/snowflake"
+          changeLogFile: "snowflake.sql"
+          username: "${{env.TH_DB_ADMIN}}"
+          password: "${{env.TH_DB_PASSWD}}"
+          url: "${{env.TH_SNOW_URL}}"
 
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{secrets.TH_DB_ADMIN}} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{env.TH_DB_ADMIN}} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
