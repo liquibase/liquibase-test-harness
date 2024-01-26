@@ -28,12 +28,33 @@ jobs:
           changeLogFile: "snowflake.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{secrets.TH_SNOW_URL}}"
+          url: "snowflake://snowflake.localhost.localstack.cloud"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5.0.0
+        with:
+          python-version: '3.11.5'
+
+      - name: Start & Configure LocalStack
+        env:
+          LOCALSTACK_API_KEY: ${{ secrets.LOCALSTACK_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          pip install localstack awscli-local
+          localstack extensions install localstack-extension-snowflake
+          docker pull localstack/localstack-pro
+          localstack start -d
+          echo "Waiting for LocalStack startup..."
+          localstack wait -t 30
+          echo "Startup complete"
+          echo "TH_DB_ADMIN=test" >> $GITHUB_ENV  
+          echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
+          echo "TH_DB=snowflake" >> $GITHUB_ENV
 
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=snowflake -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{secrets.TH_DB_ADMIN}} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
