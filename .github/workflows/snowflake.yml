@@ -28,7 +28,7 @@ jobs:
           changeLogFile: "snowflake.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
-          url: "snowflake://snowflake.localhost.localstack.cloud"
+          url: "jdbc:snowflake://snowflake.localhost.localstack.cloud"
 
       - name: Setup Python
         uses: actions/setup-python@v5.0.0
