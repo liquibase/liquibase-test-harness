@@ -14,13 +14,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: liquibase-github-actions/drop-all@v4.25.1
-        with:
-          url: "${{secrets.TH_SNOW_URL}}"
-          username: "${{secrets.TH_DB_ADMIN}}"
-          password: "${{secrets.TH_DB_PASSWD}}"
-          licenseKey: "${{secrets.LICENSE_KEY}}"
-
       - uses: liquibase/liquibase-github-action@v7
         with:
           operation: "update"
