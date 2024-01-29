@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
     steps:
       - name: Checkout
@@ -18,6 +20,14 @@ jobs:
         uses: actions/setup-python@v5.0.0
         with:
           python-version: '3.12.1'
+
+      - name: Install liquibase
+        run: |
+          wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg && \
+          cat liquibase-keyring.gpg | sudo tee /usr/share/keyrings/liquibase-keyring.gpg > /dev/null && \
+          echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | sudo tee /etc/apt/sources.list.d/liquibase.list
+          sudo apt-get update
+          sudo apt-get install liquibase
 
       - name: Start & Configure LocalStack
         env:
@@ -36,18 +46,10 @@ jobs:
           echo "TH_DB=snowflake" >> $GITHUB_ENV
           echo "TH_SNOW_URL=jdbc:snowflake://http://snowflake.localhost.localstack.cloud:4566" >> $GITHUB_ENV
 
-      - uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/snowflake"
-          changeLogFile: "snowflake.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{env.TH_SNOW_URL}}"
+      - name: Status
+        run: liquibase update --url="${{env.TH_SNOW_URL}}" --username="${{env.TH_DB_ADMIN}}" --password="${{env.TH_DB_PASSWD}}" --classpath="src/test/resources/init-changelogs/snowflake" --changeLogFile="snowflake.sql"
 
       - name: Snowflake Test Run
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{env.TH_DB_ADMIN}} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
