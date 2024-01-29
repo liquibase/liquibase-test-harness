@@ -26,11 +26,11 @@ jobs:
         run: |
           pip install localstack awscli-local
           docker pull localstack/localstack-pro
+          localstack extensions install localstack-extension-snowflake
           localstack start -d
           echo "Waiting for LocalStack startup..."
-          localstack wait -t 30
+          localstack wait
           echo "Startup complete"
-          localstack extensions install localstack-extension-snowflake
           echo "TH_DB_ADMIN=test" >> $GITHUB_ENV  
           echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
           echo "TH_DB=snowflake" >> $GITHUB_ENV
