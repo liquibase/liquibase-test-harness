@@ -17,7 +17,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5.0.0
         with:
-          python-version: '3.11.5'
+          python-version: '3.12.1'
 
       - name: Start & Configure LocalStack
         env:
@@ -27,7 +27,7 @@ jobs:
           pip install localstack awscli-local
           docker pull localstack/localstack-pro
           localstack extensions install localstack-extension-snowflake
-          localstack start -d
+          DEBUG=1 localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait
           echo "Startup complete"
