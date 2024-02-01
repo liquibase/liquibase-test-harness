@@ -1,1 +1,1 @@
-CREATE TABLE LTHDB."PUBLIC".createTableDataTypeText (textCol TEXT)
+CREATE TABLE "public".createTableDataTypeText (textCol TEXT)

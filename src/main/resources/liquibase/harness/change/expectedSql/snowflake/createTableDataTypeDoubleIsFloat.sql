@@ -1,1 +1,1 @@
-CREATE TABLE LTHDB."PUBLIC".createTableDataTypeDoubleIsFloat (floatCol FLOAT)
+CREATE TABLE "public".createTableDataTypeDoubleIsFloat (floatCol FLOAT)
