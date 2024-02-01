@@ -37,7 +37,7 @@ jobs:
           pip install localstack awscli-local
           docker pull localstack/localstack-pro
           localstack extensions install localstack-extension-snowflake
-          DEBUG=1 localstack start -d
+          DEBUG=1 DOCKER_FLAGS='-e SF_LOG=trace' localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait
           echo "Startup complete"
@@ -46,7 +46,7 @@ jobs:
           echo "TH_DB=snowflake" >> $GITHUB_ENV
           echo "TH_SNOW_URL=jdbc:snowflake://http://snowflake.localhost.localstack.cloud:4566" >> $GITHUB_ENV
 
-      - name: Status
+      - name: Update
         run: liquibase update --url="${{env.TH_SNOW_URL}}" --username="${{env.TH_DB_ADMIN}}" --password="${{env.TH_DB_PASSWD}}" --classpath="src/test/resources/init-changelogs/snowflake" --changeLogFile="snowflake.sql"
 
       - name: Snowflake Test Run
