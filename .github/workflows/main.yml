@@ -256,7 +256,7 @@ jobs:
           cache: 'maven'
 
       - name: Install Snapshot Liquibase
-        if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
+        #if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
