@@ -44,15 +44,6 @@ jobs:
           echo "TH_DB=snowflake" >> $GITHUB_ENV
           echo "TH_SNOW_URL=jdbc:snowflake://http://snowflake.localhost.localstack.cloud:4566" >> $GITHUB_ENV
 
-      - uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/snowflake"
-          changeLogFile: "snowflake.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{env.TH_SNOW_URL}}"
-
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
