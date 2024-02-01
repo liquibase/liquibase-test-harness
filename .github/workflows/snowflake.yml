@@ -50,7 +50,7 @@ jobs:
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -X -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{env.TH_DB}} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{env.TH_DB}} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
