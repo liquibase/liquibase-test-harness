@@ -4,7 +4,7 @@ name: Default Test Execution
 on:
   # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers
   push:
-    branches: [ main, develop ]
+    branches: [ develop ]
   pull_request:
     types:
       - opened
@@ -105,19 +105,18 @@ on:
           ]
 
 jobs:
-  check_build_safety:
-    name: Check if Build should be done
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Emit failure code if unsafe
-        if: github.event.pull_request && github.event.pull_request.head.repo.full_name != 'liquibase/liquibase-test-harness'
-        run: |
-          echo "PR from Fork is NOT safe to build"
-          exit 1
+#  check_build_safety:
+#    name: Check if Build should be done
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - name: Emit failure code if unsafe
+#        if: github.event.pull_request && github.event.pull_request.head.repo.full_name != 'liquibase/liquibase-test-harness'
+#        run: |
+#          echo "PR from Fork is NOT safe to build"
+#          exit 1
 
   setup:
     name: Setup
-    needs: check_build_safety
     runs-on: ubuntu-22.04
     env:
       GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
@@ -331,7 +330,7 @@ jobs:
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
 
       - name: Configure Liquibase Version
-        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
+        #if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
