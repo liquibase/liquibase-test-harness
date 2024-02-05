@@ -122,7 +122,6 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
       liquibaseOwner: ${{ steps.configure-build.outputs.liquibaseOwner }}
-      useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
       liquibaseSha: ${{ steps.configure-build.outputs.liquibaseSha }}
@@ -150,17 +149,6 @@ jobs:
             let testBranchName = helper.getCurrentBranch();
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
-
-            let useLiquibaseSnapshot = testBranchName !== "main"
-            if ("${{ github.event.pull_request.base.ref }}" !== "") {
-              useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
-            }
-            if (${{ inputs.ignoreLiquibaseSnapshot == true }}) {
-              useLiquibaseSnapshot = false
-            }
-        
-            console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
-            core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
             console.log("liquibaseBranch == " + "${{ github.event.inputs.liquibaseBranch }}");
             core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
@@ -255,7 +243,6 @@ jobs:
           cache: 'maven'
 
       - name: Install Snapshot Liquibase
-        #if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
@@ -330,7 +317,6 @@ jobs:
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
 
       - name: Configure Liquibase Version
-        #if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
