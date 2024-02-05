@@ -4,7 +4,7 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "1\\!\\{java.lang.Integer\\}",
+            "defaultValue": "1\\!\\{liquibase.statement.DatabaseFunction}",
             "name": "booleanColumn",
             "nullable": true,
             "type": {
