@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[authors](
     ) ON [PRIMARY]
 GO
 
+--changeset liquibase:2
 INSERT INTO [dbo].[authors] ([id],[first_name],[last_name],[email],[birthdate],[added])
 VALUES ('1','Eileen','Lubowitz','ppaucek@example.org','1991-03-04','2004-05-30 02:08:25'),
 ('2','Tamia','Mayert','shansen@example.org','2016-03-27','2014-03-21 02:52:00'),
@@ -22,6 +23,7 @@ VALUES ('1','Eileen','Lubowitz','ppaucek@example.org','1991-03-04','2004-05-30 0
 ('5','Jayden','Walter','lillian66@example.com','2010-02-27','1990-02-04 02:32:00')
 GO
 
+--changeset liquibase:3 runAlways:true
 DROP TABLE IF EXISTS [dbo].[posts]
 GO
 
@@ -35,6 +37,7 @@ CREATE TABLE [dbo].[posts](
     ) ON [PRIMARY]
 GO
 
+--changeset liquibase:4
 INSERT INTO [dbo].[posts] ([id],[author_id],[title],[description],[content],[inserted_date])
 VALUES ('1','1','temporibus','voluptatum','Fugit non et doloribus repudiandae.','2015-11-18'),
 ('2','2','ea','aut','Tempora molestias maiores provident molestiae sint possimus quasi.','1975-06-08'),
