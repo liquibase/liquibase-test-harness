@@ -11,7 +11,7 @@ CREATE TABLE `authors` (
                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---changeset liquibase:2
+--changeset liquibase:2 runAlways:true
 INSERT INTO `authors` VALUES ('1','Eileen','Lubowitz','ppaucek@example.org','1991-03-04','2004-05-30 02:08:25'),
                              ('2','Tamia','Mayert','shansen@example.org','2016-03-27','2014-03-21 02:52:00'),
                              ('3','Cyril','Funk','reynolds.godfrey@example.com','1988-04-21','2011-06-24 18:17:48'),
@@ -29,12 +29,12 @@ CREATE TABLE `posts` (
                          `inserted_date` date
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---changeset liquibase:4
+--changeset liquibase:4 runAlways:true
 INSERT INTO `posts` VALUES ('1','1','temporibus','voluptatum','Fugit non et doloribus repudiandae.','2015-11-18'),
                            ('2','2','ea','aut','Tempora molestias maiores provident molestiae sint possimus quasi.','1975-06-08'),
                            ('3','3','illum','rerum','Delectus recusandae sit officiis dolor.','1975-02-25'),
                            ('4','4','itaque','deleniti','Magni nam optio id recusandae.','2010-07-28'),
                            ('5','5','ad','similique','Rerum tempore quis ut nesciunt qui excepturi est.','2006-10-09');
 
---changeset liquibase:5
+--changeset liquibase:5 runAlways:true
 SET GLOBAL log_bin_trust_function_creators = 1;
