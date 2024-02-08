@@ -40,7 +40,7 @@ jobs:
           fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
 
       - name: Cache Built Code
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: built-code-${{ github.run_id }}
           path: ./**/target

@@ -293,7 +293,7 @@ Execute `mvn test` with the (optional) flags outlined below:
 * `-DdbPassword=myPassword` overrides the database login password. Providing placeholder password in config.yml file is still required.
 * `-DdbUrl=myUrl` overrides the database url. Providing placeholder url in config.yml file is still required.
 * `-DrollbackStrategy` overrides the default rollback strategy of `rollbackToDate` where we create a timestamp in UTC timezone and then try to rollback to that point in time. But this rollback strategy might not work well in some cases like cloud databases for instance -- cloud databases are often in different timezones than the test-harness runners, so the `rollback` command can be used instead in conjunction with the `test-harness-tag` tag. To do so, use `-DrollbackStrategy=rollbackByTag`.
-* `-Dliquibase-core.version` overrides default version of liquibase-core.
+* `-Dliquibase-core.version` for macOS and Linux, or `-D"liquibase-core.version=value"` for Windows, overrides default version of liquibase-core.
 
 To run the test suite itself, you can execute `mvn -Dtest=LiquibaseHarnessSuiteTest test`
 
@@ -301,3 +301,7 @@ To run the test suite itself, you can execute `mvn -Dtest=LiquibaseHarnessSuiteT
 
 When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
 gracefully and to allow the tests to start from a clean slate on the next run.
+
+## Local testing
+
+The Liquibase Test Harness repository uses [localstack](https://www.localstack.cloud/) and the [awslocal CLI](https://github.com/localstack/awscli-local) to run tests against different `AWS RDS` (`MySQL`, `PostgreSQL`, `MariaDB`, and `Microsoft SQL Server`) databases locally. Read more about it and how to execute tests against local `AWS` database instances [here](README.localstack.md).
