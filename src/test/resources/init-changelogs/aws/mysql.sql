@@ -36,5 +36,6 @@ INSERT INTO `posts` VALUES ('1','1','temporibus','voluptatum','Fugit non et dolo
                            ('4','4','itaque','deleniti','Magni nam optio id recusandae.','2010-07-28'),
                            ('5','5','ad','similique','Rerum tempore quis ut nesciunt qui excepturi est.','2006-10-09');
 
+
 --changeset liquibase:5 runAlways:true
 SET GLOBAL log_bin_trust_function_creators = 1;
