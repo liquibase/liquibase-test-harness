@@ -105,18 +105,12 @@ on:
           ]
 
 jobs:
-#  check_build_safety:
-#    name: Check if Build should be done
-#    runs-on: ubuntu-22.04
-#    steps:
-#      - name: Emit failure code if unsafe
-#        if: github.event.pull_request && github.event.pull_request.head.repo.full_name != 'liquibase/liquibase-test-harness'
-#        run: |
-#          echo "PR from Fork is NOT safe to build"
-#          exit 1
+  authorize:
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
 
   setup:
     name: Setup
+    needs: authorize
     runs-on: ubuntu-22.04
     env:
       GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
@@ -287,7 +281,7 @@ jobs:
 
   test:
     runs-on: ubuntu-20.04
-    needs: [ setup ]
+    needs: [ setup, authorize ]
     strategy:
       fail-fast: false
       matrix:
@@ -342,7 +336,7 @@ jobs:
   finish:
     name: Finish
     runs-on: ubuntu-22.04
-    needs: [ setup, test ]
+    needs: [ setup, test, authorize ]
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
