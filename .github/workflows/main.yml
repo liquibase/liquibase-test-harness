@@ -105,25 +105,20 @@ on:
           ]
 
 jobs:
-  check_build_safety:
-    name: Check if Build should be done
-    runs-on: ubuntu-22.04
+  authorize:
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
+    runs-on: ubuntu-latest
     steps:
-      - name: Emit failure code if unsafe
-        if: github.event.pull_request && github.event.pull_request.head.repo.full_name != 'liquibase/liquibase-test-harness'
-        run: |
-          echo "PR from Fork is NOT safe to build"
-          exit 1
+      - run: true
 
   setup:
     name: Setup
-    needs: check_build_safety
+    needs: authorize
     runs-on: ubuntu-22.04
     env:
       GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
       liquibaseOwner: ${{ steps.configure-build.outputs.liquibaseOwner }}
-      useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
       liquibaseSha: ${{ steps.configure-build.outputs.liquibaseSha }}
@@ -151,17 +146,6 @@ jobs:
             let testBranchName = helper.getCurrentBranch();
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
-
-            let useLiquibaseSnapshot = testBranchName !== "main"
-            if ("${{ github.event.pull_request.base.ref }}" !== "") {
-              useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
-            }
-            if (${{ inputs.ignoreLiquibaseSnapshot == true }}) {
-              useLiquibaseSnapshot = false
-            }
-        
-            console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
-            core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
             console.log("liquibaseBranch == " + "${{ github.event.inputs.liquibaseBranch }}");
             core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
@@ -256,7 +240,6 @@ jobs:
           cache: 'maven'
 
       - name: Install Snapshot Liquibase
-        if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
@@ -301,7 +284,7 @@ jobs:
 
   test:
     runs-on: ubuntu-20.04
-    needs: [ setup ]
+    needs: [ setup, authorize ]
     strategy:
       fail-fast: false
       matrix:
@@ -331,7 +314,6 @@ jobs:
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
 
       - name: Configure Liquibase Version
-        if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
@@ -357,7 +339,7 @@ jobs:
   finish:
     name: Finish
     runs-on: ubuntu-22.04
-    needs: [ setup, test ]
+    needs: [ setup, test, authorize ]
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4

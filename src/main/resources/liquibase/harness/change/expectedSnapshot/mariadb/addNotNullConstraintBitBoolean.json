@@ -16,7 +16,7 @@
             "name": "boolean_col",
             "nullable": false,
             "type": {
-              "typeName": "TINYINT"
+              "typeName": "BOOLEAN"
             }
           }
         }
