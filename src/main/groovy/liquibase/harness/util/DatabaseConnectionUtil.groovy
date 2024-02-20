@@ -1,5 +1,6 @@
 package liquibase.harness.util
 
+import liquibase.Scope
 import liquibase.changelog.ChangeLogHistoryServiceFactory
 import liquibase.database.Database
 import liquibase.database.DatabaseConnection
@@ -96,7 +97,7 @@ class DatabaseConnectionUtil {
         SnapshotGeneratorFactory.resetAll()
         LockServiceFactory.getInstance().resetAll()
         LockServiceFactory.getInstance().getLockService(database).init()
-        ChangeLogHistoryServiceFactory.getInstance().resetAll()
+        Scope.getCurrentScope().getSingleton(ChangeLogHistoryServiceFactory.class).getChangeLogService(database).reset()
         return database
     }
 }
