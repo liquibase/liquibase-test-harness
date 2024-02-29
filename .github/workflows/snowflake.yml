@@ -33,9 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           pip install localstack awscli-local
-          docker pull localstack/localstack-pro
-          localstack extensions install localstack-extension-snowflake
-          DEBUG=1 DOCKER_FLAGS='-e SF_LOG=trace' localstack start -d
+          IMAGE_NAME=localstack/snowflake DEBUG=1 DOCKER_FLAGS='-e SF_LOG=trace' localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait
           echo "Startup complete"
