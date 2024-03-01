@@ -50,6 +50,9 @@ case $db in
   "postgres-15" )
     test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=15 test
     ;;
+  "postgres-16" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=16 test
+    ;;
   "mariadb-10.2" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mariadb -DdbVersion=10.2 test
     ;;
