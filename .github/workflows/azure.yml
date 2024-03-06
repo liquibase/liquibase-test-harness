@@ -161,7 +161,7 @@ jobs:
 
   postgresql-flexible-test:
     name: PostgreSQL Flexible Server Test
-    if: "contains(nputs.databases, 'postgresql:flexible')"
+    if: "contains(inputs.databases, 'postgresql:flexible')"
     runs-on: ubuntu-latest
     env:
       TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL: TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_${{ matrix.version }}_URL
