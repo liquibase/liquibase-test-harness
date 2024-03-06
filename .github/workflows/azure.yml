@@ -163,6 +163,8 @@ jobs:
     name: PostgreSQL Flexible Server Test
     needs: [setup]
     runs-on: ubuntu-latest
+    env:
+      TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL: TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_${{ matrix.version }}_URL
     strategy:
       matrix:
         version: [15, 16]
@@ -175,7 +177,7 @@ jobs:
         uses: liquibase-github-actions/drop-all@v4.26.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'flexible' }}
         with:
-          url: "${{ secrets['TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_' + matrix.version + '_URL'] }}"
+          url: ${{ secrets[env.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL] }}
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
@@ -189,13 +191,13 @@ jobs:
           changeLogFile: "postgresql.sql"
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
-          url: "${{ secrets['TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_' + matrix.version + '_URL'] }}"
+          url: ${{ secrets[env.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL] }}
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'flexible' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=flexible -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets['TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_' + matrix.version + '_URL'] }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=flexible -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets[env.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL] }}' test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@v4
