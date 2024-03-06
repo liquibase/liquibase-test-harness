@@ -161,7 +161,7 @@ jobs:
 
   postgresql-flexible-test:
     name: PostgreSQL Flexible Server Test
-    needs: [setup]
+    if: "contains(nputs.databases, 'postgresql:flexible')"
     runs-on: ubuntu-latest
     env:
       TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL: TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_${{ matrix.version }}_URL
@@ -172,15 +172,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Configure Test
-        id: setup
-        uses: actions/github-script@v7.0.1
-        with:
-          script: |
-            let splitValues = "${{ matrix.database }}".split(":")
-            core.setOutput("databasePlatform", splitValues[0]);
-            core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Azure PostgreSQL Flexible Server dropAll
         uses: liquibase-github-actions/drop-all@v4.26.0
