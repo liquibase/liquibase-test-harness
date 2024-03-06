@@ -173,6 +173,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Configure Test
+        id: setup
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            let splitValues = "${{ matrix.database }}".split(":")
+            core.setOutput("databasePlatform", splitValues[0]);
+            core.setOutput("databaseVersion", splitValues[1]);
+
       - name: Azure PostgreSQL Flexible Server dropAll
         uses: liquibase-github-actions/drop-all@v4.26.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'flexible' }}
