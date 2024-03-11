@@ -110,7 +110,7 @@ jobs:
           name: liquibase-test-harness
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           target_commitish: ${{ needs.build.outputs.releaseSha }}
           name: v${{ needs.setup.outputs.extensionVersion }}
