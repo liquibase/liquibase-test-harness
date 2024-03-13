@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
-        <liquibase-core.version>[4.22.0,)</liquibase-core.version>
+        <liquibase-core.version>[4.26.0,)</liquibase-core.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
     </properties>
     <organization>
