@@ -96,30 +96,10 @@ jobs:
           path: |
             target/*.jar
 
-
-  draft-release:
+  create-release:
     needs: [ setup, build ]
-    name: Draft Release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: liquibase-test-harness
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          target_commitish: ${{ needs.build.outputs.releaseSha }}
-          name: v${{ needs.setup.outputs.extensionVersion }}
-          tag_name: liquibase-test-harness-${{ needs.setup.outputs.extensionVersion }}
-          draft: true
-          body: In version ${{ needs.setup.outputs.extensionVersion }} we
-          files: liquibase-test-harness-*.jar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: liquibase/build-logic/.github/workflows/create-release.yml@v0.6.5
+    secrets: inherit
 
   bump-pom-to-snapshot:
     name: Prepare POM for Development
