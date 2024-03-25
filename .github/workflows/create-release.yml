@@ -98,7 +98,7 @@ jobs:
 
   create-release:
     needs: [ setup, build ]
-    uses: liquibase/build-logic/.github/workflows/create-release.yml@v0.6.6
+    uses: liquibase/build-logic/.github/workflows/create-release.yml@v0.6.7
     secrets: inherit
 
   bump-pom-to-snapshot:
