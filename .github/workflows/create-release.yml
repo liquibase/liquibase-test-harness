@@ -5,6 +5,9 @@ on:
       extensionVersion:
         description: 'Extension Version to release'
         required: true
+  push:
+    branches:
+      - main
 
 jobs:
   setup:
