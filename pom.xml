@@ -16,6 +16,8 @@
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
         <liquibase-core.version>[4.26.0,)</liquibase-core.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version>
     </properties>
     <organization>
         <name>Liquibase.org</name>
@@ -281,7 +283,7 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>${gmavenplus-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -289,7 +291,6 @@
                             <goal>addTestSources</goal>
                             <goal>compile</goal>
                             <goal>compileTests</goal>
-                            <goal>removeStubs</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -297,12 +298,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -381,10 +382,10 @@
     <profiles>
         <profile>
             <!-- Required for deployment to Sonatype -->
-            <id>release-sign-artifacts</id>
+            <id>release</id>
             <activation>
                 <property>
-                    <name>performRelease</name>
+                    <name>env.CI</name>
                     <value>true</value>
                 </property>
             </activation>
@@ -392,24 +393,30 @@
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.2</version>
-                        <configuration>
-                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>
-                            <gpgArguments>
-                                <!-- This is necessary for gpg to not try to use the pinentry programs -->
-                                <arg>--batch</arg>
-                                <arg>--no-tty</arg>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
                         <executions>
                             <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
+                                <id>attach-sources</id>
                                 <goals>
-                                    <goal>sign</goal>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.gmavenplus</groupId>
+                        <artifactId>gmavenplus-plugin</artifactId>
+                        <version>${gmavenplus-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>addSources</goal>
+                                    <goal>addTestSources</goal>
+                                    <goal>compile</goal>
+                                    <goal>compileTests</goal>
+                                    <goal>removeStubs</goal>
+                                    <goal>removeTestStubs</goal>
                                 </goals>
                             </execution>
                         </executions>
