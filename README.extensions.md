@@ -127,7 +127,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Start database container # Start the database container using Docker Compose
-        run: docker-compose -f src/test/resources/docker/docker-compose-${{ matrix.database-version }}.yml up -d
+        run: docker compose -f src/test/resources/docker/docker-compose-${{ matrix.database-version }}.yml up -d
 
       - name: Setup Temurin Java 17 # Set up Java 17 with Temurin distribution and cache the Maven packages
         uses: actions/setup-java@v3
@@ -155,7 +155,7 @@ jobs:
           fail-on-error: false # Set fail-on-error to false to show report even if it has failed tests
 
       - name: Stop database container # Stop the database container using Docker Compose
-        run: docker-compose -f src/test/resources/docker/docker-compose-${{ matrix.database-version }}.yml down
+        run: docker compose -f src/test/resources/docker/docker-compose-${{ matrix.database-version }}.yml down
 ```
 
 On Pull Request creation, each test level will run against each database version. If you would like to test for only a subset of Liquibase Verification Levels, simply remove the levels you do not wish to test against. 

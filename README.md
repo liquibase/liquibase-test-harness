@@ -272,7 +272,7 @@ Firebird, HyperSQL(HSQLDB), Microsoft SQL Server. Downgrade java and jdbc driver
 ## Running the Tests
 
 1) Make sure you have a docker container up and running first
-2) Go to `src/test/resources/docker` and run `docker-compose up -d`. 
+2) Go to `src/test/resources/docker` and run `docker compose up -d`. 
 Wait until the databases start up.
 3) Open `src/test/groovy/liquibase/harness/LiquibaseHarnessSuiteTest.groovy` in your IDE of choice and run it
 
@@ -299,7 +299,7 @@ To run the test suite itself, you can execute `mvn -Dtest=LiquibaseHarnessSuiteT
 
 ## Cleanup
 
-When you are done with test execution, run `docker-compose down --volumes` to stop the docker containers 
+When you are done with test execution, run `docker compose down --volumes` to stop the docker containers 
 gracefully and to allow the tests to start from a clean slate on the next run.
 
 ## Local testing
