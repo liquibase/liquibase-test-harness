@@ -16,7 +16,7 @@
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
         <liquibase-core.version>[4.26.0,)</liquibase-core.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version>
     </properties>
     <organization>
