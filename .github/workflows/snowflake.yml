@@ -20,6 +20,8 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
+          force: true
+          requireForce: true
 
       - uses: liquibase/liquibase-github-action@v7
         with:

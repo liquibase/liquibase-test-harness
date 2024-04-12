@@ -63,6 +63,8 @@ jobs:
           username: "${{ format('{0}@{1}', secrets.TH_DB_ADMIN, secrets.TH_AZURE_MYSQL_FQDN) }}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
+          force: true
+          requireForce: true
 
       - name: Init Azure MySQL Database
         uses: liquibase/liquibase-github-action@v7
@@ -103,6 +105,8 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
+          force: true
+          requireForce: true
 
       - name: Azure MSSQL init changelogs update
         uses: liquibase/liquibase-github-action@v7
@@ -123,6 +127,8 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
+          force: true
+          requireForce: true
 
       - name: Azure MSSQL MI init changelogs update
         uses: liquibase/liquibase-github-action@v7
@@ -143,6 +149,8 @@ jobs:
           username: "${{ format('{0}@{1}', secrets.TH_DB_ADMIN, secrets.TH_AZURE_POSTGRESQL_FQDN) }}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
+          force: true
+          requireForce: true
 
       - name: Azure PostgreSQL Single Server init changelogs update
         uses: liquibase/liquibase-github-action@v7
@@ -207,6 +215,8 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
+          force: true
+          requireForce: true
 
       - name: Azure PostgreSQL Flexible Server init changelogs update
         uses: liquibase/liquibase-github-action@v7

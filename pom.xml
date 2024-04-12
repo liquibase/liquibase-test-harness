@@ -16,7 +16,7 @@
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
         <liquibase-core.version>[4.26.0,)</liquibase-core.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version>
     </properties>
     <organization>
@@ -118,7 +118,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.16.0</version>
+            <version>2.16.1</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -184,7 +184,7 @@
         <dependency>
             <groupId>net.snowflake</groupId>
             <artifactId>snowflake-jdbc</artifactId>
-            <version>3.15.0</version>
+            <version>3.15.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -368,7 +368,7 @@
             <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
                 <artifactId>copy-rename-maven-plugin</artifactId>
-                <version>1.0</version>
+                <version>1.0.1</version>
                 <executions>
                     <execution>
                         <id>copy</id>
