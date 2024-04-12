@@ -12,7 +12,8 @@ src/test/resources/derby/lbcat/*
 src/test/resources/sqlite/*
 src/test/resources/H2/
 derby.log
-
+.classpath
+.settings/
 # Local .terraform directories
 **/.terraform/*
 
