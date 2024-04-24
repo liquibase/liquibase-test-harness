@@ -217,6 +217,38 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}/src/main/resources/drivers/edb/edb-jdbc18.jar</systemPath>
         </dependency>
+
+        <!-- bigquery -->
+        <dependency>
+            <groupId>com.simba.googlebigquery.jdbc</groupId>
+            <artifactId>GoogleBigQueryJDBC42</artifactId>
+            <version>4.2</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/drivers/bigquery/GoogleBigQueryJDBC42.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-bigquery</artifactId>
+            <version>2.35.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-bigquerystorage</artifactId>
+            <version>2.47.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client</artifactId>
+            <version>1.43.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client-jackson2</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <!-- end bigquery -->
+
         <dependency>
             <groupId>com.athaydes</groupId>
             <artifactId>spock-reports</artifactId>

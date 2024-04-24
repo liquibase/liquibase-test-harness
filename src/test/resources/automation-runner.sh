@@ -157,9 +157,12 @@ case $db in
     ;;
   "db2-luw")
       test_command mvn -ntp -Dtest=$tc -DdbName=db2-luw test
-      ;;
+    ;;
   "snowflake")
     test_command mvn -ntp -Dtest=$tc -DdbName=snowflake -DrollbackStrategy=rollbackByTag test
+    ;;
+  "bigquery")
+    test_command mvn -ntp -Dtest=$tc -DdbName=bigquery test
     ;;
 esac
 
