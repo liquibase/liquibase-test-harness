@@ -88,6 +88,9 @@ jobs:
           echo "TH_MARIADB_ENGINE=10.6" >> $GITHUB_ENV
           echo "TH_MSSQL_ENGINE=2019" >> $GITHUB_ENV
           echo "TH_MYSQL_ENGINE=8.0" >> $GITHUB_ENV
+          aws --version
+          pip --version
+          awslocal --version 
 
       - name: Configure Test
         id: setup
