@@ -5,11 +5,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet id="2" author="oleh">
-        <createView viewName="test_view" fullDefinition="true">
-            CREATE MATERIALIZED  VIEW "test_view" as (select id, first_name, last_name, email from authors)
+        <createView viewName="test_view">
+            select id, first_name, last_name, email from authors
         </createView>
         <rollback>
-            <dropView viewName="test_view" />
+            <dropView viewName="test_view"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
