@@ -71,6 +71,7 @@ jobs:
         env:
           LOCALSTACK_API_KEY: ${{ secrets.LOCALSTACK_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          RDS_MYSQL_DOCKER: 1     #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
         run: |
           pip install localstack awscli-local
           docker pull localstack/localstack-pro
@@ -100,7 +101,7 @@ jobs:
       - name: Init Aurora MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         run: |
-          awslocal rds create-db-cluster --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --engine-version ${{ env.TH_AURORA_MYSQL_ENGINE }} --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
+          awslocal rds create-db-cluster --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
           awslocal rds create-db-instance --db-instance-identifier aurora-mysql-primary-cluster-instance --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --db-instance-class db.t3.medium
           aurora_mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-mysql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           aurora_mysql_url="jdbc:mysql://localhost:$aurora_mysql_port/${{ env.TH_DB }}"
