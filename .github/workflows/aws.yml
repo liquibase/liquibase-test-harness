@@ -83,7 +83,6 @@ jobs:
           echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
           echo "TH_DB_PASSWD_MSSQL=Test.2024" >> $GITHUB_ENV
           echo "TH_DB=lbcat" >> $GITHUB_ENV  
-          echo "TH_AURORA_MYSQL_ENGINE=8.0" >> $GITHUB_ENV  
           echo "TH_AURORA_POSTGRESQL_ENGINE=16" >> $GITHUB_ENV
           echo "TH_MARIADB_ENGINE=10.6" >> $GITHUB_ENV
           echo "TH_MSSQL_ENGINE=2019" >> $GITHUB_ENV
