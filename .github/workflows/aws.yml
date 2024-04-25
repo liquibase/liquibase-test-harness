@@ -54,7 +54,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5.1.0
         with:
-          python-version: '3.12.3'
+          python-version: '3.11.5'
     
       - name: Install liquibase and lpm
         run: |
@@ -88,12 +88,6 @@ jobs:
           echo "TH_MARIADB_ENGINE=10.6" >> $GITHUB_ENV
           echo "TH_MSSQL_ENGINE=2019" >> $GITHUB_ENV
           echo "TH_MYSQL_ENGINE=8.0" >> $GITHUB_ENV
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
-          aws --version
-          pip --version
-          awslocal --version 
 
       - name: Configure Test
         id: setup
@@ -107,7 +101,7 @@ jobs:
       - name: Init Aurora MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         run: |
-          awslocal rds create-db-cluster --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --engine-version ${{ env.TH_AURORA_MYSQL_ENGINE }} --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
+          awslocal rds create-db-cluster --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
           awslocal rds create-db-instance --db-instance-identifier aurora-mysql-primary-cluster-instance --db-cluster-identifier aurora-mysql-primary-cluster --engine aurora-mysql --db-instance-class db.t3.medium
           aurora_mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-mysql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           aurora_mysql_url="jdbc:mysql://localhost:$aurora_mysql_port/${{ env.TH_DB }}"
