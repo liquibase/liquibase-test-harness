@@ -30,6 +30,21 @@ references:
     referenceDatabaseName: postgresql
     referenceDatabaseVersion: 14
 
+  - targetDatabaseName: mariadb
+    targetDatabaseVersion: 10.6
+    referenceDatabaseName: mariadb
+    referenceDatabaseVersion: 10.7
+
+  - targetDatabaseName: mariadb
+    targetDatabaseVersion: 10.4
+    referenceDatabaseName: mariadb
+    referenceDatabaseVersion: 10.5
+
+  - targetDatabaseName: mariadb
+    targetDatabaseVersion: 10.2
+    referenceDatabaseName: mariadb
+    referenceDatabaseVersion: 10.3
+
   - targetDatabaseName: mssql
     targetDatabaseVersion: 2017
     referenceDatabaseName: mssql
