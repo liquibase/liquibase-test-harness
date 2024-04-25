@@ -54,7 +54,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5.1.0
         with:
-          python-version: '3.11.5'
+          python-version: '3.12.3'
     
       - name: Install liquibase and lpm
         run: |
@@ -90,7 +90,7 @@ jobs:
           echo "TH_MYSQL_ENGINE=8.0" >> $GITHUB_ENV
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
-          sudo ./aws/install
+          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
           aws --version
           pip --version
           awslocal --version 
