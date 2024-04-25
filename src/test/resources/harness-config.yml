@@ -37,34 +37,6 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-  - name: postgresql
-    prefix: docker
-    version: 11
-    url: jdbc:postgresql://localhost:5435/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: postgresql
-    prefix: docker
-    version: 10
-    url: jdbc:postgresql://localhost:5434/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: postgresql
-    prefix: docker
-    version: 9
-    url: jdbc:postgresql://localhost:5433/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: postgresql
-    prefix: docker
-    version: 9.5
-    url: jdbc:postgresql://localhost:5432/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
   - name: mysql
     prefix: docker
     version: 5.6

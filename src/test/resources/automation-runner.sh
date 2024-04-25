@@ -26,18 +26,6 @@ case $db in
   "percona-xtradb-cluster-8.0" )
     test_command mvn -ntp -Dtest=$tc -DdbName=percona-xtradb-cluster -DdbVersion=8.0 test
     ;;
-  "postgres-9.5" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=9.5 test
-    ;;
-  "postgres-9" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=9 test
-    ;;
-  "postgres-10" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=10 test
-    ;;
-  "postgres-11" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=11 test
-    ;;
   "postgres-12" )
     test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=12 test
     ;;
