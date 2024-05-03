@@ -3,7 +3,7 @@ version: '3.5'
 services:
 
   # Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected. 
-  # If you do not login privileges to this private repo then you will encounter authentication errors if you run `docker-compose up` on this docker-compose file.
+  # If you do not login privileges to this private repo then you will encounter authentication errors if you run `docker compose up` on this docker compose file.
   edb-postgres-9.5:
     image: docker-dev.artifactory.datical.net/datical/datical-enterprisedb-ppas95:latest
     ports:
