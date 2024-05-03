@@ -36,7 +36,7 @@ jobs:
       - name: Build Oracle Artifactory test infra
         if: ${{ matrix.plan == '19.3.0' }}
         working-directory: src/test/resources/docker/oracle-artifactory
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Build Oracle XE test infra
         if: ${{ matrix.plan != '19.3.0' }}
@@ -44,7 +44,7 @@ jobs:
         run: |
           # Constructing service name from version
           SERVICE_NAME="oracle-xe-${{ matrix.plan }}"
-          docker-compose up -d $SERVICE_NAME
+          docker compose up -d $SERVICE_NAME
 
       # Adding sleep to avoid ORA-12514 error when database & listeners are still in the middle of startup
       - name: Sleep for 180 seconds
@@ -67,8 +67,8 @@ jobs:
 
       - name: Tear down Oracle test infra
         working-directory: src/test/resources/docker/oracle-artifactory
-        run: docker-compose down --volumes
+        run: docker compose down --volumes
 
       - name: Tear down Oracle XE test infra
         working-directory: src/test/resources/docker/oracle-xe
-        run: docker-compose down --volumes
+        run: docker compose down --volumes

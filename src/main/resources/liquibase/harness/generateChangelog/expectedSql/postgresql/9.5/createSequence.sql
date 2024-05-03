@@ -1,1 +1,0 @@
-CREATE SEQUENCE  IF NOT EXISTS "test_sequence";
