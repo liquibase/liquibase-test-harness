@@ -4,7 +4,7 @@
       "com.datical.liquibase.ext.storedlogic.trigger.Trigger": [
         {
           "trigger": {
-            "body": "CREATE TRIGGER test_trigger BEFORE UPDATE ON posts FOR EACH ROW BEGIN END",
+            "body": "CREATE TRIGGER test_trigger BEFORE UPDATE ON posts FOR EACH ROW BEGIN END/n",
             "disabled": false,
             "name": "test_trigger",
             "tableName": "posts",
