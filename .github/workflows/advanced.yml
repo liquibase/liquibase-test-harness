@@ -206,9 +206,9 @@ jobs:
         working-directory: src/test/resources/docker
         run: ./create-infra.sh ${{ matrix.database }}
         env:
-          ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+          REPO_URL: ${{ secrets.REPO_URL }}
+          REPO_USER: ${{ secrets.REPO_USER }}
+          REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
 
       - name: Configure Liquibase Version
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
