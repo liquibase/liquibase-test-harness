@@ -42,15 +42,13 @@ jobs:
     secrets: inherit
     with:
         deploy: true
-        aws_postgresql: ${{ contains(inputs.databases, 'postgresql') }}
+        aws_postgresql: ${{ !contains(inputs.databases, 'postgresql:aurora') && contains(inputs.databases, 'postgresql') }}
         aws_oracle: ${{ contains(inputs.databases, 'oracle') }}
         aws_mariadb: ${{ contains(inputs.databases, 'mariadb') }}
         aws_aurora_mysql: ${{ contains(inputs.databases, 'mysql:aurora') }}
         aws_mssql: ${{ contains(inputs.databases, 'mssql') }}
         aws_aurora_postgres: ${{ contains(inputs.databases, 'postgresql:aurora') }}
         aws_mysql: ${{ contains(inputs.databases, 'mysql:aws') }}
-
-        
 
   init-mysql:
     runs-on: ubuntu-latest
@@ -303,4 +301,3 @@ jobs:
         aws_mssql: ${{ contains(inputs.databases, 'mssql') }}
         aws_aurora_postgres: ${{ contains(inputs.databases, 'postgresql:aurora') }}
         aws_mysql: ${{ contains(inputs.databases, 'mysql:aws') }}
-        
