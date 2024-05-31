@@ -51,6 +51,7 @@ jobs:
 
   init-mysql:
     runs-on: ubuntu-latest
+    needs: [deploy-ephemeral-cloud-infra]
     permissions:
       contents: read
       id-token: write
@@ -77,10 +78,17 @@ jobs:
             aws-region: us-east-1
 
       - name: Get AWS secrets
+        if: ${{ matrix.version == 'aws' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
             secret-ids: |
                 TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+
+      - name: Get AWS secrets
+        if: ${{ matrix.version == 'aurora' }}
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+            secret-ids: |
                 TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       #This additional init step is required because of mysql driver issue on GH actions
