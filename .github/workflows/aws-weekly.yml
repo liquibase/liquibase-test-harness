@@ -37,11 +37,11 @@ jobs:
         uses: actions/checkout@v4
 
   deploy-ephemeral-cloud-infra:
-    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@DAT-17834
+    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@master
     secrets: inherit
     with:
         deploy: true
-        aws_postgresql: ${{ !contains(inputs.databases, 'postgresql:aurora') && contains(inputs.databases, 'postgresql') }}
+        aws_postgresql: ${{ contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
         aws_oracle: ${{ contains(inputs.databases, 'oracle') }}
         aws_mariadb: ${{ contains(inputs.databases, 'mariadb') }}
         aws_aurora_mysql: ${{ contains(inputs.databases, 'mysql:aurora') }}
@@ -352,12 +352,12 @@ jobs:
   destroy-ephemeral-cloud-infra:
     if: always()
     needs: [ deploy-ephemeral-cloud-infra, test ]
-    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@DAT-17834
+    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@master
     secrets: inherit
     with:
         destroy: true
         stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
-        aws_postgresql: ${{ !contains(inputs.databases, 'postgresql:aurora') && contains(inputs.databases, 'postgresql') }}
+        aws_postgresql: ${{ contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
         aws_oracle: ${{ contains(inputs.databases, 'oracle') }}
         aws_mariadb: ${{ contains(inputs.databases, 'mariadb') }}
         aws_aurora_mysql: ${{ contains(inputs.databases, 'mysql:aurora') }}
