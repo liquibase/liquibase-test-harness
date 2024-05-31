@@ -294,7 +294,7 @@ jobs:
     with:
         destroy: true
         stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
-        aws_postgresql: ${{ contains(inputs.databases, 'postgresql') }}
+        aws_postgresql: ${{ !contains(inputs.databases, 'postgresql:aurora') && contains(inputs.databases, 'postgresql') }}
         aws_oracle: ${{ contains(inputs.databases, 'oracle') }}
         aws_mariadb: ${{ contains(inputs.databases, 'mariadb') }}
         aws_aurora_mysql: ${{ contains(inputs.databases, 'mysql:aurora') }}
