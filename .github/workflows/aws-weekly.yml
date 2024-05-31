@@ -48,6 +48,7 @@ jobs:
         aws_aurora_mysql: ${{ contains(inputs.databases, 'mysql:aurora') }}
         aws_mssql: ${{ contains(inputs.databases, 'mssql') }}
         aws_aurora_postgres: ${{ contains(inputs.databases, 'postgresql:aurora') }}
+        aws_mysql: ${{ contains(inputs.databases, 'mysql:aws') }}
 
         
 
@@ -301,3 +302,5 @@ jobs:
         aws_aurora_mysql: ${{ contains(inputs.databases, 'mysql:aurora') }}
         aws_mssql: ${{ contains(inputs.databases, 'mssql') }}
         aws_aurora_postgres: ${{ contains(inputs.databases, 'postgresql:aurora') }}
+        aws_mysql: ${{ contains(inputs.databases, 'mysql:aws') }}
+        
