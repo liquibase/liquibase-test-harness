@@ -78,14 +78,14 @@ jobs:
             aws-region: us-east-1
 
       - name: Get AWS secrets
-        if: ${{ matrix.version == 'aws' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
             secret-ids: |
                 TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
-        if: ${{ matrix.version == 'aurora' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
             secret-ids: |
@@ -97,7 +97,7 @@ jobs:
 
       - name: Clean AWS MySQL Database
         uses: liquibase-github-actions/drop-all@v4.25.1
-        if: ${{ matrix.version == 'aws' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
         with:
           url: "${{ env.TH_MYSQLURL_8_0 }}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -105,12 +105,12 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - name: Init Database
-        if: ${{ matrix.version == 'aws' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_MYSQLURL_8_0 }}" update
 
       - name: Clean Aurora MySQL Database
         uses: liquibase-github-actions/drop-all@v4.25.1
-        if: ${{ matrix.version == 'aurora' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         with:
           url: "${{ env.TH_AURORA_MYSQLURL }}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -118,7 +118,7 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
 
       - name: Init Database
-        if: ${{ matrix.version == 'aurora' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
 
   test:
