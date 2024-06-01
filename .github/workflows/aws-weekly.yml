@@ -87,14 +87,14 @@ jobs:
                 core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Get AWS secrets
-        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
+        if: ${{ matrix.version == 'aws' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
             secret-ids: |
                 TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
-        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        if: ${{ matrix.version == 'aurora' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
             secret-ids: |
@@ -105,11 +105,11 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Init Database
-        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
+        if: ${{ matrix.version == 'aws' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_MYSQLURL_8_0 }}" update
 
       - name: Init Database
-        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        if: ${{ matrix.version == 'aurora' }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
 
   test:
