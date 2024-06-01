@@ -87,6 +87,7 @@ jobs:
                 core.setOutput("databaseVersion", splitValues[1]);
 
 
+
   test:
     needs: [deploy-ephemeral-cloud-infra, init-mysql, setup]
     permissions:
