@@ -101,16 +101,7 @@ jobs:
                 TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       #This additional init step is required because of mysql driver issue on GH actions
-      - name: Install Dependencies
-        run: lpm update && lpm add mysql
 
-      - name: Init Database
-        if: ${{ matrix.version == 'aws' && matrix.database == 'mysql'}}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}_cloud.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_MYSQLURL_8_0 }}" update
-
-      - name: Init Database
-        if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql'}}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}_cloud.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
 
   test:
     needs: [deploy-ephemeral-cloud-infra, init-mysql, setup]
