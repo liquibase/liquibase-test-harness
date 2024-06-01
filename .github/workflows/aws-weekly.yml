@@ -131,7 +131,7 @@ jobs:
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
 
   test:
-    needs: [init-mysql, setup]
+    needs: [deploy-ephemeral-cloud-infra, init-mysql, setup]
     permissions:
         contents: read
         id-token: write
