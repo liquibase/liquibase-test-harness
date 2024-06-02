@@ -207,12 +207,7 @@ jobs:
 
       - name: Run sqlcmd
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        run: |
-            original_value="${{ env.TH_MSSQLURL_HOST }}"
-            transformed_value="${original_value/:/,}"
-            echo "Transformed value: $transformed_value"
-            echo "TH_MSSQLURL_HOST_TRANSFORMED=$transformed_value" >> $GITHUB_ENV
-            sqlcmd -S ${{ env.TH_MSSQLURL_HOST_TRANSFORMED }} -U ${{secrets.TH_DB_ADMIN}} -P ${{secrets.TH_DB_PASSWD}} -Q "CREATE DATABASE lbcat"
+        run: sqlcmd -S ${{ env.TH_MSSQLURL_HOST }} -U ${{secrets.TH_DB_ADMIN}} -P ${{secrets.TH_DB_PASSWD}} -Q "CREATE DATABASE lbcat"
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
