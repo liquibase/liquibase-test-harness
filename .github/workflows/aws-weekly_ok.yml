@@ -23,14 +23,14 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"mssql:2019\"]"
+        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:2019\",\"postgresql:aurora\"]"
 
 jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["mssql:2019"]' }}
+      databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","oracle:aws_19","mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:2019","postgresql:aurora"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
@@ -85,6 +85,32 @@ jobs:
                 let splitValues = "${{ matrix.database }}".split(":")
                 core.setOutput("databasePlatform", splitValues[0]);
                 core.setOutput("databaseVersion", splitValues[1]);
+
+      - name: Get AWS secrets
+        if: ${{ matrix.version == 'aws' && matrix.database == 'mysql'}}
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+            secret-ids: |
+                TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+
+      - name: Get AWS secrets
+        if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql'}}
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+            secret-ids: |
+                TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+
+      #This additional init step is required because of mysql driver issue on GH actions
+      - name: Install Dependencies
+        run: lpm update && lpm add mysql
+
+      - name: Init Database
+        if: ${{ matrix.version == 'aws' && matrix.database == 'mysql'}}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}_cloud.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_MYSQLURL_8_0 }}" update
+
+      - name: Init Database
+        if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql'}}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}_cloud.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
 
   test:
     needs: [deploy-ephemeral-cloud-infra, init-mysql, setup]
@@ -198,16 +224,6 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ env.TH_MARIADBURL_10_6 }}"
 
-      - name: Install a SQL Server suite of tools
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: potatoqualitee/mssqlsuite@v1.7
-        with:
-            install: sqlengine, sqlclient, sqlpackage
-
-      - name: Run sqlcmd
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        run: sqlcmd -S ${{ env.TH_MSSQLURL }} -U ${{secrets.TH_DB_ADMIN}} -P ${{secrets.TH_DB_PASSWD}} -d tempdb -Q "CREATE DATABASE lbcat"
-
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
@@ -284,3 +300,18 @@ jobs:
           name: aws-rds-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
           path: build/spock-reports
 
+  destroy-ephemeral-cloud-infra:
+    if: always()
+    needs: [ deploy-ephemeral-cloud-infra, test ]
+    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@DAT-17834
+    secrets: inherit
+    with:
+        destroy: true
+        stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
+        aws_postgresql: ${{ contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
+        aws_oracle: ${{ contains(inputs.databases, 'oracle') }}
+        aws_mariadb: ${{ contains(inputs.databases, 'mariadb') }}
+        aws_aurora_mysql: ${{ contains(inputs.databases, 'mysql:aurora') }}
+        aws_mssql: ${{ contains(inputs.databases, 'mssql') }}
+        aws_aurora_postgres: ${{ contains(inputs.databases, 'postgresql:aurora') }}
+        aws_mysql: ${{ contains(inputs.databases, 'mysql:aws') }}

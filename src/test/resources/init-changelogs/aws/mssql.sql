@@ -1,9 +1,7 @@
 --liquibase formatted sql
 --changeset liquibase:1 runAlways:true
-USE master;
-CREATE DATABASE lbcat;
+USE [lbcat]
 GO
-USE NewDB;
 DROP TABLE IF EXISTS [dbo].[authors]
 CREATE TABLE [dbo].[authors](
     [id] [int] NOT NULL,
