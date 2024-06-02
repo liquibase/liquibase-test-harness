@@ -160,6 +160,7 @@ jobs:
         with:
             secret-ids: |
                 TH_MSSQLURL, /testautomation/db_details/aws_mssql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+                TH_MSSQLURL_HOST, /testautomation/db_details/aws_mssql_host${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
@@ -206,7 +207,7 @@ jobs:
 
       - name: Run sqlcmd
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        run: sqlcmd -S ${{ env.TH_MSSQLURL }} -U ${{secrets.TH_DB_ADMIN}} -P ${{secrets.TH_DB_PASSWD}} -d tempdb -Q "CREATE DATABASE lbcat"
+        run: sqlcmd -S ${{ env.TH_MSSQLURL_HOST }} -U ${{secrets.TH_DB_ADMIN}} -P ${{secrets.TH_DB_PASSWD}} -Q "CREATE DATABASE lbcat"
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
