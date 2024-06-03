@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v4
 
   deploy-ephemeral-cloud-infra:
-    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@DAT-17834
+    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
     secrets: inherit
     with:
         deploy: true
@@ -301,7 +301,7 @@ jobs:
   destroy-ephemeral-cloud-infra:
     if: always()
     needs: [ deploy-ephemeral-cloud-infra, test ]
-    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@DAT-17834
+    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
     secrets: inherit
     with:
         destroy: true
