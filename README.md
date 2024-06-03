@@ -7,21 +7,21 @@
 | Database                  | Versions Tested                       | Verification Level             |
 |---------------------------|---------------------------------------|--------------------------------|
 | Aurora MySQL              | `8`                                   | Advanced                       | 
-| Aurora Postgres           | `14`                                  | Advanced                       |
-| AWS Postgres RDS          | `11, 12, 13, 14`                      | Advanced                       |
+| Aurora Postgres           | `14, 16`                              | Advanced                       |
+| AWS Postgres RDS          | `12, 13, 14, 16`                      | Advanced                       |
 | AWS Oracle RDS            | `19.0`                                | Advanced                       |
 | AWS MySQL                 | `8`                                   | Advanced                       |
 | AWS MariaDB               | `10.6`                                | Advanced                       |
 | AWS SQL Server            | `2019`                                | Advanced                       |
 | Azure SQL DB              | `latest`                              | Advanced                       |
 | Azure SQL MI              | `latest`                              | BaseHarnessSuite               |
-| Azure PostgreSQL SS       | `11`                                  | Advanced                       |
-| Azure PostgreSQL FlS      | `14`                                  | Advanced                       |
-| GCP PostgreSQL            | `11, 12, 13, 14`                      | Advanced                       |
+| Azure PostgreSQL SS       | `15, 16`                              | Advanced                       |
+| Azure PostgreSQL FlS      | `14, 15, 16`                          | Advanced                       |
+| GCP PostgreSQL            | `12, 13, 14`                          | Advanced                       |
 | GCP MySQL                 | `8`                                   | Advanced                       |
 | GCP SQL Server            | `2019`                                | Advanced                       |
 | MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` | Advanced                       |
-| Postgres                  | `9, 9.5, 10, 11, 12, 13, 14, 15`      | Advanced                       |
+| Postgres                  | `12, 13, 14, 15, 16`                  | Advanced                       |
 | MySQL                     | `5.6, 5.7, 8`                         | Advanced                       |
 | SQL Server                | `2017`, `2019`, `2022`                | Advanced                       |
 | Percona XtraDB            | `5.7`, `8.0`                          | Advanced                       |

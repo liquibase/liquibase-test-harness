@@ -31,7 +31,7 @@ jobs:
           cache: 'maven'
 
       - name: Docker login to retrive Oracle images from private repo
-        run: docker login "${{ secrets.ARTIFACTORY_URL }}" -u "${{ secrets.ARTIFACTORY_USER }}" -p "${{ secrets.ARTIFACTORY_TOKEN }}"
+        run: docker login "${{ secrets.REPO_URL }}" -u "${{ secrets.REPO_USER }}" -p "${{ secrets.REPO_PASSWORD }}"
 
       - name: Build Oracle Artifactory test infra
         if: ${{ matrix.plan == '19.3.0' }}
