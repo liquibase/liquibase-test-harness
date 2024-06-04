@@ -80,6 +80,13 @@ databasesUnderTest:
     password: PASSWORD
 
   - name: postgresql
+    prefix: aurora
+    version: 16
+    url: DBENDPOINT
+    username: USERNAME
+    password: PASSWORD
+
+  - name: postgresql
     prefix: azure
     version: azure
     url: DBENDPOINT
