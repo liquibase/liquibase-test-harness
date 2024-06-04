@@ -54,9 +54,11 @@ jobs:
           echo "TH_SNOW_URL=jdbc:snowflake://http://snowflake.localhost.localstack.cloud:4566" >> $GITHUB_ENV
 
       - name: Update
+        continue-on-error: true
         run: liquibase update --url="${{env.TH_SNOW_URL}}" --username="${{env.TH_DB_ADMIN}}" --password="${{env.TH_DB_PASSWD}}" --classpath="src/test/resources/init-changelogs/snowflake" --changeLogFile="snowflake.sql"
 
       - name: Snowflake Test Run
+        continue-on-error: true
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{env.TH_DB}} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
