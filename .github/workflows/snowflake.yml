@@ -62,10 +62,12 @@ jobs:
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{env.TH_DB}} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
 
       - name: Update
+        continue-on-error: true
         if: always()
         run: curl -s localhost:4566/_localstack/diagnose | gzip -cf > diagnose.json.gz
 
       - name: Update
+        continue-on-error: true
         if: always()
         run: curl -s snowflake.localhost.localstack.cloud:4566/_localstack/diagnose | gzip -cf > diagnose.json.gz
 
