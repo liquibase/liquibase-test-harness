@@ -1,0 +1,291 @@
+# Terraform Action to test Cloud Databases with test-harness
+
+name: AWS Weekly Cloud Database Test Execution
+concurrency: aws-run
+on:
+  # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
+  # Execute every sunday at 6:00 AM
+  schedule:
+    - cron: '0 6 * * 0'
+  workflow_dispatch:
+    inputs:
+      testClasses:
+        type: choice
+        description: Test Suite or test class to run
+        options:
+          - LiquibaseHarnessSuiteTest
+          - FoundationalHarnessSuiteTest
+          - AdvancedHarnessSuiteTest
+          - ChangeObjectTests
+          - ChangeDataTests
+          - SnapshotObjectTests
+          - GenerateChangelogTest
+          - FoundationalTest
+      databases:
+        description: Databases to start up. Comma separated list of "name:version"
+        required: true
+        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:2019\",\"postgresql:aurora\"]"
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","oracle:aws_19","mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:2019","postgresql:aurora"]' }}
+      testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+  deploy-ephemeral-cloud-infra:
+    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@DAT-17834
+    secrets: inherit
+    with:
+        deploy: true
+        aws_test_harness: true
+
+  init-mysql:
+    runs-on: ubuntu-latest
+    needs: [deploy-ephemeral-cloud-infra]
+    container:
+      image: liquibase/liquibase:latest
+      env:
+        LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - database: mysql
+            version: aws
+          - database: mysql
+            version: aurora
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            role-to-assume: ${{ secrets.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
+            aws-region: us-east-1
+
+      - name: Get AWS secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+            secret-ids: |
+                TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+                TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+                TH_ORACLEURL_19, /testautomation/db_details/aws_oracle_19_jdbc${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+                TH_PGRESURL_12, /testautomation/db_details/aws_postgresql_12_jdbc${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+                TH_PGRESURL_13, /testautomation/db_details/aws_postgresql_13_jdbc${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+                TH_PGRESURL_14, /testautomation/db_details/aws_postgresql_14_jdbc${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+                TH_MARIADBURL_10_6, /testautomation/db_details/aws_mariadb_jdbc${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+                TH_MSSQLURL, /testautomation/db_details/aws_mssql_jdbc${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+                TH_AURORA_POSTGRESQLURL, /testautomation/db_details/aurora_postgresql_jdbc${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+
+      #This additional init step is required because of mysql driver issue on GH actions
+      - name: Install Dependencies
+        run: lpm update && lpm add mysql
+
+      - name: Clean AWS MySQL Database
+        uses: liquibase-github-actions/drop-all@v4.25.1
+        if: ${{ matrix.version == 'aws' }}
+        with:
+          url: "${{ env.TH_MYSQLURL_8_0 }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - name: Init Database
+        if: ${{ matrix.version == 'aws' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_MYSQLURL_8_0 }}" update
+
+      - name: Clean Aurora MySQL Database
+        uses: liquibase-github-actions/drop-all@v4.25.1
+        if: ${{ matrix.version == 'aurora' }}
+        with:
+          url: "${{ env.TH_AURORA_MYSQLURL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - name: Init Database
+        if: ${{ matrix.version == 'aurora' }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}.sql" --username="${{ secrets.TH_DB_ADMIN }}" --password="${{ secrets.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
+
+  test:
+    needs: [init-mysql, setup]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        database: ${{ fromJson(needs.setup.outputs.databases) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Test
+        id: setup
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            let splitValues = "${{ matrix.database }}".split(":")
+            core.setOutput("databasePlatform", splitValues[0]);
+            core.setOutput("databaseVersion", splitValues[1]);
+
+      - uses: liquibase-github-actions/drop-all@v4.25.1
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        with:
+          url: "${{ env.TH_ORACLEURL_19 }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "oracle.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ env.TH_ORACLEURL_19 }}"
+
+      - uses: liquibase-github-actions/drop-all@v4.25.1
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
+        with:
+          url: "${{ env[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "postgresql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ env[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
+
+      - uses: liquibase-github-actions/drop-all@v4.25.1
+        if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
+        with:
+          url: "${{ env.TH_MARIADBURL_10_6 }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "mariadb.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ env.TH_MARIADBURL_10_6 }}"
+
+      - uses: liquibase-github-actions/drop-all@v4.25.1
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        with:
+          url: "${{ env.TH_MSSQLURL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "mssql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ env.TH_MSSQLURL }}"
+
+      - uses: liquibase-github-actions/drop-all@v4.25.1
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        with:
+          url: "${{ env.TH_AURORA_POSTGRESQLURL }}"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          licenseKey: "${{secrets.LICENSE_KEY}}"
+
+      - uses: liquibase/liquibase-github-action@v7
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        with:
+          operation: "update"
+          classpath: "src/test/resources/init-changelogs/aws"
+          changeLogFile: "postgresql.sql"
+          username: "${{secrets.TH_DB_ADMIN}}"
+          password: "${{secrets.TH_DB_PASSWD}}"
+          url: "${{ env.TH_AURORA_POSTGRESQLURL }}"
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}' test
+
+      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_ORACLEURL_19 }}' test
+
+      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_MARIADBURL_10_6 }}'  test
+
+      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_MYSQLURL_8_0 }}' test
+
+      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_MSSQLURL }}' test
+
+      - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_MYSQLURL }}' test
+
+      - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=13 -Dprefix=aurora -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_POSTGRESQLURL }}' test
+
+      - name: Archive AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: aws-rds-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
+          path: build/spock-reports
+
+  destroy-ephemeral-cloud-infra:
+    if: always()
+    needs: [ deploy-ephemeral-cloud-infra, test ]
+    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@DAT-17834
+    secrets: inherit
+    with:
+        destroy: true
+        stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
+        aws_test_harness: true

@@ -5,7 +5,7 @@ concurrency: aws-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
-    - cron: '0 6 * * *' # Execute every day at noon
+    - cron: '0 6 * * *' # Execute every day at 6AM UTC
   workflow_dispatch:
     inputs:
       testClasses:
@@ -75,7 +75,8 @@ jobs:
         run: |
           pip install localstack awscli-local
           docker pull localstack/localstack-pro
-          DOCKER_FLAGS='-e MSSQL_ACCEPT_EULA=Y' localstack start -d
+          docker pull mcr.microsoft.com/mssql/server:2019-latest
+          DOCKER_FLAGS='-e MSSQL_ACCEPT_EULA=Y -e MSSQL_IMAGE=mcr.microsoft.com/mssql/server:2019-latest' localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
