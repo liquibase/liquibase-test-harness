@@ -33,7 +33,7 @@ jobs:
             role-to-assume: ${{ secrets.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
             aws-region: us-east-1
     
-      - name: Get LIQUIBASEPRO secrets
+      - name: Get LIQUIBASETH secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
