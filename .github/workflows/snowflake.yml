@@ -60,12 +60,12 @@ jobs:
           name: snowflake-test-results
           path: build/spock-reports
 
-      destroy-ephemeral-cloud-infra:
-        if: always()
-        needs: [ deploy-ephemeral-cloud-infra, test ]
-        uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
-        secrets: inherit
-        with:
-            destroy: true
-            stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
-            snowflake_th: true
+  destroy-ephemeral-cloud-infra:
+    if: always()
+    needs: [ deploy-ephemeral-cloud-infra, test ]
+    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
+    secrets: inherit
+    with:
+        destroy: true
+        stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
+        snowflake_th: true
