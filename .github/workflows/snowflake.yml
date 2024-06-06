@@ -72,6 +72,18 @@ jobs:
         continue-on-error: true
         if: always()
         run: curl -s snowflake.localhost.localstack.cloud:4566/_localstack/diagnose | gzip -cf > diagnose.json.gz
+        
+      - name: Get logs from the localstack-main container
+        if: always()
+        run: |
+          docker logs localstack-main > localstack-main.log
+          
+      - name: Archive LocalStack logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: localstack-logs
+          path: localstack-main.log
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
