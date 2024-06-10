@@ -41,13 +41,13 @@ jobs:
     secrets: inherit
     with:
         deploy: true
-        aws_postgresql: ${{ contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
-        aws_oracle: ${{ contains(inputs.databases, 'oracle') }}
-        aws_mariadb: ${{ contains(inputs.databases, 'mariadb') }}
-        aws_aurora_mysql: ${{ contains(inputs.databases, 'mysql:aurora') }}
-        aws_mssql: ${{ contains(inputs.databases, 'mssql') }}
-        aws_aurora_postgres: ${{ contains(inputs.databases, 'postgresql:aurora') }}
-        aws_mysql: ${{ contains(inputs.databases, 'mysql:aws') }}
+        aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
+        aws_oracle: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'oracle') }}
+        aws_mariadb: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mariadb') }}
+        aws_aurora_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aurora') }}
+        aws_mssql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mssql') }}
+        aws_aurora_postgres: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:aurora') }}
+        aws_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aws') }}
 
   init-mysql:
     runs-on: ubuntu-latest
@@ -316,10 +316,10 @@ jobs:
     with:
         destroy: true
         stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
-        aws_postgresql: ${{ contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
-        aws_oracle: ${{ contains(inputs.databases, 'oracle') }}
-        aws_mariadb: ${{ contains(inputs.databases, 'mariadb') }}
-        aws_aurora_mysql: ${{ contains(inputs.databases, 'mysql:aurora') }}
-        aws_mssql: ${{ contains(inputs.databases, 'mssql') }}
-        aws_aurora_postgres: ${{ contains(inputs.databases, 'postgresql:aurora') }}
-        aws_mysql: ${{ contains(inputs.databases, 'mysql:aws') }}
+        aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
+        aws_oracle: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'oracle') }}
+        aws_mariadb: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mariadb') }}
+        aws_aurora_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aurora') }}
+        aws_mssql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mssql') }}
+        aws_aurora_postgres: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:aurora') }}
+        aws_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aws') }}
