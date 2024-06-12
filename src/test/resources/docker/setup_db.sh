@@ -3,8 +3,9 @@
 #sleep 10
 
 HOST=$1
-HOSTPARAMS="--host $HOST --insecure"
-SQL="/cockroach/cockroach.sh sql $HOSTPARAMS"
+ARGS=$2
+HOSTPARAMS="--host $HOST"
+SQL="/cockroach/cockroach.sh sql $HOSTPARAMS $ARGS"
 
 $SQL -e "CREATE DATABASE lbcat;"
 $SQL -e "CREATE USER lbuser;"
