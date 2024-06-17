@@ -83,18 +83,6 @@ case $db in
   "crdb-22.1" )
     test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=22.1 test
     ;;
-  "edb-postgres-9.5" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=9.5 test
-    ;;
-  "edb-postgres-9.6" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=9.6 test
-    ;;
-  "edb-postgres-10" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=10 test
-    ;;
-  "edb-postgres-11" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=11 test
-    ;;
   "edb-postgres-12" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=12 test
     ;;
@@ -103,18 +91,6 @@ case $db in
     ;;
   "edb-postgres-14" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=14 test
-    ;;
-  "edb-edb-9.5" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=9.5 test
-    ;;
-  "edb-edb-9.6" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=9.6 test
-    ;;
-  "edb-edb-10" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=10 test
-    ;;
-  "edb-edb-11" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=11 test
     ;;
   "edb-edb-12" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=12 test
