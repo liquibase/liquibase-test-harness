@@ -187,33 +187,6 @@ databasesUnderTest:
 
 # Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected.
 # We recommend commenting out the EDB sections in this config file to prevent false failures
-  - name: edb-postgres
-    prefix: docker
-    version: 9.5
-    url: jdbc:postgresql://localhost:5501/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-postgres
-    prefix: docker
-    version: 9.6
-    url: jdbc:postgresql://localhost:5502/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-postgres
-    prefix: docker
-    version: 10
-    url: jdbc:postgresql://localhost:5503/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-postgres
-    prefix: docker
-    version: 11
-    url: jdbc:postgresql://localhost:5504/lbcat
-    username: lbuser
-    password: LiquibasePass1
 
   - name: edb-postgres
     prefix: docker
@@ -233,34 +206,6 @@ databasesUnderTest:
     prefix: docker
     version: 14
     url: jdbc:postgresql://localhost:5507/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-edb
-    prefix: docker
-    version: 9.5
-    url: jdbc:edb://localhost:5508/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-edb
-    prefix: docker
-    version: 9.6
-    url: jdbc:edb://localhost:5509/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-edb
-    prefix: docker
-    version: 10
-    url: jdbc:edb://localhost:5510/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-edb
-    prefix: docker
-    version: 11
-    url: jdbc:edb://localhost:5511/lbcat
     username: lbuser
     password: LiquibasePass1
 

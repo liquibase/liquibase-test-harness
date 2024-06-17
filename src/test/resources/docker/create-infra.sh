@@ -13,7 +13,7 @@ case $db in
     ;;
 
   # edb setup requires login to private registry
-  "edb-postgres-9.5"|"edb-postgres-9.6"|"edb-postgres-10"|"edb-postgres-11"|"edb-postgres-12"|"edb-postgres-13"|"edb-postgres-14"|"edb-edb-9.5"|"edb-edb-9.6"|"edb-edb-10"|"edb-edb-11"|"edb-edb-12"|"edb-edb-13"|"edb-edb-14")
+  "edb-postgres-12"|"edb-postgres-13"|"edb-postgres-14"|"edb-edb-12"|"edb-edb-13"|"edb-edb-14")
     docker login $REPO_URL -u $REPO_USER -p $REPO_PASSWORD
     docker compose -f docker-compose.edb.yml up -d $db
     exit 0
