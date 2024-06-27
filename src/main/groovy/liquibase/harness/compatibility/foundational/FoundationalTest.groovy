@@ -7,7 +7,7 @@ import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
 import org.json.JSONArray
 import org.json.JSONObject
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
 import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
@@ -116,7 +116,7 @@ class FoundationalTest extends Specification {
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.LENIENT)
         } catch (Exception exception) {
             Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.printStackTrace())
-            Assert.fail exception.message
+            Assertions.fail exception.message
         } finally {
             newConnection == null ?: newConnection.close()
 
@@ -130,7 +130,7 @@ class FoundationalTest extends Specification {
                 // Assume test object was not created after 'update' command execution and test failed.
                 Scope.getCurrentScope().getUI().sendMessage("Error executing test table checking sql! " +
                         sqlException.printStackTrace())
-                Assert.fail sqlException.message
+                Assertions.fail sqlException.message
             }
         }
 
@@ -151,7 +151,7 @@ class FoundationalTest extends Specification {
                         Scope.getCurrentScope().getUI().sendMessage("ERROR!: Rollback was not successful! " +
                                 "The object was not removed after 'rollback' command: " +
                                 resultSet.getMetaData().getTableName(0))
-                        Assert.fail()
+                        Assertions.fail()
                     }
                 } catch (ignored) {
                     (connection.isClosed() || connection.autoCommit) ?: connection.commit()

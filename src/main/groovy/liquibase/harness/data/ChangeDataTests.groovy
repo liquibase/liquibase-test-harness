@@ -9,8 +9,7 @@ import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.resource.ClassLoaderResourceAccessor
 import org.json.JSONArray
 import org.json.JSONObject
-import org.junit.Assert
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
@@ -59,7 +58,7 @@ class ChangeDataTests extends Specification {
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
-        Assume.assumeTrue(expectedSql, shouldRunChangeSet)
+        Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
         and: "fail test if expectedResultSet is not provided"
         shouldRunChangeSet = expectedResultSet != null
