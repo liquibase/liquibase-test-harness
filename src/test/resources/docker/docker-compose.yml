@@ -363,6 +363,29 @@ services:
     depends_on:
       - crdb-22.1
 
+  crdb-23.1:
+    image: cockroachdb/cockroach:v23.1.12
+    command: start-single-node --insecure
+    expose:
+      - "8080"
+      - "26257"
+    ports:
+      - "26261:26257"
+      - "8084:8080"
+    networks:
+      - roachnet
+
+  crdb-23.1-init:
+    image: cockroachdb/cockroach:v23.1.12
+    networks:
+      - roachnet
+    volumes:
+      - ./setup_db.sh:/setup_db.sh
+    entrypoint: "/bin/bash"
+    command: /setup_db.sh crdb-23.1
+    depends_on:
+      - crdb-23.1
+
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data
 

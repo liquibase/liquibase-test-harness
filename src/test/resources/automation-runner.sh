@@ -83,6 +83,9 @@ case $db in
   "crdb-22.1" )
     test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=22.1 test
     ;;
+  "crdb-23.1" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=23.1 test
+    ;;
   "edb-postgres-12" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=12 test
     ;;

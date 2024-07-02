@@ -164,6 +164,13 @@ databasesUnderTest:
     username: lbuser
     password:
 
+  - name: cockroachdb
+    prefix: docker
+    version: 23.1
+    url: jdbc:postgresql://localhost:26261/lbcat
+    username: lbuser
+    password:
+
   - name: mssql
     prefix: docker
     version: 2017
