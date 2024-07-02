@@ -71,18 +71,6 @@ case $db in
   "H2Database-2.2" )
     test_command mvn -ntp -Dtest=$tc -DdbName=h2 test
     ;;
-  "crdb-20.2" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=20.2 test
-    ;;
-  "crdb-21.1" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=21.1 test
-    ;;
-  "crdb-21.2" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=21.2 test
-    ;;
-  "crdb-22.1" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=22.1 test
-    ;;
   "crdb-23.1" )
     test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=23.1 test
     ;;
