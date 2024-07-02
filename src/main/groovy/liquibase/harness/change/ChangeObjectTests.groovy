@@ -5,7 +5,7 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -44,7 +44,7 @@ class ChangeObjectTests extends Specification {
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
-        Assume.assumeTrue(expectedSql, shouldRunChangeSet)
+        Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
         and: "fail test if snapshot is not provided"
         shouldRunChangeSet = expectedSnapshot != null
