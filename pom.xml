@@ -18,6 +18,8 @@
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version>
+        <junit.version>5.10.3</junit.version>
+        <junit-platform.version>1.10.3</junit-platform.version>
     </properties>
     <organization>
         <name>Liquibase.org</name>
@@ -85,9 +87,9 @@
             <version>${liquibase-core.version}</version>
         </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.5.19</version>
+            <version>4.0.22</version>
             <type>pom</type>
             <exclusions>
                 <exclusion>
@@ -98,12 +100,44 @@
                     <groupId>org.codehaus.groovy</groupId>
                     <artifactId>groovy-swing</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>1.3-groovy-2.5</version>
+            <version>2.3-groovy-4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${junit-platform.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-engine</artifactId>
+            <version>${junit-platform.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.skyscreamer</groupId>
@@ -222,7 +256,7 @@
         <dependency>
             <groupId>com.athaydes</groupId>
             <artifactId>spock-reports</artifactId>
-            <version>1.7.1</version>
+            <version>2.5.1-groovy-4.0</version>
             <scope>test</scope>
             <!-- this avoids affecting your version of Groovy/Spock -->
             <exclusions>
@@ -294,6 +328,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <targetBytecode>1.8</targetBytecode>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -395,6 +432,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <includes>
+                        <!-- By default, only files ending in 'Test' will be included, so also include support for Spock style naming convention -->
+                        <include>**/*Test</include>
+                        <include>**/*Tests</include>
+                        <include>**/*Spec</include>
+                        <include>**/*Suite</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
     <distributionManagement>
@@ -450,6 +502,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <targetBytecode>1.8</targetBytecode>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
