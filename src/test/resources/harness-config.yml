@@ -138,29 +138,22 @@ databasesUnderTest:
 
   - name: cockroachdb
     prefix: docker
-    version: 20.2
-    url: jdbc:postgresql://localhost:26257/lbcat
+    version: 23.1
+    url: jdbc:postgresql://localhost:26261/lbcat
     username: lbuser
     password:
 
   - name: cockroachdb
     prefix: docker
-    version: 21.1
-    url: jdbc:postgresql://localhost:26258/lbcat
+    version: 23.2
+    url: jdbc:postgresql://localhost:26262/lbcat
     username: lbuser
     password:
 
   - name: cockroachdb
     prefix: docker
-    version: 21.2
-    url: jdbc:postgresql://localhost:26259/lbcat
-    username: lbuser
-    password:
-
-  - name: cockroachdb
-    prefix: docker
-    version: 22.1
-    url: jdbc:postgresql://localhost:26260/lbcat
+    version: 24.1
+    url: jdbc:postgresql://localhost:26263/lbcat
     username: lbuser
     password:
 
