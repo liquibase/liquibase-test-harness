@@ -341,12 +341,17 @@ jobs:
             }
 
             console.log("Mark tests as "+result);
-            await github.rest.repos.createCommitStatus({
-              "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
-              "repo": "liquibase",
-              "sha": "${{ needs.setup.outputs.liquibaseSha }}",
-              "state": result,
-              "context": "Run Test-Harness Tests",
-              "description": "Test-Harness tests complete",
-              "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
-            });
+            try {
+              await github.rest.repos.createCommitStatus({
+                "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
+                "repo": "liquibase",
+                "sha": "${{ needs.setup.outputs.liquibaseSha }}",
+                "state": result,
+                "context": "Run Test-Harness Tests",
+                "description": "Test-Harness tests complete",
+                "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
+              });
+              } catch (error) {
+                console.error("Failed to create commit status:", error);
+                throw error;
+              }
