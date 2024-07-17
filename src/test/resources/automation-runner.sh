@@ -101,7 +101,7 @@ case $db in
   "edb-edb-14" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=14 test
     ;;
-  "edb-edb-1" )
+  "edb-edb-15" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=15 test
     ;;
   "derby" )
