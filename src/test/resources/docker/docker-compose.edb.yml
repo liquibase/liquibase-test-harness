@@ -17,14 +17,18 @@ services:
     ports:
       - "5506:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
 
   edb-postgres-14:
     image: docker.liquibase.net/datical-enterprisedb-edbas14:latest
     ports:
       - "5507:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
+
+  edb-postgres-15:
+    image: docker.liquibase.net/datical-enterprisedb-edbas15:latest
+    ports:
+      - "5508:5444"
+    restart: always
 
     # We are providing second set of EDB images to run tests with EDB driver
     # Without it tests will run in parallel and interfere with each other
@@ -34,18 +38,21 @@ services:
     ports:
       - "5512:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
 
   edb-edb-13:
     image: docker.liquibase.net/datical-enterprisedb-edbas13:latest
     ports:
       - "5513:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
 
   edb-edb-14:
     image: docker.liquibase.net/datical-enterprisedb-edbas14:latest
     ports:
       - "5514:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
+
+  edb-edb-15:
+    image: docker.liquibase.net/datical-enterprisedb-edbas15:latest
+    ports:
+      - "5515:5444"
+    restart: always
