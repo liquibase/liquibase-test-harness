@@ -5,10 +5,10 @@
 ---
 references:
 
-  - targetDatabaseName: mysql
-    targetDatabaseVersion: 5.7
-    referenceDatabaseName: mysql
-    referenceDatabaseVersion: 8
+#  - targetDatabaseName: mysql
+#    targetDatabaseVersion: 5.7
+#    referenceDatabaseName: mysql
+#    referenceDatabaseVersion: 8
 
 #  - targetDatabaseName: oracle
 #    targetDatabaseVersion: 18.3.0
@@ -30,10 +30,10 @@ references:
     referenceDatabaseName: postgresql
     referenceDatabaseVersion: 14
 
-#  - targetDatabaseName: mariadb
-#    targetDatabaseVersion: 10.6
-#    referenceDatabaseName: mariadb
-#    referenceDatabaseVersion: 10.7
+  - targetDatabaseName: mariadb
+    targetDatabaseVersion: 10.6
+    referenceDatabaseName: mariadb
+    referenceDatabaseVersion: 10.7
 #
 #  - targetDatabaseName: mariadb
 #    targetDatabaseVersion: 10.4
