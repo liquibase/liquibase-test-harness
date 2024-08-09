@@ -103,6 +103,8 @@ class DiffCommandTest extends Specification {
         argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")
         String generatedDiffContent = removeDatabaseInfoFromDiff(executeCommandScope("diff", argsMap).toString())
 
+        uiService.sendMessage("<-------------------GENERATED DIFF-------------------->" + generatedDiffContent)
+
         then: "validate generated diff"
         String expectedDiffContent = removeDatabaseInfoFromDiff(getResourceContent(testInput.pathToExpectedDiffFile))
         assert expectedDiffContent == generatedDiffContent
