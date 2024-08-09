@@ -131,6 +131,12 @@ class DiffCommandTestHelper {
         //Schema and Catalog to add. Also this will probably change while adding new types
         for (Map.Entry<String, List> entry : map.entrySet()) {
             if (changelogContent.contains(entry.key)) {
+                if(entry.key.equalsIgnoreCase("createSequence")) {
+                    uiService.sendMessage("xmlDiffChangelogContent.contains(entry.value.get(0).toString())=" + xmlDiffChangelogContent.contains(entry.value.get(0).toString()))
+                    uiService.sendMessage("sqlDiffChangelogContent.toLowerCase().contains(entry.value.get(1).toString())=" + sqlDiffChangelogContent.toLowerCase().contains(entry.value.get(1).toString()))
+                    uiService.sendMessage("ymlDiffChangelogContent.contains(entry.value.get(0).toString())=" + ymlDiffChangelogContent.contains(entry.value.get(0).toString()))
+                    uiService.sendMessage("jsonDiffChangelogContent.contains(entry.value.get(0).toString())=" + jsonDiffChangelogContent.contains(entry.value.get(0).toString()))
+                }
                 assert xmlDiffChangelogContent.contains(entry.value.get(0).toString()) &&
                         sqlDiffChangelogContent.toLowerCase().contains(entry.value.get(1).toString())
                         ymlDiffChangelogContent.contains(entry.value.get(0).toString()) &&
