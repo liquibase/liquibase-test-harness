@@ -12,6 +12,14 @@ on:
       runDetails:
         description: 'JSON details of run. Provided by automation'
         required: false
+      useLiquibaseSnapshot:
+        description: 'Use Liquibase Snapshot?'
+        type: choice
+        required: true
+        default: 'false'
+        options:
+          - true
+          - false
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
