@@ -127,6 +127,11 @@ class DiffCommandTestHelper {
             map.put("addPrimaryKey", new ArrayList<>(List.of("dropPrimaryKey", "drop constraint")))
             map.put("addUniqueConstraint", new ArrayList<>(List.of("dropUniqueConstraint", "drop constraint")))
         }
+        uiService.sendMessage("------------changelogContent------")
+        uiService.sendMessage(changelogContent)
+        uiService.sendMessage("------------/changelogContent------")
+
+        uiService.sendMessage("changelogContent.contains createSequence="changelogContent.contains("createSequence"))
 
         //Schema and Catalog to add. Also this will probably change while adding new types
         for (Map.Entry<String, List> entry : map.entrySet()) {
