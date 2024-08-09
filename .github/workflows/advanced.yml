@@ -170,22 +170,18 @@ jobs:
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
-            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
+            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
+            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro" \
+            "-Dliquibase.sdk.proWorkflowId=build.yml"\
+            "-Dliquibase.sdk.workflowId=run-tests.yml"
 
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
-          echo "::notice :: Installed Snapshot Liquibase $buildOverview"
+          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+          mvn liquibase-sdk:install-snapshot-cli \
+          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
+          "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro" \
+          "-Dliquibase.sdk.proWorkflowId=build.yml" \
+          "-Dliquibase.sdk.workflowId=run-tests.yml"
           
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase-pro')"
-          echo "::notice :: Installed Snapshot Liquibase-pro $buildOverview"
-
-          mvn -B liquibase-sdk:set-commit-status \
-            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \
-            "-Dliquibase.sdk.status.context=Run Test Harness" \
-            "-Dliquibase.sdk.status.state=PENDING" \
-            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Internal functional tests" \
-            "-Dliquibase.sdk.status.commit=installed"
           
           chmod -R 777 bin
           ls -l ./bin
