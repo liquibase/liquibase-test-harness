@@ -48,13 +48,13 @@ references:
     targetDatabaseVersion: 10.4
     referenceDatabaseName: mariadb
     referenceDatabaseVersion: 10.5
-
-  - targetDatabaseName: mariadb
-    targetDatabaseVersion: 10.2
-    referenceDatabaseName: mariadb
-    referenceDatabaseVersion: 10.3
-
-  - targetDatabaseName: mysql
-    targetDatabaseVersion: 5.7
-    referenceDatabaseName: mysql
-    referenceDatabaseVersion: 8
+#
+#  - targetDatabaseName: mariadb
+#    targetDatabaseVersion: 10.2
+#    referenceDatabaseName: mariadb
+#    referenceDatabaseVersion: 10.3
+#
+#  - targetDatabaseName: mysql
+#    targetDatabaseVersion: 5.7
+#    referenceDatabaseName: mysql
+#    referenceDatabaseVersion: 8
