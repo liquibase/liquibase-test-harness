@@ -275,7 +275,7 @@ services:
 
   crdb-20.2:
     image: cockroachdb/cockroach:v20.2.19
-    command: start-single-node --insecure
+    command: start-single-node
     expose:
       - "8080"
       - "26257"
@@ -297,7 +297,7 @@ services:
 
   crdb-21.1:
     image: cockroachdb/cockroach:v21.1.16
-    command: start-single-node --insecure
+    command: start-single-node
     expose:
       - "8080"
       - "26257"
@@ -319,7 +319,7 @@ services:
 
   crdb-21.2:
     image: cockroachdb/cockroach:v21.2.7
-    command: start-single-node --insecure
+    command: start-single-node
     expose:
       - "8080"
       - "26257"
@@ -342,7 +342,7 @@ services:
 
   crdb-22.1:
     image: cockroachdb/cockroach-unstable:v22.1.0-beta.4
-    command: start-single-node --insecure
+    command: start-single-node
     expose:
       - "8080"
       - "26257"
