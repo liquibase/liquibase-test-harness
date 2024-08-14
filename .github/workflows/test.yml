@@ -313,7 +313,7 @@ jobs:
           name: ${{ matrix.database }}-test-results
           path: build/spock-reports
 
-      - name: Archive ${{ matrix.database }} test results
+      - name: Archive test-reports-jdk-17-ubuntu-latest test results
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
