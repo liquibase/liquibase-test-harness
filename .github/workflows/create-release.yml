@@ -28,7 +28,6 @@ jobs:
               LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.PRO_LICENSE_KEY }}
             run: |
               mvn -B sonar:sonar -P 'sonar,!run-proguard' -DskipTests -Dliquibase.version=${{ github.ref }}-SNAPSHOT \
-              ${{ inputs.mavenArgs  }} \
               -Dsonar.scm.revision=${{ github.sha }} \
               -Dsonar.token=$SONAR_TOKEN \
               -Dsonar.java.coveragePlugin=jacoco \
