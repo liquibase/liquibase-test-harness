@@ -1,0 +1,60 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Sonar Branch Scan
+        if: always() && !github.event.pull_request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.PRO_LICENSE_KEY }}
+        run: |
+          mvn -B sonar:sonar -P 'sonar,!run-proguard' -DskipTests -Dliquibase.version=${{ github.ref }}-SNAPSHOT \
+          -Dsonar.scm.revision=${{ github.sha }} \
+          -Dsonar.token=$SONAR_TOKEN \
+          -Dsonar.java.coveragePlugin=jacoco \
+          -Dsonar.branch.name=${{ github.ref }} \
+          -Dsonar.qualitygate.wait=true \
+          -Dsonar.organization=${{ github.repository_owner }} \
+          -Dsonar.host.url='https://sonarcloud.io' \
+          -Dsonar.scm.provider=git \
+          -Daws.region="us-east-1"
+
+      - name: Sonar PR Scan
+        if: always() && github.event.pull_request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.PRO_LICENSE_KEY }}
+        run: |
+          mvn -B sonar:sonar -P 'sonar,!run-proguard' -DskipTests -Dliquibase.version=${{ github.ref }}-SNAPSHOT \
+          ${{ inputs.mavenArgs  }} \
+          -Dsonar.scm.revision=${{ github.sha }} \
+          -Dsonar.token=$SONAR_TOKEN \
+          -Dsonar.java.coveragePlugin=jacoco \
+          -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+          -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} \
+          -Dsonar.pullrequest.provider=GitHub \
+          -Dsonar.pullrequest.github.repository="${{ github.repository }}" \
+          -Dsonar.pullrequest.github.endpoint='https://api.github.com/' \
+          -Dsonar.qualitygate.wait=true \
+          -Dsonar.organization=${{ github.repository_owner }} \
+          -Dsonar.host.url='https://sonarcloud.io' \
+          -Dsonar.scm.provider=git \
+          -Daws.region="us-east-1"
