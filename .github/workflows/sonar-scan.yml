@@ -1,4 +1,4 @@
-name: Create Release
+name: Sonar Scan
 
 on:
   workflow_dispatch:
