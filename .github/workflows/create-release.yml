@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - DAT-18326
 
 jobs:
   create-release:
