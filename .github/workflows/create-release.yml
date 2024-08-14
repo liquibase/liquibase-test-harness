@@ -8,9 +8,9 @@ on:
       - DAT-18326
 
 jobs:
-  create-release:
-    uses: liquibase/build-logic/.github/workflows/create-release.yml@DAT-18326
-    secrets: inherit
+#  create-release:
+#    uses: liquibase/build-logic/.github/workflows/create-release.yml@DAT-18326
+#    secrets: inherit
 
     sonar:
       runs-on: ubuntu-latest
