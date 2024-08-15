@@ -209,6 +209,13 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: edb-postgres
+    prefix: docker
+    version: 16
+    url: jdbc:postgresql://localhost:5509/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
   - name: edb-edb
     prefix: docker
     version: 12
@@ -234,6 +241,13 @@ databasesUnderTest:
     prefix: docker
     version: 15
     url: jdbc:edb://localhost:5515/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: edb-edb
+    prefix: docker
+    version: 16
+    url: jdbc:edb://localhost:5510/lbcat
     username: lbuser
     password: LiquibasePass1
 
