@@ -92,6 +92,9 @@ case $db in
   "edb-postgres-15" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=15 test
     ;;
+  "edb-postgres-16" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=16 test
+    ;;
   "edb-edb-12" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=12 test
     ;;
@@ -103,6 +106,9 @@ case $db in
     ;;
   "edb-edb-15" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=15 test
+    ;;
+  "edb-edb-16" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=16 test
     ;;
   "derby" )
     test_command mvn -ntp -Dtest=$tc -DdbName=derby test
