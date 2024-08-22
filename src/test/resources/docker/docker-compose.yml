@@ -131,28 +131,6 @@ services:
     volumes:
       - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
-  edb-postgres-16:
-    image: ghcr.io/enterprisedb/postgresql:16
-    ports:
-      - "5509:5432"
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: LbRootPass1
-      POSTGRES_DB: lbcat
-    volumes:
-      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
-
-  edb-edb-16:
-    image: ghcr.io/enterprisedb/postgresql:16
-    ports:
-      - "5510:5432"
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: LbRootPass1
-      POSTGRES_DB: lbcat
-    volumes:
-      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
-
   mariadb-10.2:
     image: mariadb:10.2
     ports:
