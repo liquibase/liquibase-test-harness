@@ -247,7 +247,7 @@ databasesUnderTest:
   - name: edb-edb
     prefix: docker
     version: 16
-    url: jdbc:edb://localhost:5510/lbcat
+    url: jdbc:edb://localhost:5516/lbcat
     username: lbuser
     password: LiquibasePass1
 

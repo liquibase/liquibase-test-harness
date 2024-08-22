@@ -30,6 +30,12 @@ services:
       - "5508:5444"
     restart: always
 
+  edb-postgres-16:
+    image: docker.liquibase.net/datical-enterprisedb-edbas16
+    ports:
+      - "5509:5444"
+    restart: always
+
     # We are providing second set of EDB images to run tests with EDB driver
     # Without it tests will run in parallel and interfere with each other
 
@@ -55,4 +61,10 @@ services:
     image: docker.liquibase.net/datical-enterprisedb-edbas15:latest
     ports:
       - "5515:5444"
+    restart: always
+
+  edb-edb-16:
+    image: docker.liquibase.net/datical-enterprisedb-edbas16
+    ports:
+      - "5516:5444"
     restart: always
