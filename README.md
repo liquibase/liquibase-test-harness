@@ -27,7 +27,7 @@
 | Percona XtraDB            | `5.7`, `8.0`                          | Advanced                       |
 | Oracle                    | `18.3.0, 18.4.0, 21.3.0`              | Advanced                       |
 | CockroachDB               | `23.1, 23.2, 24.1`                    | Advanced                       |
-| EDB                       | `12, 13, 14, 15`                      | Advanced                       |
+| EDB                       | `12, 13, 14, 15, 16`                  | Advanced                       |
 | DB2 on z/OS               | `11.1, 12`                            | BaseHarnessSuite               |
 | DB2 on Linux/Unix/Windows | `11.5.7`                              | Advanced                       |
 | H2                        | `2.2.220`                             | Advanced                       |
