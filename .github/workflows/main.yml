@@ -326,8 +326,6 @@ jobs:
     permissions:
       contents: write
     needs: [ setup, test, authorize ]
-    permissions:
-      contents: write
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
