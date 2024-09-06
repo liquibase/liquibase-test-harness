@@ -195,7 +195,7 @@ jobs:
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
 
-      - uses: liquibase-github-actions/drop-all@v4.29.1
+      - uses: liquibase-github-actions/drop-all@v4.29.2
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         with:
           url: "${{ secrets.TH_ORACLEURL_19 }}"
