@@ -424,14 +424,6 @@
                                     <sourceFile>${project.basedir}/pom.xml</sourceFile>
                                     <destinationFile>${project.basedir}/target/${project.artifactId}-${project.version}.pom</destinationFile>
                                 </fileSet>
-                                <fileSet>
-                                    <sourceFile>${project.basedir}/README.md</sourceFile>
-                                    <destinationFile>${project.basedir}/target/${project.artifactId}-${project.version}-javadoc.jar</destinationFile>
-                                </fileSet>
-                                <fileSet>
-                                    <sourceFile>${project.basedir}/README.md</sourceFile>
-                                    <destinationFile>${project.basedir}/target/${project.artifactId}-${project.version}-sources.jar</destinationFile>
-                                </fileSet>
                             </fileSets>
                         </configuration>
                     </execution>
