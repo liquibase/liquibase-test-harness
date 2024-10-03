@@ -26,7 +26,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-<<<<<<< HEAD
       - name: Setup Python
         uses: actions/setup-python@v5.0.0
         with:
@@ -60,36 +59,11 @@ jobs:
       - name: Update
         continue-on-error: true
         run: liquibase update --url="${{env.TH_SNOW_URL}}" --username="${{env.TH_DB_ADMIN}}" --password="${{env.TH_DB_PASSWD}}" --classpath="src/test/resources/init-changelogs/snowflake" --changeLogFile="snowflake.sql"
-=======
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-            role-to-assume: ${{ secrets.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
-            aws-region: us-east-1
-    
-      - name: Get LIQUIBASETH secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            TH_DB_ADMIN, liquibaseth_usrname
-            TH_DB_PASSWD, liquibaseth_pwd
-
-      - uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/snowflake"
-          changeLogFile: "snowflake.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{secrets.TH_SNOW_URL}}"
->>>>>>> main
 
       - name: Snowflake Test Run
         continue-on-error: true
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-<<<<<<< HEAD
         run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{env.TH_DB}} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
 
       - name: Update
@@ -113,31 +87,15 @@ jobs:
         with:
           name: localstack-logs
           path: localstack-main.log
-=======
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=snowflake -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
->>>>>>> main
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
         with:
           name: snowflake-test-results
           path: build/spock-reports
-<<<<<<< HEAD
       
       - name: Archive localstack diagnose
         uses: actions/upload-artifact@v4
         with:
           name: localstack-diagnose
           path: diagnose.json.gz
-=======
-
-  destroy-ephemeral-cloud-infra:
-    if: always()
-    needs: [ deploy-ephemeral-cloud-infra, test ]
-    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
-    secrets: inherit
-    with:
-        destroy: true
-        stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
-        snowflake_th: true
->>>>>>> main
