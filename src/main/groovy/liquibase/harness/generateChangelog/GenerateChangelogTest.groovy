@@ -7,7 +7,7 @@ import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.ui.UIService
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -50,7 +50,7 @@ class GenerateChangelogTest extends Specification {
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !getResourceContent("/$testInput.sqlChangelogPath").toLowerCase()?.contains("invalid test")
-        Assume.assumeTrue("INFO: Test for $testInput.change is ignored", shouldRunChangeSet)
+        Assumptions.assumeTrue(shouldRunChangeSet, "INFO: Test for $testInput.change is ignored")
 
         and: "testing generateChangelog command for all files format"
         def map = new LinkedHashMap<String, String>()

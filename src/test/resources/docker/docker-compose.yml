@@ -230,7 +230,7 @@ services:
 
   mssql-2019:
     container_name: sql-server-db-2019
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    image: mcr.microsoft.com/mssql/server:2019-CU27-ubuntu-20.04
     ports:
       - "1434:1433"
     environment:
@@ -249,7 +249,7 @@ services:
 
   mssql-2022:
     container_name: sql-server-db-2022
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
     ports:
       - "1435:1433"
     environment:
@@ -273,95 +273,74 @@ services:
     ports:
       - "50000:50000"
 
-  crdb-20.2:
-    image: cockroachdb/cockroach:v20.2.19
+  crdb-23.1:
+    image: cockroachdb/cockroach:v23.1.12
     command: start-single-node --insecure
     expose:
       - "8080"
       - "26257"
     ports:
-      - "26257:26257"
+      - "26261:26257"
       - "8080:8080"
     networks:
       - roachnet
-  crdb-20.2-init:
-    image: cockroachdb/cockroach:v20.2.19
+
+  crdb-23.1-init:
+    image: cockroachdb/cockroach:v23.1.12
     networks:
       - roachnet
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-20.2
+    command: /setup_db.sh crdb-23.1
     depends_on:
-      - crdb-20.2
+      - crdb-23.1
 
-  crdb-21.1:
-    image: cockroachdb/cockroach:v21.1.16
+  crdb-23.2:
+    image: cockroachdb/cockroach:v23.2.6
     command: start-single-node --insecure
     expose:
       - "8080"
       - "26257"
     ports:
-      - "26258:26257"
+      - "26262:26257"
       - "8081:8080"
     networks:
       - roachnet
-  crdb-21.1-init:
-    image: cockroachdb/cockroach:v21.1.16
+
+  crdb-23.2-init:
+    image: cockroachdb/cockroach:v23.2.6
     networks:
       - roachnet
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-21.1
+    command: /setup_db.sh crdb-23.2
     depends_on:
-      - crdb-21.1
+      - crdb-23.2
 
-  crdb-21.2:
-    image: cockroachdb/cockroach:v21.2.7
+  crdb-24.1:
+    image: cockroachdb/cockroach:v24.1.1
     command: start-single-node --insecure
     expose:
       - "8080"
       - "26257"
     ports:
-      - "26259:26257"
+      - "26263:26257"
       - "8082:8080"
     networks:
       - roachnet
 
-  crdb-21.2-init:
-    image: cockroachdb/cockroach:v21.2.7
+  crdb-24.1-init:
+    image: cockroachdb/cockroach:v24.1.1
     networks:
       - roachnet
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-21.2
+    command: /setup_db.sh crdb-24.1
     depends_on:
-      - crdb-21.2
-
-  crdb-22.1:
-    image: cockroachdb/cockroach-unstable:v22.1.0-beta.4
-    command: start-single-node --insecure
-    expose:
-      - "8080"
-      - "26257"
-    ports:
-      - "26260:26257"
-      - "8083:8080"
-    networks:
-      - roachnet
-
-  crdb-22.1-init:
-    image: cockroachdb/cockroach-unstable:v22.1.0-beta.4
-    networks:
-      - roachnet
-    volumes:
-      - ./setup_db.sh:/setup_db.sh
-    entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-22.1
-    depends_on:
-      - crdb-22.1
+      - crdb-24.1
 
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data

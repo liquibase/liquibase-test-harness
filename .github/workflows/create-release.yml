@@ -4,8 +4,11 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   create-release:
-    uses: liquibase/build-logic/.github/workflows/create-release.yml@v0.7.7
+    uses: liquibase/build-logic/.github/workflows/create-release.yml@main
     secrets: inherit
+    with:
+      sonar: false

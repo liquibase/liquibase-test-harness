@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v5.1.0
+        uses: actions/setup-python@v5.2.0
         with:
           python-version: '3.11.5'
     
@@ -195,7 +195,7 @@ jobs:
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
 
-      - uses: liquibase-github-actions/drop-all@v4.27.0
+      - uses: liquibase-github-actions/drop-all@v4.29.2
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         with:
           url: "${{ secrets.TH_ORACLEURL_19 }}"

@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 ALTER TABLE "public".posts ADD CONSTRAINT pk_posts PRIMARY KEY (id)
 ALTER TABLE "public".posts DROP PRIMARY KEY
+=======
+ALTER TABLE LTHDB.PUBLIC.posts ADD CONSTRAINT pk_posts PRIMARY KEY (id)
+ALTER TABLE LTHDB.PUBLIC.posts DROP PRIMARY KEY
+>>>>>>> main

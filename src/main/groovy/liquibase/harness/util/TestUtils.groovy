@@ -7,14 +7,13 @@ import liquibase.harness.util.rollback.RollbackByTag
 import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.harness.util.rollback.RollbackToDate
 import liquibase.resource.SearchPathResourceAccessor
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
 
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.logging.Logger
 
 import org.apache.commons.io.FileUtils
-import static liquibase.harness.util.FileUtils.deleteFile
 
 class TestUtils {
 
@@ -65,7 +64,7 @@ class TestUtils {
                     commandScope.getCommand().toString() + ". " + exception.printStackTrace())
             Logger.getLogger(this.class.name).info("If this is expected to be invalid query for this database/version, " +
                     "create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.")
-            Assert.fail exception.message
+            Assertions.fail exception.message
         }
         return outputStream
     }
@@ -98,7 +97,7 @@ class TestUtils {
                     commandScope.getCommand().toString() + ". " + exception.printStackTrace())
             Logger.getLogger(this.class.name).info("If this is expected to be invalid query for this database/version, " +
                     "create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.")
-            Assert.fail exception.message
+            Assertions.fail exception.message
         }
         return outputStream
     }
@@ -132,7 +131,7 @@ class TestUtils {
                     commandScope.getCommand().toString() + ". " + exception.printStackTrace())
             Logger.getLogger(this.class.name).info("If this is expected to be invalid query for this database/version, " +
                     "create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.")
-            Assert.fail exception.message
+            Assertions.fail exception.message
         }
         return outputStream
     }

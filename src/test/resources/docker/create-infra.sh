@@ -13,7 +13,7 @@ case $db in
     ;;
 
   # edb setup requires login to private registry
-  "edb-postgres-9.5"|"edb-postgres-9.6"|"edb-postgres-10"|"edb-postgres-11"|"edb-postgres-12"|"edb-postgres-13"|"edb-postgres-14"|"edb-edb-9.5"|"edb-edb-9.6"|"edb-edb-10"|"edb-edb-11"|"edb-edb-12"|"edb-edb-13"|"edb-edb-14")
+  "edb-postgres-12"|"edb-postgres-13"|"edb-postgres-14"|"edb-postgres-15"|"edb-postgres-16"|"edb-edb-12"|"edb-edb-13"|"edb-edb-14"|"edb-edb-15"|"edb-edb-16")
     docker login $REPO_URL -u $REPO_USER -p $REPO_PASSWORD
     docker compose -f docker-compose.edb.yml up -d $db
     exit 0
@@ -26,7 +26,25 @@ case $db in
     ;;
 
   # crdb also has an init container
-  "crdb-20.2"|"crdb-21.1"|"crdb-21.2"|"crdb-22.1")
+  "crdb-23.1")
+    docker compose up -d $db
+    sleep 20
+    docker compose up -d ${db}-init
+    docker compose logs $db
+    docker compose logs ${db}-init
+    exit 0
+    ;;
+
+  "crdb-23.2")
+    docker compose up -d $db
+    sleep 20
+    docker compose up -d ${db}-init
+    docker compose logs $db
+    docker compose logs ${db}-init
+    exit 0
+    ;;
+
+  "crdb-24.1")
     docker compose up -d $db
     sleep 20
     docker compose up -d ${db}-init
