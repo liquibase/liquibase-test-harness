@@ -8,16 +8,8 @@ on:
 
 jobs:
 
-  deploy-ephemeral-cloud-infra:
-    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
-    secrets: inherit
-    with:
-        deploy: true
-        snowflake_th: true
-
   test:
     runs-on: ubuntu-latest
-    needs: [deploy-ephemeral-cloud-infra]
     permissions:
       contents: read
       id-token: write
