@@ -17,9 +17,9 @@
         <liquibase-core.version>[4.26.0,)</liquibase-core.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version>
-        <junit.version>5.11.1</junit.version>
-        <junit-platform.version>1.11.0</junit-platform.version>
+        <gmavenplus-plugin.version>4.0.1</gmavenplus-plugin.version>
+        <junit.version>5.11.2</junit.version>
+        <junit-platform.version>1.11.2</junit-platform.version>
     </properties>
     <organization>
         <name>Liquibase.org</name>
@@ -373,7 +373,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.5.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -432,7 +432,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.5.1</version>
                 <configuration>
                     <includes>
                         <!-- By default, only files ending in 'Test' will be included, so also include support for Spock style naming convention -->
