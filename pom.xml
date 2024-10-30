@@ -295,6 +295,7 @@
             <groupId>org.liquibase.ext</groupId>
             <artifactId>liquibase-disable-analytics</artifactId>
             <version>1.0.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
