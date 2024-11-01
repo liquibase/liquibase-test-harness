@@ -70,7 +70,7 @@ class FoundationalTest extends Specification {
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
-        and: "execute Liquibase validate command to ensure a chagelog is valid"
+        and: "execute Liquibase validate command to ensure a changelog is valid"
         for (int i = 0; i < changelogList.size(); i++) {
             argsMap.put("changeLogFile", changelogList.get(i))
             executeCommandScope("validate", argsMap)
