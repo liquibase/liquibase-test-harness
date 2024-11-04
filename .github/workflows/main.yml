@@ -99,7 +99,7 @@ on:
 jobs:
   authorize:
     environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - run: true
 
@@ -322,7 +322,7 @@ jobs:
 
   finish:
     name: Finish
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
       statuses: write
