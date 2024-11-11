@@ -57,7 +57,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean GCP MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.29.2
+        uses: liquibase-github-actions/drop-all@v4.30.0
         if: ${{ matrix.version == 'gcp' }}
         with:
           url: "${{ secrets.TH_GCP_MYSQL_8_0_URL }}"
@@ -92,7 +92,7 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@v4.29.2
+      - uses: liquibase-github-actions/drop-all@v4.30.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         with:
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
@@ -112,7 +112,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.29.2
+      - uses: liquibase-github-actions/drop-all@v4.30.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
