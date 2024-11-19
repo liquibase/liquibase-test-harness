@@ -119,7 +119,7 @@ it is not present in test**)
 As far as this test validates work of basic Liquibase functions it is essential to keep its configuration as simple as possible:
 1. If you have your database instance up and running you need to just add appropriate configuration details to `src/test/resources/harness-config.yml` file.
 Following the example:
-   - **name**: `database_name` (**mandatory**) </br>
+   - **name**: `database_name` (**mandatory**)  - is used in test input files structure to override default files </br>
      **version**: `database_version` (optional) </br>
      **prefix**: `local` (optional parameter required for CI/CD tests, leave it empty or set `local`) </br>
      **url**: `db_connection_url` (**mandatory**) </br>

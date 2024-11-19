@@ -84,7 +84,7 @@ class FileUtils {
         return true
     }
 
-    private static String getFileContent(String change, String databaseName, String version , String expectedFolder,
+    static String getFileContent(String change, String databaseName, String version , String expectedFolder,
                                          String fileExtension) {
         def resourceAccessor = TestConfig.instance.resourceAccessor
 

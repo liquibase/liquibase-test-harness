@@ -53,6 +53,11 @@ This suite will run the Base Harness Test Suite. Please note the name of the tes
 
 - If you are creating a new extension to work with Liquibase, it is advisable to start with the Foundational Level Test. 
   - See https://github.com/liquibase/liquibase-test-harness#foundationaltest for a description of what this test validates.
+- Override input files if needed.
+  - to override input changelog put it into the path like src/test/resources/liquibase/harness/compatibility/foundational/changelogs/{database_name}/createTable.xml
+  - to override checkingSql for 'createTable' changelog, put it into the path like src/test/resources/liquibase/harness/compatibility/foundational/checkingSql/createTable/{database_name}/createTableXml.sql
+  - to override expected snapshot of DBCL table data for 'createTable' put it into the path like src/test/resources/liquibase/harness/compatibility/foundational/expectedResultSet/{database_name}/createTable.json
+  - *{database_name}* represent value for database_name from harness-config.yml
 - In your `src/test/groovy/ext` directory, create a file with this inclusion:   
 
 ```
