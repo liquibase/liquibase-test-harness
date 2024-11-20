@@ -2,9 +2,10 @@
   "createTable": [
     {
       "EXECTYPE": "EXECUTED",
+      "ORDEREXECUTED": 1,
       "COMMENTS": "test_comment",
       "AUTHOR": "as",
-      "MD5SUM": "9:7eb68c7a3994f387134835e99cf27a10",
+      "MD5SUM": "9:4a083dae8a82228dbf846133a767d880",
       "CONTEXTS": "test_context",
       "DESCRIPTION": "sql",
       "ID": "1",
@@ -14,12 +15,26 @@
     },
     {
       "EXECTYPE": "EXECUTED",
+      "ORDEREXECUTED": 2,
       "COMMENTS": "test_comment",
       "AUTHOR": "as",
       "MD5SUM": "9:b93d6668d8df8115b2b634a585875da6",
       "CONTEXTS": "test_context",
+      "DESCRIPTION": "createTable tableName=test_table_json",
+      "ID": "2",
+      "LABELS": "test_label",
+      "FILENAME": "liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.json",
+      "TAG": ""
+    },
+    {
+      "EXECTYPE": "EXECUTED",
+      "ORDEREXECUTED": 3,
+      "COMMENTS": "test_comment",
+      "AUTHOR": "as",
+      "MD5SUM": "9:7eb68c7a3994f387134835e99cf27a10",
+      "CONTEXTS": "test_context",
       "DESCRIPTION": "createTable tableName=test_table_yaml",
-      "ID": "1",
+      "ID": "3",
       "LABELS": "test_label",
       "FILENAME": "liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.yml",
       "TAG": ""
@@ -30,20 +45,8 @@
       "AUTHOR": "as",
       "MD5SUM": "9:23305a0f4312264f2bee0e1e23cad5de",
       "CONTEXTS": "test_context",
-      "DESCRIPTION": "createTable tableName=test_table_json",
-      "ID": "1",
-      "LABELS": "test_label",
-      "FILENAME": "liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.json",
-      "TAG": ""
-    },
-    {
-      "EXECTYPE": "EXECUTED",
-      "COMMENTS": "test_comment",
-      "AUTHOR": "as",
-      "MD5SUM": "9:4a083dae8a82228dbf846133a767d880",
-      "CONTEXTS": "test_context",
       "DESCRIPTION": "sql",
-      "ID": "1",
+      "ID": "4",
       "LABELS": "test_label",
       "FILENAME": "liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.sql",
       "TAG": "test_tag"
