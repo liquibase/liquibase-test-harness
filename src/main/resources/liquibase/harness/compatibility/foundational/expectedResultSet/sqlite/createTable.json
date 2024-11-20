@@ -10,7 +10,7 @@
       "ID": "1",
       "LABELS": "test_label",
       "FILENAME": "liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.xml",
-      "TAG": "test_tag"
+      "TAG": ""
     },
     {
       "EXECTYPE": "EXECUTED",
@@ -22,7 +22,7 @@
       "ID": "1",
       "LABELS": "test_label",
       "FILENAME": "liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.yml",
-      "TAG": "test_tag"
+      "TAG": ""
     },
     {
       "EXECTYPE": "EXECUTED",
@@ -34,7 +34,7 @@
       "ID": "1",
       "LABELS": "test_label",
       "FILENAME": "liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.json",
-      "TAG": "test_tag"
+      "TAG": ""
     },
     {
       "EXECTYPE": "EXECUTED",
