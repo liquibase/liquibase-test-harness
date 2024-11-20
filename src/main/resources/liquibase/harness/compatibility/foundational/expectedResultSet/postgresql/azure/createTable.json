@@ -1,18 +1,6 @@
 {
   "createTable": [
     {
-      "comments":"test_comment",
-      "author":"as",
-      "description":"createTable tableName=test_table_json",
-      "contexts":"test_context",
-      "exectype":"EXECUTED",
-      "labels":"test_label",
-      "filename":"liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.json",
-      "md5sum":"9:23305a0f4312264f2bee0e1e23cad5de",
-      "id":"1",
-      "tag":""
-    },
-    {
       "comments":"",
       "author":"liquibase",
       "description":"sql",
@@ -22,7 +10,7 @@
       "filename":"postgresql.sql",
       "md5sum":"8:dcd35d09f34d2ec9aeae879fc4222925",
       "id":"1",
-      "tag":"",
+      "tag":""
     },
     {
       "comments":"test_comment",
@@ -32,10 +20,21 @@
       "exectype":"EXECUTED",
       "labels":"test_label",
       "filename":"liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.xml",
-      "md5sum":"9:7eb68c7a3994f387134835e99cf27a10",
+      "md5sum":"9:4a083dae8a82228dbf846133a767d880",
       "id":"1",
-      "tag":"",
-      "deployment_id":"3610748767"
+      "tag":""
+    },
+    {
+      "comments":"test_comment",
+      "author":"as",
+      "description":"createTable tableName=test_table_json",
+      "contexts":"test_context",
+      "exectype":"EXECUTED",
+      "labels":"test_label",
+      "filename":"liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.json",
+      "md5sum":"9:b93d6668d8df8115b2b634a585875da6",
+      "id":"2",
+      "tag":""
     },
     {
       "comments":"test_comment",
@@ -45,8 +44,8 @@
       "exectype":"EXECUTED",
       "labels":"test_label",
       "filename":"liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.yml",
-      "md5sum":"9:b93d6668d8df8115b2b634a585875da6",
-      "id":"1",
+      "md5sum":"9:7eb68c7a3994f387134835e99cf27a10",
+      "id":"3",
       "tag":""
     },
     {
@@ -57,8 +56,8 @@
       "exectype":"EXECUTED",
       "labels":"test_label",
       "filename":"liquibase\/harness\/compatibility\/foundational\/changelogs\/createTable.sql",
-      "md5sum":"9:4a083dae8a82228dbf846133a767d880",
-      "id":"1",
+      "md5sum":"9:23305a0f4312264f2bee0e1e23cad5de",
+      "id":"4",
       "tag":"test_tag"
     }
   ]
