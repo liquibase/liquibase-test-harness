@@ -9,10 +9,9 @@
       "FILENAME": "liquibase/harness/compatibility/foundational/changelogs/createTable.xml",
       "ID": "1",
       "LABELS": "test_label",
-      "LIQUIBASE": "DEV",
       "MD5SUM": ".*",
       "ORDEREXECUTED": 1,
-      "TAG": "test_tag"
+      "TAG": ""
     },
     {
       "AUTHOR": "as",
@@ -23,7 +22,6 @@
       "FILENAME": "liquibase/harness/compatibility/foundational/changelogs/createTable.json",
       "ID": "1",
       "LABELS": "test_label",
-      "LIQUIBASE": "DEV",
       "MD5SUM": ".*",
       "ORDEREXECUTED": 2,
       "TAG": "test_tag"
@@ -37,7 +35,6 @@
       "FILENAME": "liquibase/harness/compatibility/foundational/changelogs/createTable.yml",
       "ID": "1",
       "LABELS": "test_label",
-      "LIQUIBASE": "DEV",
       "MD5SUM": ".*",
       "ORDEREXECUTED": 3,
       "TAG": "test_tag"
@@ -51,7 +48,6 @@
       "FILENAME": "liquibase/harness/compatibility/foundational/changelogs/createTable.sql",
       "ID": "1",
       "LABELS": "test_label",
-      "LIQUIBASE": "DEV",
       "MD5SUM": ".*",
       "ORDEREXECUTED": 4,
       "TAG": "test_tag"
