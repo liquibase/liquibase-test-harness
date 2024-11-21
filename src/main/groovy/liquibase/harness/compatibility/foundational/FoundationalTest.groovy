@@ -37,25 +37,26 @@ class FoundationalTest extends Specification {
 
     def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
+        String basePath = "liquibase/harness/compatibility/foundational/"
+
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/compatibility/foundational/expectedResultSet")
+                "${basePath}/expectedResultSet")
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
 
-        String basePath = "liquibase/harness/compatibility/foundational/"
         ArrayList<String> changelogList = new ArrayList<>()
-        changelogList.add("${basePath}changelogs/${testInput.change}.xml")
-        changelogList.add("${basePath}changelogs/${testInput.change}.yml")
-        changelogList.add("${basePath}changelogs/${testInput.change}.json")
-        changelogList.add("${basePath}changelogs/${testInput.change}.sql")
+        changelogList.add(testInput.xmlChange)
+        changelogList.add(testInput.jsonChange)
+        changelogList.add(testInput.ymlChange)
+        changelogList.add(testInput.sqlChange)
 
         ArrayList<String> checkingSqlList = new ArrayList<>()
-        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Xml.sql"))
-        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Yaml.sql"))
-        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Json.sql"))
-        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Sql.sql"))
+        checkingSqlList.add(getFileContent(testInput.change, testInput.databaseName, testInput.version, "/${basePath}checkingSql/${testInput.change}", "Xml.sql"))
+        checkingSqlList.add(getFileContent(testInput.change, testInput.databaseName, testInput.version, "/${basePath}checkingSql/${testInput.change}","Yaml.sql"))
+        checkingSqlList.add(getFileContent(testInput.change, testInput.databaseName, testInput.version, "/${basePath}checkingSql/${testInput.change}","Json.sql"))
+        checkingSqlList.add(getFileContent(testInput.change, testInput.databaseName, testInput.version, "/${basePath}checkingSql/${testInput.change}","Sql.sql"))
 
         boolean shouldRunChangeSet
 

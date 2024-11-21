@@ -3,7 +3,7 @@ databaseChangeLog:
       comment: test_comment
       labels: test_label
       context: test_context
-      id: 1
+      id: 3
       author: as
       changes:
         - createTable:
