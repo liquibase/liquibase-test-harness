@@ -349,9 +349,11 @@ services:
     ports:
       - "9088:9088"
     environment:
+      LICENSE: "accept"
       INFORMIX_PASSWORD: "in4mix"
       INFORMIX_USER: "informix"
     restart: always
+    privileged: true
     volumes:
       - "./informix-init.sh:/docker-entrypoint-initdb.d/informix-init.sh"
       - "./informix-init.sql:/docker-entrypoint-initdb.d/informix-init.sql"
