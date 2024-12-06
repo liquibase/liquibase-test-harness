@@ -352,6 +352,12 @@ services:
       LICENSE: "accept"
     restart: always
     privileged: true
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9088" ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
     #volumes:
     #- "./informix-init.sh:/docker-entrypoint-initdb.d/informix-init.sh"
     #- "./informix-init.sql:/docker-entrypoint-initdb.d/informix-init.sql"
