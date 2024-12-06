@@ -309,10 +309,10 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
- - name: informix
-   prefix: docker
-   version: 14
-   url: jdbc:informix-sqli://localhost:9088/sysmaster:INFORMIXSERVER=informix;
-   username: informix
-   password: in4mix
+  - name: informix
+    prefix: docker
+    version: 14
+    url: jdbc:informix-sqli://localhost:9088/sysmaster:INFORMIXSERVER=informix;
+    username: informix
+    password: in4mix
 
