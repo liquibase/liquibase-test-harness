@@ -350,14 +350,12 @@ services:
       - "9088:9088"
     environment:
       LICENSE: "accept"
-      INFORMIX_PASSWORD: "in4mix"
-      INFORMIX_USER: "informix"
     restart: always
     privileged: true
-    volumes:
-      - "./informix-init.sh:/docker-entrypoint-initdb.d/informix-init.sh"
-      - "./informix-init.sql:/docker-entrypoint-initdb.d/informix-init.sql"
-    entrypoint: /bin/bash /docker-entrypoint-initdb.d/informix-init.sh
+    #volumes:
+    #- "./informix-init.sh:/docker-entrypoint-initdb.d/informix-init.sh"
+    #- "./informix-init.sql:/docker-entrypoint-initdb.d/informix-init.sql"
+    #entrypoint: /bin/bash /docker-entrypoint-initdb.d/informix-init.sh
 
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data
