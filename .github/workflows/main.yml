@@ -93,7 +93,8 @@ on:
             "hsqldb-2.5",
             "firebird-3",
             "firebird-4",
-            "db2-luw"
+            "db2-luw",
+            "informix"
           ]
 
 jobs:
