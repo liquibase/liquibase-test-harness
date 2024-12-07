@@ -356,7 +356,7 @@ services:
     volumes:
       - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9088" ]
+      test: ["CMD-SHELL", "echo 'SELECT 1 FROM systables;' | dbaccess testdb > /dev/null 2>&1"]
       interval: 10s
       timeout: 5s
       retries: 6
