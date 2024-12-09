@@ -137,8 +137,11 @@ case $db in
   "snowflake")
     test_command mvn -ntp -Dtest=$tc -DdbName=snowflake -DrollbackStrategy=rollbackByTag test
     ;;
-  "informix")
-    test_command mvn -ntp -Dtest=$tc -DdbName=informix test
+  "informix-12.10")
+    test_command mvn -ntp -Dtest=$tc -DdbName=informix -DdbVersion=12 test
+    ;;
+  "informix-14.10")
+    test_command mvn -ntp -Dtest=$tc -DdbName=informix -DdbVersion=14 test
     ;;
 esac
 

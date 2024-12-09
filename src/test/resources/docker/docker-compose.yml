@@ -342,8 +342,22 @@ services:
     depends_on:
       - crdb-24.1
 
-  informix:
-    image: icr.io/informix/informix-developer-database:latest
+  informix-12.10:
+    image: ibmcom/informix-developer-database:12.10.FC12W1DE
+    container_name: informix-db
+    hostname: ifx
+    ports:
+      - "9088:9088"
+    environment:
+      LICENSE: "accept"
+      INIT_FILE: "informix-init.sql"
+    restart: always
+    privileged: true
+    volumes:
+      - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
+
+  informix-14.10:
+    image: icr.io/informix/informix-developer-database:14.10.FC7W1DE
     container_name: informix-db
     hostname: ifx
     ports:
