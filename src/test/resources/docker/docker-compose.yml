@@ -354,7 +354,7 @@ services:
     restart: always
     privileged: true
     volumes:
-      - "./informix-init.sql:/opt/ibm/data/sch_init_informix.custom.sql"
+      - "./informix-init.sql:/docker-entrypoint-initdb.d/informix-init.sql"
 
   informix-14.10:
     image: icr.io/informix/informix-developer-database:14.10.FC7W1DE
@@ -368,7 +368,8 @@ services:
     restart: always
     privileged: true
     volumes:
-      - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
+      - "./informix-init.sql:/docker-entrypoint-initdb.d/informix-init.sql"
+
 
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data
