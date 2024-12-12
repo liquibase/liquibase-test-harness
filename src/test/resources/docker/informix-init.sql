@@ -41,9 +41,6 @@ CREATE TABLE posts (
                        inserted_date DATE
 );
 
-ALTER TABLE testdb:informix.posts MODIFY (title VARCHAR(255) DEFAULT 'title_test');
-
-
 INSERT INTO posts (id, author_id, title, description, content, inserted_date)
 VALUES  (1,1,'temporibus','voluptatum','Fugit non et doloribus repudiandae.','2015-11-18');
 
