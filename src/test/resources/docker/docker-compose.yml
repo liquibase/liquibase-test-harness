@@ -365,6 +365,7 @@ services:
     environment:
       LICENSE: "accept"
       INIT_FILE: "informix-init.sql"
+      DBDATE: "Y4MD-"
     restart: always
     privileged: true
     volumes:
