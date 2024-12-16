@@ -2,13 +2,6 @@ inputFormat: xml
 context: testContext
 
 databasesUnderTest:
-  - name: informix
-    prefix: docker
-    version: 14
-    url: jdbc:informix-sqli://localhost:9088/testdb:INFORMIXSERVER=informix;
-    username: informix
-    password: in4mix
-
   - name: postgresql
     prefix: docker
     version: 16
