@@ -8,7 +8,7 @@ BEGIN WORK;
 -- Drop and create authors table
 DROP TABLE IF EXISTS authors;
 CREATE TABLE authors (
-                         id SERIAL PRIMARY KEY,
+                         id SERIAL,
                          first_name VARCHAR(50) NOT NULL,
                          last_name VARCHAR(50) NOT NULL,
                          email VARCHAR(100) NOT NULL,
@@ -55,7 +55,7 @@ BEGIN WORK;
 -- Drop and create posts table
 DROP TABLE IF EXISTS posts;
 CREATE TABLE posts (
-                       id SERIAL PRIMARY KEY,
+                       id SERIAL,
                        author_id INT NOT NULL,
                        title VARCHAR(255) NOT NULL DEFAULT 'title_test',
                        description VARCHAR(255) NOT NULL,
