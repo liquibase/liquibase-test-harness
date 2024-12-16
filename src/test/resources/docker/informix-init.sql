@@ -55,7 +55,7 @@ BEGIN WORK;
 -- Drop and create posts table
 DROP TABLE IF EXISTS posts;
 CREATE TABLE posts (
-                       id SERIAL PRIMARY KEY,
+                       id SERIAL,
                        author_id INT NOT NULL,
                        title VARCHAR(255) NOT NULL DEFAULT 'title_test',
                        description VARCHAR(255) NOT NULL,
