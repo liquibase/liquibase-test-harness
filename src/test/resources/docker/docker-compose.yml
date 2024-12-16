@@ -350,6 +350,7 @@ services:
       - "9088:9088"
     environment:
       LICENSE: "accept"
+      INIT_FILE: "sch_init_informix.custom.sql"
       SIZE: "custom"
     restart: always
     privileged: true
