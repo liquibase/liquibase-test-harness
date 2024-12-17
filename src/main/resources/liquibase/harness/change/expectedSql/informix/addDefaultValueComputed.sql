@@ -1,6 +1,6 @@
 INVALID TEST
 
--- Bug on Liquibase side: incorrect generated sql
+-- Bug on Liquibase side: incorrect generated sql DAT-19231
 -- Actual:
 -- ALTER TABLE testdb:informix.posts
 --     MODIFY (inserted_date date DEFAULT DATETIME YEAR TO FRACTION(5) DEFAULT CURRENT YEAR TO FRACTION(5));
