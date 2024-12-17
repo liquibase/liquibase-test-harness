@@ -66,6 +66,12 @@ case $db in
     exit 0
     ;;
 
+  # informix needs a bit more time to start
+  "informix-12.10"|"informix-14.10")
+    docker compose up -d $db
+    sleep 60
+    ;;
+
   # standard startup
   *)
     docker compose up -d $db

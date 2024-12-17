@@ -93,7 +93,9 @@ on:
             "hsqldb-2.5",
             "firebird-3",
             "firebird-4",
-            "db2-luw"
+            "db2-luw",
+            "informix-12.10",
+            "informix-14.10"
           ]
 
 jobs:
@@ -118,7 +120,7 @@ jobs:
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
         "mariadb-10.7","mssql-2017","H2Database-2.2","crdb-23.1","crdb-23.2","crdb-24.1",
         "edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-postgres-15","edb-postgres-16",
-        "edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","derby","sqlite","hsqldb-2.4","hsqldb-2.5","firebird-3","firebird-4","db2-luw"]' }}
+        "edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","derby","sqlite","hsqldb-2.4","hsqldb-2.5","firebird-3","firebird-4","db2-luw","informix-12.10","informix-14.10"]' }}
       testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - uses: actions/checkout@v4
