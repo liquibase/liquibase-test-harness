@@ -106,6 +106,8 @@ class FoundationalTest extends Specification {
             if (shouldOpenNewConnection(connection, "sqlite")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
+            } else if (shouldOpenNewConnection(connection, "informix")) {
+                resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
             } else {
                 resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
                 connection.autoCommit ?: connection.commit()

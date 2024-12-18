@@ -132,10 +132,16 @@ case $db in
     test_command mvn -ntp -Dtest=$tc -DdbName=firebird -DdbVersion=4 test
     ;;
   "db2-luw")
-      test_command mvn -ntp -Dtest=$tc -DdbName=db2-luw test
-      ;;
+    test_command mvn -ntp -Dtest=$tc -DdbName=db2-luw test
+    ;;
   "snowflake")
     test_command mvn -ntp -Dtest=$tc -DdbName=snowflake -DrollbackStrategy=rollbackByTag test
+    ;;
+  "informix-12.10")
+    test_command mvn -ntp -Dtest=$tc -DdbName=informix -DdbVersion=12 test
+    ;;
+  "informix-14.10")
+    test_command mvn -ntp -Dtest=$tc -DdbName=informix -DdbVersion=14 test
     ;;
 esac
 
