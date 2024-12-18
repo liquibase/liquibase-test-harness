@@ -63,8 +63,7 @@ class FoundationalTest extends Specification {
         and: "fail test if expectedResultSet is not provided"
         shouldRunChangeSet = expectedResultSet != null
         assert shouldRunChangeSet: "No expectedResultSet for ${testInput.change} against " +
-                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
-                "${testInput.database.databaseMinorVersion}"
+                "${testInput.databaseName} ${testInput.version}."
 
         and: "check database under test is online"
         def connection = testInput.database.getConnection()
