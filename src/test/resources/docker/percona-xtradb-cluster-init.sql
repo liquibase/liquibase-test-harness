@@ -32,7 +32,7 @@ CREATE TABLE `DATABASECHANGELOG` (
                           `LIQUIBASE` varchar(20) DEFAULT NULL,
                           `CONTEXTS` varchar(255) DEFAULT NULL,
                           `LABELS` varchar(255) DEFAULT NULL,
-                          `DEPLOYMENT_ID` varchar(10) DEFAULT NULL,
+                          `DEPLOYMENT_ID` varchar(36) DEFAULT NULL,
                           PRIMARY KEY (ID, AUTHOR, FILENAME)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
