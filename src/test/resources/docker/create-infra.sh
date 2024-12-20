@@ -7,7 +7,7 @@ db=$1
 case $db in
 
   # percona xtradb cluster needs a bit more time to start
-  "percona-xtradb-cluster-5.7"|"percona-xtradb-cluster-8.0" )
+  "percona-xtradb-cluster-5.7"|"percona-xtradb-cluster-8.0"|"percona-xtradb-cluster-8.4" )
     docker compose up -d $db
     sleep 180
     ;;
