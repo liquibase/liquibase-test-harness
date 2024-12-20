@@ -26,6 +26,9 @@ case $db in
   "percona-xtradb-cluster-8.0" )
     test_command mvn -ntp -Dtest=$tc -DdbName=percona-xtradb-cluster -DdbVersion=8.0 test
     ;;
+  "percona-xtradb-cluster-8.4" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=percona-xtradb-cluster -DdbVersion=8.4 test
+    ;;
   "postgres-12" )
     test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=12 test
     ;;

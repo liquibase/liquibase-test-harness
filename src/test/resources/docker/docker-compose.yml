@@ -76,6 +76,22 @@ services:
     volumes:
       - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
 
+  percona-xtradb-cluster-8.4:
+    image: percona/percona-xtradb-cluster:8.4
+    ports:
+      - "33072:3306"
+    networks:
+      - cluster1_net
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+      CLUSTER_NAME: cluster1
+    volumes:
+      - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
+
   postgres-12:
     image: postgres:12
     ports:
