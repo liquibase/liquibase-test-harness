@@ -1,12 +1,11 @@
 package liquibase.harness
 
-
 import liquibase.harness.generateChangelog.GenerateChangelogTest
 import liquibase.harness.snapshot.SnapshotObjectTests
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
+import org.junit.platform.suite.api.SelectClasses
+import org.junit.platform.suite.api.Suite
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses([GenerateChangelogTest, SnapshotObjectTests])
+@Suite
+@SelectClasses([GenerateChangelogTest, SnapshotObjectTests])
 abstract class AdvancedHarnessSuite {
 }

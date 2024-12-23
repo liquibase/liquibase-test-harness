@@ -7,7 +7,7 @@ import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.ui.UIService
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -50,7 +50,7 @@ class GenerateChangelogTest extends Specification {
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !getResourceContent("/$testInput.sqlChangelogPath").toLowerCase()?.contains("invalid test")
-        Assume.assumeTrue("INFO: Test for $testInput.change is ignored", shouldRunChangeSet)
+        Assumptions.assumeTrue(shouldRunChangeSet, "INFO: Test for $testInput.change is ignored")
 
         and: "testing generateChangelog command for all files format"
         def map = new LinkedHashMap<String, String>()
@@ -66,12 +66,13 @@ class GenerateChangelogTest extends Specification {
             when: "execute generateChangelog command using different changelog formats"
             argsMap.put("changeLogFile", testInput.xmlChangelogPath)
             executeCommandScope("update", argsMap)
-            argsMap.put("changeLogFile", resourcesDirFullPath + entry.value)
             argsMap.put("excludeObjects", "(?i)posts, (?i)authors")//excluding static test-harness objects from generated changelog
             if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
                 def shortDbName = getShortDatabaseName(testInput.databaseName)
                 sqlSpecificChangelogFile = entry.value.replace(".sql", ".$shortDbName" + ".sql")
-                argsMap.put("changeLogFile", resourcesDirFullPath + sqlSpecificChangelogFile)
+                argsMap.put("changeLogFile", resourcesDirFullPath + "generated/" + sqlSpecificChangelogFile)
+            } else {
+                argsMap.put("changeLogFile", resourcesDirFullPath + "generated/" + entry.value)
             }
             executeCommandScope("generateChangelog", argsMap, testInput.databaseName)
 
@@ -128,9 +129,9 @@ class GenerateChangelogTest extends Specification {
         }
         for (Map.Entry<String, String> entry : map.entrySet()) {
             if (entry.key.equalsIgnoreCase("expectedSqlChangelog")) {
-                deleteFile(resourcesDirFullPath + sqlSpecificChangelogFile)
+                deleteFile(resourcesDirFullPath + "generated/" + sqlSpecificChangelogFile)
             } else {
-                deleteFile(resourcesDirFullPath + entry.value)
+                deleteFile(resourcesDirFullPath + "generated/" + entry.value)
             }
         }
 

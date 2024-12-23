@@ -7,13 +7,13 @@ db=$1
 case $db in
 
   # percona xtradb cluster needs a bit more time to start
-  "percona-xtradb-cluster-5.7"|"percona-xtradb-cluster-8.0" )
+  "percona-xtradb-cluster-5.7"|"percona-xtradb-cluster-8.0"|"percona-xtradb-cluster-8.4" )
     docker compose up -d $db
     sleep 180
     ;;
 
   # edb setup requires login to private registry
-  "edb-postgres-9.5"|"edb-postgres-9.6"|"edb-postgres-10"|"edb-postgres-11"|"edb-postgres-12"|"edb-postgres-13"|"edb-postgres-14"|"edb-edb-9.5"|"edb-edb-9.6"|"edb-edb-10"|"edb-edb-11"|"edb-edb-12"|"edb-edb-13"|"edb-edb-14")
+  "edb-postgres-12"|"edb-postgres-13"|"edb-postgres-14"|"edb-postgres-15"|"edb-postgres-16"|"edb-edb-12"|"edb-edb-13"|"edb-edb-14"|"edb-edb-15"|"edb-edb-16")
     docker login $REPO_URL -u $REPO_USER -p $REPO_PASSWORD
     docker compose -f docker-compose.edb.yml up -d $db
     exit 0
@@ -26,7 +26,25 @@ case $db in
     ;;
 
   # crdb also has an init container
-  "crdb-20.2"|"crdb-21.1"|"crdb-21.2"|"crdb-22.1")
+  "crdb-23.1")
+    docker compose up -d $db
+    sleep 20
+    docker compose up -d ${db}-init
+    docker compose logs $db
+    docker compose logs ${db}-init
+    exit 0
+    ;;
+
+  "crdb-23.2")
+    docker compose up -d $db
+    sleep 20
+    docker compose up -d ${db}-init
+    docker compose logs $db
+    docker compose logs ${db}-init
+    exit 0
+    ;;
+
+  "crdb-24.1")
     docker compose up -d $db
     sleep 20
     docker compose up -d ${db}-init
@@ -46,6 +64,12 @@ case $db in
     docker ps
     titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/$db
     exit 0
+    ;;
+
+  # informix needs a bit more time to start
+  "informix-12.10"|"informix-14.10")
+    docker compose up -d $db
+    sleep 60
     ;;
 
   # standard startup

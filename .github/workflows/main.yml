@@ -59,6 +59,7 @@ on:
             "mysql-8",
             "percona-xtradb-cluster-5.7",
             "percona-xtradb-cluster-8.0",
+            "percona-xtradb-cluster-8.4",          
             "postgres-12",
             "postgres-13",
             "postgres-14",
@@ -74,31 +75,28 @@ on:
             "mssql-2019",
             "mssql-2022",
             "H2Database-2.2",
-            "crdb-20.2",
-            "crdb-21.1",
-            "crdb-21.2",
-            "crdb-22.1",
-            "edb-postgres-9.5",
-            "edb-postgres-9.6",
-            "edb-postgres-10",
-            "edb-postgres-11",
+            "crdb-23.1",
+            "crdb-23.2",
+            "crdb-24.1",
             "edb-postgres-12",
             "edb-postgres-13",
             "edb-postgres-14",
-            "edb-edb-9.5",
-            "edb-edb-9.6",
-            "edb-edb-10",
-            "edb-edb-11",
+            "edb-postgres-15",
+            "edb-postgres-16",
             "edb-edb-12",
             "edb-edb-13",
             "edb-edb-14",
+            "edb-edb-15",
+            "edb-edb-16",
             "derby",
             "sqlite",
             "hsqldb-2.4",
             "hsqldb-2.5",
             "firebird-3",
             "firebird-4",
-            "db2-luw"
+            "db2-luw",
+            "informix-12.10",
+            "informix-14.10"
           ]
 
 jobs:
@@ -111,7 +109,7 @@ jobs:
   setup:
     name: Setup
     needs: authorize
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     env:
       GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
@@ -119,11 +117,11 @@ jobs:
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
       liquibaseSha: ${{ steps.configure-build.outputs.liquibaseSha }}
-      databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0",
+      databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","percona-xtradb-cluster-8.4",
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
-        "mariadb-10.7","mssql-2017","H2Database-2.2","crdb-20.2","crdb-21.1","crdb-21.2","crdb-22.1","edb-postgres-9.5","edb-postgres-9.6",
-        "edb-postgres-10","edb-postgres-11","edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-edb-9.5","edb-edb-9.6","edb-edb-10","edb-edb-11",
-        "edb-edb-12","edb-edb-13","edb-edb-14","derby","sqlite","hsqldb-2.4","hsqldb-2.5","firebird-3","firebird-4","db2-luw"]' }}
+        "mariadb-10.7","mssql-2017","H2Database-2.2","crdb-23.1","crdb-23.2","crdb-24.1",
+        "edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-postgres-15","edb-postgres-16",
+        "edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","derby","sqlite","hsqldb-2.4","hsqldb-2.5","firebird-3","firebird-4","db2-luw","informix-12.10","informix-14.10"]' }}
       testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - uses: actions/checkout@v4
@@ -328,13 +326,16 @@ jobs:
   finish:
     name: Finish
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      statuses: write
     needs: [ setup, test, authorize ]
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Coordinate Liquibase-Test-Harness
-        uses: actions/github-script@v6.4.1
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.BOT_TOKEN }}
           script: |

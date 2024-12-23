@@ -26,6 +26,9 @@ case $db in
   "percona-xtradb-cluster-8.0" )
     test_command mvn -ntp -Dtest=$tc -DdbName=percona-xtradb-cluster -DdbVersion=8.0 test
     ;;
+  "percona-xtradb-cluster-8.4" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=percona-xtradb-cluster -DdbVersion=8.4 test
+    ;;
   "postgres-12" )
     test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=12 test
     ;;
@@ -71,29 +74,14 @@ case $db in
   "H2Database-2.2" )
     test_command mvn -ntp -Dtest=$tc -DdbName=h2 test
     ;;
-  "crdb-20.2" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=20.2 test
+  "crdb-23.1" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=23.1 test
     ;;
-  "crdb-21.1" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=21.1 test
+  "crdb-23.2" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=23.2 test
     ;;
-  "crdb-21.2" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=21.2 test
-    ;;
-  "crdb-22.1" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=22.1 test
-    ;;
-  "edb-postgres-9.5" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=9.5 test
-    ;;
-  "edb-postgres-9.6" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=9.6 test
-    ;;
-  "edb-postgres-10" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=10 test
-    ;;
-  "edb-postgres-11" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=11 test
+  "crdb-24.1" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=cockroachdb -DdbVersion=24.1 test
     ;;
   "edb-postgres-12" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=12 test
@@ -104,17 +92,11 @@ case $db in
   "edb-postgres-14" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=14 test
     ;;
-  "edb-edb-9.5" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=9.5 test
+  "edb-postgres-15" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=15 test
     ;;
-  "edb-edb-9.6" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=9.6 test
-    ;;
-  "edb-edb-10" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=10 test
-    ;;
-  "edb-edb-11" )
-    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=11 test
+  "edb-postgres-16" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=edb-postgres -DdbVersion=16 test
     ;;
   "edb-edb-12" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=12 test
@@ -124,6 +106,12 @@ case $db in
     ;;
   "edb-edb-14" )
     test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=14 test
+    ;;
+  "edb-edb-15" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=15 test
+    ;;
+  "edb-edb-16" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=edb-edb -DdbVersion=16 test
     ;;
   "derby" )
     test_command mvn -ntp -Dtest=$tc -DdbName=derby test
@@ -147,10 +135,16 @@ case $db in
     test_command mvn -ntp -Dtest=$tc -DdbName=firebird -DdbVersion=4 test
     ;;
   "db2-luw")
-      test_command mvn -ntp -Dtest=$tc -DdbName=db2-luw test
-      ;;
+    test_command mvn -ntp -Dtest=$tc -DdbName=db2-luw test
+    ;;
   "snowflake")
     test_command mvn -ntp -Dtest=$tc -DdbName=snowflake -DrollbackStrategy=rollbackByTag test
+    ;;
+  "informix-12.10")
+    test_command mvn -ntp -Dtest=$tc -DdbName=informix -DdbVersion=12 test
+    ;;
+  "informix-14.10")
+    test_command mvn -ntp -Dtest=$tc -DdbName=informix -DdbVersion=14 test
     ;;
 esac
 

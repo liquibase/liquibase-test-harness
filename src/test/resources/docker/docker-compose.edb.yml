@@ -4,33 +4,6 @@ services:
 
   # Liquibase hosts private EDB images built for testing purposes in a private Artifactory repo which is login protected. 
   # If you do not login privileges to this private repo then you will encounter authentication errors if you run `docker compose up` on this docker compose file.
-  edb-postgres-9.5:
-    image: docker.liquibase.net/datical-enterprisedb-ppas95:latest
-    ports:
-      - "5501:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
-
-  edb-postgres-9.6:
-    image: docker.liquibase.net/datical-enterprisedb-edbas96:latest
-    ports:
-      - "5502:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
-
-  edb-postgres-10:
-    image: docker.liquibase.net/datical-enterprisedb-edbas10:latest
-    ports:
-      - "5503:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
-
-  edb-postgres-11:
-    image: docker.liquibase.net/datical-enterprisedb-edbas11:latest
-    ports:
-      - "5504:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
 
   edb-postgres-12:
     image: docker.liquibase.net/datical-enterprisedb-edbas12:latest
@@ -44,63 +17,54 @@ services:
     ports:
       - "5506:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
 
   edb-postgres-14:
     image: docker.liquibase.net/datical-enterprisedb-edbas14:latest
     ports:
       - "5507:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
 
-    # We are providing second set of EDB images to run tests with EDB driver
-    # Without it tests will run in parallel and interfere with each other
-
-  edb-edb-9.5:
-    image: docker.liquibase.net/datical-enterprisedb-ppas95:latest
+  edb-postgres-15:
+    image: docker.liquibase.net/datical-enterprisedb-edbas15:latest
     ports:
       - "5508:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
 
-  edb-edb-9.6:
-    image: docker.liquibase.net/datical-enterprisedb-edbas96:latest
+  edb-postgres-16:
+    image: docker.liquibase.net/datical-enterprisedb-edbas16
     ports:
       - "5509:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
 
-  edb-edb-10:
-    image: docker.liquibase.net/datical-enterprisedb-edbas10:latest
-    ports:
-      - "5510:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
-
-  edb-edb-11:
-    image: docker.liquibase.net/datical-enterprisedb-edbas11:latest
-    ports:
-      - "5511:5444"
-    restart: always
-    # no environment or volumes as those were created at image creation
+    # We are providing second set of EDB images to run tests with EDB driver
+    # Without it tests will run in parallel and interfere with each other
 
   edb-edb-12:
     image: docker.liquibase.net/datical-enterprisedb-edbas12:latest
     ports:
       - "5512:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
 
   edb-edb-13:
     image: docker.liquibase.net/datical-enterprisedb-edbas13:latest
     ports:
       - "5513:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
 
   edb-edb-14:
     image: docker.liquibase.net/datical-enterprisedb-edbas14:latest
     ports:
       - "5514:5444"
     restart: always
-    # no environment or volumes as those were created at image creation
+
+  edb-edb-15:
+    image: docker.liquibase.net/datical-enterprisedb-edbas15:latest
+    ports:
+      - "5515:5444"
+    restart: always
+
+  edb-edb-16:
+    image: docker.liquibase.net/datical-enterprisedb-edbas16
+    ports:
+      - "5516:5444"
+    restart: always

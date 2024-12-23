@@ -2,10 +2,10 @@ package liquibase.harness
 
 import liquibase.harness.change.ChangeObjectTests
 import liquibase.harness.data.ChangeDataTests
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
+import org.junit.platform.suite.api.SelectClasses
+import org.junit.platform.suite.api.Suite
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses([ChangeObjectTests, ChangeDataTests])
+@Suite
+@SelectClasses([ChangeObjectTests, ChangeDataTests])
 abstract class BaseHarnessSuite {
 }

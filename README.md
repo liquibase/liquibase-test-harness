@@ -26,8 +26,8 @@
 | SQL Server                | `2017`, `2019`, `2022`                | Advanced                       |
 | Percona XtraDB            | `5.7`, `8.0`                          | Advanced                       |
 | Oracle                    | `18.3.0, 18.4.0, 21.3.0`              | Advanced                       |
-| CockroachDB               | `20.2, 21.1, 21.2, 22.1`              | Advanced                       |
-| EDB                       | `9.5, 9.6, 10, 11, 12, 13, 14`        | Advanced                       |
+| CockroachDB               | `23.1, 23.2, 24.1`                    | Advanced                       |
+| EDB                       | `12, 13, 14, 15, 16`                  | Advanced                       |
 | DB2 on z/OS               | `11.1, 12`                            | BaseHarnessSuite               |
 | DB2 on Linux/Unix/Windows | `11.5.7`                              | Advanced                       |
 | H2                        | `2.2.220`                             | Advanced                       |
@@ -119,7 +119,7 @@ it is not present in test**)
 As far as this test validates work of basic Liquibase functions it is essential to keep its configuration as simple as possible:
 1. If you have your database instance up and running you need to just add appropriate configuration details to `src/test/resources/harness-config.yml` file.
 Following the example:
-   - **name**: `database_name` (**mandatory**) </br>
+   - **name**: `database_name` (**mandatory**)  - is used in test input files structure to override default files </br>
      **version**: `database_version` (optional) </br>
      **prefix**: `local` (optional parameter required for CI/CD tests, leave it empty or set `local`) </br>
      **url**: `db_connection_url` (**mandatory**) </br>
