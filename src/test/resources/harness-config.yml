@@ -329,3 +329,7 @@ databasesUnderTest:
     username: informix
     password: in4mix
 
+  - name: tidb
+    prefix: docker
+    url: jdbc:mysql://localhost:4000/test
+    username: root

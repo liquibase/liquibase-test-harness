@@ -388,6 +388,17 @@ services:
     volumes:
       - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
 
+  ti-db:
+    image: pingcap/tidb
+    container_name: ti-db
+    ports:
+      - 4000:4000
+    logging:
+      driver: none
+    volumes:
+      - ./storage/tidb:/var/lib/mysql
+      - "./tidb-init.sql:/docker-entrypoint-initdb.d/tidb-init.sql"
+    command: sh -c 'exec /entrypoint.sh tidb-server --store=tikv && mysql -h 127.0.0.1 -P 4000 -u root < /docker-entrypoint-initdb.d/tidb-init.sql'
 
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data

@@ -146,5 +146,8 @@ case $db in
   "informix-14.10")
     test_command mvn -ntp -Dtest=$tc -DdbName=informix -DdbVersion=14 test
     ;;
+  "tidb")
+    test_command mvn -ntp -Dtest=$tc -DdbName=tidb test
+    ;;
 esac
 
