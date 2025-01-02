@@ -13,8 +13,6 @@ BEGIN
     EXEC sp_addrolemember 'db_owner', 'lbuser';
 END
 
-ALTER USER lbuser WITH DEFAULT_SCHEMA = lbuser;
-
 --changeset liquibase:2 runAlways:true
 DROP TABLE IF EXISTS [lbuser].[authors]
 
