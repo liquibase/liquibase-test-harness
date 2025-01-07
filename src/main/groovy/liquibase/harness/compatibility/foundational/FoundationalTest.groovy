@@ -37,40 +37,40 @@ class FoundationalTest extends Specification {
 
     def "apply #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data"
+        String basePath = "liquibase/harness/compatibility/foundational/"
+
         String expectedResultSet = getJSONFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/compatibility/foundational/expectedResultSet")
+                "${basePath}/expectedResultSet")
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
 
-        String basePath = "liquibase/harness/compatibility/foundational/"
         ArrayList<String> changelogList = new ArrayList<>()
-        changelogList.add("${basePath}changelogs/${testInput.change}.xml")
-        changelogList.add("${basePath}changelogs/${testInput.change}.yml")
-        changelogList.add("${basePath}changelogs/${testInput.change}.json")
-        changelogList.add("${basePath}changelogs/${testInput.change}.sql")
+        changelogList.add(testInput.xmlChange)
+        changelogList.add(testInput.jsonChange)
+        changelogList.add(testInput.ymlChange)
+        changelogList.add(testInput.sqlChange)
 
         ArrayList<String> checkingSqlList = new ArrayList<>()
-        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Xml.sql"))
-        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Yaml.sql"))
-        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Json.sql"))
-        checkingSqlList.add(getResourceContent("/${basePath}checkingSql/${testInput.change}/${testInput.change}Sql.sql"))
+        checkingSqlList.add(getFileContent(testInput.change, testInput.databaseName, testInput.version, "/${basePath}checkingSql/${testInput.change}", "Xml.sql"))
+        checkingSqlList.add(getFileContent(testInput.change, testInput.databaseName, testInput.version, "/${basePath}checkingSql/${testInput.change}","Yaml.sql"))
+        checkingSqlList.add(getFileContent(testInput.change, testInput.databaseName, testInput.version, "/${basePath}checkingSql/${testInput.change}","Json.sql"))
+        checkingSqlList.add(getFileContent(testInput.change, testInput.databaseName, testInput.version, "/${basePath}checkingSql/${testInput.change}","Sql.sql"))
 
         boolean shouldRunChangeSet
 
         and: "fail test if expectedResultSet is not provided"
         shouldRunChangeSet = expectedResultSet != null
         assert shouldRunChangeSet: "No expectedResultSet for ${testInput.change} against " +
-                "${testInput.database.shortName} ${testInput.database.databaseMajorVersion}." +
-                "${testInput.database.databaseMinorVersion}"
+                "${testInput.databaseName} ${testInput.version}."
 
         and: "check database under test is online"
         def connection = testInput.database.getConnection()
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
-        and: "execute Liquibase validate command to ensure a chagelog is valid"
+        and: "execute Liquibase validate command to ensure a changelog is valid"
         for (int i = 0; i < changelogList.size(); i++) {
             argsMap.put("changeLogFile", changelogList.get(i))
             executeCommandScope("validate", argsMap)
@@ -106,6 +106,8 @@ class FoundationalTest extends Specification {
             if (shouldOpenNewConnection(connection, "sqlite")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 resultSet = newConnection.createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
+            } else if (shouldOpenNewConnection(connection, "informix")) {
+                resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
             } else {
                 resultSet = ((JdbcConnection) connection).createStatement().executeQuery("SELECT * FROM DATABASECHANGELOG")
                 connection.autoCommit ?: connection.commit()

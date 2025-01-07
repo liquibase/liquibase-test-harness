@@ -76,6 +76,22 @@ services:
     volumes:
       - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
 
+  percona-xtradb-cluster-8.4:
+    image: percona/percona-xtradb-cluster:8.4
+    ports:
+      - "33072:3306"
+    networks:
+      - cluster1_net
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+      CLUSTER_NAME: cluster1
+    volumes:
+      - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
+
   postgres-12:
     image: postgres:12
     ports:
@@ -341,6 +357,37 @@ services:
     command: /setup_db.sh crdb-24.1
     depends_on:
       - crdb-24.1
+
+  informix-12.10:
+    image: ibmcom/informix-developer-database:12.10.FC12W1DE
+    container_name: informix-db
+    hostname: ifx
+    ports:
+      - "9088:9088"
+    environment:
+      LICENSE: "accept"
+      INIT_FILE: "sch_init_informix.custom.sql"
+      SIZE: "custom"
+    restart: always
+    privileged: true
+    volumes:
+      - "./informix-init.sql:/opt/ibm/data/sch_init_informix.custom.sql"
+
+  informix-14.10:
+    image: icr.io/informix/informix-developer-database:14.10.FC7W1DE
+    container_name: informix-db
+    hostname: ifx
+    ports:
+      - "9088:9088"
+    environment:
+      LICENSE: "accept"
+      INIT_FILE: "informix-init.sql"
+      DBDATE: "Y4MD-"
+    restart: always
+    privileged: true
+    volumes:
+      - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
+
 
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data

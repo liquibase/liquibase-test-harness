@@ -7,7 +7,7 @@ db=$1
 case $db in
 
   # percona xtradb cluster needs a bit more time to start
-  "percona-xtradb-cluster-5.7"|"percona-xtradb-cluster-8.0" )
+  "percona-xtradb-cluster-5.7"|"percona-xtradb-cluster-8.0"|"percona-xtradb-cluster-8.4" )
     docker compose up -d $db
     sleep 180
     ;;
@@ -64,6 +64,12 @@ case $db in
     docker ps
     titan clone s3web://test-harness-titan-configs.s3-website.us-east-2.amazonaws.com/$db
     exit 0
+    ;;
+
+  # informix needs a bit more time to start
+  "informix-12.10"|"informix-14.10")
+    docker compose up -d $db
+    sleep 60
     ;;
 
   # standard startup

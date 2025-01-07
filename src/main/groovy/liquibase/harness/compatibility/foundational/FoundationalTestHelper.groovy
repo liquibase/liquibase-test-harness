@@ -48,6 +48,10 @@ class FoundationalTestHelper {
                         .password(databaseUnderTest.password)
                         .version(databaseUnderTest.version)
                         .change(changeLogEntry.key)
+                        .xmlChange(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "xml").get(changeLogEntry.key))
+                        .jsonChange(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "json").get(changeLogEntry.key))
+                        .ymlChange(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "yml").get(changeLogEntry.key))
+                        .sqlChange(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath, "sql").get(changeLogEntry.key))
                         .database(databaseUnderTest.database)
                         .build())
             }
@@ -80,6 +84,10 @@ class FoundationalTestHelper {
         String url
         String dbSchema
         String change
+        String xmlChange
+        String jsonChange
+        String ymlChange
+        String sqlChange
         Database database
     }
 }

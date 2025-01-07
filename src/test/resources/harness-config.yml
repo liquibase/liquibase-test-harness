@@ -70,6 +70,12 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: percona-xtradb-cluster
+    version: 8.4
+    url: jdbc:mysql://localhost:33072/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
   - name: mariadb
     prefix: docker
     version: 10.2
@@ -308,3 +314,18 @@ databasesUnderTest:
     url: jdbc:firebirdsql://localhost:3050/lbcat
     username: lbuser
     password: LiquibasePass1
+
+  - name: informix
+    prefix: docker
+    version: 12
+    url: jdbc:informix-sqli://localhost:9088/testdb:INFORMIXSERVER=informix;
+    username: informix
+    password: in4mix
+
+  - name: informix
+    prefix: docker
+    version: 14
+    url: jdbc:informix-sqli://localhost:9088/testdb:INFORMIXSERVER=informix;
+    username: informix
+    password: in4mix
+
