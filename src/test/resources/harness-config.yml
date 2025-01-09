@@ -4,6 +4,13 @@ context: testContext
 databasesUnderTest:
   - name: postgresql
     prefix: docker
+    version: 17
+    url: jdbc:postgresql://localhost:5441/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
+    prefix: docker
     version: 16
     url: jdbc:postgresql://localhost:5440/lbcat
     username: lbuser
