@@ -44,26 +44,26 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-#  - name: mysql
-#    prefix: docker
-#    version: 5.6
-#    url: jdbc:mysql://localhost:33064/lbcat
-#    username: lbuser
-#    password: LiquibasePass1
-#
-#  - name: mysql
-#    prefix: docker
-#    version: 5.7
-#    url: jdbc:mysql://localhost:33062/lbcat
-#    username: lbuser
-#    password: LiquibasePass1
-#
-#  - name: mysql
-#    prefix: docker
-#    version: 8
-#    url: jdbc:mysql://localhost:33061/lbcat
-#    username: lbuser
-#    password: LiquibasePass1
+  - name: mysql
+    prefix: docker
+    version: 5.6
+    url: jdbc:mysql://localhost:33064/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
+    version: 5.7
+    url: jdbc:mysql://localhost:33062/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
+    version: 8
+    url: jdbc:mysql://localhost:33061/lbcat
+    username: lbuser
+    password: LiquibasePass1
 
   - name: mysql
     prefix: docker
