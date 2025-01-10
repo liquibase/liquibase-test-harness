@@ -44,6 +44,21 @@ services:
     volumes:
     - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
+  mysql-8.4:
+    platform: linux/x86_64
+    image: mysql:8.4
+    ports:
+      - "33065:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+
+
   percona-xtradb-cluster-5.7:
     image: percona/percona-xtradb-cluster:5.7
     ports:
