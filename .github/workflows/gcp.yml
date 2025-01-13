@@ -5,7 +5,7 @@ concurrency: gcp-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
-    - cron: '0 6 * * *' # Execute every day at 6AM UTC
+    - cron: '0 5 * * *' # Execute every day at 5AM UTC
   workflow_dispatch:
     inputs:
       testClasses:
