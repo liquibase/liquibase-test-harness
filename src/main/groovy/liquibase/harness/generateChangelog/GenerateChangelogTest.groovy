@@ -84,6 +84,28 @@ class GenerateChangelogTest extends Specification {
                 assert generatedChangelog.contains("$testInput.change")
             }
 
+            then: "verify that the 'stored objects' directories are created"
+            if (!entry.value.endsWith("sql")) {
+                def storedObjectTypesMap = [
+                    "createPackage"     : "package",
+                    "createPackageBody" : "packagebody",
+                    "createFunction"    : "function",
+                    "createProcedure"   : "storedprocedure",
+                    "createTrigger"     : "trigger"
+            ]
+
+            if (storedObjectTypesMap.keySet().any { changelogType -> testInput.change.equalsIgnoreCase(changelogType) }) {
+                def expectedObjectType = storedObjectTypesMap[testInput.change]
+
+                def originalPath = entry.value
+                def replacedPath = originalPath.replaceAll(/create\w+\.(xml|yml|json)$/, "") + "objects/" + expectedObjectType
+
+                def objectDir = new File(resourcesDirFullPath + "generated/" + replacedPath)
+                assert objectDir.exists() && objectDir.isDirectory() :
+                        "Directory for stored object '${expectedObjectType}' was not created at path: ${replacedPath}!"
+                }
+            }
+
 //TODO will be fixed in DAT-14675.
 /*
             when: "get sql generated for the change set"
