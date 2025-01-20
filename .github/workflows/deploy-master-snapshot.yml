@@ -1,0 +1,11 @@
+name: Deploy Master Snapshot
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  extension-deploy-master-snapshot:
+    uses: liquibase/build-logic/.github/workflows/extension-deploy-master-snapshot.yml@main
+    secrets: inherit
