@@ -98,7 +98,7 @@ on:
             "firebird-4",
             "db2-luw",
             "informix-12.10",
-            "informix-14.10"
+            "informix-14.10",
             "ti-db-mysql"
           ]
 
