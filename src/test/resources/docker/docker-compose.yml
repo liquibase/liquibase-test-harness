@@ -412,7 +412,7 @@ services:
     volumes:
       - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
 
-  ti-db-mysql:
+  ti-db:
     image: pingcap/tidb
     container_name: ti-db
     ports:
@@ -420,11 +420,11 @@ services:
     volumes:
       - ./storage/tidb:/var/lib/mysql
 
-  ti-db:
+  ti-db-mysql:
     image: mysql:latest
     container_name: mysql-client
     depends_on:
-      - ti-db-mysql
+      - ti-db
     volumes:
       - ./tidb-init.sql:/tidb-init.sql
     entrypoint: sh -c "
