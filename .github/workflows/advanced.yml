@@ -25,7 +25,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name"
         required: true
-        default: "[\"mysql-5.6\",\"mysql-5.7\",\"mysql-8\",\"postgres-12\",\"postgres-13\",\"postgres-14\",\"postgres-15\",\"postgres-16\",\"mariadb-10.2\",\"mariadb-10.3\",\"mariadb-10.4\",\"mariadb-10.5\",\"mariadb-10.6\",
+        default: "[\"mysql-5.6\",\"mysql-5.7\",\"mysql-8\",\"mysql-8.4\",\"postgres-12\",\"postgres-13\",\"postgres-14\",\"postgres-15\",\"postgres-16\",\"postgres-17\",\"mariadb-10.2\",\"mariadb-10.3\",\"mariadb-10.4\",\"mariadb-10.5\",\"mariadb-10.6\",
         \"mariadb-10.7\",\"mssql-2017\",\"mssql-2019\",\"mssql-2022\",\"crdb-23.1\",\"crdb-23.2\",\"crdb-24.1\",\"percona-xtradb-cluster-5.7\",\"percona-xtradb-cluster-8.0\",
         \"edb-edb-12\",\"edb-edb-13\",\"edb-edb-14\",\"edb-edb-15\",\"edb-edb-16\",\"db2-luw\",\"H2Database-2.2\",\"sqlite\",\"derby\",
         \"firebird-3\",\"firebird-4\",\"hsqldb-2.4\",\"hsqldb-2.5\",\"diff\"]"
@@ -49,8 +49,8 @@ jobs:
       useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
-      databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8",
-        "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
+      databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4",
+        "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
         "mariadb-10.7","mssql-2017","mssql-2019","mssql-2022","crdb-23.1","crdb-23.2","crdb-24.1","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0",
         "edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","db2-luw","H2Database-2.2","sqlite","derby","firebird-3","firebird-4",
         "hsqldb-2.4","hsqldb-2.5","diff"]' }}

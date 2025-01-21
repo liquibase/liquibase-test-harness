@@ -20,6 +20,9 @@ case $db in
   "mysql-8" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mysql -DdbVersion=8 test
     ;;
+  "mysql-8.4" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=mysql -DdbVersion=8.4 test
+    ;;
   "percona-xtradb-cluster-5.7" )
     test_command mvn -ntp -Dtest=$tc -DdbName=percona-xtradb-cluster -DdbVersion=5.7 test
     ;;
@@ -43,6 +46,9 @@ case $db in
     ;;
   "postgres-16" )
     test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=16 test
+    ;;
+  "postgres-17" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=17 test
     ;;
   "mariadb-10.2" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mariadb -DdbVersion=10.2 test

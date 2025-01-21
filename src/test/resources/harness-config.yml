@@ -4,6 +4,13 @@ context: testContext
 databasesUnderTest:
   - name: postgresql
     prefix: docker
+    version: 17
+    url: jdbc:postgresql://localhost:5441/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
+    prefix: docker
     version: 16
     url: jdbc:postgresql://localhost:5440/lbcat
     username: lbuser
@@ -55,6 +62,13 @@ databasesUnderTest:
     prefix: docker
     version: 8
     url: jdbc:mysql://localhost:33061/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
+    version: 8.4
+    url: jdbc:mysql://localhost:33065/lbcat
     username: lbuser
     password: LiquibasePass1
 

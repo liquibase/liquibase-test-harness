@@ -53,7 +53,7 @@ databasesUnderTest:
 
   - name: mssql
     prefix: aws
-    version: 2019
+    version: aws_2019
     url: DBENDPOINT
     username: USERNAME
     password: PASSWORD

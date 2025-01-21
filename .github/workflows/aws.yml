@@ -23,7 +23,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"postgresql:16\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:2019\",\"postgresql:aurora\"]"
+        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"postgresql:16\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:aws_2019\",\"postgresql:aurora\"]"
 
 jobs:
   setup:
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","postgresql:16","oracle:aws_19",
-        "mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:2019","postgresql:aurora"]' }}
+        "mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout

@@ -17,7 +17,7 @@
         <liquibase-core.version>[4.26.0,)</liquibase-core.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <gmavenplus-plugin.version>4.0.1</gmavenplus-plugin.version>
+        <gmavenplus-plugin.version>4.1.1</gmavenplus-plugin.version>
         <junit.version>5.11.4</junit.version>
         <junit-platform.version>1.11.4</junit-platform.version>
     </properties>
@@ -201,7 +201,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.47.1.0</version>
+            <version>3.47.2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -308,7 +308,7 @@
             <plugin>
                 <groupId>org.liquibase.ext</groupId>
                 <artifactId>liquibase-sdk-maven-plugin</artifactId>
-                <version>0.10.23</version>
+                <version>0.10.25</version>
                 <configuration>
                     <githubToken>${env.GITHUB_TOKEN}</githubToken>
                     <liquibaseHome>bin</liquibaseHome>
@@ -458,14 +458,14 @@
     </build>
     <distributionManagement>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/liquibase/liquibase-test-harness</url>
         </repository>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>github</id>
+            <name>GitHub Packages Snapshots</name>
+            <url>https://maven.pkg.github.com/liquibase/liquibase-test-harness</url>
         </snapshotRepository>
     </distributionManagement>
     <profiles>
