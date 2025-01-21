@@ -68,6 +68,9 @@ case $db in
   "mariadb-10.7" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mariadb -DdbVersion=10.7 test
     ;;
+  "mariadb-11.4" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=mariadb -DdbVersion=11.4 test
+    ;;
   "mssql-2017" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mssql -DdbVersion=2017 test
     ;;
