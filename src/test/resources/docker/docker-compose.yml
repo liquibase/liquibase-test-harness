@@ -1,7 +1,6 @@
-version: '3.3'
+version: "3.3"
 
 services:
-
   mysql-5.6:
     platform: linux/x86_64
     image: library/mysql:5.6
@@ -42,7 +41,7 @@ services:
       MYSQL_USER: lbuser
       MYSQL_PASSWORD: LiquibasePass1
     volumes:
-    - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
   mysql-8.4:
     platform: linux/x86_64
@@ -57,7 +56,6 @@ services:
       MYSQL_PASSWORD: LiquibasePass1
     volumes:
       - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
-
 
   percona-xtradb-cluster-5.7:
     image: percona/percona-xtradb-cluster:5.7
@@ -311,7 +309,7 @@ services:
   db2-luw:
     image: taskana/db2:11.5
     environment:
-      LICENSE: 'accept'
+      LICENSE: "accept"
     ports:
       - "50000:50000"
 
@@ -414,6 +412,29 @@ services:
     volumes:
       - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
 
+  ti-db:
+    image: pingcap/tidb
+    container_name: ti-db
+    ports:
+      - 4000:4000
+    volumes:
+      - ./storage/tidb:/var/lib/mysql
+
+  ti-db-mysql:
+    image: mysql:latest
+    container_name: mysql-client
+    depends_on:
+      - ti-db
+    volumes:
+      - ./tidb-init.sql:/tidb-init.sql
+    entrypoint: sh -c "
+      echo 'Waiting for TiDB to be ready...' &&
+      sleep 5;
+      echo 'TiDB is ready. Running initialization script...' &&
+      mysql -h ti-db -P 4000 -u root < /tidb-init.sql &&
+      echo 'Initialization complete.' &&
+      tail -f /dev/null" Keeps the container running for interactive use
+    network_mode: "service:ti-db"
 
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data
