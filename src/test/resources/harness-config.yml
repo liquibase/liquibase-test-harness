@@ -53,8 +53,29 @@ databasesUnderTest:
 
   - name: mysql
     prefix: docker
+    version: 5.7
+    url: jdbc:mysql://localhost:33062/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
+    version: 8
+    url: jdbc:mysql://localhost:33061/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
+    version: 8.4
+    url: jdbc:mysql://localhost:33065/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
     version: tidb
-    url: jdbc:mysql://localhost:4000/test
+    url: jdbc:mysql://localhost:4000/lbcat
     username: root
 
   - name: percona-xtradb-cluster

@@ -1,8 +1,8 @@
 -- Create the 'test' database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS `test`;
+CREATE DATABASE IF NOT EXISTS `lbcat`;
 
 -- Switch to the 'test' database
-USE `test`;
+USE `lbcat`;
 
 -- Drop and recreate the 'authors' table
 DROP TABLE IF EXISTS `authors`;
