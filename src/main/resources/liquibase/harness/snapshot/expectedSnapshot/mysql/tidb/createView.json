@@ -11,7 +11,7 @@
       "liquibase.structure.core.View": [
         {
           "view": {
-            "definition": "SELECT `test_column` AS `test_column` FROM `test`.`view_table`",
+            "definition": "SELECT `test_column` AS `test_column` FROM `lbcat`.`view_table`",
             "name": "test_view",
             "remarks": "VIEW"
           }
