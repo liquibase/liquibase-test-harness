@@ -420,7 +420,7 @@ services:
     volumes:
       - ./storage/tidb:/var/lib/mysql
 
-  ti-db-mysql:
+  tidb:
     image: mysql:latest
     container_name: mysql-client
     depends_on:

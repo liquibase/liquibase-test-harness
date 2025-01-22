@@ -72,6 +72,12 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
+  - name: mysql
+    prefix: docker
+    version: tidb
+    url: jdbc:mysql://localhost:4000/lbcat
+    username: root
+
   - name: percona-xtradb-cluster
     version: 5.7
     url: jdbc:mysql://localhost:33070/lbcat
@@ -342,4 +348,3 @@ databasesUnderTest:
     url: jdbc:informix-sqli://localhost:9088/testdb:INFORMIXSERVER=informix;
     username: informix
     password: in4mix
-

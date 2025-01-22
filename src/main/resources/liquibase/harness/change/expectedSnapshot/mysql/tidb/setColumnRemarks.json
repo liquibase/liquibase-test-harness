@@ -1,0 +1,21 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "authors"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "first_name",
+            "remarks": "A Test Column Remark"
+          }
+        }
+      ]
+    }
+  }
+}
