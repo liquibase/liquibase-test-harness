@@ -27,7 +27,6 @@ class GenerateChangelogTest extends Specification {
     @Shared
     UIService uiService = Scope.getCurrentScope().getUI()
     String resourcesDirPath = "src/test/resources/"
-//    String resourcesDirFullPath = System.getProperty("user.dir") +"/"+ resourcesDirPath
     long timeMillisBeforeTest
     long timeMillisAfterTest
 
@@ -60,14 +59,14 @@ class GenerateChangelogTest extends Specification {
         executeCommandScope("update", argsMap)
 
         and: "testing generateChangelog command for all files format"
-        String generated = Paths.get(resourcesDirPath, baseChangelogPath, "generated").toString()
-        String generatedFolderPath = Paths.get(resourcesDirPath, baseChangelogPath, "generated", testInput.databaseName, testInput.change).toString()
+        String generatedFolderPath = Paths.get(resourcesDirPath, baseChangelogPath, "generated").toString()
+        String generatedChangeTypePath = Paths.get(resourcesDirPath, baseChangelogPath, "generated", testInput.databaseName, testInput.change).toString()
         def formats = new LinkedHashMap<String, String>()
         def shortDbName = getShortDatabaseName(testInput.databaseName)
-        formats.put("XmlTestCase", generatedFolderPath + ".xml")
-        formats.put("SqlTestCase", generatedFolderPath + ".$shortDbName"+".sql")
-        formats.put("YmlTestCase",  generatedFolderPath + ".yml")
-        formats.put("JsonTestCase", generatedFolderPath + ".json")
+        formats.put("XmlTestCase", generatedChangeTypePath + ".xml")
+        formats.put("SqlTestCase", generatedChangeTypePath + ".$shortDbName"+".sql")
+        formats.put("YmlTestCase",  generatedChangeTypePath + ".yml")
+        formats.put("JsonTestCase", generatedChangeTypePath + ".json")
 
         then: "check if a changelog was actually generated and validate it's content"
         for (Map.Entry<String, String> entry : formats.entrySet()) {
@@ -79,7 +78,7 @@ class GenerateChangelogTest extends Specification {
                 scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), false)
             }
 
-            clearFolder(generated)
+            clearFolder(generatedFolderPath)
 
             argsMap.put("excludeObjects", "(?i)posts, (?i)authors")//excluding static test-harness objects from generated changelog
             argsMap.put("changeLogFile", entry.value)
@@ -87,30 +86,26 @@ class GenerateChangelogTest extends Specification {
 
             String generatedChangelog = readFile((String) argsMap.get("changeLogFile"))
             if (entry.key.equalsIgnoreCase("SqlTestCase")) {
-                validateSqlChangelog(getResourceContent(testInput.expectedSqlPath), generatedChangelog)
+                validateSqlChangelog(getResourceContent("/$testInput.expectedSqlPath"), generatedChangelog)
             } else {
-                assert generatedChangelog.contains("$testInput.change")
-            }
-
-            and: "verify that the 'stored objects' directories are created"
-            if (!entry.value.endsWith("sql")) {
+                and: "verify that the 'stored objects' directories are created"
                 def storedObjectTypesMap = [
-                    "createPackage"     : "package",
-                    "createPackageBody" : "packagebody",
-                    "createFunction"    : "function",
-                    "createProcedure"   : "storedprocedure",
-                    "createTrigger"     : "trigger"
-            ]
+                        "createPackage"     : "package",
+                        "createPackageBody" : "packagebody",
+                        "createFunction"    : "function",
+                        "createProcedure"   : "storedprocedure",
+                        "createTrigger"     : "trigger"
+                ]
 
-            if (storedObjectTypesMap.keySet().any { changelogType -> testInput.change.equalsIgnoreCase(changelogType) }) {
-                def expectedObjectType = storedObjectTypesMap[testInput.change]
+                if (storedObjectTypesMap.keySet().any { changelogType -> testInput.change.equalsIgnoreCase(changelogType) }) {
+                    def expectedObjectType = storedObjectTypesMap[testInput.change]
 
-                def originalPath = entry.value
-                def replacedPath = originalPath.replaceAll(/create\w+\.(xml|yml|json)$/, "") + "objects/" + expectedObjectType
+                    def originalPath = entry.value
+                    def replacedPath = originalPath.replaceAll(/create\w+\.(xml|yml|json)$/, "") + "objects/" + expectedObjectType
 
-                def objectDir = new File(replacedPath)
-                assert objectDir.exists() && objectDir.isDirectory() :
-                        "Directory for stored object '${expectedObjectType}' was not created at path: ${replacedPath}!"
+                    def objectDir = new File(replacedPath)
+                    assert objectDir.exists() && objectDir.isDirectory() :
+                            "Directory for stored object '${expectedObjectType}' was not created at path: ${replacedPath}!"
                 }
             }
 
@@ -155,8 +150,7 @@ class GenerateChangelogTest extends Specification {
                 //Ignore exception considering a test was successful
             }
         }
-
-        clearFolder(generated)
+        clearFolder(generatedFolderPath)
 
         where: "test input in next data table"
         testInput << buildTestInput()

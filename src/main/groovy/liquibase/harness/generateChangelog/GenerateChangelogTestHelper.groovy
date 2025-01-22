@@ -93,11 +93,6 @@ class GenerateChangelogTestHelper {
         }
     }
 
-    static String getSqlSpecificChangelogFile (String dbName, String changelogFileName) {
-        def replacementName = String.format(".%s.sql", getShortDatabaseName(dbName))
-        return changelogFileName.replace(".sql", replacementName)
-    }
-
     static String removeSchemaNames(String generatedSql, Database database) {
         if (database.getShortName().equals("sqlite")) {
             return generatedSql.toLowerCase()
