@@ -1,0 +1,1 @@
+ALTER TABLE lbcat.authors MODIFY COLUMN first_name VARCHAR(50) COMMENT 'A Test Column Remark'
