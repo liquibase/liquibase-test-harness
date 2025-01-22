@@ -1,0 +1,1 @@
+CREATE VIEW test_view AS SELECT `id` AS `id`,`first_name` AS `first_name`,`last_name` AS `last_name`,`email` AS `email` FROM `test`.`authors`;

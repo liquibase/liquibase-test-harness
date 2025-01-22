@@ -1,0 +1,259 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.string_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+		  {
+			  "column": {
+				  "name": "char0",
+				  "type": {
+					  "columnSize": "0\\!\\{java.lang.Integer\\}",
+					  "typeName": "CHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "char1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "CHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "char10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "CHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "char100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "CHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar0",
+				  "type": {
+					  "columnSize": "0\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARCHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARCHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARCHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARCHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar1000",
+				  "type": {
+					  "columnSize": "1000\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARCHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varchar10000",
+				  "type": {
+					  "columnSize": "10000\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARCHAR"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "binary0",
+				  "type": {
+					  "columnSize": "0\\!\\{java.lang.Integer\\}",
+					  "typeName": "BINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "binary1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "BINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "binary10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "BINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "binary100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "BINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varbinary0",
+				  "type": {
+					  "columnSize": "0\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARBINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varbinary1",
+				  "type": {
+					  "columnSize": "1\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARBINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varbinary10",
+				  "type": {
+					  "columnSize": "10\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARBINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varbinary100",
+				  "type": {
+					  "columnSize": "100\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARBINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varbinary1000",
+				  "type": {
+					  "columnSize": "1000\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARBINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "varbinary10000",
+				  "type": {
+					  "columnSize": "10000\\!\\{java.lang.Integer\\}",
+					  "typeName": "VARBINARY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "tinyblob",
+				  "type": {
+					  "typeName": "TINYBLOB"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "blob",
+				  "type": {
+					  "typeName": "BLOB"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "mediumblob",
+				  "type": {
+					  "typeName": "MEDIUMBLOB"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "longblob",
+				  "type": {
+					  "typeName": "LONGBLOB"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "tinytext",
+				  "type": {
+					  "typeName": "TINYTEXT"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "text",
+				  "type": {
+					  "typeName": "TEXT"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "mediumtext",
+				  "type": {
+					  "typeName": "MEDIUMTEXT"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "longtext",
+				  "type": {
+					  "typeName": "LONGTEXT"
+				  }
+			  }
+		  }
+	  ]
+    }
+  }
+}

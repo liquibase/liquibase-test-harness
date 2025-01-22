@@ -4,15 +4,14 @@
       "liquibase.structure.core.Table": [
         {
           "table": {
-            "name": "authors"
+            "name": "sqltest"
           }
         }
       ],
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "first_name",
-            "remarks": "A Test Column Remark"
+            "name": "id"
           }
         }
       ]

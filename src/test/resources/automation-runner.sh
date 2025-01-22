@@ -153,7 +153,7 @@ case $db in
     test_command mvn -ntp -Dtest=$tc -DdbName=informix -DdbVersion=14 test
     ;;
   "tidb")
-    test_command mvn -ntp -Dtest=$tc -DdbName=tidb test
+    test_command mvn -ntp -Dtest=$tc -DdbName=mysql -DdbVersion=tidb test
     ;;
 esac
 
