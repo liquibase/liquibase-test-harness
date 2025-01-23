@@ -90,8 +90,9 @@ class GenerateChangelogTest extends Specification {
             } else {
                 and: "verify that the 'stored objects' directories are created"
                 def storedObjectTypesMap = [
-                        "createPackage"     : "package",
-                        "createPackageBody" : "packagebody",
+                        //Should be fixed by DAT-19461
+                        "createPackage"     : (shortDbName == "edb-edb" ? "databasepackage" : "package"),
+                        "createPackageBody" :  (shortDbName == "edb-edb" ? "databasepackagebody" : "packagebody"),
                         "createFunction"    : "function",
                         "createProcedure"   : "storedprocedure",
                         "createTrigger"     : "trigger"
@@ -108,37 +109,6 @@ class GenerateChangelogTest extends Specification {
                             "Directory for stored object '${expectedObjectType}' was not created at path: ${replacedPath}!"
                 }
             }
-
-//TODO will be fixed in DAT-14675.
-/*
-            when: "get sql generated for the change set"
-            String generatedSql
-            argsMap.put("changeLogFile", resourcesDirFullPath + entry.value)
-            if (!entry.key.equalsIgnoreCase("SqlTestCase")) {
-                generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
-                generatedSql = removeSchemaNames(generatedSql, testInput.database)
-            }
-
-            then: "execute updateSql command on generated changelogs"
-            if (!entry.key.equalsIgnoreCase("SqlTestCase")) {
-                def expectedSql
-                try {
-                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                            "liquibase/harness/generateChangelog/verificationSql")).toLowerCase()
-                } catch (NullPointerException exception) {
-                    expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                            "liquibase/harness/generateChangelog/expectedSql")).toLowerCase()
-                }
-                def generatedSqlIsCorrect = generatedSql == expectedSql
-                if (!generatedSqlIsCorrect) {
-                    Scope.getCurrentScope().getUI().sendMessage("FAIL! Expected sql doesn't " +
-                            "match generated sql! \nEXPECTED SQL: \n" + expectedSql + " \n" +
-                            "GENERATED SQL: \n" + generatedSql)
-                    assert generatedSql == expectedSql
-                }
-            }
- */
-
         }
 
         cleanup: "try to rollback in case a test was failed and delete generated changelogs"
