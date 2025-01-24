@@ -36,11 +36,9 @@ class GenerateChangelogTestHelper {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)
-                            .dbSchema(databaseUnderTest.dbSchema)
                             .username(databaseUnderTest.username)
                             .password(databaseUnderTest.password)
                             .version(databaseUnderTest.version)
-                            .setupChangelogPath(changeLogEntry.value)
                             .inputChangelogFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedChangeLog", "xml").get(changeLogEntry.key))
                             .expectedSqlPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
@@ -103,10 +101,8 @@ class GenerateChangelogTestHelper {
         String username
         String password
         String url
-        String setupChangelogPath
         String inputChangelogFile
         String expectedSqlPath
-        String dbSchema
         String change
         Database database
     }
