@@ -5,13 +5,9 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
-import org.apache.commons.io.FileUtils
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.nio.file.Path
-import java.nio.file.Paths
 
 import static liquibase.harness.diff.DiffCommandTestHelper.*
 import static liquibase.harness.util.TestUtils.*
@@ -19,9 +15,9 @@ import static liquibase.harness.util.FileUtils.*
 
 class DiffCommandTest extends Specification {
     @Shared
-    RollbackStrategy strategy;
+    RollbackStrategy strategy
     @Shared
-    List<DatabaseUnderTest> databases;
+    List<DatabaseUnderTest> databases
 
     def setupSpec() {
         databases = TestConfig.instance.getFilteredDatabasesUnderTest()
@@ -77,7 +73,7 @@ class DiffCommandTest extends Specification {
         Map<String, Object> scopeValues = new HashMap<>()
         scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), false)
         executeCommandScope("diffChangelog", argsMapRef, scopeValues)
-        File expectedDiffFolder = new File(testInput.pathToExpectedDiffFolder);
+        File expectedDiffFolder = new File(testInput.pathToExpectedDiffFolder)
         File[] subDirs = expectedDiffFolder.listFiles(new FileFilter() {
             @Override
             boolean accept(File file) {
@@ -86,16 +82,16 @@ class DiffCommandTest extends Specification {
         })
         Optional<File> objectsFolder = Arrays.stream(subDirs)
                 .filter(f -> f.getName().startsWith("objects-"))
-                .findFirst();
+                .findFirst()
 
         if (objectsFolder.isEmpty()) {
-            throw new RuntimeException("No 'objects' folder created inside " + testInput.pathToExpectedDiffFolder);
+            throw new RuntimeException("No 'objects' folder created inside " + testInput.pathToExpectedDiffFolder)
         }
         File actualObjectsFolder = objectsFolder.get()
         for (String expectedObjectType : Arrays.asList("function", "trigger", "storedprocedure")) {
-            File objectDir = new File(actualObjectsFolder, expectedObjectType);
+            File objectDir = new File(actualObjectsFolder, expectedObjectType)
             assert objectDir.exists() && objectDir.isDirectory() :
-                    "Directory for stored object '" + expectedObjectType + "' was not created at path: " + objectDir.getPath() + "!";
+                    "Directory for stored object '" + expectedObjectType + "' was not created at path: " + objectDir.getPath() + "!"
         }
 
 
