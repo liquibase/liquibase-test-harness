@@ -25,7 +25,7 @@ Unexpected Column(s):
      lbcat.test_table_for_column.intColumn
      lbcat.test_view.last_name
      lbcat.test_table_reference.test_column
-     lbcat.test_table_for_column.varchar
+     lbcat.test_table_for_column.varcharColumn
 Changed Column(s): NONE
 Missing Database Package(s): NONE
 Unexpected Database Package(s): NONE
