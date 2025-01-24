@@ -123,9 +123,6 @@ class DiffCommandTestHelper {
         map.put("createIndex", new ArrayList<>(List.of("dropIndex", "drop index")))
         map.put("createSequence", new ArrayList<>(List.of("dropSequence", "drop sequence")))
         map.put("createFunction", new ArrayList<>(List.of("dropFunction", "drop function")))
-        //TODO verify what to do with this
-//        map.put("createPackage", new ArrayList<>(List.of("dropPackage", "drop package")))
-//        map.put("createPackageBody", new ArrayList<>(List.of("dropPackageBody", "drop packageBody")))
         map.put("createTrigger", new ArrayList<>(List.of("dropTrigger", "drop trigger")))
         map.put("createProcedure", new ArrayList<>(List.of("dropProcedure", "drop procedure")))
 

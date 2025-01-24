@@ -9,37 +9,37 @@ references:
     referenceDatabaseName: postgresql
     referenceDatabaseVersion: 14
 
-    - targetDatabaseName: postgresql
-      targetDatabaseVersion: 16
-      referenceDatabaseName: postgresql
-      referenceDatabaseVersion: 17
+  - targetDatabaseName: postgresql
+    targetDatabaseVersion: 16
+    referenceDatabaseName: postgresql
+    referenceDatabaseVersion: 17
 
-    - targetDatabaseName: mariadb
-      targetDatabaseVersion: 10.4
-      referenceDatabaseName: mariadb
-      referenceDatabaseVersion: 10.5
+  - targetDatabaseName: mariadb
+    targetDatabaseVersion: 10.4
+    referenceDatabaseName: mariadb
+    referenceDatabaseVersion: 10.5
 
-    - targetDatabaseName: mariadb
-      targetDatabaseVersion: 10.6
-      referenceDatabaseName: mariadb
-      referenceDatabaseVersion: 10.7
+  - targetDatabaseName: mariadb
+    targetDatabaseVersion: 10.6
+    referenceDatabaseName: mariadb
+    referenceDatabaseVersion: 10.7
 
-    - targetDatabaseName: mssql
-      targetDatabaseVersion: 2017
-      referenceDatabaseName: mssql
-      referenceDatabaseVersion: 2022
+  - targetDatabaseName: mssql
+    targetDatabaseVersion: 2017
+    referenceDatabaseName: mssql
+    referenceDatabaseVersion: 2022
 
-    - targetDatabaseName: mssql
-      targetDatabaseVersion: 2019
-      referenceDatabaseName: mssql
-      referenceDatabaseVersion: 2022
+  - targetDatabaseName: mssql
+    targetDatabaseVersion: 2019
+    referenceDatabaseName: mssql
+    referenceDatabaseVersion: 2022
 
-    - targetDatabaseName: mysql
-      targetDatabaseVersion: 5.7
-      referenceDatabaseName: mysql
-      referenceDatabaseVersion: 8.4
+  - targetDatabaseName: mysql
+    targetDatabaseVersion: 5.7
+    referenceDatabaseName: mysql
+    referenceDatabaseVersion: 8.4
 
-    - targetDatabaseName: mysql
-      targetDatabaseVersion: 5.6
-      referenceDatabaseName: mysql
-      referenceDatabaseVersion: 8
+  - targetDatabaseName: mysql
+    targetDatabaseVersion: 5.6
+    referenceDatabaseName: mysql
+    referenceDatabaseVersion: 8
