@@ -4,7 +4,7 @@ Compared Schemas: lbcat
 Product Name: EQUAL
 Product Version:
      Reference:   '10.7.8-MariaDB-1:10.7.8+maria~ubu2004'
-     Target: '10.6.13-MariaDB-1:10.6.13+maria~ubu2004'
+     Target: '10.6.20-MariaDB-ubu2004'
 Missing Catalog(s): NONE
 Unexpected Catalog(s): NONE
 Changed Catalog(s): NONE
@@ -17,8 +17,6 @@ Unexpected Column(s):
      lbcat.test_view.email
      lbcat.test_view.first_name
      lbcat.test_table_base.id
-     lbcat.test_table_for_column.id
-     lbcat.test_table_for_index.id
      lbcat.test_table_for_uc.id
      lbcat.test_table_reference.id
      lbcat.test_view.id
@@ -38,7 +36,10 @@ Unexpected Foreign Key(s):
      test_fk(test_table_base[id] -> test_table_reference[test_column])
 Changed Foreign Key(s): NONE
 Missing Function(s): NONE
-Unexpected Function(s): NONE
+Unexpected Function(s):
+     test_function
+     test_function1
+     test_function2
 Changed Function(s): NONE
 Missing Index(s): NONE
 Unexpected Index(s):
@@ -58,7 +59,8 @@ Unexpected Sequence(s):
      test_sequence
 Changed Sequence(s): NONE
 Missing Stored Procedure(s): NONE
-Unexpected Stored Procedure(s): NONE
+Unexpected Stored Procedure(s):
+     test_procedure
 Changed Stored Procedure(s): NONE
 Missing Synonym(s): NONE
 Unexpected Synonym(s): NONE
@@ -66,13 +68,12 @@ Changed Synonym(s): NONE
 Missing Table(s): NONE
 Unexpected Table(s):
      test_table_base
-     test_table_for_column
-     test_table_for_index
      test_table_for_uc
      test_table_reference
 Changed Table(s): NONE
 Missing Trigger(s): NONE
-Unexpected Trigger(s): NONE
+Unexpected Trigger(s):
+     posts::test_trigger
 Changed Trigger(s): NONE
 Missing Unique Constraint(s): NONE
 Unexpected Unique Constraint(s):

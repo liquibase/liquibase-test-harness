@@ -73,17 +73,6 @@
         </rollback>
     </changeSet>
 
-    <!--          SEQUENCE          -->
-    <changeSet id="9" author="as">
-        <createSequence incrementBy="1"
-                        minValue="1"
-                        sequenceName="test_sequence"
-                        startValue="1"/>
-        <rollback>
-            <dropSequence sequenceName="test_sequence"/>
-        </rollback>
-    </changeSet>
-
     <!--          VIEW          -->
     <changeSet id="10" author="as">
         <createView viewName="test_view">
@@ -111,6 +100,7 @@
         </rollback>
     </changeSet>
 
+
     <!-- FUNCTION -->
     <changeSet id="13" author="as">
         <pro:createFunction
@@ -128,7 +118,7 @@
     </changeSet>
 
     <!-- PACKAGE -->
-    <changeSet id="14"  author="as">
+    <changeSet id="14" author="as">
         <pro:createPackage encoding="UTF-8"
                            packageName="Test package">CREATE FUNCTION test_function1()
             RETURNS VARCHAR(20)
@@ -141,20 +131,20 @@
     </changeSet>
 
     <!-- PACKAGE BODY -->
-    <changeSet id="15"  author="as">
-        <pro:createPackageBody encoding="UTF-8"
-                               packageBodyName="Test package">CREATE FUNCTION test_function2()
+    <changeSet id="15" author="as">
+        <pro:createPackage encoding="UTF-8"
+                           packageName="Test package">CREATE FUNCTION test_function2()
             RETURNS VARCHAR(20)
             BEGIN
             RETURN 'Hello';
-            END</pro:createPackageBody>
+            END</pro:createPackage>
         <rollback>
             <pro:dropFunction functionName="test_function2"/>
         </rollback>
     </changeSet>
 
     <!-- TRIGGER -->
-    <changeSet id="16"  author="as">
+    <changeSet id="16" author="as">
         <pro:createTrigger disabled="false"
                            encoding="UTF-8"
                            scope="test"

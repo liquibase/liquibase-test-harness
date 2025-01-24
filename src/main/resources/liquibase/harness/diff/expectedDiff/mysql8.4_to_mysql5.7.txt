@@ -1,10 +1,10 @@
-Reference Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33061/lbcat (Default Schema: lbcat)
-Comparison Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33062/lbcat (Default Schema: lbcat)
+Reference Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33062/lbcat (Default Schema: lbcat)
+Comparison Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33065/lbcat (Default Schema: lbcat)
 Compared Schemas: lbcat
 Product Name: EQUAL
 Product Version:
-     Reference:   '8.0.26'
-     Target: '5.7.42'
+     Reference:   '5.7.44'
+     Target: '8.4.4'
 Missing Catalog(s): NONE
 Unexpected Catalog(s): NONE
 Changed Catalog(s): NONE
@@ -38,7 +38,10 @@ Unexpected Foreign Key(s):
      test_fk(test_table_base[id] -> test_table_reference[test_column])
 Changed Foreign Key(s): NONE
 Missing Function(s): NONE
-Unexpected Function(s): NONE
+Unexpected Function(s):
+     test_function
+     test_function1
+     test_function2
 Changed Function(s): NONE
 Missing Index(s): NONE
 Unexpected Index(s):
@@ -53,11 +56,9 @@ Unexpected Primary Key(s):
      PRIMARY on lbcat.test_table_base(id)
      PRIMARY on lbcat.test_table_reference(id)
 Changed Primary Key(s): NONE
-Missing Sequence(s): NONE
-Unexpected Sequence(s): NONE
-Changed Sequence(s): NONE
 Missing Stored Procedure(s): NONE
-Unexpected Stored Procedure(s): NONE
+Unexpected Stored Procedure(s):
+     test_procedure
 Changed Stored Procedure(s): NONE
 Missing Synonym(s): NONE
 Unexpected Synonym(s): NONE
@@ -71,7 +72,8 @@ Unexpected Table(s):
      test_table_reference
 Changed Table(s): NONE
 Missing Trigger(s): NONE
-Unexpected Trigger(s): NONE
+Unexpected Trigger(s):
+     posts::test_trigger
 Changed Trigger(s): NONE
 Missing Unique Constraint(s): NONE
 Unexpected Unique Constraint(s):

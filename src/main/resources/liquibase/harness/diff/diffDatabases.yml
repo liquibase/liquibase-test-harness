@@ -4,57 +4,42 @@
 # -> with such name or DB doesn't have version as such
 ---
 references:
-  #  - targetDatabaseName: oracle
-  #    targetDatabaseVersion: 18.3.0
-  #    referenceDatabaseName: oracle
-  #    referenceDatabaseVersion: 18.4.0
-  #
-  #  - targetDatabaseName: oracle
-  #    targetDatabaseVersion: 18.4.0
-  #    referenceDatabaseName: oracle
-  #    referenceDatabaseVersion: 21.3.0
-  #
-  #  - targetDatabaseName: oracle
-  #    targetDatabaseVersion: 21.3.0
-  #    referenceDatabaseName: oracle
-  #    referenceDatabaseVersion: 18.4.0
-
   - targetDatabaseName: postgresql
     targetDatabaseVersion: 13
     referenceDatabaseName: postgresql
     referenceDatabaseVersion: 14
 
-  - targetDatabaseName: mssql
-    targetDatabaseVersion: 2017
-    referenceDatabaseName: mssql
-    referenceDatabaseVersion: 2022
+    - targetDatabaseName: postgresql
+      targetDatabaseVersion: 16
+      referenceDatabaseName: postgresql
+      referenceDatabaseVersion: 17
 
-  - targetDatabaseName: mssql
-    targetDatabaseVersion: 2019
-    referenceDatabaseName: mssql
-    referenceDatabaseVersion: 2022
+    - targetDatabaseName: mariadb
+      targetDatabaseVersion: 10.4
+      referenceDatabaseName: mariadb
+      referenceDatabaseVersion: 10.5
 
-  - targetDatabaseName: mssql
-    targetDatabaseVersion: 2022
-    referenceDatabaseName: mssql
-    referenceDatabaseVersion: 2019
+    - targetDatabaseName: mariadb
+      targetDatabaseVersion: 10.6
+      referenceDatabaseName: mariadb
+      referenceDatabaseVersion: 10.7
 
-  - targetDatabaseName: mariadb
-    targetDatabaseVersion: 10.6
-    referenceDatabaseName: mariadb
-    referenceDatabaseVersion: 10.7
+    - targetDatabaseName: mssql
+      targetDatabaseVersion: 2017
+      referenceDatabaseName: mssql
+      referenceDatabaseVersion: 2022
 
-  - targetDatabaseName: mariadb
-    targetDatabaseVersion: 10.4
-    referenceDatabaseName: mariadb
-    referenceDatabaseVersion: 10.5
-#
-#  - targetDatabaseName: mariadb
-#    targetDatabaseVersion: 10.2
-#    referenceDatabaseName: mariadb
-#    referenceDatabaseVersion: 10.3
-#
-#  - targetDatabaseName: mysql
-#    targetDatabaseVersion: 5.7
-#    referenceDatabaseName: mysql
-#    referenceDatabaseVersion: 8
+    - targetDatabaseName: mssql
+      targetDatabaseVersion: 2019
+      referenceDatabaseName: mssql
+      referenceDatabaseVersion: 2022
+
+    - targetDatabaseName: mysql
+      targetDatabaseVersion: 5.7
+      referenceDatabaseName: mysql
+      referenceDatabaseVersion: 8.4
+
+    - targetDatabaseName: mysql
+      targetDatabaseVersion: 5.6
+      referenceDatabaseName: mysql
+      referenceDatabaseVersion: 8
