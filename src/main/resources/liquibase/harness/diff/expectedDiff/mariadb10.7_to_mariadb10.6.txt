@@ -17,13 +17,15 @@ Unexpected Column(s):
      lbcat.test_view.email
      lbcat.test_view.first_name
      lbcat.test_table_base.id
+     lbcat.test_table_for_column.id
+     lbcat.test_table_for_index.id
      lbcat.test_table_for_uc.id
      lbcat.test_table_reference.id
      lbcat.test_view.id
      lbcat.test_table_for_column.intColumn
      lbcat.test_view.last_name
      lbcat.test_table_reference.test_column
-     lbcat.test_table_for_column.varcharColumn
+     lbcat.test_table_for_column.varchar
 Changed Column(s): NONE
 Missing Database Package(s): NONE
 Unexpected Database Package(s): NONE
@@ -68,6 +70,8 @@ Changed Synonym(s): NONE
 Missing Table(s): NONE
 Unexpected Table(s):
      test_table_base
+     test_table_for_column
+     test_table_for_index
      test_table_for_uc
      test_table_reference
 Changed Table(s): NONE
