@@ -131,6 +131,9 @@ case $db in
   "diff")
     test_command mvn -ntp -Dtest=DiffTest test
     ;;
+  "diffChangelog")
+    test_command mvn -ntp -Dtest=DiffChangelogTest test
+    ;;
   "hsqldb-2.4")
     test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.4 test
     ;;
