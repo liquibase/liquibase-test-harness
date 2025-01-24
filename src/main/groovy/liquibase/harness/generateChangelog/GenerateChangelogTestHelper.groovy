@@ -41,6 +41,8 @@ class GenerateChangelogTestHelper {
                             .password(databaseUnderTest.password)
                             .version(databaseUnderTest.version)
                             .setupChangelogPath(changeLogEntry.value)
+                            .inputChangelogFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                                    "expectedChangeLog", "xml").get(changeLogEntry.key))
                             .expectedSqlPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedSql", "sql").get(changeLogEntry.key))
                             .change(changeLogEntry.key)
