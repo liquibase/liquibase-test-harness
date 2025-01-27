@@ -1,10 +1,10 @@
-Reference Database: lbuser@jdbc:sqlserver://localhost:1435;connectRetryInterval=10;connectRetryCount=1;maxResultBuffer=-1;sendTemporalDataTypesAsStringForBulkCopy=true;delayLoadingLobs=true;useFmtOnly=false;msiTokenCacheTtl=3600;useBulkCopyForBatchInsert=false;cancelQueryTimeout=-1;sslProtocol=TLS;jaasConfigurationName=SQLJDBCDriver;statementPoolingCacheSize=0;serverPreparedStatementDiscardThreshold=10;enablePrepareOnFirstPreparedStatementCall=false;fips=false;socketTimeout=0;authentication=NotSpecified;authenticationScheme=nativeAuthentication;xopenStates=false;sendTimeAsDatetime=true;replication=false;trustStoreType=JKS;trustServerCertificate=true;TransparentNetworkIPResolution=true;iPAddressPreference=IPv4First;serverNameAsACE=false;sendStringParametersAsUnicode=true;selectMethod=direct;responseBuffering=adaptive;queryTimeout=-1;packetSize=8000;multiSubnetFailover=false;loginTimeout=30;lockTimeout=-1;lastUpdateCount=true;prepareMethod=prepexec;encrypt=True;disableStatementPooling=true;databaseName=lbcat;columnEncryptionSetting=Disabled;applicationName=MicrosoftJDBCDriverforSQLServer;applicationIntent=readwrite;(DefaultSchema:dbo)
-Comparison Database: lbuser@jdbc:sqlserver://localhost:1434;connectRetryInterval=10;connectRetryCount=1;maxResultBuffer=-1;sendTemporalDataTypesAsStringForBulkCopy=true;delayLoadingLobs=true;useFmtOnly=false;msiTokenCacheTtl=3600;useBulkCopyForBatchInsert=false;cancelQueryTimeout=-1;sslProtocol=TLS;jaasConfigurationName=SQLJDBCDriver;statementPoolingCacheSize=0;serverPreparedStatementDiscardThreshold=10;enablePrepareOnFirstPreparedStatementCall=false;fips=false;socketTimeout=0;authentication=NotSpecified;authenticationScheme=nativeAuthentication;xopenStates=false;sendTimeAsDatetime=true;replication=false;trustStoreType=JKS;trustServerCertificate=true;TransparentNetworkIPResolution=true;iPAddressPreference=IPv4First;serverNameAsACE=false;sendStringParametersAsUnicode=true;selectMethod=direct;responseBuffering=adaptive;queryTimeout=-1;packetSize=8000;multiSubnetFailover=false;loginTimeout=30;lockTimeout=-1;lastUpdateCount=true;prepareMethod=prepexec;encrypt=True;disableStatementPooling=true;databaseName=lbcat;columnEncryptionSetting=Disabled;applicationName=MicrosoftJDBCDriverforSQLServer;applicationIntent=readwrite;(DefaultSchema:dbo)
+Reference Database: lbuser @ jdbc:sqlserver://localhost:1434;connectRetryInterval=10;connectRetryCount=1;maxResultBuffer=-1;sendTemporalDataTypesAsStringForBulkCopy=true;delayLoadingLobs=true;useFmtOnly=false;cacheBulkCopyMetadata=false;useBulkCopyForBatchInsert=false;cancelQueryTimeout=-1;sslProtocol=TLS;calcBigDecimalPrecision=false;useDefaultJaasConfig=false;jaasConfigurationName=SQLJDBCDriver;statementPoolingCacheSize=0;serverPreparedStatementDiscardThreshold=10;enablePrepareOnFirstPreparedStatementCall=false;fips=false;socketTimeout=0;authentication=NotSpecified;authenticationScheme=nativeAuthentication;xopenStates=false;datetimeParameterType=datetime2;sendTimeAsDatetime=true;replication=false;trustStoreType=JKS;trustServerCertificate=true;TransparentNetworkIPResolution=true;iPAddressPreference=IPv4First;serverNameAsACE=false;sendStringParametersAsUnicode=true;selectMethod=direct;responseBuffering=adaptive;queryTimeout=-1;packetSize=8000;multiSubnetFailover=false;loginTimeout=30;lockTimeout=-1;lastUpdateCount=true;useDefaultGSSCredential=false;prepareMethod=prepexec;encrypt=True;disableStatementPooling=true;databaseName=lbcat;columnEncryptionSetting=Disabled;applicationName=Microsoft JDBC Driver for SQL Server;applicationIntent=readwrite; (Default Schema: dbo)
+Comparison Database: lbuser @ jdbc:sqlserver://localhost:1435;connectRetryInterval=10;connectRetryCount=1;maxResultBuffer=-1;sendTemporalDataTypesAsStringForBulkCopy=true;delayLoadingLobs=true;useFmtOnly=false;cacheBulkCopyMetadata=false;useBulkCopyForBatchInsert=false;cancelQueryTimeout=-1;sslProtocol=TLS;calcBigDecimalPrecision=false;useDefaultJaasConfig=false;jaasConfigurationName=SQLJDBCDriver;statementPoolingCacheSize=0;serverPreparedStatementDiscardThreshold=10;enablePrepareOnFirstPreparedStatementCall=false;fips=false;socketTimeout=0;authentication=NotSpecified;authenticationScheme=nativeAuthentication;xopenStates=false;datetimeParameterType=datetime2;sendTimeAsDatetime=true;replication=false;trustStoreType=JKS;trustServerCertificate=true;TransparentNetworkIPResolution=true;iPAddressPreference=IPv4First;serverNameAsACE=false;sendStringParametersAsUnicode=true;selectMethod=direct;responseBuffering=adaptive;queryTimeout=-1;packetSize=8000;multiSubnetFailover=false;loginTimeout=30;lockTimeout=-1;lastUpdateCount=true;useDefaultGSSCredential=false;prepareMethod=prepexec;encrypt=True;disableStatementPooling=true;databaseName=lbcat;columnEncryptionSetting=Disabled;applicationName=Microsoft JDBC Driver for SQL Server;applicationIntent=readwrite; (Default Schema: dbo)
 Compared Schemas: dbo
 Product Name: EQUAL
 Product Version:
-     Reference:   '16.00.4035'
-     Target: '15.00.4312'
+     Reference:   '15.00.4375'
+     Target: '16.00.4125'
 Missing Catalog(s): NONE
 Unexpected Catalog(s): NONE
 Changed Catalog(s): NONE
@@ -32,16 +32,19 @@ Unexpected Database Package Body(s): NONE
 Changed Database Package Body(s): NONE
 Missing Foreign Key(s): NONE
 Unexpected Foreign Key(s):
-     test_fk(test_table_base[id]->test_table_reference[test_column])
+     test_fk(test_table_base[id] -> test_table_reference[test_column])
 Changed Foreign Key(s): NONE
 Missing Function(s): NONE
-Unexpected Function(s): NONE
+Unexpected Function(s):
+     test_function
+     test_function1
+     test_function2
 Changed Function(s): NONE
 Missing Index(s): NONE
 Unexpected Index(s):
-     PK_TEST_TABLE_REFERENCE UNIQUE ON dbo.test_table_reference(test_column)
+     PK_TEST_TABLE_REFERENCE UNIQUE  ON dbo.test_table_reference(test_column)
      idx_first_name ON dbo.test_table_for_index(id)
-     test_unique_constraint UNIQUE ON dbo.test_table_base(id)
+     test_unique_constraint UNIQUE  ON dbo.test_table_base(id)
 Changed Index(s): NONE
 Missing Primary Key(s): NONE
 Unexpected Primary Key(s):
@@ -56,7 +59,8 @@ Unexpected Sequence(s):
      test_sequence
 Changed Sequence(s): NONE
 Missing Stored Procedure(s): NONE
-Unexpected Stored Procedure(s): NONE
+Unexpected Stored Procedure(s):
+     test_procedure
 Changed Stored Procedure(s): NONE
 Missing Synonym(s): NONE
 Unexpected Synonym(s): NONE
@@ -69,7 +73,8 @@ Unexpected Table(s):
      test_table_reference
 Changed Table(s): NONE
 Missing Trigger(s): NONE
-Unexpected Trigger(s): NONE
+Unexpected Trigger(s):
+     posts::test_trigger
 Changed Trigger(s): NONE
 Missing Unique Constraint(s): NONE
 Unexpected Unique Constraint(s):
