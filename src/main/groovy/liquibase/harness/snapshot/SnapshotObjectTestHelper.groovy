@@ -36,7 +36,6 @@ class SnapshotObjectTestHelper {
                             .databaseName(databaseUnderTest.name)
                             .databaseVersion(databaseUnderTest.version)
                             .url(databaseUnderTest.url)
-                            .dbSchema(databaseUnderTest.dbSchema)
                             .username(databaseUnderTest.username)
                             .password(databaseUnderTest.password)
                             .snapshotObject(changeLogEntry.key)
@@ -56,7 +55,6 @@ class SnapshotObjectTestHelper {
         String databaseName
         String databaseVersion
         String url
-        String dbSchema
         String username
         String password
         String snapshotObject
