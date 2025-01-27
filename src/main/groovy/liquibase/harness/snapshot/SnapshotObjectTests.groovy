@@ -1,11 +1,10 @@
 package liquibase.harness.snapshot
 
-import liquibase.Scope
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
-import liquibase.ui.UIService
+import org.junit.jupiter.api.Assumptions
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -22,8 +21,6 @@ class SnapshotObjectTests extends Specification {
     RollbackStrategy strategy
     @Shared
     List<DatabaseUnderTest> databases
-    @Shared
-    UIService uiService = Scope.getCurrentScope().getUI()
 
     def setupSpec() {
         databases = TestConfig.instance.getFilteredDatabasesUnderTest()
@@ -47,6 +44,10 @@ class SnapshotObjectTests extends Specification {
         def connection = testInput.database.getConnection()
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.databaseVersion} is offline!"
+
+        and: "ignore testcase if it's invalid for this combination of db type and/or version"
+        shouldRunChangeSet = !expectedSnapshot?.toLowerCase()?.contains("invalid test")
+        Assumptions.assumeTrue(shouldRunChangeSet, expectedSnapshot)
 
         and: "check expected snapshot file is present"
         assert expectedSnapshot != null : "No expectedSnapshot for ${testInput.snapshotObject} against " +
