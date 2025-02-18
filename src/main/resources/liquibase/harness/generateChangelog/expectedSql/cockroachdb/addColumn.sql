@@ -1,6 +1,1 @@
-ALTER TABLE public.authors ADD "varcharColumn" VARCHAR(25)
-ALTER TABLE public.authors ADD "intColumn" INTEGER
-ALTER TABLE public.authors ADD "dateColumn" date
-UPDATE public.authors SET "varcharColumn" = 'INITIAL_VALUE'
-UPDATE public.authors SET "intColumn" = 5
-UPDATE public.authors SET "dateColumn" = '2020-09-21'
+CREATE TABLE "test_table" ("test_column" BIGINT, "rowid" BIGINT DEFAULT unique_rowid() NOT NULL, "varcharColumn" VARCHAR(25), "intColumn" BIGINT, "dateColumn" date, CONSTRAINT "test_table_pkey" PRIMARY KEY ("rowid"));

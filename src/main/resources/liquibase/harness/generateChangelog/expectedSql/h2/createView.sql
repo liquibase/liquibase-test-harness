@@ -1,1 +1,6 @@
-CREATE VIEW PUBLIC.test_view AS select id, first_name, last_name, email from authors
+CREATE VIEW TEST_VIEW AS SELECT
+                             "ID",
+                             "FIRST_NAME",
+                             "LAST_NAME",
+                             "EMAIL"
+                         FROM "PUBLIC"."AUTHORS";

@@ -1,2 +1,1 @@
-CREATE TABLE public."primaryKeyTest" (test_id INTEGER NOT NULL, test_column VARCHAR(50))
-ALTER TABLE public."primaryKeyTest" ADD CONSTRAINT "primary" PRIMARY KEY (test_id)
+CREATE TABLE "primaryKeyTest" ("test_id" BIGINT NOT NULL, "test_column" VARCHAR(50), CONSTRAINT "primary" PRIMARY KEY ("test_id"));

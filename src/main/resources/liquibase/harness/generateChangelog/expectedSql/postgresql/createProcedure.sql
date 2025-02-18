@@ -1,6 +1,6 @@
-CREATE OR REPLACE PROCEDURE test_procedure()
-LANGUAGE 'plpgsql'
-AS $$
+CREATE OR REPLACE PROCEDURE public.test_procedure()
+ LANGUAGE plpgsql
+AS $procedure$
 BEGIN
-END
-$$
+END;
+      $procedure$;

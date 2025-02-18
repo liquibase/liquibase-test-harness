@@ -1,1 +1,3 @@
-CREATE PROCEDURE test_procedure() BEGIN END
+CREATE PROCEDURE test_procedure()
+                                               BEGIN
+                                               END;

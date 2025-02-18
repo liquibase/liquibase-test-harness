@@ -6,16 +6,32 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <!-- own trigger syntax-->
-    <changeSet  author="as" id="1">
+    <changeSet id="1" author="as">
+        <createTable tableName="test_table">
+            <column name="id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="test_column" type="VARCHAR(50)" />
+        </createTable>
+        <rollback>
+            <dropTable tableName="test_table"/>
+        </rollback>
+    </changeSet>
+    <changeSet  author="as" id="2">
         <pro:createTrigger disabled="false"
                            encoding="UTF-8"
                            scope="test"
-                           tableName="posts"
-                           triggerName="test_trigger">CREATE TRIGGER test_trigger AFTER UPDATE OF title ON posts REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW MODE DB2SQL UPDATE posts SET description = 'New description'
+                           tableName="test_table"
+                           triggerName="test_trigger">CREATE TRIGGER test_trigger
+            AFTER UPDATE OF test_table.id
+            ON test_table REFERENCING OLD AS OLD NEW AS NEW
+            FOR EACH ROW MODE DB2SQL
+            UPDATE test_table SET test_column = 'New description'
+            WHERE test_column IS NULL
         </pro:createTrigger>
         <rollback>
             <pro:dropTrigger triggerName="test_trigger"
-                             tableName="posts"/>
+                             tableName="test_table"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

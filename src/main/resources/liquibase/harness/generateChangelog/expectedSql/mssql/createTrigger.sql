@@ -1,1 +1,2 @@
-CREATE TRIGGER test_trigger ON posts AFTER UPDATE AS RAISERROR ('error', 1, 1)
+if object_id('[dbo].test_trigger', 'tr') is null exec ('CREATE TRIGGER test_trigger on posts after insert as begin select ''STUB'' END');
+ALTER TRIGGER test_trigger ON posts AFTER UPDATE AS RAISERROR ('error', 1, 1);

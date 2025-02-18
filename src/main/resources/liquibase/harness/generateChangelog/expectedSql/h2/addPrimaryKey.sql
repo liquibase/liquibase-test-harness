@@ -1,1 +1,1 @@
-ALTER TABLE PUBLIC.posts ADD CONSTRAINT pk_posts PRIMARY KEY (id)
+CREATE TABLE test_table (id int NOT NULL, CONSTRAINT test_pk PRIMARY KEY (id));

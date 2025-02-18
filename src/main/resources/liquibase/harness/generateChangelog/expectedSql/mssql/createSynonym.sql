@@ -1,1 +1,1 @@
-CREATE SYNONYM test_synonym FOR authors
+CREATE SYNONYM test_synonym FOR authors;

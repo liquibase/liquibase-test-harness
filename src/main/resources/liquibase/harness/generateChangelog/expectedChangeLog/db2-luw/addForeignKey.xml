@@ -4,18 +4,38 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <!-- onUpdate="RESTRICT" doesn't work for db2-luw-->
-    <changeSet author="as" id="1">
-        <addForeignKeyConstraint  baseColumnNames="author_id"
-                                  baseTableName="posts"
-                                  constraintName="fk_posts_authors_test"
+    <changeSet id="1" author="as">
+        <createTable tableName="test_table_reference">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" />
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="test_table_reference"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="2" author="as">
+        <createTable tableName="test_table_base">
+            <column name="id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="test_column" type="VARCHAR(50)" />
+        </createTable>
+        <rollback>
+            <dropTable tableName="test_table_base"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="3" author="as">
+        <addForeignKeyConstraint  baseColumnNames="test_column"
+                                  baseTableName="test_table_base"
+                                  constraintName="fk_test"
                                   onDelete="CASCADE"
                                   referencedColumnNames="id"
-                                  referencedTableName="authors"
+                                  referencedTableName="test_table_reference"
                                   validate="true"/>
         <rollback>
-            <dropForeignKeyConstraint baseTableName="posts"
-                                      constraintName="fk_posts_authors_test"/>
+            <dropForeignKeyConstraint baseTableName="test_table_base"
+                                      constraintName="fk_test"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
