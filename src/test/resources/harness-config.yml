@@ -4,6 +4,13 @@ context: testContext
 databasesUnderTest:
   - name: postgresql
     prefix: docker
+    version: 17
+    url: jdbc:postgresql://localhost:5441/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
+    prefix: docker
     version: 16
     url: jdbc:postgresql://localhost:5440/lbcat
     username: lbuser
@@ -57,6 +64,19 @@ databasesUnderTest:
     url: jdbc:mysql://localhost:33061/lbcat
     username: lbuser
     password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
+    version: 8.4
+    url: jdbc:mysql://localhost:33065/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
+    version: tidb
+    url: jdbc:mysql://localhost:4000/lbcat
+    username: root
 
   - name: percona-xtradb-cluster
     version: 5.7
@@ -115,6 +135,13 @@ databasesUnderTest:
     prefix: docker
     version: 10.7
     url: jdbc:mariadb://localhost:33070/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mariadb
+    prefix: docker
+    version: 11.4
+    url: jdbc:mariadb://localhost:33073/lbcat
     username: lbuser
     password: LiquibasePass1
 
@@ -328,4 +355,3 @@ databasesUnderTest:
     url: jdbc:informix-sqli://localhost:9088/testdb:INFORMIXSERVER=informix;
     username: informix
     password: in4mix
-

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
 <!--          FOREIGN KEY CONSTRAINT            -->
 
@@ -109,6 +109,95 @@
         <rollback>
             <dropUniqueConstraint tableName="test_table_for_uc"
               constraintName="test_unique_constraint"/>
+        </rollback>
+    </changeSet>
+
+
+    <!-- FUNCTION -->
+    <changeSet id="13" author="as">
+        <pro:createFunction
+                encoding="UTF-8"
+                functionName="test_function">CREATE OR REPLACE FUNCTION test_function()
+            RETURNS trigger
+            AS $$
+            BEGIN
+            RAISE NOTICE 'Test function created';
+            RETURN NEW;
+            END;
+            $$
+            LANGUAGE plpgsql;
+        </pro:createFunction>
+        <rollback>
+            <pro:dropFunction functionName="test_function"/>
+        </rollback>
+    </changeSet>
+
+    <!-- PACKAGE -->
+    <changeSet id="14" author="as">
+        <pro:createPackage encoding="UTF-8"
+                           packageName="Test package">CREATE OR REPLACE FUNCTION test_function1()
+            RETURNS trigger
+            AS $$
+            BEGIN
+            RAISE NOTICE 'Test function created';
+            RETURN NEW;
+            END;
+            $$
+            LANGUAGE plpgsql;</pro:createPackage>
+        <rollback>
+            <pro:dropFunction functionName="test_function1"/>
+        </rollback>
+    </changeSet>
+
+    <!-- PACKAGE BODY -->
+    <changeSet id="15" author="as">
+        <pro:createPackageBody encoding="UTF-8"
+                               packageBodyName="Test package">CREATE OR REPLACE FUNCTION test_function2()
+            RETURNS trigger
+            AS $$
+            BEGIN
+            RAISE NOTICE 'Test function created';
+            RETURN NEW;
+            END;
+            $$
+            LANGUAGE plpgsql;</pro:createPackageBody>
+        <rollback>
+            <pro:dropFunction functionName="test_function2"/>
+        </rollback>
+    </changeSet>
+
+    <!-- TRIGGER -->
+    <changeSet id="16" author="as">
+        <pro:createTrigger disabled="false"
+                           encoding="UTF-8"
+                           scope="test"
+                           tableName="posts"
+                           triggerName="test_trigger">CREATE TRIGGER test_trigger
+            BEFORE INSERT ON posts
+            FOR EACH ROW EXECUTE PROCEDURE test_function();
+        </pro:createTrigger>
+        <rollback>
+            <pro:dropTrigger triggerName="test_trigger"
+                             tableName="posts"/>
+        </rollback>
+    </changeSet>
+
+    <!-- PROCEDURE -->
+    <changeSet id="17" author="as">
+        <comment>test procedure</comment>
+        <createProcedure
+
+                dbms="postgresql"
+                encoding="UTF-8"
+                procedureName="test_procedure">CREATE OR REPLACE PROCEDURE test_procedure()
+                                               LANGUAGE 'plpgsql'
+                                               AS $$
+        BEGIN
+        END;
+                                               $$
+        </createProcedure>
+        <rollback>
+            <dropProcedure procedureName="test_procedure"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

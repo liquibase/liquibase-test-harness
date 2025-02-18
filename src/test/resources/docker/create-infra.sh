@@ -20,7 +20,13 @@ case $db in
     ;;
 
   "diff")
-    docker compose up -d postgres-16 postgres-15 postgres-14 postgres-13 postgres-12 mysql-5.7 mysql-8 mariadb-10.2 mariadb-10.3 mariadb-10.4 mariadb-10.5 mariadb-10.6 mariadb-10.7 mssql-2017 mssql-2019 mssql-2022
+    docker compose up -d postgres-17 postgres-16 postgres-14 postgres-13 mysql-5.7 mysql-5.6 mysql-8 mysql-8.4 mariadb-10.4 mariadb-10.5 mariadb-10.6 mariadb-10.7 mssql-2017 mssql-2019 mssql-2022
+    sleep 40
+    docker ps -a
+    ;;
+
+  "diffChangelog")
+    docker compose up -d postgres-17 postgres-16 postgres-14 postgres-13 mysql-5.7 mysql-5.6 mysql-8 mysql-8.4 mariadb-10.4 mariadb-10.5 mariadb-10.6 mariadb-10.7 mssql-2017 mssql-2019 mssql-2022
     sleep 40
     docker ps -a
     ;;

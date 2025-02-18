@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "nextval\\('test_sequence'::regclass\\)\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "name": "sequence_referenced_column",
+            "nullable": true,
+            "type": {
+              "typeName": "numeric"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

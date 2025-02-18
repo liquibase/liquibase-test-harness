@@ -20,6 +20,9 @@ case $db in
   "mysql-8" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mysql -DdbVersion=8 test
     ;;
+  "mysql-8.4" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=mysql -DdbVersion=8.4 test
+    ;;
   "percona-xtradb-cluster-5.7" )
     test_command mvn -ntp -Dtest=$tc -DdbName=percona-xtradb-cluster -DdbVersion=5.7 test
     ;;
@@ -44,6 +47,9 @@ case $db in
   "postgres-16" )
     test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=16 test
     ;;
+  "postgres-17" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=postgresql -DdbVersion=17 test
+    ;;
   "mariadb-10.2" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mariadb -DdbVersion=10.2 test
     ;;
@@ -61,6 +67,9 @@ case $db in
     ;;
   "mariadb-10.7" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mariadb -DdbVersion=10.7 test
+    ;;
+  "mariadb-11.4" )
+    test_command mvn -ntp -Dtest=$tc -DdbName=mariadb -DdbVersion=11.4 test
     ;;
   "mssql-2017" )
     test_command mvn -ntp -Dtest=$tc -DdbName=mssql -DdbVersion=2017 test
@@ -122,6 +131,9 @@ case $db in
   "diff")
     test_command mvn -ntp -Dtest=DiffTest test
     ;;
+  "diffChangelog")
+    test_command mvn -ntp -Dtest=DiffChangelogTest test
+    ;;
   "hsqldb-2.4")
     test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.4 test
     ;;
@@ -145,6 +157,9 @@ case $db in
     ;;
   "informix-14.10")
     test_command mvn -ntp -Dtest=$tc -DdbName=informix -DdbVersion=14 test
+    ;;
+  "tidb")
+    test_command mvn -ntp -Dtest=$tc -DdbName=mysql -DdbVersion=tidb test
     ;;
 esac
 

@@ -1,0 +1,29 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "authors_data"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "authors_email"
+          }
+        }
+      ],
+      "liquibase.structure.core.ForeignKey": [
+        {
+          "foreignKey": {
+            "deferrable": false,
+            "initiallyDeferred": false,
+            "name": "FK_AUTHORS_AUTHORS_DATA"
+          }
+        }
+      ]
+    }
+  }
+}

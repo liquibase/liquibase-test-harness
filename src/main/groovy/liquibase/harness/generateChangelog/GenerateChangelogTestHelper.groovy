@@ -10,6 +10,9 @@ import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
 import liquibase.ui.UIService
 
+import java.nio.file.Path
+import java.nio.file.Paths
+
 class GenerateChangelogTestHelper {
     final static String baseChangelogPath = "liquibase/harness/generateChangelog/"
     final static UIService uiService = Scope.getCurrentScope().getUI()
@@ -33,24 +36,12 @@ class GenerateChangelogTestHelper {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)
-                            .dbSchema(databaseUnderTest.dbSchema)
                             .username(databaseUnderTest.username)
                             .password(databaseUnderTest.password)
                             .version(databaseUnderTest.version)
-                            .setupChangelogPath(changeLogEntry.value)
-                            .insertChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "stress/insert", "xml").get(changeLogEntry.key))
-                            .updateChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "stress/update", "xml").get(changeLogEntry.key))
-                            .selectChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "stress/select", "xml").get(changeLogEntry.key))
-                            .xmlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                            .inputChangelogFile(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedChangeLog", "xml").get(changeLogEntry.key))
-                            .jsonChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "expectedChangeLog", "json").get(changeLogEntry.key))
-                            .ymlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
-                                    "expectedChangeLog", "yml").get(changeLogEntry.key))
-                            .sqlChangelogPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
+                            .expectedSqlPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedSql", "sql").get(changeLogEntry.key))
                             .change(changeLogEntry.key)
                             .database(databaseUnderTest.database)
@@ -87,9 +78,11 @@ class GenerateChangelogTestHelper {
         }
     }
 
-    static String getSqlSpecificChangelogFile (String dbName, String changelogFileName) {
-        def replacementName = String.format(".%s.sql", getShortDatabaseName(dbName))
-        return changelogFileName.replace(".sql", replacementName)
+    static void clearFolder(String pathToObjectDir) {
+        Path path = Paths.get(pathToObjectDir)
+        if (path.toFile().isDirectory()) {
+            org.apache.commons.io.FileUtils.forceDelete(new File(pathToObjectDir))
+        }
     }
 
     static String removeSchemaNames(String generatedSql, Database database) {
@@ -108,15 +101,8 @@ class GenerateChangelogTestHelper {
         String username
         String password
         String url
-        String setupChangelogPath
-        String insertChangelogPath
-        String updateChangelogPath
-        String selectChangelogPath
-        String xmlChangelogPath
-        String jsonChangelogPath
-        String ymlChangelogPath
-        String sqlChangelogPath
-        String dbSchema
+        String inputChangelogFile
+        String expectedSqlPath
         String change
         Database database
     }

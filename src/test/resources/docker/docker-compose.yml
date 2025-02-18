@@ -1,7 +1,6 @@
-version: '3.3'
+version: "3.3"
 
 services:
-
   mysql-5.6:
     platform: linux/x86_64
     image: library/mysql:5.6
@@ -42,7 +41,21 @@ services:
       MYSQL_USER: lbuser
       MYSQL_PASSWORD: LiquibasePass1
     volumes:
-    - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+
+  mysql-8.4:
+    platform: linux/x86_64
+    image: mysql:8.4
+    ports:
+      - "33065:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
   percona-xtradb-cluster-5.7:
     image: percona/percona-xtradb-cluster:5.7
@@ -147,6 +160,17 @@ services:
     volumes:
       - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
+  postgres-17:
+    image: postgres:17
+    ports:
+      - "5441:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: LbRootPass1
+      POSTGRES_DB: lbcat
+    volumes:
+      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
+
   mariadb-10.2:
     image: mariadb:10.2
     ports:
@@ -225,6 +249,20 @@ services:
     volumes:
       - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
 
+  mariadb-11.4:
+    image: mariadb:11.4
+    ports:
+      - "33073:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+
+
   mssql-2017:
     container_name: sql-server-db-2017
     image: mcr.microsoft.com/mssql/server:2017-latest
@@ -285,7 +323,7 @@ services:
   db2-luw:
     image: taskana/db2:11.5
     environment:
-      LICENSE: 'accept'
+      LICENSE: "accept"
     ports:
       - "50000:50000"
 
@@ -388,6 +426,29 @@ services:
     volumes:
       - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
 
+  ti-db:
+    image: pingcap/tidb
+    container_name: ti-db
+    ports:
+      - 4000:4000
+    volumes:
+      - ./storage/tidb:/var/lib/mysql
+
+  tidb:
+    image: mysql:latest
+    container_name: mysql-client
+    depends_on:
+      - ti-db
+    volumes:
+      - ./tidb-init.sql:/tidb-init.sql
+    entrypoint: sh -c "
+      echo 'Waiting for TiDB to be ready...' &&
+      sleep 5;
+      echo 'TiDB is ready. Running initialization script...' &&
+      mysql -h ti-db -P 4000 -u root < /tidb-init.sql &&
+      echo 'Initialization complete.' &&
+      tail -f /dev/null" Keeps the container running for interactive use
+    network_mode: "service:ti-db"
 
 # Titan (https://titan-data.io) is managing these images for our CI/CD process. If you want to run them locally you'll have to
 #  populate init script (hsqldb-init.sql) for this platform manually or install titan and pull image pre-populated with data
