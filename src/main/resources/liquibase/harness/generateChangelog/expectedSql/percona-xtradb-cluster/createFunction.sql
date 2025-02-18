@@ -1,6 +1,4 @@
-CREATE TABLE test_table (test_column INT NULL, varcharColumn VARCHAR(25) NULL, intColumn INT NULL, dateColumn date NULL);
-
-CREATE FUNCTION `test_function`() RETURNS varchar(20) CHARSET latin1
+CREATE FUNCTION `test_function`() RETURNS varchar(20) CHARSET utf8mb4
 BEGIN
-                                              RETURN \'Hello\';
-                                              END;
+      RETURN \'Hello\';
+      END;

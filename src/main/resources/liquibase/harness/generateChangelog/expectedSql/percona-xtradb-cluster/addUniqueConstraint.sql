@@ -1,1 +1,1 @@
-ALTER TABLE lbcat.authors ADD CONSTRAINT test_unique_constraint UNIQUE (email)
+CREATE TABLE test_table (id INT NULL, UNIQUE (id));
