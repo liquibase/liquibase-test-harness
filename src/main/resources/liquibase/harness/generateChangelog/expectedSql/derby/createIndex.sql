@@ -1,3 +1,2 @@
-CREATE TABLE TEST_TABLE (ID INTEGER);
-
-CREATE INDEX IDX_FIRST_NAME ON TEST_TABLE(ID);
+CREATE INDEX APP.idx_first_name ON APP.authors(first_name)
+CREATE INDEX APP.idx_last_name ON APP.authors(last_name)

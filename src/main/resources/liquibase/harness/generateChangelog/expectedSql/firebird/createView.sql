@@ -1,3 +1,1 @@
-CREATE TABLE TEST_TABLE (TEST_COLUMN INT);
-
-CREATE VIEW TEST_VIEW AS select test_column from test_table;
+CREATE VIEW test_view AS select id, first_name, last_name, email from authors

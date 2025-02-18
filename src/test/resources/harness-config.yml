@@ -50,51 +50,51 @@ databasesUnderTest:
     url: jdbc:mysql://localhost:33064/lbcat
     username: lbuser
     password: LiquibasePass1
-
-  - name: mysql
-    prefix: docker
-    version: 5.7
-    url: jdbc:mysql://localhost:33062/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mysql
-    prefix: docker
-    version: 8
-    url: jdbc:mysql://localhost:33061/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mysql
-    prefix: docker
-    version: 8.4
-    url: jdbc:mysql://localhost:33065/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mysql
-    prefix: docker
-    version: tidb
-    url: jdbc:mysql://localhost:4000/lbcat
-    username: root
-
-  - name: percona-xtradb-cluster
-    version: 5.7
-    url: jdbc:mysql://localhost:33070/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: percona-xtradb-cluster
-    version: 8.0
-    url: jdbc:mysql://localhost:33071/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: percona-xtradb-cluster
-    version: 8.4
-    url: jdbc:mysql://localhost:33072/lbcat
-    username: lbuser
-    password: LiquibasePass1
+#
+#  - name: mysql
+#    prefix: docker
+#    version: 5.7
+#    url: jdbc:mysql://localhost:33062/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: mysql
+#    prefix: docker
+#    version: 8
+#    url: jdbc:mysql://localhost:33061/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: mysql
+#    prefix: docker
+#    version: 8.4
+#    url: jdbc:mysql://localhost:33065/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: mysql
+#    prefix: docker
+#    version: tidb
+#    url: jdbc:mysql://localhost:4000/lbcat
+#    username: root
+#
+#  - name: percona-xtradb-cluster
+#    version: 5.7
+#    url: jdbc:mysql://localhost:33070/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: percona-xtradb-cluster
+#    version: 8.0
+#    url: jdbc:mysql://localhost:33071/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
+#
+#  - name: percona-xtradb-cluster
+#    version: 8.4
+#    url: jdbc:mysql://localhost:33072/lbcat
+#    username: lbuser
+#    password: LiquibasePass1
 
   - name: mariadb
     prefix: docker

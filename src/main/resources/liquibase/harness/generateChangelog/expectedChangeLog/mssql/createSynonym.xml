@@ -8,7 +8,7 @@
 
     <changeSet  author="as" id="1">
         <pro:createSynonym objectType="table"
-                           objectName="test_table_xml"
+                           objectName="authors"
                            replaceIfExists="true"
                            synonymName="test_synonym"/>
         <rollback>

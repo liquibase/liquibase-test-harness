@@ -37,6 +37,7 @@ class GenerateChangelogTest extends Specification {
     def "apply generateChangelog test for #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data for generateChangelog test"
         Map<String, Object> argsMap = new HashMap()
+        argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)

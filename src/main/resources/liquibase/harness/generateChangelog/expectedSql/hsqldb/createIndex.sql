@@ -1,3 +1,2 @@
-CREATE TABLE TEST_TABLE (ID INT);
-
-CREATE INDEX IDX_FIRST_NAME ON TEST_TABLE(ID);
+CREATE INDEX PUBLIC.idx_first_name ON PUBLIC.authors(first_name)
+CREATE INDEX PUBLIC.idx_last_name ON PUBLIC.authors(last_name)

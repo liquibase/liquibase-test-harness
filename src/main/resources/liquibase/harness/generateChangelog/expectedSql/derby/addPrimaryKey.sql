@@ -1,0 +1,1 @@
+ALTER TABLE APP.posts ADD CONSTRAINT pk_posts PRIMARY KEY (id)
