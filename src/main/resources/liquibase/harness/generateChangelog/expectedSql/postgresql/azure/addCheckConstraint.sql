@@ -1,4 +1,4 @@
-CREATE TABLE "test_table" ("test_column" INTEGER, "varcharColumn" VARCHAR(25), "intColumn" INTEGER, "dateColumn" date);
+ALTER TABLE "posts" ADD CONSTRAINT "test_check_constraint" CHECK (((id > 0)));
 
 CREATE VIEW "pg_buffercache" AS SELECT p.bufferid,
     p.relfilenode,

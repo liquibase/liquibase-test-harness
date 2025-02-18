@@ -1,4 +1,4 @@
-CREATE TABLE "test_table" ("test_column" INTEGER, "varcharColumn" VARCHAR(25), "intColumn" INTEGER, "dateColumn" date);
+CREATE SEQUENCE  IF NOT EXISTS "test_sequence" AS bigint START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
 
 CREATE VIEW "pg_buffercache" AS SELECT p.bufferid,
     p.relfilenode,

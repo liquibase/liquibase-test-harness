@@ -1,4 +1,8 @@
-CREATE TABLE "test_table" ("test_column" INTEGER, "varcharColumn" VARCHAR(25), "intColumn" INTEGER, "dateColumn" date);
+CREATE VIEW "test_view" AS SELECT authors.id,
+    authors.first_name,
+    authors.last_name,
+    authors.email
+   FROM authors;;
 
 CREATE VIEW "pg_buffercache" AS SELECT p.bufferid,
     p.relfilenode,

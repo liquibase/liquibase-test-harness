@@ -1,4 +1,4 @@
-CREATE TABLE "test_table" ("test_column" INTEGER, "varcharColumn" VARCHAR(25), "intColumn" INTEGER, "dateColumn" date);
+CREATE TABLE "test_table" ("id" INTEGER NOT NULL, CONSTRAINT "test_pk" PRIMARY KEY ("id"));
 
 CREATE VIEW "pg_buffercache" AS SELECT p.bufferid,
     p.relfilenode,

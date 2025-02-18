@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION "public".test_function()
  LANGUAGE plpgsql
 AS $function$
                                                         BEGIN
-                                                            RAISE NOTICE \'Test trigger function created\';
+                                                            RAISE NOTICE 'Test trigger function created';
                                                             RETURN NEW;
                                                         END;
                                                     $function$;
