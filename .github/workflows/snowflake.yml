@@ -46,7 +46,7 @@ jobs:
           echo "TH_DB_ADMIN=test" >> $GITHUB_ENV  
           echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
           echo "TH_DB=snowflake" >> $GITHUB_ENV
-          echo "TH_SNOW_URL=jdbc:snowflake://http://snowflake.localhost.localstack.cloud:4566" >> $GITHUB_ENV
+          echo "TH_SNOW_URL=jdbc:snowflake://snowflake.localhost.localstack.cloud:4566" >> $GITHUB_ENV
 
       - name: Update
         continue-on-error: true
