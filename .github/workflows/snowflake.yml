@@ -18,6 +18,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+          with:
+            java-version: '11'
+            distribution: 'temurin'
+
       - name: Setup Python
         uses: actions/setup-python@v5.0.0
         with:
