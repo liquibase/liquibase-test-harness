@@ -54,8 +54,6 @@ on:
         required: true
         default: |
           [
-            "hsqldb-2.4",
-            "hsqldb-2.5",
             "firebird-3",
             "firebird-4",
           ]

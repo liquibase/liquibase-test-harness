@@ -481,24 +481,26 @@ services:
   firebird-3:
     image: firebirdsql/firebird:3.0.9
     ports:
-      - "3051:3050"
-    environment:
-      FIREBIRD_ROOT_PASSWORD: LbRootPass1
-      FIREBIRD_DATABASE: lbcat
-      FIREBIRD_USER: lbuser
-      FIREBIRD_PASSWORD: LiquibasePass1
-    volumes:
-      - "./firebird-init.sql:/docker-entrypoint-initdb.d/firebird-init.sql"
-
-  firebird-4:
-    image: firebirdsql/firebird:4.0.5
-    ports:
       - "3050:3050"
     environment:
       FIREBIRD_ROOT_PASSWORD: LbRootPass1
       FIREBIRD_DATABASE: lbcat
       FIREBIRD_USER: lbuser
       FIREBIRD_PASSWORD: LiquibasePass1
+      FIREBIRD_DATABASE_DEFAULT_CHARSET: UTF8
+    volumes:
+      - "./firebird-init.sql:/docker-entrypoint-initdb.d/firebird-init.sql"
+
+  firebird-4:
+    image: firebirdsql/firebird:4.0.5
+    ports:
+      - "3051:3050"
+    environment:
+      FIREBIRD_ROOT_PASSWORD: LbRootPass1
+      FIREBIRD_DATABASE: lbcat
+      FIREBIRD_USER: lbuser
+      FIREBIRD_PASSWORD: LiquibasePass1
+      FIREBIRD_DATABASE_DEFAULT_CHARSET: UTF8
     volumes:
       - "./firebird-init.sql:/docker-entrypoint-initdb.d/firebird-init.sql"
 
