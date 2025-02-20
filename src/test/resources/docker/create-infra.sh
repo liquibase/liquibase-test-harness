@@ -68,7 +68,7 @@ case $db in
     docker compose up -d $db
     sleep 20
     docker ps
-    docker logs $db
+    docker logs docker-${db}-1
     exit 0
     ;;
 
