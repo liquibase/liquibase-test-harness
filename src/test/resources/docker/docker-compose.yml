@@ -450,49 +450,57 @@ services:
       tail -f /dev/null" Keeps the container running for interactive use
     network_mode: "service:ti-db"
 
-# Warning! Remap ports here and in harness-config.yml if you want to run two versions of these platforms simultaneously
+  # Warning! Remap ports here and in harness-config.yml if you want to run two versions of these platforms simultaneously
 
- hsqldb-2.4:
-   image: blacklabelops/hsqldb:latest
-   ports:
-     - "9001:9001"
-   environment:
-     HSQLDB_USER: lbuser
-     HSQLDB_PASSWORD: LiquibasePass1
-     HSQLDB_DATABASE_ALIAS: lbcat
-     HSQLDB_DATABASE_HOST: localhost:9001
+  hsqldb-2.4:
+    image: blacklabelops/hsqldb:latest
+    ports:
+      - "9001:9001"
+    environment:
+      HSQLDB_USER: lbuser
+      HSQLDB_PASSWORD: LiquibasePass1
+      HSQLDB_DATABASE_ALIAS: lbcat
+      HSQLDB_DATABASE_HOST: localhost:9001
+    volumes:
+      - "./hsqldb-init.sql:/docker-entrypoint-initdb.d/hsqldb-init.sql"
 
- hsqldb-2.5:
-   image: mitchtalmadge/hsqldb:2.5.0
-   ports:
-     - "9001:9001"
-   environment:
-     HSQLDB_USER: lbuser
-     HSQLDB_PASSWORD: LiquibasePass1
-     HSQLDB_DATABASE_ALIAS: lbcat
-     HSQLDB_DATABASE_HOST: localhost
+  hsqldb-2.5:
+    image: mitchtalmadge/hsqldb:2.5.0
+    ports:
+      - "9001:9001"
+    environment:
+      HSQLDB_USER: lbuser
+      HSQLDB_PASSWORD: LiquibasePass1
+      HSQLDB_DATABASE_ALIAS: lbcat
+      HSQLDB_DATABASE_HOST: localhost
+    volumes:
+      - "./hsqldb-init.sql:/docker-entrypoint-initdb.d/hsqldb-init.sql"
 
-# Warning! Remap ports here and in harness-config.yml if you want to run two versions of these platforms simultaneously
+  # Warning! Remap ports here and in harness-config.yml if you want to run two versions of these platforms simultaneously
 
- firebird-3:
-   image: firebirdsql/firebird:3.0.9
-   ports:
-     - "3051:3050"
-   environment:
-     FIREBIRD_ROOT_PASSWORD: LbRootPass1
-     FIREBIRD_DATABASE: lbcat
-     FIREBIRD_USER: lbuser
-     FIREBIRD_PASSWORD: LiquibasePass1
+  firebird-3:
+    image: firebirdsql/firebird:3.0.9
+    ports:
+      - "3051:3050"
+    environment:
+      FIREBIRD_ROOT_PASSWORD: LbRootPass1
+      FIREBIRD_DATABASE: lbcat
+      FIREBIRD_USER: lbuser
+      FIREBIRD_PASSWORD: LiquibasePass1
+    volumes:
+      - "./firebird-init.sql:/docker-entrypoint-initdb.d/firebird-init.sql"
 
- firebird-4:
-   image: firebirdsql/firebird:4.0.5
-   ports:
-     - "3050:3050"
-   environment:
-     FIREBIRD_ROOT_PASSWORD: LbRootPass1
-     FIREBIRD_DATABASE: lbcat
-     FIREBIRD_USER: lbuser
-     FIREBIRD_PASSWORD: LiquibasePass1
+  firebird-4:
+    image: firebirdsql/firebird:4.0.5
+    ports:
+      - "3050:3050"
+    environment:
+      FIREBIRD_ROOT_PASSWORD: LbRootPass1
+      FIREBIRD_DATABASE: lbcat
+      FIREBIRD_USER: lbuser
+      FIREBIRD_PASSWORD: LiquibasePass1
+    volumes:
+      - "./firebird-init.sql:/docker-entrypoint-initdb.d/firebird-init.sql"
 
 networks:
   roachnet:
