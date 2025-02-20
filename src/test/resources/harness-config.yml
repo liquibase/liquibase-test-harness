@@ -331,14 +331,14 @@ databasesUnderTest:
   - name: firebird
     version: 3
     prefix: docker
-    url: jdbc:firebirdsql://localhost:3050/lbcat
+    url: jdbc:firebirdsql://localhost:3050//var/lib/firebird/data/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: firebird
     version: 4
     prefix: docker
-    url: jdbc:firebirdsql://localhost:3050/lbcat
+    url: jdbc:firebirdsql://localhost:3051//var/lib/firebird/data/lbcat
     username: lbuser
     password: LiquibasePass1
 
