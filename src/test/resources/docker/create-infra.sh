@@ -66,7 +66,6 @@ case $db in
 
   "hsqldb-2.4"|"hsqldb-2.5"|"firebird-3"|"firebird-4")
     docker compose up -d $db
-    sleep 20
     exit 0
     ;;
 
