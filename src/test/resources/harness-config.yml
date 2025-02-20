@@ -323,7 +323,7 @@ databasesUnderTest:
   - name: hsqldb
     version: 2.5
     prefix: docker
-    url: jdbc:hsqldb:hsql://localhost:9001/lbcat
+    url: jdbc:hsqldb:hsql://localhost:9002/lbcat
     username: lbuser
     password: LiquibasePass1
 

@@ -460,14 +460,14 @@ services:
       HSQLDB_USER: lbuser
       HSQLDB_PASSWORD: LiquibasePass1
       HSQLDB_DATABASE_ALIAS: lbcat
-      HSQLDB_DATABASE_HOST: localhost:9001
+      HSQLDB_DATABASE_HOST: localhost
     volumes:
       - "./hsqldb-init.sql:/docker-entrypoint-initdb.d/hsqldb-init.sql"
 
   hsqldb-2.5:
     image: mitchtalmadge/hsqldb:2.5.0
     ports:
-      - "9001:9001"
+      - "9002:9001"
     environment:
       HSQLDB_USER: lbuser
       HSQLDB_PASSWORD: LiquibasePass1
