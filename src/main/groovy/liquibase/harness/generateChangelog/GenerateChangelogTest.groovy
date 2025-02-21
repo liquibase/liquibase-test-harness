@@ -15,11 +15,9 @@ import java.nio.file.Paths
 
 import static liquibase.harness.generateChangelog.GenerateChangelogTestHelper.*
 import static liquibase.harness.util.FileUtils.getResourceContent
-import static liquibase.harness.util.FileUtils.getSqlFileContent
 import static liquibase.harness.util.FileUtils.readFile
 import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
 import static liquibase.harness.util.TestUtils.executeCommandScope
-import static liquibase.harness.util.TestUtils.parseQuery
 
 class GenerateChangelogTest extends Specification {
     @Shared
@@ -52,7 +50,7 @@ class GenerateChangelogTest extends Specification {
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
-        shouldRunChangeSet = !getResourceContent("/$testInput.expectedSqlPath").toLowerCase()?.contains("invalid test")
+        shouldRunChangeSet = !expectedSql.toLowerCase()?.contains("invalid test")
         Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
         when: "execute update command using xml changelog formats"
@@ -87,7 +85,7 @@ class GenerateChangelogTest extends Specification {
 
             String generatedChangelog = readFile((String) argsMap.get("changeLogFile"))
             if (entry.key.equalsIgnoreCase("SqlTestCase")) {
-                validateSqlChangelog(getResourceContent("/$testInput.expectedSqlPath"), generatedChangelog)
+                validateSqlChangelog(expectedSql, generatedChangelog)
             } else {
                 and: "verify that the 'stored objects' directories are created"
                 def storedObjectTypesMap = [
