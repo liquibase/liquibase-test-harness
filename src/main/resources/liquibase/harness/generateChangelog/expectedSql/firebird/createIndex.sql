@@ -1,4 +1,3 @@
-INVALID TEST
+CREATE TABLE TEST_TABLE (ID INT);
 
---Indexes are treated as unique constraints during generateChangelog command for Firebird
---Change after https://datical.atlassian.net/browse/DAT-13129 issue is resolved
+ALTER TABLE TEST_TABLE ADD CONSTRAINT IDX_FIRST_NAME UNIQUE (ID);

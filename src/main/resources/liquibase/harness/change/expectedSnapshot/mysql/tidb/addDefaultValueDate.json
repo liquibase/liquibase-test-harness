@@ -1,0 +1,15 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "2008-02-12T12:34:03\\!\\{java.sql.Timestamp\\}",
+            "name": "dateTimeColumn",
+            "nullable": true
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,5 +1,6 @@
-CREATE FUNCTION `test_function`() RETURNS varchar(20) CHARSET utf8mb4
+DROP FUNCTION IF EXISTS test_function
+CREATE FUNCTION test_function()
+RETURNS VARCHAR(20)
 BEGIN
-                                                RETURN 'Hello';
-                                                END;
-
+RETURN 'Hello'
+END

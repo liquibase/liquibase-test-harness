@@ -1,0 +1,1 @@
+ALTER TABLE "C##LIQUIBASE".posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES "C##LIQUIBASE".authors (id) ON DELETE CASCADE

@@ -1,0 +1,86 @@
+Reference Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33064/lbcat (Default Schema: lbcat)
+Comparison Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33061/lbcat (Default Schema: lbcat)
+Compared Schemas: lbcat
+Product Name: EQUAL
+Product Version:
+     Reference:   '5.6.51'
+     Target: '8.0.26'
+Missing Catalog(s): NONE
+Unexpected Catalog(s): NONE
+Changed Catalog(s): NONE
+Missing Check Constraint(s): NONE
+Unexpected Check Constraint(s): NONE
+Changed Check Constraint(s): NONE
+Missing Column(s): NONE
+Unexpected Column(s):
+     lbcat.test_table_for_column.dateColumn
+     lbcat.test_view.email
+     lbcat.test_view.first_name
+     lbcat.test_table_base.id
+     lbcat.test_table_for_column.id
+     lbcat.test_table_for_index.id
+     lbcat.test_table_for_uc.id
+     lbcat.test_table_reference.id
+     lbcat.test_view.id
+     lbcat.test_table_for_column.intColumn
+     lbcat.test_view.last_name
+     lbcat.test_table_reference.test_column
+     lbcat.test_table_for_column.varcharColumn
+Changed Column(s): NONE
+Missing Database Package(s): NONE
+Unexpected Database Package(s): NONE
+Changed Database Package(s): NONE
+Missing Database Package Body(s): NONE
+Unexpected Database Package Body(s): NONE
+Changed Database Package Body(s): NONE
+Missing Foreign Key(s): NONE
+Unexpected Foreign Key(s):
+     test_fk(test_table_base[id] -> test_table_reference[test_column])
+Changed Foreign Key(s): NONE
+Missing Function(s): NONE
+Unexpected Function(s):
+     test_function
+     test_function1
+     test_function2
+Changed Function(s): NONE
+Missing Index(s): NONE
+Unexpected Index(s):
+     PRIMARY UNIQUE  ON lbcat.test_table_base(id)
+     PRIMARY UNIQUE  ON lbcat.test_table_reference(id)
+     idx_first_name ON lbcat.test_table_for_index(id)
+     test_column UNIQUE  ON lbcat.test_table_reference(test_column)
+     test_unique_constraint UNIQUE  ON lbcat.test_table_for_uc(id)
+Changed Index(s): NONE
+Missing Primary Key(s): NONE
+Unexpected Primary Key(s):
+     PRIMARY on lbcat.test_table_base(id)
+     PRIMARY on lbcat.test_table_reference(id)
+Changed Primary Key(s): NONE
+Missing Stored Procedure(s): NONE
+Unexpected Stored Procedure(s):
+     test_procedure
+Changed Stored Procedure(s): NONE
+Missing Synonym(s): NONE
+Unexpected Synonym(s): NONE
+Changed Synonym(s): NONE
+Missing Table(s): NONE
+Unexpected Table(s):
+     test_table_base
+     test_table_for_column
+     test_table_for_index
+     test_table_for_uc
+     test_table_reference
+Changed Table(s): NONE
+Missing Trigger(s): NONE
+Unexpected Trigger(s):
+     posts::test_trigger
+Changed Trigger(s): NONE
+Missing Unique Constraint(s): NONE
+Unexpected Unique Constraint(s):
+     test_column on test_table_reference(test_column)
+     test_unique_constraint on test_table_for_uc(id)
+Changed Unique Constraint(s): NONE
+Missing View(s): NONE
+Unexpected View(s):
+     test_view
+Changed View(s): NONE

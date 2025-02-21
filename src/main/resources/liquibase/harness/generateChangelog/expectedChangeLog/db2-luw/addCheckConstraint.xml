@@ -17,8 +17,8 @@
     </changeSet>
     <changeSet  id="2" author="as">
         <pro:addCheckConstraint constraintName="test_check_constraint"
-                                 disabled="false"
-                                 tableName="test_table"
-                                 validate="true">id > 0</pro:addCheckConstraint>
+                                disabled="false"
+                                tableName="test_table"
+                                validate="true">id > 0</pro:addCheckConstraint>
     </changeSet>
 </databaseChangeLog>

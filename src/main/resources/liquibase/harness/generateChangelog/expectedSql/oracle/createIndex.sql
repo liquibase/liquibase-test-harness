@@ -1,3 +1,2 @@
-CREATE TABLE TEST_TABLE (ID NUMBER(*, 0));
-
-CREATE INDEX IDX_FIRST_NAME ON TEST_TABLE(ID);
+CREATE INDEX "C##LIQUIBASE".idx_first_name ON "C##LIQUIBASE".authors(first_name)
+CREATE INDEX "C##LIQUIBASE".idx_last_name ON "C##LIQUIBASE".authors(last_name)

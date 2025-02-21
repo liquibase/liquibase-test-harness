@@ -1,0 +1,12 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "liquibase.structure.core.UniqueConstraint": [
+        {
+            "name": "test_unique_constraint"
+          }
+      ]
+    }
+  }
+}

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <!-- own trigger syntax-->
     <changeSet id="1" author="as">
@@ -19,10 +19,10 @@
     </changeSet>
     <changeSet  author="as" id="2">
         <pro:createTrigger disabled="false"
-          encoding="UTF-8"
-          scope="test"
-          tableName="test_table"
-          triggerName="test_trigger">CREATE TRIGGER test_trigger
+                           encoding="UTF-8"
+                           scope="test"
+                           tableName="test_table"
+                           triggerName="test_trigger">CREATE TRIGGER test_trigger
             AFTER UPDATE OF test_table.id
             ON test_table REFERENCING OLD AS OLD NEW AS NEW
             FOR EACH ROW MODE DB2SQL
@@ -31,7 +31,7 @@
         </pro:createTrigger>
         <rollback>
             <pro:dropTrigger triggerName="test_trigger"
-              tableName="test_table"/>
+                             tableName="test_table"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

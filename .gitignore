@@ -1,5 +1,6 @@
 target/
 .idea/
+.run/
 *.iml
 /.apt_generated/
 /.apt_generated_tests/
@@ -48,3 +49,8 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+.classpath
+.project
+.settings/org.eclipse.jdt.apt.core.prefs
+.settings/org.eclipse.jdt.core.prefs

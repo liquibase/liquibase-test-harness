@@ -1,0 +1,16 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "com.datical.liquibase.ext.storedlogic.function.Function": [
+        {
+          "function": {
+            "body": "CREATE OR REPLACE FUNCTION public.test_function()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\n                                                    BEGIN\n                                                    RAISE NOTICE 'Test function created';\n                                                    RETURN NEW;\n                                                    END;\n                                                    $function$\n",
+            "functionName": "test_function",
+            "name": "test_function()",
+            "valid": true
+          }
+        }]
+    }
+  }
+}

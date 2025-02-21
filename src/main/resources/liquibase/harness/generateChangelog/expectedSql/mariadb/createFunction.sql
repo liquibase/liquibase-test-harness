@@ -5,4 +5,3 @@ CREATE FUNCTION `test_function`() RETURNS varchar(20) CHARSET utf8mb4 COLLATE ut
 BEGIN
                                                 RETURN 'Hello';
                                                 END;
-

@@ -6,7 +6,11 @@ import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.ui.UIService
+import org.apache.commons.io.FileUtils
 import org.yaml.snakeyaml.Yaml
+
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.stream.Collectors
 
 import static liquibase.harness.util.FileUtils.*
@@ -91,6 +95,7 @@ class DiffCommandTestHelper {
                             "${targetDatabase.name}${targetDatabase.version}.json")
                     .targetDatabase(targetDatabase)
                     .referenceDatabase(referenceDatabase)
+                    .pathToExpectedDiffFolder("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/")
                     .build())
         }
         new DatabaseConnectionUtil().initializeDatabasesConnection(databasesToConnect)
@@ -117,6 +122,9 @@ class DiffCommandTestHelper {
         map.put("createView", new ArrayList<>(List.of("dropView", "drop view")))
         map.put("createIndex", new ArrayList<>(List.of("dropIndex", "drop index")))
         map.put("createSequence", new ArrayList<>(List.of("dropSequence", "drop sequence")))
+        map.put("createFunction", new ArrayList<>(List.of("dropFunction", "drop function")))
+        map.put("createTrigger", new ArrayList<>(List.of("dropTrigger", "drop trigger")))
+        map.put("createProcedure", new ArrayList<>(List.of("dropProcedure", "drop procedure")))
 
         if(dbName.equals("mariadb") || dbName.equals("mysql")) {
             map.put("addForeignKey", new ArrayList<>(List.of("dropForeignKey", "drop foreign key")))
@@ -156,6 +164,13 @@ class DiffCommandTestHelper {
                 .replaceAll(replacementRegexpWS, "")
     }
 
+    static void clearFolder(String pathToObjectDir) {
+        Path path = Paths.get(pathToObjectDir)
+        if (path.toFile().isDirectory()) {
+            FileUtils.forceDelete(new File(pathToObjectDir))
+        }
+    }
+
     @Builder
     static class TestInput {
         String pathToExpectedDiffFile
@@ -165,6 +180,7 @@ class DiffCommandTestHelper {
         String pathToGeneratedSqlDiffChangelogFile
         String pathToGeneratedYmlDiffChangelogFile
         String pathToGeneratedJsonDiffChangelogFile
+        String pathToExpectedDiffFolder
         DatabaseUnderTest referenceDatabase
         DatabaseUnderTest targetDatabase
     }
