@@ -314,16 +314,23 @@ databasesUnderTest:
 
   # change ports if you want to run 2 versions of these platforms simultaneously
   - name: hsqldb
-    version: 2.4
+    version: 2.5
     prefix: docker
     url: jdbc:hsqldb:hsql://localhost:9001/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: hsqldb
-    version: 2.5
+    version: 2.6
     prefix: docker
     url: jdbc:hsqldb:hsql://localhost:9002/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: hsqldb
+    version: 2.7
+    prefix: docker
+    url: jdbc:hsqldb:hsql://localhost:9003/lbcat
     username: lbuser
     password: LiquibasePass1
 

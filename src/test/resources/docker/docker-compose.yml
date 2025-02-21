@@ -452,29 +452,38 @@ services:
 
   # Warning! Remap ports here and in harness-config.yml if you want to run two versions of these platforms simultaneously
 
-  hsqldb-2.4:
-    image: blacklabelops/hsqldb:latest
+  hsqldb-2.5:
+    build:
+      context: ./Dockerfiles/hsqldb
+      args:
+        HSQLDB_USER: lbuser
+        HSQLDB_PASSWORD: LiquibasePass1
+        HSQLDB_VERSION: 2.5.1
+        HSQLDB_DATABASE_ALIAS: lbcat
     ports:
       - "9001:9001"
-    environment:
-      HSQLDB_USER: lbuser
-      HSQLDB_PASSWORD: LiquibasePass1
-      HSQLDB_DATABASE_ALIAS: lbcat
-      HSQLDB_DATABASE_HOST: localhost
-    volumes:
-      - "./data/hsqldb/database:/opt/database"
 
-  hsqldb-2.5:
-    image: mitchtalmadge/hsqldb:2.5.0
+  hsqldb-2.6:
+    build:
+      context: ./Dockerfiles/hsqldb
+      args:
+        HSQLDB_USER: lbuser
+        HSQLDB_PASSWORD: LiquibasePass1
+        HSQLDB_VERSION: 2.6.1
+        HSQLDB_DATABASE_ALIAS: lbcat
     ports:
       - "9002:9001"
-    environment:
-      HSQLDB_USER: lbuser
-      HSQLDB_PASSWORD: LiquibasePass1
-      HSQLDB_DATABASE_ALIAS: lbcat
-      HSQLDB_DATABASE_HOST: localhost
-    volumes:
-      - "./data/hsqldb/database:/opt/database"
+
+  hsqldb-2.7:
+    build:
+      context: ./Dockerfiles/hsqldb
+      args:
+        HSQLDB_USER: lbuser
+        HSQLDB_PASSWORD: LiquibasePass1
+        HSQLDB_VERSION: 2.7.4
+        HSQLDB_DATABASE_ALIAS: lbcat
+    ports:
+      - "9003:9001"
 
   # Warning! Remap ports here and in harness-config.yml if you want to run two versions of these platforms simultaneously
 

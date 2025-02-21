@@ -134,11 +134,14 @@ case $db in
   "diffChangelog")
     test_command mvn -ntp -Dtest=DiffChangelogTest test
     ;;
-  "hsqldb-2.4")
-    test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.4 test
-    ;;
   "hsqldb-2.5")
     test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.5 test
+    ;;
+  "hsqldb-2.6")
+    test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.6 test
+    ;;
+  "hsqldb-2.7")
+    test_command mvn -ntp -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.7 test
     ;;
   "firebird-3")
     test_command mvn -ntp -Dtest=$tc -DdbName=firebird -DdbVersion=3 test
