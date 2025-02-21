@@ -38,8 +38,7 @@ class GenerateChangelogTest extends Specification {
     @Unroll
     def "apply generateChangelog test for #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data for generateChangelog test"
-        String expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
-                "liquibase/harness/generateChangelog/expectedSql"))
+        String expectedSql = getResourceContent("/$testInput.expectedSqlPath")
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("url", testInput.url)
