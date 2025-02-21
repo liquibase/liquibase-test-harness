@@ -28,7 +28,7 @@ on:
         default: "[\"mysql-5.6\",\"mysql-5.7\",\"mysql-8\",\"mysql-8.4\",\"postgres-12\",\"postgres-13\",\"postgres-14\",\"postgres-15\",\"postgres-16\",\"postgres-17\",\"mariadb-10.2\",\"mariadb-10.3\",\"mariadb-10.4\",\"mariadb-10.5\",\"mariadb-10.6\",
         \"mariadb-10.7\",\"mariadb-11.4\",\"mssql-2017\",\"mssql-2019\",\"mssql-2022\",\"crdb-23.1\",\"crdb-23.2\",\"crdb-24.1\",\"percona-xtradb-cluster-5.7\",\"percona-xtradb-cluster-8.0\",
         \"edb-edb-12\",\"edb-edb-13\",\"edb-edb-14\",\"edb-edb-15\",\"edb-edb-16\",\"db2-luw\",\"H2Database-2.2\",\"sqlite\",\"derby\",
-        \"firebird-3\",\"firebird-4\",\"hsqldb-2.4\",\"hsqldb-2.5\",\"tidb\",\"diff\",\"diffChangelog\"]"
+        \"firebird-3\",\"firebird-4\",\"hsqldb-2.5\",\"hsqldb-2.6\",\"hsqldb-2.7\",\"tidb\",\"diff\",\"diffChangelog\"]"
 
 jobs:
   check_build_safety:
@@ -53,7 +53,7 @@ jobs:
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
         "mariadb-10.7","mariadb-11.4","mssql-2017","mssql-2019","mssql-2022","crdb-23.1","crdb-23.2","crdb-24.1","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0",
         "edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","db2-luw","H2Database-2.2","sqlite","derby","firebird-3","firebird-4",
-        "hsqldb-2.4","hsqldb-2.5","tidb","diff","diffChangelog"]' }}
+        "hsqldb-2.5","hsqldb-2.6","hsqldb-2.7","tidb","diff","diffChangelog"]' }}
       testClasses: ${{ 'AdvancedHarnessSuiteTest' }}
     steps:
       - uses: actions/checkout@v4
@@ -180,7 +180,7 @@ jobs:
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [ setup ]
     strategy:
       fail-fast: false
