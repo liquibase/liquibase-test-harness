@@ -36,6 +36,7 @@ class GenerateChangelogTest extends Specification {
     @Unroll
     def "apply generateChangelog test for #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data for generateChangelog test"
+        String expectedSql = getResourceContent("/$testInput.expectedSqlPath")
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
@@ -48,8 +49,8 @@ class GenerateChangelogTest extends Specification {
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
-        shouldRunChangeSet = !getResourceContent("/$testInput.expectedSqlPath").toLowerCase()?.contains("invalid test")
-        Assumptions.assumeTrue(shouldRunChangeSet, "INFO: Test for $testInput.change is ignored")
+        shouldRunChangeSet = !expectedSql.toLowerCase()?.contains("invalid test")
+        Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
         when: "execute update command using xml changelog formats"
         argsMap.put("changeLogFile", testInput.inputChangelogFile)
@@ -83,7 +84,7 @@ class GenerateChangelogTest extends Specification {
 
             String generatedChangelog = readFile((String) argsMap.get("changeLogFile"))
             if (entry.key.equalsIgnoreCase("SqlTestCase")) {
-                validateSqlChangelog(getResourceContent("/$testInput.expectedSqlPath"), generatedChangelog)
+                validateSqlChangelog(expectedSql, generatedChangelog)
             } else {
                 and: "verify that the 'stored objects' directories are created"
                 def storedObjectTypesMap = [

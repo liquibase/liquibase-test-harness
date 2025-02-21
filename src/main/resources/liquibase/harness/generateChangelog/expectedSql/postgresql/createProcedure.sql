@@ -4,4 +4,3 @@ AS $procedure$
       BEGIN
       END;
       $procedure$;
-
