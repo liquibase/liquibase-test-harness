@@ -44,7 +44,6 @@ class GenerateChangelogTestHelper {
                             .expectedSqlPath(FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                                     "expectedSql", "sql").get(changeLogEntry.key))
                             .change(changeLogEntry.key)
-                            .pathToChangeLogFile(changeLogEntry.value)
                             .database(databaseUnderTest.database)
                             .build())
                 }
@@ -105,7 +104,6 @@ class GenerateChangelogTestHelper {
         String inputChangelogFile
         String expectedSqlPath
         String change
-        String pathToChangeLogFile
         Database database
     }
 }

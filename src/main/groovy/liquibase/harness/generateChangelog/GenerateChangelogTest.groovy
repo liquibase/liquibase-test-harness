@@ -38,7 +38,6 @@ class GenerateChangelogTest extends Specification {
         given: "read input data for generateChangelog test"
         String expectedSql = getResourceContent("/$testInput.expectedSqlPath")
         Map<String, Object> argsMap = new HashMap()
-        argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
