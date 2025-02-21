@@ -314,31 +314,38 @@ databasesUnderTest:
 
   # change ports if you want to run 2 versions of these platforms simultaneously
   - name: hsqldb
-    version: 2.4
-    prefix: titan
+    version: 2.5
+    prefix: docker
     url: jdbc:hsqldb:hsql://localhost:9001/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: hsqldb
-    version: 2.5
-    prefix: titan
-    url: jdbc:hsqldb:hsql://localhost:9001/lbcat
+    version: 2.6
+    prefix: docker
+    url: jdbc:hsqldb:hsql://localhost:9002/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: hsqldb
+    version: 2.7
+    prefix: docker
+    url: jdbc:hsqldb:hsql://localhost:9003/lbcat
     username: lbuser
     password: LiquibasePass1
 
 #  change ports if you want to run 2 versions of these platforms simultaneously
   - name: firebird
     version: 3
-    prefix: titan
-    url: jdbc:firebirdsql://localhost:3050/lbcat
+    prefix: docker
+    url: jdbc:firebirdsql://localhost:3050//var/lib/firebird/data/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: firebird
     version: 4
-    prefix: titan
-    url: jdbc:firebirdsql://localhost:3050/lbcat
+    prefix: docker
+    url: jdbc:firebirdsql://localhost:3051//var/lib/firebird/data/lbcat
     username: lbuser
     password: LiquibasePass1
 
