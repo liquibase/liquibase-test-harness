@@ -15,9 +15,11 @@ import java.nio.file.Paths
 
 import static liquibase.harness.generateChangelog.GenerateChangelogTestHelper.*
 import static liquibase.harness.util.FileUtils.getResourceContent
+import static liquibase.harness.util.FileUtils.getSqlFileContent
 import static liquibase.harness.util.FileUtils.readFile
 import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
 import static liquibase.harness.util.TestUtils.executeCommandScope
+import static liquibase.harness.util.TestUtils.parseQuery
 
 class GenerateChangelogTest extends Specification {
     @Shared
@@ -36,6 +38,8 @@ class GenerateChangelogTest extends Specification {
     @Unroll
     def "apply generateChangelog test for #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data for generateChangelog test"
+        String expectedSql = parseQuery(getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+                "liquibase/harness/generateChangelog/expectedSql"))
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
         argsMap.put("url", testInput.url)
@@ -50,7 +54,7 @@ class GenerateChangelogTest extends Specification {
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !getResourceContent("/$testInput.expectedSqlPath").toLowerCase()?.contains("invalid test")
-        Assumptions.assumeTrue(shouldRunChangeSet, "INFO: Test for $testInput.change is ignored")
+        Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
         when: "execute update command using xml changelog formats"
         argsMap.put("changeLogFile", testInput.inputChangelogFile)
