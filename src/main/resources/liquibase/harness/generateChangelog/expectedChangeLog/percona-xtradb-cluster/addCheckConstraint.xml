@@ -7,8 +7,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet  id="1" author="as">
         <pro:addCheckConstraint constraintName="test_check_constraint"
-                                 disabled="false"
-                                 tableName="posts"
-                                 validate="true">author_id > 0</pro:addCheckConstraint>
+                                disabled="false"
+                                tableName="posts"
+                                validate="true">author_id > 0</pro:addCheckConstraint>
     </changeSet>
 </databaseChangeLog>

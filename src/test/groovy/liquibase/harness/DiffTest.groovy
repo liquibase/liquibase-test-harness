@@ -1,6 +1,6 @@
 package liquibase.harness;
 
-import liquibase.harness.diff.DiffCommandTest;
+import liquibase.harness.diff.DiffTests;
 
-class DiffTest extends DiffCommandTest {
+class DiffTest extends DiffTests {
 }

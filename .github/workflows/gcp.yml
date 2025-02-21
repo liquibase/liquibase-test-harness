@@ -5,7 +5,7 @@ concurrency: gcp-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
-    - cron: '0 6 * * *' # Execute every day at 6AM UTC
+    - cron: '0 5 * * *' # Execute every day at 5AM UTC
   workflow_dispatch:
     inputs:
       testClasses:
@@ -57,7 +57,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean GCP MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.30.0
+        uses: liquibase-github-actions/drop-all@v4.31.0
         if: ${{ matrix.version == 'gcp' }}
         with:
           url: "${{ secrets.TH_GCP_MYSQL_8_0_URL }}"
@@ -92,7 +92,7 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@v4.30.0
+      - uses: liquibase-github-actions/drop-all@v4.31.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         with:
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
@@ -112,7 +112,7 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.30.0
+      - uses: liquibase-github-actions/drop-all@v4.31.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
@@ -156,6 +156,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          LIQUIBASE_LIQUIBASE_SCHEMA_NAME: lbuser
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=gcp -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_GCP_MSSQL_2019_URL }}' test
 
       - name: Archive GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results

@@ -1,5 +1,5 @@
-CREATE OR REPLACE PROCEDURE test_procedure()
-                                               BEGIN
-                                               END;
+CREATE OR REPLACE PROCEDURE test_procedure
+AS
+BEGIN
+END
 /
-
