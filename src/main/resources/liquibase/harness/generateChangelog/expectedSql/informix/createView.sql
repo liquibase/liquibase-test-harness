@@ -1,0 +1,1 @@
+CREATE VIEW  test_view AS SELECT * FROM (select x0.id, x0.first_name, x0.last_name, x0.email from (select x1.id, x1.first_name, x1.last_name, x1.email from authors x1 ) x0(id, first_name, last_name, email)) AS v;

@@ -1,0 +1,21 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "view_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.View": [
+        {
+          "view": {
+            "definition": "select x0.test_column from (select x1.test_column from view_table x1 ) x0(test_column)",
+            "name": "test_view"
+          }
+        }
+      ]
+    }
+  }
+}
