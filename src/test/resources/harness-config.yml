@@ -275,7 +275,7 @@ databasesUnderTest:
   - name: db2-z
     prefix: cloud
     version:
-    url: jdbc:db2://163.66.82.34:8100/DBC1LOC
+    url: jdbc:db2://163.66.82.34:8000/DBC1LOC
     username: "USERNAME"
     password: "PASSWORD"
 
