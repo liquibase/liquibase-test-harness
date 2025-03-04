@@ -284,7 +284,7 @@ services:
 
   mssql-2019:
     container_name: sql-server-db-2019
-    image: mcr.microsoft.com/mssql/server:2019-CU27-ubuntu-20.04
+    image: mcr.microsoft.com/mssql/server:2019-latest
     ports:
       - "1434:1433"
     environment:
@@ -303,7 +303,7 @@ services:
 
   mssql-2022:
     container_name: sql-server-db-2022
-    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
+    image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
       - "1435:1433"
     environment:
