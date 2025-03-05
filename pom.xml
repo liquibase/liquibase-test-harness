@@ -4,7 +4,7 @@
 
     <groupId>org.liquibase</groupId>
     <artifactId>liquibase-test-harness</artifactId>
-    <version>1.0.11-SNAPSHOT</version>
+    <version>1.0.11</version>
     <name>Liquibase Test Harness</name>
     <description>Test Harness For Liquibase</description>
     <url>https://github.com/liquibase/liquibase-test-harness</url>
@@ -37,7 +37,7 @@
     <scm>
         <connection>scm:git:https://github.com/liquibase/liquibase-test-harness.git</connection>
         <url>https://github.com/liquibase/liquibase-test-harness</url>
-        <tag>HEAD</tag>
+        <tag>temp</tag>
     </scm>
     <developers>
         <developer>
