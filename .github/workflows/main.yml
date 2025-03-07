@@ -114,7 +114,7 @@ jobs:
   setup:
     name: Setup
     needs: authorize
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
@@ -275,7 +275,7 @@ jobs:
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: [ setup, authorize ]
     strategy:
       fail-fast: false
@@ -330,7 +330,7 @@ jobs:
 
   finish:
     name: Finish
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       statuses: write
