@@ -44,7 +44,7 @@ jobs:
           classpath: "src/test/resources/init-changelogs/snowflake"
           changeLogFile: "snowflake.sql"
           username: "tf-snow"
-          password: ""
+          password: "${{ secrets.TH_DB_PRIVATE_KEY }}"
           url: "${{secrets.TH_SNOW_URL}}"
         env:
           SNOWFLAKE_PRIVATE_KEY_FILE: "/tmp/snowflake_private_key.p8"
