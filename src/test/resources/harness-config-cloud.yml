@@ -88,13 +88,6 @@ databasesUnderTest:
 
   - name: postgresql
     prefix: azure
-    version: azure
-    url: DBENDPOINT
-    username: USERNAME
-    password: PASSWORD
-
-  - name: postgresql
-    prefix: azure
     version: flexible_15
     url: DBENDPOINT
     username: USERNAME
