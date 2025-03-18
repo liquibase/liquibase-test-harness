@@ -14,6 +14,7 @@
 | AWS MariaDB               | `10.6`                                | Advanced                       |
 | AWS SQL Server            | `2019`                                | Advanced                       |
 | Azure SQL DB              | `latest`                              | Advanced                       |
+| Azure Mysql DB            | `5.7`                                 | Advanced                       |
 | Azure SQL MI              | `latest`                              | BaseHarnessSuite               |
 | Azure PostgreSQL FlS      | `14, 15, 16`                          | Advanced                       |
 | GCP PostgreSQL            | `12, 13, 14`                          | Advanced                       |
