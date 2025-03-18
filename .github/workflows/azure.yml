@@ -29,7 +29,7 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["mysql:azure","mssql:azure","mssql:mi"]' }}
+      databases: ${{ github.event.inputs.databases || '["mysql:azure","mssql:azure","mssql:mi","postgresql:flexible"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
@@ -168,7 +168,7 @@ jobs:
   postgresql-flexible-test:
     name: PostgreSQL Flexible Server Test
     needs: setup
-    if: "contains(inputs.databases, 'postgresql:flexible')"
+    if: "contains(needs.setup.outputs.databases, 'postgresql:flexible')"
     runs-on: ubuntu-latest
     env:
       TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL: TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_${{ matrix.version }}_URL
