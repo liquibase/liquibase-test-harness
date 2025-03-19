@@ -174,7 +174,7 @@ jobs:
       TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL: TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_${{ matrix.version }}_URL
     strategy:
       matrix:
-        version: [15, 16]
+        version: [13, 15, 16]
 
     steps:
       - name: Checkout
