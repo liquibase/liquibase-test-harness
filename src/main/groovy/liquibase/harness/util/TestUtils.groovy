@@ -22,6 +22,7 @@ class TestUtils {
         if (script) {
             script.replaceAll(/(?m)^--.*/, "") //remove comments
                     .replaceAll(/(?m)^CREATE TABLE .*\w*.*DATABASECHANGELOG.*/, "") //remove create table queries for databasechangelog* tables
+                    .replaceAll(/(?m)^ALTER TABLE .*\w*.*DATABASECHANGELOG.*/, "") //remove alter table queries for databasechangelog* tables
                     .replaceAll(/(?m)^CREATE TABLE .*\w*.*databasechangelog.*/, "")
                     .replaceAll(/(?m)^INSERT INTO .*\w*.*DATABASECHANGELOG.*/, "") //remove insert queries for databasechangelog* tables
                     .replaceAll(/(?m)^INSERT INTO .*\w*.*databasechangelog.*/, "")

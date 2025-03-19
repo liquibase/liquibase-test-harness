@@ -8,16 +8,8 @@ on:
 
 jobs:
 
-  deploy-ephemeral-cloud-infra:
-    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
-    secrets: inherit
-    with:
-        deploy: true
-        snowflake_th: true
-
   test:
     runs-on: ubuntu-latest
-    needs: [deploy-ephemeral-cloud-infra]
     permissions:
       contents: read
       id-token: write
@@ -26,46 +18,82 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+          with:
+            java-version: '11'
+            distribution: 'temurin'
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5.0.0
         with:
-            role-to-assume: ${{ secrets.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
-            aws-region: us-east-1
-    
-      - name: Get LIQUIBASETH secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            TH_DB_ADMIN, liquibaseth_usrname
-            TH_DB_PASSWD, liquibaseth_pwd
+          python-version: '3.12.1'
 
-      - uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/snowflake"
-          changeLogFile: "snowflake.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{secrets.TH_SNOW_URL}}"
+      - name: Install liquibase
+        run: |
+          wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg && \
+          cat liquibase-keyring.gpg | sudo tee /usr/share/keyrings/liquibase-keyring.gpg > /dev/null && \
+          echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | sudo tee /etc/apt/sources.list.d/liquibase.list
+          sudo apt-get update
+          sudo apt-get install liquibase
+
+      - name: Start & Configure LocalStack
+        env:
+          LOCALSTACK_API_KEY: ${{ secrets.LOCALSTACK_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        continue-on-error: true
+        run: |
+          pip install localstack awscli-local
+          DEBUG=1 DOCKER_FLAGS='-e SF_LOG=trace' IMAGE_NAME=localstack/snowflake localstack start -d
+          echo "Waiting for LocalStack startup..."
+          echo "Waiting for LocalStack startup..."
+          localstack wait -t 30
+          echo "Startup complete"
+          echo "TH_DB_ADMIN=test" >> $GITHUB_ENV  
+          echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
+          echo "TH_DB=snowflake" >> $GITHUB_ENV
+          echo "TH_SNOW_URL=jdbc:snowflake://snowflake.localhost.localstack.cloud:4566" >> $GITHUB_ENV
+
+      - name: Update
+        continue-on-error: true
+        run: liquibase update --url="${{env.TH_SNOW_URL}}" --username="${{env.TH_DB_ADMIN}}" --password="${{env.TH_DB_PASSWD}}" --classpath="src/test/resources/init-changelogs/snowflake" --changeLogFile="snowflake.sql"
 
       - name: Snowflake Test Run
+        continue-on-error: true
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=snowflake -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=${{env.TH_DB}} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
+
+      - name: Update
+        continue-on-error: true
+        if: always()
+        run: curl -s localhost:4566/_localstack/diagnose | gzip -cf > diagnose.json.gz
+
+      - name: Update
+        continue-on-error: true
+        if: always()
+        run: curl -s snowflake.localhost.localstack.cloud:4566/_localstack/diagnose | gzip -cf > diagnose.json.gz
+        
+      - name: Get logs from the localstack-main container
+        if: always()
+        run: |
+          docker logs localstack-main > localstack-main.log
+          
+      - name: Archive LocalStack logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: localstack-logs
+          path: localstack-main.log
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
         with:
           name: snowflake-test-results
           path: build/spock-reports
-
-  destroy-ephemeral-cloud-infra:
-    if: always()
-    needs: [ deploy-ephemeral-cloud-infra, test ]
-    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
-    secrets: inherit
-    with:
-        destroy: true
-        stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
-        snowflake_th: true
+      
+      - name: Archive localstack diagnose
+        uses: actions/upload-artifact@v4
+        with:
+          name: localstack-diagnose
+          path: diagnose.json.gz

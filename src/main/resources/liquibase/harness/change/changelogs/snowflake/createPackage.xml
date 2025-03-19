@@ -9,7 +9,7 @@
     <changeSet  author="as" id="1">
         <pro:createPackage encoding="UTF-8"
                            packageName="Test package">
-            CREATE TABLE "PUBLIC".test_table_package (test_id INT NOT NULL);
+            CREATE TABLE "public".test_table_package (test_id INT NOT NULL);
         </pro:createPackage>
         <rollback>
             <dropTable tableName="test_table_package"/>
