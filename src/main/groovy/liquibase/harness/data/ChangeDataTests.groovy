@@ -3,9 +3,9 @@ package liquibase.harness.data
 /**
  * Tests for Liquibase change data.
  * 
- * Note: This class has special handling for Snowflake connections when running on Java 17+.
- * It sets the JDBC query result format to JSON using the command "alter session set jdbc_query_result_format = 'JSON'"
- * to work around issues with the Snowflake driver's Arrow format in Java 17+.
+ * Note: For Snowflake connections on Java 17+, the JDBC query result format is configured in 
+ * SnowflakeDatabase.configureSession() to use JSON format instead of Arrow format
+ * to work around issues with the Snowflake driver on Java 17+.
  */
 
 import liquibase.Scope
@@ -111,31 +111,11 @@ class ChangeDataTests extends Specification {
             if (shouldOpenNewConnection(connection, "sqlite", "snowflake", "postgres", "oracle", "mysql")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
                 
-                // Set Snowflake JDBC query format to JSON for Java 17+ compatibility if this is a Snowflake connection
-                if (testInput.url.startsWith("jdbc:snowflake") && Integer.parseInt(System.getProperty("java.version").split("\\.")[0]) >= 17) {
-                    try {
-                        newConnection.createStatement().execute("alter session set jdbc_query_result_format = 'JSON'")
-                    } catch (Exception e) {
-                        // Ignore if it fails
-                        Scope.getCurrentScope().getLog(this.class).warning("Could not set Snowflake JDBC query format: " + e.getMessage(), e)
-                    }
-                }
-                
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
             } else {
                 connection.close()
                 connection = DatabaseFactory.getInstance().openConnection(testInput.url, testInput.username, testInput.password,
                         null, new ClassLoaderResourceAccessor()) as JdbcConnection
-                
-                // Set Snowflake JDBC query format to JSON for Java 17+ compatibility if this is a Snowflake connection
-                if (testInput.url.startsWith("jdbc:snowflake") && Integer.parseInt(System.getProperty("java.version").split("\\.")[0]) >= 17) {
-                    try {
-                        connection.createStatement().execute("alter session set jdbc_query_result_format = 'JSON'")
-                    } catch (Exception e) {
-                        // Ignore if it fails
-                        Scope.getCurrentScope().getLog(this.class).warning("Could not set Snowflake JDBC query format: " + e.getMessage(), e)
-                    }
-                }
                 
                 resultSet = connection.createStatement().executeQuery(checkingSql)
                 connection.autoCommit ?: connection.commit()
