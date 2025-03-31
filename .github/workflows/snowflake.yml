@@ -32,27 +32,32 @@ jobs:
         with:
             role-to-assume: ${{ secrets.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
             aws-region: us-east-1
-    
-      - name: Get LIQUIBASETH secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            TH_DB_ADMIN, liquibaseth_usrname
-            TH_DB_PASSWD, liquibaseth_pwd
+
+      - name: Decode Private Key
+        run: |
+          echo "${{ secrets.TH_DB_PRIVATE_KEY }}" | awk '{gsub("\\\\n","\n")}1' > /tmp/snowflake_private_key.p8
+          chmod 600 /tmp/snowflake_private_key.p8  # Secure the key file
 
       - uses: liquibase/liquibase-github-action@v7
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/snowflake"
           changeLogFile: "snowflake.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
+          username: "tf-snow"
+          password: "${{secrets.TH_DB_PRIVATE_KEY}}"
           url: "${{secrets.TH_SNOW_URL}}"
 
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DconfigFile=/harness-config-cloud.yml -DdbName=snowflake -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_SNOW_URL}}' -DrollbackStrategy=rollbackByTag test
+        run: |
+          mvn -Dtest=LiquibaseHarnessSuiteTest 
+          -DconfigFile=/harness-config-cloud.yml 
+          -DdbName=snowflake 
+          -DdbUsername=${{env.TH_DB_ADMIN}} 
+          -DdbPassword=${{env.TH_DB_PASSWD}} 
+          -DdbUrl='${{secrets.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8' 
+          -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
