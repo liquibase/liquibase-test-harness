@@ -44,8 +44,7 @@ jobs:
           classpath: "src/test/resources/init-changelogs/snowflake"
           changeLogFile: "snowflake.sql"
           username: "tf-snow"
-          password: "${{secrets.TH_DB_PRIVATE_KEY}}"
-          url: "${{secrets.TH_SNOW_URL}}"
+          url: "${{secrets.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8"
 
       - name: Snowflake Test Run
         env:
@@ -55,7 +54,6 @@ jobs:
           -DconfigFile=/harness-config-cloud.yml 
           -DdbName=snowflake 
           -DdbUsername=${{env.TH_DB_ADMIN}} 
-          -DdbPassword=${{env.TH_DB_PASSWD}} 
           -DdbUrl='${{secrets.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8' 
           -DrollbackStrategy=rollbackByTag test
 
