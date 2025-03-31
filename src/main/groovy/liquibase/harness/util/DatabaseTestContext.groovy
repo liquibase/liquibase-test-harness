@@ -116,22 +116,6 @@ class DatabaseTestContext {
         if (databaseConnection.getAutoCommit()) {
             databaseConnection.setAutoCommit(false)
         }
-        
-        // Set Snowflake JDBC query format to JSON for Java 17+ compatibility
-        if (url.startsWith("jdbc:snowflake") && Integer.parseInt(System.getProperty("java.version").split("\\.")[0]) >= 17) {
-            try {
-                String sql = "alter session set jdbc_query_result_format = 'JSON'"
-                for (SqlListener listener : Scope.getCurrentScope().getListeners(SqlListener.class)) {
-                    listener.writeSqlWillRun(sql)
-                }
-                ((JdbcConnection) databaseConnection).getUnderlyingConnection().createStatement().execute(sql)
-                if (!databaseConnection.getAutoCommit()) {
-                    databaseConnection.commit()
-                }
-            } catch (SQLException e) {
-                Scope.getCurrentScope().getLog(DatabaseTestContext.class).warning("Could not set Snowflake JDBC query format: " + e.getMessage(), e)
-            }
-        }
 
         try {
             if (url.startsWith("jdbc:hsql")) {

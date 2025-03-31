@@ -1,13 +1,5 @@
 package liquibase.harness.data
 
-/**
- * Tests for Liquibase change data.
- * 
- * Note: For Snowflake connections on Java 17+, the JDBC query result format is configured in 
- * SnowflakeDatabase.configureSession() to use JSON format instead of Arrow format
- * to work around issues with the Snowflake driver on Java 17+.
- */
-
 import liquibase.Scope
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
