@@ -102,11 +102,13 @@ class ChangeDataTests extends Specification {
             //For embedded databases, let's create separate connection to run checking SQL
             if (shouldOpenNewConnection(connection, "sqlite", "snowflake", "postgres", "oracle", "mysql")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
             } else {
                 connection.close()
                 connection = DatabaseFactory.getInstance().openConnection(testInput.url, testInput.username, testInput.password,
                         null, new ClassLoaderResourceAccessor()) as JdbcConnection
+                
                 resultSet = connection.createStatement().executeQuery(checkingSql)
                 connection.autoCommit ?: connection.commit()
             }
