@@ -11,6 +11,14 @@ import org.junit.jupiter.api.Assertions
 
 import java.util.logging.Logger
 
+/**
+ * Test utilities for the Liquibase test harness.
+ * 
+ * Note: The parseQuery method filters out the Snowflake statement "alter session set jdbc_query_result_format = 'JSON'" 
+ * which is automatically added by SnowflakeDatabase.configureSession() method when running on Java 17+.
+ * This is necessary to make test assertions pass, as this statement is added to work around issues with 
+ * the Snowflake driver's arrow support in Java 17+ but is not present in the expected SQL.
+ */
 class TestUtils {
 
     /**
@@ -32,6 +40,7 @@ class TestUtils {
                     .replaceAll(/(?m)^SET SEARCH_PATH.*/, "") //specific replacement for Postgres
                     .replaceAll(/\b(?:GO|USE lbcat)\b/, "") //specific replacement for MSSQL
                     .replaceAll(/(?m)^SET GLOBAL log_bin_trust_function_creators = 1/, "") //specific replacement for MySQL
+                    .replaceAll(/(?i)alter\s+session\s+set\s+jdbc_query_result_format\s*=\s*['"]JSON['"]/, "") //remove Snowflake JDBC format setting
                     .replaceAll("(?m);\$", "") // remove semicolon
                     .replaceAll(/^(?:[\t ]*(?:\r?\n|\r))+/, "") //remove empty lines
                     .replaceAll(/(?m)^\s+/, "") //remove beginning whitespaces per line
