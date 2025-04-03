@@ -353,11 +353,13 @@ jobs:
       - name: Setup Docker on macOS
         uses: douglascamata/setup-docker-macos-action@v1-alpha
 
-      - name: Start SQL Server 2017
-        run: |
-          docker-compose -f src/test/resources/docker/docker-compose.yml up -d mssql-2017
-          sleep 30
-          docker ps -a
+      - name: Build mssql-2017 test infra
+        working-directory: src/test/resources/docker
+        run: ./create-infra.sh mssql-2017
+        env:
+          REPO_URL: ${{ secrets.REPO_URL }}
+          REPO_USER: ${{ secrets.REPO_USER }}
+          REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
 
       - name: Configure Liquibase Version
         env:
