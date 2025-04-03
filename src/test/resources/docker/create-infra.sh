@@ -23,11 +23,22 @@ case $db in
   "mssql-2017")
     # Make sure the init script is executable
     chmod +x ./mssql-2017-init.sh
+    
+    # Remove any existing container to ensure a clean start
+    docker compose rm -f $db
+    
+    # Start the container
     docker compose up -d $db
+    
     # Give it extra time to start and initialize
-    sleep 90
-    docker ps -a
-    docker compose logs $db
+    echo "Waiting for MSSQL 2017 to initialize (this may take a few minutes)..."
+    sleep 120
+    
+    # Check container status
+    docker ps -a | grep $db
+    
+    # Check logs briefly
+    docker compose logs --tail=50 $db
     ;;
 
   "diff")

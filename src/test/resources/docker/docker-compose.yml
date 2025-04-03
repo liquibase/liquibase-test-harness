@@ -264,7 +264,7 @@ services:
 
   mssql-2017:
     container_name: sql-server-db-2017
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    image: mcr.microsoft.com/mssql/server:2017-GA
     platform: linux/amd64
     ports:
       - "1433:1433"
@@ -272,10 +272,11 @@ services:
       SA_PASSWORD: "LiquibasePass1"
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
+      MSSQL_AGENT_ENABLED: "true"
     volumes:
       - "./mssql-2017-init.sh:/mssql-2017-init.sh"
       - "./mssql-init.sql:/mssql-init.sql"
-    command: /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 30 && /bin/bash /mssql-2017-init.sh && tail -f /dev/null"
+    command: /bin/bash -c "(/opt/mssql/bin/sqlservr &) && sleep 45 && /bin/bash /mssql-2017-init.sh && tail -f /dev/null"
 
   mssql-2019:
     container_name: sql-server-db-2019
