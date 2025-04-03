@@ -265,24 +265,17 @@ services:
   mssql-2017:
     container_name: sql-server-db-2017
     image: mcr.microsoft.com/mssql/server:2017-latest
+    platform: linux/amd64
     ports:
       - "1433:1433"
     environment:
       SA_PASSWORD: "LiquibasePass1"
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
-      MSSQL_TCP_PORT: "1433"
     volumes:
-      - "./mssql-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
-      - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
-    entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
-    healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$${SA_PASSWORD}" -Q "SELECT 1" -b -o /dev/null
-      interval: 10s
-      timeout: 3s
-      retries: 10
-      start_period: 10s
-    command: /opt/mssql/bin/sqlservr
+      - "./mssql-2017-init.sh:/mssql-2017-init.sh"
+      - "./mssql-init.sql:/mssql-init.sql"
+    command: /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 30 && /bin/bash /mssql-2017-init.sh && tail -f /dev/null"
 
   mssql-2019:
     container_name: sql-server-db-2019

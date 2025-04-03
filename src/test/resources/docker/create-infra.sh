@@ -19,10 +19,13 @@ case $db in
     exit 0
     ;;
 
-  # MSSQL 2017 needs more time to start properly
+  # MSSQL 2017 needs special handling
   "mssql-2017")
+    # Make sure the init script is executable
+    chmod +x ./mssql-2017-init.sh
     docker compose up -d $db
-    sleep 60
+    # Give it extra time to start and initialize
+    sleep 90
     docker ps -a
     docker compose logs $db
     ;;
