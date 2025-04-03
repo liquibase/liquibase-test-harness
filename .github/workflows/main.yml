@@ -351,38 +351,58 @@ jobs:
           path: ~/.m2/repository/org/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v3
-        with:
-          install: true
-
-      - name: Create docker plugin directory
+      - name: Install Docker with Finch
         run: |
-          mkdir -p ~/.docker/cli-plugins
+          # Install Docker CLI and Finch
+          brew install docker finch
 
-      - name: Install Docker Compose
-        run: |
+          # Start Finch service
+          finch vm start
+
+          # Configure Docker CLI to use Finch
+          mkdir -p ~/.docker
+          cat > ~/.docker/config.json << EOF
+          {
+            "hosts": ["unix://${HOME}/.finch/run/finch.sock"]
+          }
+          EOF
+
+          # Set DOCKER_HOST for this session
+          export DOCKER_HOST="unix://${HOME}/.finch/run/finch.sock"
+          echo "DOCKER_HOST=unix://${HOME}/.finch/run/finch.sock" >> $GITHUB_ENV
+
+          # Install Docker Compose
           brew install docker-compose
-          # Set up Docker Compose as a plugin
-          DOCKER_COMPOSE_PATH=$(which docker-compose)
-          ln -sfn $DOCKER_COMPOSE_PATH ~/.docker/cli-plugins/docker-compose
 
-      - name: Start Docker
-        uses: douglascamata/setup-docker-macos-action@v1-alpha
-
-      - name: Verify Docker is running
-        run: |
+          # Test Docker
           docker version
-          docker compose version
-          docker ps
+          docker info
+
+      - name: Pull SQL Server image
+        run: |
+          docker pull mcr.microsoft.com/mssql/server:2017-latest
 
       - name: Start SQL Server 2017
         run: |
           cd src/test/resources/docker
-          docker compose up -d mssql-2017
+
+          # Run the container directly instead of using docker-compose
+          docker run -d \
+            --name sql-server-db-2017 \
+            -e "ACCEPT_EULA=Y" \
+            -e "SA_PASSWORD=LiquibasePass1" \
+            -p 1433:1433 \
+            mcr.microsoft.com/mssql/server:2017-latest
+
+          # Wait for the container to be ready
           sleep 60
           docker ps -a
           docker logs sql-server-db-2017
+
+          # Create the database
+          docker exec -i sql-server-db-2017 /opt/mssql-tools/bin/sqlcmd \
+            -S localhost -U sa -P 'LiquibasePass1' \
+            -Q "CREATE DATABASE lbcat"
 
       - name: Configure Liquibase Version
         env:
@@ -395,6 +415,7 @@ jobs:
           ./src/test/resources/automation-runner.sh mssql-2017 ${{ needs.setup.outputs.testClasses }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          DOCKER_HOST: "unix://${HOME}/.finch/run/finch.sock"
 
       - name: Archive MSSQL 2017 test results
         uses: actions/upload-artifact@v4
@@ -406,8 +427,9 @@ jobs:
       - name: Tear down SQL Server container
         if: ${{ always() }}
         run: |
-          cd src/test/resources/docker
-          docker compose down mssql-2017
+          docker stop sql-server-db-2017
+          docker rm -f sql-server-db-2017
+          finch vm stop
 
   finish:
     name: Finish
