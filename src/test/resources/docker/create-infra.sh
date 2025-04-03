@@ -24,7 +24,7 @@ case $db in
     docker compose up -d $db
     sleep 60
     docker ps -a
-    docker logs $db
+    docker compose logs $db
     ;;
 
   "diff")
