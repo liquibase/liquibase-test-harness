@@ -356,7 +356,7 @@ jobs:
       - name: Start SQL Server 2017
         run: |
           docker-compose -f src/test/resources/docker/docker-compose.yml up -d mssql-2017
-          Start-Sleep -Seconds 30
+          sleep 30
           docker ps -a
 
       - name: Configure Liquibase Version
