@@ -262,7 +262,6 @@ services:
     volumes:
       - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
 
-
   mssql-2017:
     container_name: sql-server-db-2017
     image: mcr.microsoft.com/mssql/server:2017-latest
@@ -271,6 +270,8 @@ services:
     environment:
       SA_PASSWORD: "LiquibasePass1"
       ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+      MSSQL_TCP_PORT: "1433"
     volumes:
       - "./mssql-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
       - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
@@ -281,6 +282,7 @@ services:
       timeout: 3s
       retries: 10
       start_period: 10s
+    command: /opt/mssql/bin/sqlservr
 
   mssql-2019:
     container_name: sql-server-db-2019
