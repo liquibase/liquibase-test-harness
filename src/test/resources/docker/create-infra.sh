@@ -19,28 +19,6 @@ case $db in
     exit 0
     ;;
 
-  # MSSQL 2017 needs special handling
-  "mssql-2017")
-    # Make sure the init script is executable
-    chmod +x ./mssql-2017-init.sh
-    
-    # Remove any existing container to ensure a clean start
-    docker compose rm -f $db
-    
-    # Start the container
-    docker compose up -d $db
-    
-    # Give it extra time to start and initialize
-    echo "Waiting for MSSQL 2017 to initialize (this may take a few minutes)..."
-    sleep 120
-    
-    # Check container status
-    docker ps -a | grep $db
-    
-    # Check logs briefly
-    docker compose logs --tail=50 $db
-    ;;
-
   "diff")
     docker compose up -d postgres-17 postgres-16 postgres-14 postgres-13 mysql-5.7 mysql-5.6 mysql-8 mysql-8.4 mariadb-10.4 mariadb-10.5 mariadb-10.6 mariadb-10.7 mssql-2017 mssql-2019 mssql-2022
     sleep 40
