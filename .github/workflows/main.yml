@@ -332,7 +332,7 @@ jobs:
 
   test-mssql-2017:
     name: test (mssql-2017)
-    runs-on: windows-latest
+    runs-on: macos-latest
     needs: [setup, authorize]
     if: contains(fromJson(needs.setup.outputs.databases), 'mssql-2017') || github.event.inputs.databases == null
 
@@ -351,15 +351,20 @@ jobs:
           path: ~/.m2/repository/org/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
-      - name: Set up docker-compose
+      - name: Install Docker
         run: |
-          choco install docker-compose -y
+          brew install docker docker-compose colima
+          colima start
+          docker version
+          docker compose version
 
       - name: Start SQL Server 2017
         run: |
-          docker compose -f src/test/resources/docker/docker-compose.yml up -d mssql-2017
-          Start-Sleep -Seconds 30
+          cd src/test/resources/docker
+          docker compose up -d mssql-2017
+          sleep 60
           docker ps -a
+          docker logs sql-server-db-2017
 
       - name: Configure Liquibase Version
         env:
@@ -370,7 +375,6 @@ jobs:
       - name: MSSQL 2017 Test Run
         run: |
           ./src/test/resources/automation-runner.sh mssql-2017 ${{ needs.setup.outputs.testClasses }}
-        shell: bash
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
 
@@ -384,7 +388,9 @@ jobs:
       - name: Tear down SQL Server container
         if: ${{ always() }}
         run: |
-          docker-compose -f src/test/resources/docker/docker-compose.yml down mssql-2017
+          cd src/test/resources/docker
+          docker compose down mssql-2017
+          colima stop
 
   finish:
     name: Finish
