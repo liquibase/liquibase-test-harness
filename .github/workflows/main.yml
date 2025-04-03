@@ -351,12 +351,30 @@ jobs:
           path: ~/.m2/repository/org/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
-      - name: Install Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+
+      - name: Create docker plugin directory
         run: |
-          brew install docker docker-compose colima
-          colima start
+          mkdir -p ~/.docker/cli-plugins
+
+      - name: Install Docker Compose
+        run: |
+          brew install docker-compose
+          # Set up Docker Compose as a plugin
+          DOCKER_COMPOSE_PATH=$(which docker-compose)
+          ln -sfn $DOCKER_COMPOSE_PATH ~/.docker/cli-plugins/docker-compose
+
+      - name: Start Docker
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+
+      - name: Verify Docker is running
+        run: |
           docker version
           docker compose version
+          docker ps
 
       - name: Start SQL Server 2017
         run: |
@@ -390,7 +408,6 @@ jobs:
         run: |
           cd src/test/resources/docker
           docker compose down mssql-2017
-          colima stop
 
   finish:
     name: Finish
