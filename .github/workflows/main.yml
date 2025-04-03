@@ -309,8 +309,9 @@ jobs:
       - name: Configure Liquibase Version
         env:
           GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+        shell: bash
         run: |
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+          mvn -B "versions:set-property" "-Dproperty=liquibase-core.version" "-DnewVersion=0-SNAPSHOT"
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
