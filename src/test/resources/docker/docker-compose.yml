@@ -528,6 +528,3 @@ services:
 networks:
   roachnet:
   cluster1_net:
-
-volumes:
-  mssql2017_data:
