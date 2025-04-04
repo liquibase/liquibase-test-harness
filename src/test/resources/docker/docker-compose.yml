@@ -264,7 +264,7 @@ services:
 
   mssql-2017:
     container_name: sql-server-db-2017
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    image: mcr.microsoft.com/mssql/server:2017
     ports:
       - "1433:1433"
     environment:
