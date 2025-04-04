@@ -262,25 +262,37 @@ services:
     volumes:
       - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
 
-
   mssql-2017:
     container_name: sql-server-db-2017
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    build:
+      context: ./Dockerfiles/mssql-2017
     ports:
       - "1433:1433"
     environment:
       SA_PASSWORD: "LiquibasePass1"
       ACCEPT_EULA: "Y"
+      MSSQL_TCP_PORT: "1433"
+      MSSQL_IP_ADDRESS: "0.0.0.0"
+      MSSQL_STARTUP_TIMEOUT: 300
+      MSSQL_MEMORY_LIMIT_MB: "1024"
     volumes:
       - "./mssql-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
       - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
-    entrypoint: /bin/bash /docker-entrypoint-initdb.d/mssql-init.sh
+      - "mssql2017_data:/var/opt/mssql"
     healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$${SA_PASSWORD}" -Q "SELECT 1" -b -o /dev/null
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$$SA_PASSWORD" -Q "SELECT 1" -b -o /dev/null
       interval: 10s
-      timeout: 3s
-      retries: 10
-      start_period: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "2"
+        reservations:
+          memory: 1G
+          cpus: "1"
 
   mssql-2019:
     container_name: sql-server-db-2019
@@ -516,4 +528,6 @@ services:
 networks:
   roachnet:
   cluster1_net:
-  
+
+volumes:
+  mssql2017_data:
