@@ -1,31 +1,20 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
 
-# Wait for SQL Server to be ready
-echo "Waiting for SQL Server to start..."
-for i in {1..60}; do
-    if /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -Q "SELECT 1" &> /dev/null; then
-        echo "SQL Server started"
+/opt/mssql/bin/sqlservr &
+
+echo "Waiting for server to start...."
+#do this in a loop because the timing for when the SQL instance is ready is indeterminate
+for i in {1..50};
+do
+    /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -d master -i /docker-entrypoint-initdb.d/mssql-init.sql
+    if [ $? -eq 0 ]
+    then
+        echo "mssql-init.sh completed"
         break
+    else
+        echo "not ready yet..."
+        sleep 5
     fi
-    echo "SQL Server startup in progress (${i}/60)..."
-    sleep 1
 done
 
-# If SQL Server isn't running, show error and exit
-if ! /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -Q "SELECT 1" &> /dev/null; then
-    echo "SQL Server failed to start within 60 seconds"
-    exit 1
-fi
-
-echo "Running initialization script..."
-# Run the SQL script for initialization
-/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -i /docker-entrypoint-initdb.d/mssql-init.sql
-
-# Create a user for tests if needed
-/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -Q "IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = 'lbuser') BEGIN CREATE LOGIN lbuser WITH PASSWORD = 'LiquibasePass1'; CREATE USER lbuser FOR LOGIN lbuser; END"
-
-# Grant permissions to the user
-/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -Q "EXEC sp_addrolemember 'db_owner', 'lbuser'"
-
-echo "SQL Server initialization completed successfully"
+sleep infinity
