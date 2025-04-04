@@ -276,7 +276,7 @@ services:
       MSSQL_STARTUP_TIMEOUT: 300
       MSSQL_MEMORY_LIMIT_MB: "1024"
     volumes:
-      - "./mssql-2017-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
+      - "./mssql-init.sh:/docker-entrypoint-initdb.d/mssql-init.sh"
       - "./mssql-init.sql:/docker-entrypoint-initdb.d/mssql-init.sql"
     healthcheck:
       test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$$SA_PASSWORD" -Q "SELECT 1" -b -o /dev/null
