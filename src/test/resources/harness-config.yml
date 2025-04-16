@@ -158,12 +158,6 @@ databasesUnderTest:
     password: DATICAL_ADMIN_PW
 
   - name: oracle
-    version: 21.3.0
-    url: 'jdbc:oracle:thin:@localhost:1523/xe'
-    username: C##LIQUIBASE
-    password: Secret321
-
-  - name: oracle
     version: 23.2.0
     url: 'jdbc:oracle:thin:@localhost:1524/FREE'
     username: C##LIQUIBASE
