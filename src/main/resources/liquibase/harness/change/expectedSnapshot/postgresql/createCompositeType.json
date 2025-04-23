@@ -1,1 +1,28 @@
-{}
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.appdba.type.CompositeType": [
+        {
+          "compositeType": {
+            "name": "myType",
+            "typeAttributes": [
+              {
+                "typeAttribute": {
+                  "name": "attr1",
+                  "type": "int"
+                }
+              },
+              {
+                "typeAttribute": {
+                  "collation": "en_US",
+                  "name": "attr2",
+                  "type": "text"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
