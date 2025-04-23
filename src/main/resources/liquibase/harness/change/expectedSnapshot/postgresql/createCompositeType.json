@@ -9,7 +9,7 @@
               {
                 "typeAttribute": {
                   "name": "attr1",
-                  "type": "int"
+                  "type": "integer"
                 }
               },
               {
