@@ -13,6 +13,10 @@ databaseChangeLog:
                   name: "attr2"
                   type: "text"
                   collation: "en_US"
+        - changeCompositeTypeOwner:
+            typeName: "myType"
+            newOwner: "SESSION_USER"
+
       rollback:
         - dropCompositeType:
             name: "myType"

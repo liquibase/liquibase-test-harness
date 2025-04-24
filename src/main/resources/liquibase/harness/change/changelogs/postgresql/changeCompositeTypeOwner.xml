@@ -10,6 +10,7 @@
             <pro:typeAttribute name="attr1" type="int"/>
             <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
         </pro:createCompositeType>
+        <pro:changeCompositeTypeOwner typeName="myType" newOwner="SESSION_USER"/>
         <rollback>
             <pro:dropCompositeType name="myType" ifExists="true" onDelete="CASCADE"/>
         </rollback>
