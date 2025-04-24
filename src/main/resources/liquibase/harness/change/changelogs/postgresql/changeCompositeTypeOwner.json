@@ -1,0 +1,47 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "itTest",
+        "changes": [
+          {
+            "createCompositeType": {
+              "name":"myType",
+              "typeAttributes": [
+                {
+                  "typeAttribute": {
+                    "name": "attr1",
+                    "type": "int"
+                  }
+                },
+                {
+                  "typeAttribute": {
+                    "name": "attr2",
+                    "type": "text",
+                    "collation":"en_US"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "changeCompositeTypeOwner": {
+              "typeName":"myType",
+              "newOwner":"SESSION_USER"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropCompositeType": {
+              "name":"myType",
+              "ifExists": true,
+              "onDelete": "CASCADE"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
