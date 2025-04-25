@@ -1,0 +1,40 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "itTest",
+        "changes": [
+          {
+            "createCompositeType": {
+              "name":"myDelType",
+              "typeAttributes": [
+                {
+                  "typeAttribute": {
+                    "name": "attr1",
+                    "type": "int"
+                  }
+                },
+                {
+                  "typeAttribute": {
+                    "name": "attr2",
+                    "type": "text",
+                    "collation":"en_US"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "dropCompositeType": {
+              "name":"myDelType",
+              "ifExists": true,
+              "onDelete": "CASCADE"
+            }
+          }
+        ],
+        "rollback":[]
+      }
+    }
+  ]
+}
