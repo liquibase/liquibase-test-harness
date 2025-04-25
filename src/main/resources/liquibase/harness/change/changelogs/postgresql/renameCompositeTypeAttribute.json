@@ -24,6 +24,14 @@
                 }
               ]
             }
+          },
+          {
+            "renameCompositeTypeAttribute": {
+              "typeName": "myType",
+              "oldAttributeName": "attr2",
+              "newAttributeName": "attr22",
+              "onUpdate": "CASCADE"
+            }
           }
         ]
       }
