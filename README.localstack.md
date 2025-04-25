@@ -16,7 +16,7 @@ Check out the full `localstack` RDS documentation [here](https://docs.localstack
 Before creating local instances and running your tests, start `localstack` by running the following command:
 
 ```bash
-export LOCALSTACK_API_KEY=<YOUR_LOCAL_STACK_API_KEY>
+localstack auth set-token <THE TOKEN IS IN BITWARDEN>
 localstack start -d
 ```
 
