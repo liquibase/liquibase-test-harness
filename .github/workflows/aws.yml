@@ -76,7 +76,7 @@ jobs:
           pip install localstack awscli-local
           docker pull localstack/localstack-pro
           docker pull mcr.microsoft.com/mssql/server:2019-latest
-          DOCKER_FLAGS='-e MSSQL_ACCEPT_EULA=Y -e MSSQL_IMAGE=mcr.microsoft.com/mssql/server:2019-latest' localstack start -d
+          DOCKER_FLAGS='-e MSSQL_ACCEPT_EULA=Y -e MSSQL_IMAGE=mcr.microsoft.com/mssql/server:2019-latest -e LOCALSTACK_OAUTH_TOKEN=${{ env.LOCALSTACK_OAUTH_TOKEN }}' localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
