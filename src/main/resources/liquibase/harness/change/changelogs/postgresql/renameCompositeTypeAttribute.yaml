@@ -13,3 +13,8 @@ databaseChangeLog:
                   name: "attr2"
                   type: "text"
                   collation: "en_US"
+        - renameCompositeTypeAttribute:
+            typeName: "myType"
+            oldAttributeName: "attr2"
+            newAttributeName: "attr22"
+            onUpdate: "CASCADE"

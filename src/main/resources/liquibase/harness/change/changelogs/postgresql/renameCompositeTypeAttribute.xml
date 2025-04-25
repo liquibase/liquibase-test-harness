@@ -10,5 +10,6 @@
             <pro:typeAttribute name="attr1" type="int"/>
             <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
         </pro:createCompositeType>
+        <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="attr2" newAttributeName="attr22" onUpdate="CASCADE"/>
     </changeSet>
 </databaseChangeLog>
