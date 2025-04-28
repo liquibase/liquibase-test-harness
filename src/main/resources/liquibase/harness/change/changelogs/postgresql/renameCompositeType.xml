@@ -6,14 +6,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="itTest" id="1">
-        <pro:createCompositeType name="myType">
+        <pro:createCompositeType name="myRenameType">
             <pro:typeAttribute name="attr1" type="int"/>
             <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
         </pro:createCompositeType>
-        <pro:renameCompositeType oldTypeName="myType" newTypeName="myNewType">
-        </pro:renameCompositeType>
-        <rollback>
-            <pro:dropCompositeType name="myNewType"/>
-        </rollback>
+        <pro:renameCompositeType oldTypeName="myRenameType" newTypeName="myNewNameType"/>
     </changeSet>
 </databaseChangeLog>

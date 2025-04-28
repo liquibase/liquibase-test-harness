@@ -1,2 +1,2 @@
-CREATE TYPE public."myType" AS (attr1 int, attr2 text COLLATE "en_US")
-ALTER TYPE public."myType" RENAME TO "myNewType"
+CREATE TYPE public."myRenameType" AS (attr1 int, attr2 text COLLATE "en_US")
+ALTER TYPE public."myRenameType" RENAME TO "myNewNameType"
