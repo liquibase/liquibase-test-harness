@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="itTest" id="1">
+        <pro:createCompositeType name="myTestType">
+            <pro:typeAttribute name="attr1" type="int"/>
+            <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
+        </pro:createCompositeType>
+        <sql>CREATE SCHEMA IF NOT EXISTS test_schema</sql>
+        <pro:changeCompositeTypeSchema typeName="myTestType" newSchemaName="test_schema"/>
+    </changeSet>
+</databaseChangeLog>

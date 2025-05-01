@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: itTest
+      changes:
+        - createCompositeType:
+            name: "myTestType"
+            typeAttributes:
+              - typeAttribute:
+                  name: "attr1"
+                  type: "int"
+              - typeAttribute:
+                  name: "attr2"
+                  type: "text"
+                  collation: "en_US"
+        - sql:
+            sql: "CREATE SCHEMA IF NOT EXISTS test_schema"
+        - changeCompositeTypeSchema:
+            typeName: "myTestType"
+            newSchemaName: "test_schema"
