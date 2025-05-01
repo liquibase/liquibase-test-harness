@@ -1,28 +1,33 @@
 {
   "snapshot": {
     "objects": {
-      "liquibase.structure.core.Schema": [
+      "com.datical.liquibase.ext.appdba.type.CompositeType": [
         {
-          "name": "test_schema"
+          "compositeType": {
+            "name": "myType"
+          }
         }
       ],
-      "liquibase.structure.core.CompositeType": [
+      "com.datical.liquibase.ext.appdba.type.TypeAttribute": [
+        {
+          "typeAttribute": {
+            "name": "attr1",
+            "type": "integer"
+          }
+        },
+        {
+          "typeAttribute": {
+            "name": "attr2",
+            "collation": "en_US",
+            "type": "text"
+          }
+        }
+      ],
+      "liquibase.structure.core.Schema": [
         {
           "schema": {
-            "name": "test_schema"
-          },
-          "name": "myTestType",
-          "typeAttributes": [
-            {
-              "name": "attr1",
-              "type": "int"
-            },
-            {
-              "name": "attr2",
-              "type": "text",
-              "collation": "en_US"
-            }
-          ]
+            "name": "public"
+          }
         }
       ]
     }

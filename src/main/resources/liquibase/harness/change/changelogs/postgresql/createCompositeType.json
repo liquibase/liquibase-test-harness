@@ -7,12 +7,12 @@
         "changes": [
           {
             "createCompositeType": {
-              "name":"myType",
+              "name":"myTypeCreateTest",
               "typeAttributes": [
                 {
                   "typeAttribute": {
                     "name": "attr1",
-                    "type": "int"
+                    "type": "integer"
                   }
                 },
                 {
@@ -28,7 +28,8 @@
         ],
         "rollback": [
           {
-            "empty": {
+            "sql": {
+              "sql": "DROP TYPE IF EXISTS public.\"myTypeCreateTest\";"
             }
           }
         ]

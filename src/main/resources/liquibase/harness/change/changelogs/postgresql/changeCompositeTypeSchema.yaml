@@ -4,17 +4,46 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myTestType"
+            name: "myTypeForSchemaTest"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
-                  type: "int"
+                  type: "integer"
               - typeAttribute:
                   name: "attr2"
                   type: "text"
                   collation: "en_US"
+      rollback:
         - sql:
-            sql: "CREATE SCHEMA IF NOT EXISTS test_schema"
+            sql: "DROP TYPE IF EXISTS public.\"myTypeForSchemaTest\";"
+  - changeSet:
+      id: 2
+      author: itTest
+      changes:
+        - sql:
+            sql: "CREATE SCHEMA IF NOT EXISTS test_schema;"
+      rollback:
+        - sql:
+            sql: "DROP SCHEMA IF EXISTS test_schema;"
+  - changeSet:
+      id: 3
+      author: itTest
+      changes:
         - changeCompositeTypeSchema:
-            typeName: "myTestType"
+            typeName: "myTypeForSchemaTest"
+            oldSchemaName: "public"
             newSchemaName: "test_schema"
+      rollback:
+        - sql:
+            sql: "ALTER TYPE test_schema.\"myTypeForSchemaTest\" SET SCHEMA public;"
+  - changeSet:
+      id: 4
+      author: itTest
+      changes:
+        - sql:
+            sql: "SELECT 1 FROM pg_catalog.pg_type t 
+JOIN pg_catalog.pg_namespace n ON t.typnamespace = n.oid
+WHERE t.typname = 'myTypeForSchemaTest' AND n.nspname = 'test_schema';"
+      rollback:
+        - sql:
+            sql: "SELECT 1;"

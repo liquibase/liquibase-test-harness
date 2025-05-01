@@ -4,14 +4,15 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myType"
+            name: "myTypeCreateTest"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
-                  type: "int"
+                  type: "integer"
               - typeAttribute:
                   name: "attr2"
                   type: "text"
                   collation: "en_US"
       rollback:
-        empty
+        - sql:
+            sql: "DROP TYPE IF EXISTS public.\"myTypeCreateTest\";"

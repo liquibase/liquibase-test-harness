@@ -1,1 +1,1 @@
-CREATE TYPE public."myType" AS (attr1 int, attr2 text COLLATE "en_US")
+CREATE TYPE public."myTypeCreateTest" AS (attr1 integer, attr2 text COLLATE "en_US")
