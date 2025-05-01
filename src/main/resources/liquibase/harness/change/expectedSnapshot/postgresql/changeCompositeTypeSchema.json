@@ -3,26 +3,9 @@
     "objects": {
       "liquibase.structure.core.Schema": [
         {
-          "name": "test_schema"
-        }
-      ],
-      "liquibase.structure.core.CompositeType": [
-        {
           "schema": {
-            "name": "test_schema"
-          },
-          "name": "myTestType",
-          "typeAttributes": [
-            {
-              "name": "attr1",
-              "type": "int"
-            },
-            {
-              "name": "attr2",
-              "type": "text",
-              "collation": "en_US"
-            }
-          ]
+            "name": "public"
+          }
         }
       ]
     }

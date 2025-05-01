@@ -4,17 +4,35 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myTestType"
+            name: "myType"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
-                  type: "int"
+                  type: "integer"
               - typeAttribute:
                   name: "attr2"
                   type: "text"
                   collation: "en_US"
+      rollback:
         - sql:
-            sql: "CREATE SCHEMA IF NOT EXISTS test_schema"
+            sql: "DROP TYPE IF EXISTS public.\"myType\";"
+  - changeSet:
+      id: 2
+      author: itTest
+      changes:
+        - sql:
+            sql: "CREATE SCHEMA IF NOT EXISTS test_schema;"
+      rollback:
+        - sql:
+            sql: "DROP SCHEMA IF EXISTS test_schema;"
+  - changeSet:
+      id: 3
+      author: itTest
+      changes:
         - changeCompositeTypeSchema:
-            typeName: "myTestType"
+            typeName: "myType"
+            oldSchemaName: "public"
             newSchemaName: "test_schema"
+      rollback:
+        - sql:
+            sql: "ALTER TYPE test_schema.\"myType\" SET SCHEMA public;"
