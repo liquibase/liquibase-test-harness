@@ -10,21 +10,12 @@
             <pro:typeAttribute name="attr1" type="integer"/>
             <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
         </pro:createCompositeType>
-        <rollback>
-            <sql>DROP TYPE IF EXISTS public."myType";</sql>
-        </rollback>
     </changeSet>
     <changeSet author="itTest" id="2">
         <sql>CREATE SCHEMA IF NOT EXISTS test_schema;</sql>
-        <rollback>
-            <sql>DROP SCHEMA IF EXISTS test_schema;</sql>
-        </rollback>
     </changeSet>
     <changeSet author="itTest" id="3">
         <pro:changeCompositeTypeSchema typeName="myType" oldSchemaName="public" newSchemaName="test_schema"/>
-        <rollback>
-            <sql>ALTER TYPE test_schema."myType" SET SCHEMA public;</sql>
-        </rollback>
     </changeSet>
     
     <!-- Add a validation changeSet to verify the schema change -->
@@ -34,8 +25,5 @@
             JOIN pg_catalog.pg_namespace n ON t.typnamespace = n.oid
             WHERE t.typname = 'myType' AND n.nspname = 'test_schema';
         </sql>
-        <rollback>
-            <sql>SELECT 1;</sql>
-        </rollback>
     </changeSet>
 </databaseChangeLog>
