@@ -6,12 +6,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="itTest" id="1">
-        <pro:createCompositeType name="myTypeForSchemaTest">
+        <pro:createCompositeType name="myType">
             <pro:typeAttribute name="attr1" type="integer"/>
             <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
         </pro:createCompositeType>
         <rollback>
-            <sql>DROP TYPE IF EXISTS public."myTypeForSchemaTest";</sql>
+            <sql>DROP TYPE IF EXISTS public."myType";</sql>
         </rollback>
     </changeSet>
     <changeSet author="itTest" id="2">
@@ -21,9 +21,9 @@
         </rollback>
     </changeSet>
     <changeSet author="itTest" id="3">
-        <pro:changeCompositeTypeSchema typeName="myTypeForSchemaTest" oldSchemaName="public" newSchemaName="test_schema"/>
+        <pro:changeCompositeTypeSchema typeName="myType" oldSchemaName="public" newSchemaName="test_schema"/>
         <rollback>
-            <sql>ALTER TYPE test_schema."myTypeForSchemaTest" SET SCHEMA public;</sql>
+            <sql>ALTER TYPE test_schema."myType" SET SCHEMA public;</sql>
         </rollback>
     </changeSet>
     
@@ -32,7 +32,7 @@
         <sql>
             SELECT 1 FROM pg_catalog.pg_type t 
             JOIN pg_catalog.pg_namespace n ON t.typnamespace = n.oid
-            WHERE t.typname = 'myTypeForSchemaTest' AND n.nspname = 'test_schema';
+            WHERE t.typname = 'myType' AND n.nspname = 'test_schema';
         </sql>
         <rollback>
             <sql>SELECT 1;</sql>
