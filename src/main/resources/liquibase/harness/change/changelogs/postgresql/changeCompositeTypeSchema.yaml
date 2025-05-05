@@ -4,7 +4,7 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myTypeForSchemaTest"
+            name: "myType"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
@@ -24,14 +24,6 @@ databaseChangeLog:
       author: itTest
       changes:
         - changeCompositeTypeSchema:
-            typeName: "myTypeForSchemaTest"
+            typeName: "myType"
             oldSchemaName: "public"
             newSchemaName: "test_schema"
-  - changeSet:
-      id: 4
-      author: itTest
-      changes:
-        - sql:
-            sql: "SELECT 1 FROM pg_catalog.pg_type t 
-JOIN pg_catalog.pg_namespace n ON t.typnamespace = n.oid
-WHERE t.typname = 'myTypeForSchemaTest' AND n.nspname = 'test_schema';"

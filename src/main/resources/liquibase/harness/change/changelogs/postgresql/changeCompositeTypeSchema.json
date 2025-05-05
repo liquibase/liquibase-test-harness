@@ -7,7 +7,7 @@
         "changes": [
           {
             "createCompositeType": {
-              "name": "myTypeForSchemaTest",
+              "name": "myType",
               "typeAttributes": [
                 {
                   "typeAttribute": {
@@ -48,7 +48,7 @@
         "changes": [
           {
             "changeCompositeTypeSchema": {
-              "typeName": "myTypeForSchemaTest",
+              "typeName": "myType",
               "oldSchemaName": "public",
               "newSchemaName": "test_schema"
             }
@@ -58,24 +58,11 @@
           "changes": [
             {
               "sql": {
-                "sql": "ALTER TYPE test_schema.\"myTypeForSchemaTest\" SET SCHEMA public;"
+                "sql": "ALTER TYPE test_schema.\"myType\" SET SCHEMA public;"
               }
             }
           ]
         }
-      }
-    },
-    {
-      "changeSet": {
-        "id": "4",
-        "author": "itTest",
-        "changes": [
-          {
-            "sql": {
-              "sql": "SELECT 1 FROM pg_catalog.pg_type t \nJOIN pg_catalog.pg_namespace n ON t.typnamespace = n.oid\nWHERE t.typname = 'myTypeForSchemaTest' AND n.nspname = 'test_schema';"
-            }
-          }
-        ]
       }
     }
   ]
