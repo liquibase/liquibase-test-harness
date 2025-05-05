@@ -4,22 +4,22 @@
       "com.datical.liquibase.ext.appdba.type.CompositeType": [
         {
           "compositeType": {
-            "name": "myType",
-            "typeAttributes": [
-              {
-                "typeAttribute": {
-                  "name": "attr1",
-                  "type": "integer"
-                }
-              },
-              {
-                "typeAttribute": {
-                  "collation": "en_US",
-                  "name": "attr2",
-                  "type": "text"
-                }
-              }
-            ]
+            "name": "myType"
+          }
+        }
+      ],
+      "com.datical.liquibase.ext.appdba.type.TypeAttribute": [
+        {
+          "typeAttribute": {
+            "name": "attr1",
+            "type": "integer"
+          }
+        },
+        {
+          "typeAttribute": {
+            "name": "attr2",
+            "collation": "en_US",
+            "type": "text"
           }
         }
       ]
