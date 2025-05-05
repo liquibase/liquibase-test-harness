@@ -7,12 +7,12 @@
         "changes": [
           {
             "createCompositeType": {
-              "name":"myTypeCreateTest",
+              "name":"myType",
               "typeAttributes": [
                 {
                   "typeAttribute": {
                     "name": "attr1",
-                    "type": "integer"
+                    "type": "int"
                   }
                 },
                 {
@@ -23,6 +23,14 @@
                   }
                 }
               ]
+            }
+          },
+          {
+            "renameCompositeTypeAttribute": {
+              "typeName": "myType",
+              "oldAttributeName": "attr2",
+              "newAttributeName": "attr22",
+              "onUpdate": "CASCADE"
             }
           }
         ]

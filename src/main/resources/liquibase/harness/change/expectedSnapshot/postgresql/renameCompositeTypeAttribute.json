@@ -17,7 +17,7 @@
         },
         {
           "typeAttribute": {
-            "name": "attr2",
+            "name": "attr22",
             "collation": "en_US",
             "type": "text"
           }

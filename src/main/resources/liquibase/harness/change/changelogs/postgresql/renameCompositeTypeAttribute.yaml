@@ -4,12 +4,17 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myTypeCreateTest"
+            name: "myType"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
-                  type: "integer"
+                  type: "int"
               - typeAttribute:
                   name: "attr2"
                   type: "text"
                   collation: "en_US"
+        - renameCompositeTypeAttribute:
+            typeName: "myType"
+            oldAttributeName: "attr2"
+            newAttributeName: "attr22"
+            onUpdate: "CASCADE"
