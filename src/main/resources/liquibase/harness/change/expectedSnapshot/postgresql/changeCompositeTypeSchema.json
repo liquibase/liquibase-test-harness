@@ -28,11 +28,6 @@
           "schema": {
             "name": "public"
           }
-        },
-        {
-          "schema": {
-            "name": "test_schema"
-          }
         }
       ]
     }
