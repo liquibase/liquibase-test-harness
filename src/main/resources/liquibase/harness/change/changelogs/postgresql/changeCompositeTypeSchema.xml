@@ -13,9 +13,6 @@
     </changeSet>
     <changeSet author="itTest" id="2">
         <sql>CREATE SCHEMA test_schema</sql>
-        <rollback>
-            <sql>DROP SCHEMA IF EXISTS test_schema</sql>
-        </rollback>
     </changeSet>
     <changeSet author="itTest" id="3">
         <pro:changeCompositeTypeSchema typeName="myTypeSchema" oldSchemaName="public" newSchemaName="test_schema"/>

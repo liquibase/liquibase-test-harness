@@ -38,16 +38,7 @@
               "sql": "CREATE SCHEMA test_schema"
             }
           }
-        ],
-        "rollback": {
-          "changes": [
-            {
-              "sql": {
-                "sql": "DROP SCHEMA IF EXISTS test_schema"
-              }
-            }
-          ]
-        }
+        ]
       }
     },
     {
