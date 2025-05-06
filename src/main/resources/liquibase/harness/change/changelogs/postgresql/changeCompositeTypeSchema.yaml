@@ -4,7 +4,7 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myType"
+            name: "myTypeSchema"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
@@ -24,6 +24,6 @@ databaseChangeLog:
       author: itTest
       changes:
         - changeCompositeTypeSchema:
-            typeName: "myType"
+            typeName: "myTypeSchema"
             oldSchemaName: "public"
             newSchemaName: "test_schema"

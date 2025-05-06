@@ -4,7 +4,10 @@
       "com.datical.liquibase.ext.appdba.type.CompositeType": [
         {
           "compositeType": {
-            "name": "myTypeSchema"
+            "name": "myTypeSchema",
+            "schema": {
+              "name": "test_schema"
+            }
           }
         }
       ],
@@ -26,7 +29,7 @@
       "liquibase.structure.core.Schema": [
         {
           "schema": {
-            "name": "public"
+            "name": "test_schema"
           }
         }
       ]

@@ -7,7 +7,7 @@
         "changes": [
           {
             "createCompositeType": {
-              "name": "myType",
+              "name": "myTypeSchema",
               "typeAttributes": [
                 {
                   "typeAttribute": {
@@ -48,21 +48,12 @@
         "changes": [
           {
             "changeCompositeTypeSchema": {
-              "typeName": "myType",
+              "typeName": "myTypeSchema",
               "oldSchemaName": "public",
               "newSchemaName": "test_schema"
             }
           }
-        ],
-        "rollback": {
-          "changes": [
-            {
-              "sql": {
-                "sql": "ALTER TYPE test_schema.\"myType\" SET SCHEMA public;"
-              }
-            }
-          ]
-        }
+        ]
       }
     }
   ]
