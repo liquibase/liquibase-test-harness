@@ -12,7 +12,7 @@
         </pro:createCompositeType>
     </changeSet>
     <changeSet author="itTest" id="2">
-        <sql>CREATE SCHEMA IF NOT EXISTS test_schema;</sql>
+        <createSchema schemaName="test_schema"/>
     </changeSet>
     <changeSet author="itTest" id="3">
         <pro:changeCompositeTypeSchema typeName="myTypeSchema" oldSchemaName="public" newSchemaName="test_schema"/>

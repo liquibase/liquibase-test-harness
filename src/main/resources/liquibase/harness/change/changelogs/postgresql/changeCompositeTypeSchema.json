@@ -34,8 +34,8 @@
         "author": "itTest",
         "changes": [
           {
-            "sql": {
-              "sql": "CREATE SCHEMA IF NOT EXISTS test_schema;"
+            "createSchema": {
+              "schemaName": "test_schema"
             }
           }
         ]
