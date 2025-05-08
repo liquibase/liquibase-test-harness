@@ -115,8 +115,11 @@ jobs:
     name: Setup
     needs: authorize
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: read
     env:
-      GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+      INSTALL_SNAPSHOT_LIQUIBASE: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
       liquibaseOwner: ${{ steps.configure-build.outputs.liquibaseOwner }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
@@ -224,12 +227,12 @@ jobs:
                 {
                   "id": "liquibase-pro",
                   "username": "liquibot",
-                  "password": "${{ secrets.LIQUIBOT_PAT }}"
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
                 },
                 {
                   "id": "liquibase",
                   "username": "liquibot",
-                  "password": "${{ secrets.LIQUIBOT_PAT }}"
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
                 }
               ]
 
@@ -241,7 +244,7 @@ jobs:
 
       - name: Install Snapshot Liquibase
         env:
-          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          INSTALL_SNAPSHOT_LIQUIBASE: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
@@ -307,7 +310,7 @@ jobs:
 
       - name: Configure Liquibase Version
         env:
-          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          INSTALL_SNAPSHOT_LIQUIBASE: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
@@ -342,7 +345,7 @@ jobs:
       - name: Coordinate Liquibase-Test-Harness
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.BOT_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
 
