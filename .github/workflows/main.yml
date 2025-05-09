@@ -120,6 +120,7 @@ jobs:
       packages: read
     env:
       INSTALL_SNAPSHOT_LIQUIBASE: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       liquibaseOwner: ${{ steps.configure-build.outputs.liquibaseOwner }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
