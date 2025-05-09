@@ -119,8 +119,7 @@ jobs:
       contents: write
       packages: read
     env:
-      INSTALL_SNAPSHOT_LIQUIBASE: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
       liquibaseOwner: ${{ steps.configure-build.outputs.liquibaseOwner }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
@@ -243,7 +242,7 @@ jobs:
 
       - name: Install Snapshot Liquibase
         env:
-          INSTALL_SNAPSHOT_LIQUIBASE: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
@@ -309,7 +308,7 @@ jobs:
 
       - name: Configure Liquibase Version
         env:
-          INSTALL_SNAPSHOT_LIQUIBASE: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
