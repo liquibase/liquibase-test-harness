@@ -335,6 +335,7 @@ jobs:
     permissions:
       contents: write
       statuses: write
+      pull-requests: write  
     needs: [ setup, test, authorize ]
     if: ${{ always() }}
     steps:
