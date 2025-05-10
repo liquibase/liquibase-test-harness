@@ -335,16 +335,25 @@ jobs:
     permissions:
       contents: write
       statuses: write
-      pull-requests: write  
     needs: [ setup, test, authorize ]
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
 
+      - name: Get GitHub App token
+        id: get-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.LIQUIBASE_GITHUB_APP_ID }}
+          private-key: ${{ secrets.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
+          owner: liquibase
+          repositories: liquibase
+          permission-packages: write
+
       - name: Coordinate Liquibase-Test-Harness
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.get-token.outputs.token }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
 
