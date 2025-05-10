@@ -348,7 +348,7 @@ jobs:
           private-key: ${{ secrets.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
           owner: liquibase
           repositories: liquibase
-          permissions-statuses: write
+          permission-statuses: write
 
       - name: Coordinate Liquibase-Test-Harness
         uses: actions/github-script@v7
