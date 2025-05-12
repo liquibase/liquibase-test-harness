@@ -11,13 +11,19 @@
               "typeAttributes": [
                 {
                   "typeAttribute": {
-                    "name": "attr1",
+                    "name": "attr0",
                     "type": "int"
                   }
                 },
                 {
                   "typeAttribute": {
-                    "name": "attr2",
+                    "name": "Attr1",
+                    "type": "int"
+                  }
+                },
+                {
+                  "typeAttribute": {
+                    "name": "ATTR2",
                     "type": "text",
                     "collation":"en_US"
                   }

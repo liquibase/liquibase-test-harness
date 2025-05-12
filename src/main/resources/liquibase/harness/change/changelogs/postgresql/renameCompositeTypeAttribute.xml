@@ -15,6 +15,6 @@
         <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="attr1" newAttributeName="att®1" onUpdate="CASCADE"/>
         <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="attr2" newAttributeName="attribute 2" onUpdate="CASCADE"/>
         <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="Attr3" newAttributeName="AtTrIbUtE3" onUpdate="CASCADE"/>
-        <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="attr4" newAttributeName="attr &amp; 4" onUpdate="CASCADE"/>
+        <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="ATTR4" newAttributeName="attr &amp; 4" onUpdate="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

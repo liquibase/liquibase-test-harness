@@ -11,7 +11,13 @@
       "com.datical.liquibase.ext.appdba.type.TypeAttribute": [
         {
           "typeAttribute": {
-            "name": "attr1",
+            "name": "attr0",
+            "type": "integer"
+          }
+        },
+        {
+          "typeAttribute": {
+            "name": "Attr1",
             "type": "integer"
           }
         },

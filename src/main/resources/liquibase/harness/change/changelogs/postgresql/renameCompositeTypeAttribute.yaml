@@ -36,6 +36,6 @@ databaseChangeLog:
             onUpdate: "CASCADE"
         - renameCompositeTypeAttribute:
             typeName: "myType"
-            oldAttributeName: "attr4"
+            oldAttributeName: "ATTR4"
             newAttributeName: "attr & 4"
             onUpdate: "CASCADE"
