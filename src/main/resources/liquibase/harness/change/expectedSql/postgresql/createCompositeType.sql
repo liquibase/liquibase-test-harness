@@ -1,1 +1,1 @@
-CREATE TYPE public."myType" AS (attr1 int, attr2 text COLLATE "en_US")
+CREATE TYPE public."myType" AS (attr1 int, attr2 text COLLATE "en_US", "att®3" line, "attribute 4" real)
