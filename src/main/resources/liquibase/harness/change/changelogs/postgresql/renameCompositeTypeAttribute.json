@@ -29,7 +29,15 @@
             "renameCompositeTypeAttribute": {
               "typeName": "myType",
               "oldAttributeName": "attr2",
-              "newAttributeName": "attr22",
+              "newAttributeName": "attribute 2",
+              "onUpdate": "CASCADE"
+            }
+          },
+          {
+            "renameCompositeTypeAttribute": {
+              "typeName": "myType",
+              "oldAttributeName": "attr1",
+              "newAttributeName": "att®1",
               "onUpdate": "CASCADE"
             }
           }
