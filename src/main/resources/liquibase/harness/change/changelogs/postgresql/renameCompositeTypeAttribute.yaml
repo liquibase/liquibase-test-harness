@@ -13,6 +13,17 @@ databaseChangeLog:
                   name: "attr2"
                   type: "text"
                   collation: "en_US"
+              - typeAttribute:
+                  name: "Attr3"
+                  type: "real"
+              - typeAttribute:
+                  name: "ATTR4"
+                  type: "line"
+        - renameCompositeTypeAttribute:
+            typeName: "myType"
+            oldAttributeName: "attr1"
+            newAttributeName: "att®1"
+            onUpdate: "CASCADE"
         - renameCompositeTypeAttribute:
             typeName: "myType"
             oldAttributeName: "attr2"
@@ -20,6 +31,11 @@ databaseChangeLog:
             onUpdate: "CASCADE"
         - renameCompositeTypeAttribute:
             typeName: "myType"
-            oldAttributeName: "attr1"
-            newAttributeName: "att®1"
+            oldAttributeName: "Attr3"
+            newAttributeName: "AtTrIbUtE3"
+            onUpdate: "CASCADE"
+        - renameCompositeTypeAttribute:
+            typeName: "myType"
+            oldAttributeName: "attr4"
+            newAttributeName: "attr & 4"
             onUpdate: "CASCADE"

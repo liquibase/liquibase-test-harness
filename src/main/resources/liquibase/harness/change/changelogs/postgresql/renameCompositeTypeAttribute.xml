@@ -9,8 +9,12 @@
         <pro:createCompositeType name="myType">
             <pro:typeAttribute name="attr1" type="int"/>
             <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
+            <pro:typeAttribute name="Attr3" type="real"/>
+            <pro:typeAttribute name="ATTR4" type="line"/>
         </pro:createCompositeType>
-        <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="attr2" newAttributeName="attribute 2" onUpdate="CASCADE"/>
         <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="attr1" newAttributeName="att®1" onUpdate="CASCADE"/>
+        <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="attr2" newAttributeName="attribute 2" onUpdate="CASCADE"/>
+        <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="Attr3" newAttributeName="AtTrIbUtE3" onUpdate="CASCADE"/>
+        <pro:renameCompositeTypeAttribute typeName="myType" oldAttributeName="attr4" newAttributeName="attr &amp; 4" onUpdate="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

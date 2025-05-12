@@ -1,3 +1,5 @@
-CREATE TYPE public."myType" AS (attr1 int, attr2 text COLLATE "en_US")
-ALTER TYPE public."myType" RENAME ATTRIBUTE attr2 TO "attribute 2" CASCADE
+CREATE TYPE public."myType" AS (attr1 int, attr2 text COLLATE "en_US", "Attr3" real, attr4 line)
 ALTER TYPE public."myType" RENAME ATTRIBUTE attr1 TO "att®1" CASCADE
+ALTER TYPE public."myType" RENAME ATTRIBUTE attr2 TO "attribute 2" CASCADE
+ALTER TYPE public."myType" RENAME ATTRIBUTE "Attr3" TO "AtTrIbUtE3" CASCADE
+ALTER TYPE public."myType" RENAME ATTRIBUTE attr4 TO "attr & 4" CASCADE

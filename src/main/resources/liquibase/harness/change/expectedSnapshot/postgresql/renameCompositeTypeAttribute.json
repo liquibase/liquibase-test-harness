@@ -21,6 +21,18 @@
             "collation": "en_US",
             "type": "text"
           }
+        },
+        {
+          "typeAttribute": {
+            "name": "AtTrIbUtE3",
+            "type": "real"
+          }
+        },
+        {
+          "typeAttribute": {
+            "name": "attr & 4",
+            "type": "line"
+          }
         }
       ]
     }
