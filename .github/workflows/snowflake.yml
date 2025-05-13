@@ -55,7 +55,7 @@ jobs:
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
               -DdbUsername="tf-snow" \
-              -DdbUrl='${{ secrets.TH_SNOW_URL_TEST_HARNESS }}?private_key_file=/tmp/snowflake_private_key.p8' \
+              -DdbUrl=${{ secrets.TH_SNOW_URL_TEST_HARNESS }}?private_key_file=/tmp/snowflake_private_key.p8 \
               -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
               -DrollbackStrategy=rollbackByTag test
 
