@@ -38,11 +38,10 @@ jobs:
           echo "${{ secrets.TH_DB_PRIVATE_KEY }}" | awk '{gsub("\\\\n","\n")}1' > /tmp/snowflake_private_key.p8
           chmod 600 /tmp/snowflake_private_key.p8  # Secure the key file
 
-      - uses: liquibase/liquibase-github-action@v7
+      - uses: liquibase-github-actions/update@v4.31.1
         with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/snowflake"
           changeLogFile: "snowflake.sql"
+          changeExecListenerPropertiesFile: "src/test/resources/init-changelogs/snowflake"
           username: "tf-snow"
           url: "${{secrets.TH_SNOW_URL_TEST_HARNESS}}?private_key_file=/tmp/snowflake_private_key.p8"
 
