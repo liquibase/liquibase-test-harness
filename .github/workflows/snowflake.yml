@@ -52,11 +52,11 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: |
           mvn -Dtest=LiquibaseHarnessSuiteTest \
-          -DconfigFile=/harness-config-cloud.yml \ 
-          -DdbName=snowflake \
-          -DdbUsername="tf-snow" \
-          -DdbUrl='${{secrets.TH_SNOW_URL_TEST_HARNESS}}?private_key_file=/tmp/snowflake_private_key.p8' \
-          -DrollbackStrategy=rollbackByTag test
+              -DconfigFile=/harness-config-cloud.yml \
+              -DdbName=snowflake \
+              -DdbUsername="tf-snow" \
+              -DdbUrl='${{ secrets.TH_SNOW_URL_TEST_HARNESS }}?private_key_file=/tmp/snowflake_private_key.p8' \
+              -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
