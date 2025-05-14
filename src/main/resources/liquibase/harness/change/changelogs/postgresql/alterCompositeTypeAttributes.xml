@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="itTest" id="1">
+        <pro:createCompositeType name="myType">
+            <pro:typeAttribute name="attr0" type="int"/>
+            <pro:typeAttribute name="attr1" type="int"/>
+            <pro:typeAttribute name="attr2" type="int"/>
+        </pro:createCompositeType>
+    </changeSet>
+    <changeSet author="itTest" id="2">
+        <pro:alterCompositeTypeAttributes typeName="myType">
+            <pro:addAttribute name="attr3" type="text" collation="en_US" onCreate="CASCADE"/>
+            <pro:alterAttribute name="attr0" newType="text" collation="en_US" onUpdate="RESTRICT"/>
+            <pro:dropAttribute name="attr1" ifExists="true" onDelete="CASCADE"/>
+        </pro:alterCompositeTypeAttributes>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>
