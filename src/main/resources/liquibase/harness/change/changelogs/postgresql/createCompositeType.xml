@@ -7,8 +7,11 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="itTest" id="1">
         <pro:createCompositeType name="myType">
-            <pro:typeAttribute name="attr1" type="int"/>
-            <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
+            <pro:typeAttribute name="attr0" type="int"/>
+            <pro:typeAttribute name="Attr1" type="int"/>
+            <pro:typeAttribute name="ATTR2" type="text" collation="en_US"/>
+            <pro:typeAttribute name="att®3" type="line"/>
+            <pro:typeAttribute name="attribute 4" type="real"/>
         </pro:createCompositeType>
     </changeSet>
 </databaseChangeLog>

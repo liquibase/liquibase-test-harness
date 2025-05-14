@@ -11,15 +11,27 @@
       "com.datical.liquibase.ext.appdba.type.TypeAttribute": [
         {
           "typeAttribute": {
-            "name": "attr1",
+            "name": "att®1",
             "type": "integer"
           }
         },
         {
           "typeAttribute": {
-            "name": "attr22",
+            "name": "attribute 2",
             "collation": "en_US",
             "type": "text"
+          }
+        },
+        {
+          "typeAttribute": {
+            "name": "AtTrIbUtE3",
+            "type": "real"
+          }
+        },
+        {
+          "typeAttribute": {
+            "name": "attr & 4",
+            "type": "line"
           }
         }
       ]
