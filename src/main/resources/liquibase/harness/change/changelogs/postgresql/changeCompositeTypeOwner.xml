@@ -6,13 +6,13 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="itTest" id="1">
-        <pro:createCompositeType name="myType">
+        <pro:createCompositeType typeName="myType">
             <pro:typeAttribute name="attr1" type="int"/>
             <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
         </pro:createCompositeType>
         <pro:changeCompositeTypeOwner typeName="myType" newOwner="SESSION_USER"/>
         <rollback>
-            <pro:dropCompositeType name="myType" ifExists="true" onDelete="CASCADE"/>
+            <pro:dropCompositeType typeName="myType" ifExists="true" onDelete="CASCADE"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

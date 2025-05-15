@@ -7,7 +7,7 @@
         "changes": [
           {
             "createCompositeType": {
-              "name":"myRenameType",
+              "typeName":"myRenameType",
               "typeAttributes": [
                 {
                   "typeAttribute": {
