@@ -4,7 +4,7 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myRenameType"
+            typeName: "myRenameType"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
