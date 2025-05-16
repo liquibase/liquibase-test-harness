@@ -4,7 +4,7 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myDelType"
+            typeName: "myDelType"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
@@ -14,7 +14,7 @@ databaseChangeLog:
                   type: "text"
                   collation: "en_US"
         - dropCompositeType:
-            name: "myDelType"
+            typeName: "myDelType"
             ifExists: true
             onDelete: "CASCADE"
       rollback:
