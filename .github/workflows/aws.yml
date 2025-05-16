@@ -70,7 +70,7 @@ jobs:
       - name: Start & Configure LocalStack
         env:
           LOCALSTACK_OAUTH_TOKEN: ${{ secrets.LOCALSTACK_OAUTH_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}
           RDS_MYSQL_DOCKER: 1     #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
         run: |
           pip install localstack awscli-local
