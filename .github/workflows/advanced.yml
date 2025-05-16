@@ -251,7 +251,7 @@ jobs:
           app-id: ${{ secrets.LIQUIBASE_GITHUB_APP_ID }}
           private-key: ${{ secrets.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
           owner: liquibase
-          repositories: ${{ needs.setup.outputs.liquibaseRepo }}
+          repositories: liquibase
           permission-statuses: write 
 
       - name: Cache installed Liquibase
