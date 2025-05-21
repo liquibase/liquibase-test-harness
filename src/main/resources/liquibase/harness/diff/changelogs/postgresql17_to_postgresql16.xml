@@ -200,4 +200,14 @@
             <dropProcedure procedureName="test_procedure"/>
         </rollback>
     </changeSet>
+
+    <!-- COMPOSITE TYPE -->
+    <changeSet id="18" author="as">
+        <pro:createCompositeType typeName="test_diff_type">
+            <pro:typeAttribute name="ATTR1" type="text" collation="en_US"/>
+            <pro:typeAttribute name="att®2" type="line"/>
+            <pro:typeAttribute name="attribute 3" type="varchar(50)" collation="en_US"/>
+        </pro:createCompositeType>
+    </changeSet>
+
 </databaseChangeLog>
