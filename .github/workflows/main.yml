@@ -116,7 +116,7 @@ jobs:
     needs: authorize
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+      GITHUB_TOKEN: ${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}
     outputs:
       liquibaseOwner: ${{ steps.configure-build.outputs.liquibaseOwner }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
@@ -139,7 +139,7 @@ jobs:
         id: configure-build
         uses: actions/github-script@v7.0.1
         with:
-          github-token: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          github-token: ${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
             
@@ -224,12 +224,12 @@ jobs:
                 {
                   "id": "liquibase-pro",
                   "username": "liquibot",
-                  "password": "${{ secrets.LIQUIBOT_PAT }}"
+                  "password": "${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}"
                 },
                 {
                   "id": "liquibase",
                   "username": "liquibot",
-                  "password": "${{ secrets.LIQUIBOT_PAT }}"
+                  "password": "${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}"
                 }
               ]
 
@@ -241,7 +241,7 @@ jobs:
 
       - name: Install Snapshot Liquibase
         env:
-          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          GITHUB_TOKEN: ${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
@@ -307,7 +307,7 @@ jobs:
 
       - name: Configure Liquibase Version
         env:
-          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          GITHUB_TOKEN: ${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
@@ -339,10 +339,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Get GitHub App token
+        id: get-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.LIQUIBASE_GITHUB_APP_ID }}
+          private-key: ${{ secrets.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-contents: write
+          permission-actions: write
+
       - name: Coordinate Liquibase-Test-Harness
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.BOT_TOKEN }}
+          github-token: ${{ steps.get-token.outputs.token }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
 
