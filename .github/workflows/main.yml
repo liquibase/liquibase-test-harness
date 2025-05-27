@@ -242,7 +242,7 @@ jobs:
 
       - name: Install Snapshot Liquibase
         env:
-          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          GITHUB_TOKEN: ${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
