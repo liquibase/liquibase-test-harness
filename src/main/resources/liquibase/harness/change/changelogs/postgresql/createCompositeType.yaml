@@ -15,7 +15,7 @@ databaseChangeLog:
               - typeAttribute:
                   name: "ATTR2"
                   type: "text"
-                  collation: "en_US"
+                  collation: "en_US.utf8"
               - typeAttribute:
                   name: "att®3"
                   type: "line"
