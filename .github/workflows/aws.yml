@@ -184,7 +184,7 @@ jobs:
           awslocal rds create-db-instance --db-instance-identifier postgres17-primary-cluster-instance --db-cluster-identifier postgres17-primary-cluster --engine postgres --db-instance-class db.t3.medium
           postgres17_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres17-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           postgres17_url="jdbc:postgresql://localhost:$postgres17_port/${{ env.TH_DB }}"
-          echo "TH_PGRESURL_16=$postgres17_url" >> $GITHUB_ENV
+          echo "TH_PGRESURL_17=$postgres17_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres17_url" update          
 
