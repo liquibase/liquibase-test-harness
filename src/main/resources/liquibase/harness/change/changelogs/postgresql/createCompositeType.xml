@@ -9,7 +9,7 @@
         <pro:createCompositeType typeName="myType">
             <pro:typeAttribute name="attr0" type="int"/>
             <pro:typeAttribute name="Attr1" type="int"/>
-            <pro:typeAttribute name="ATTR2" type="text" collation="en_US"/>
+            <pro:typeAttribute name="ATTR2" type="text" collation="en_US.utf8"/>
             <pro:typeAttribute name="att®3" type="line"/>
             <pro:typeAttribute name="attribute 4" type="real"/>
         </pro:createCompositeType>
