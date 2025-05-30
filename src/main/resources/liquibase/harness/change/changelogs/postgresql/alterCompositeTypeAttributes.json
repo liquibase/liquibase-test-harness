@@ -46,7 +46,7 @@
                   "addAttribute": {
                     "name": "attr3",
                     "type": "text",
-                    "collation": "en_US",
+                    "collation": "en-US-x-icu",
                     "onCreate": "CASCADE"
                   }
                 }
@@ -56,7 +56,7 @@
                   "alterAttribute": {
                     "name": "attr0",
                     "newType": "text",
-                    "collation": "en_US",
+                    "collation": "en-US-x-icu",
                     "onUpdate": "RESTRICT"
                   }
                 }
