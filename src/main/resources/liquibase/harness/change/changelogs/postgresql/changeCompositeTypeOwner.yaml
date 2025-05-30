@@ -12,7 +12,7 @@ databaseChangeLog:
               - typeAttribute:
                   name: "attr2"
                   type: "text"
-                  collation: "en_US.utf8"
+                  collation: "en-US-x-icu"
         - changeCompositeTypeOwner:
             typeName: "myType"
             newOwner: "SESSION_USER"

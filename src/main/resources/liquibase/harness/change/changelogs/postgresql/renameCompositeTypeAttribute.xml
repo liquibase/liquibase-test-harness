@@ -8,7 +8,7 @@
     <changeSet author="itTest" id="1">
         <pro:createCompositeType typeName="myType">
             <pro:typeAttribute name="attr1" type="int"/>
-            <pro:typeAttribute name="attr2" type="text" collation="en_US.utf8"/>
+            <pro:typeAttribute name="attr2" type="text" collation="en-US-x-icu"/>
             <pro:typeAttribute name="Attr3" type="real"/>
             <pro:typeAttribute name="ATTR4" type="line"/>
         </pro:createCompositeType>

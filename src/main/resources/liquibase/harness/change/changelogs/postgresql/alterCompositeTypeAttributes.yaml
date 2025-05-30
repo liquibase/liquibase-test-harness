@@ -25,13 +25,13 @@ databaseChangeLog:
               - addAttribute:
                   name: "attr3"
                   type: "text"
-                  collation: "en_US.utf8"
+                  collation: "en-US-x-icu"
                   onCreate: "CASCADE"
             alterAttributes:
               - alterAttribute:
                   name: "attr0"
                   newType: "text"
-                  collation: "en_US.utf8"
+                  collation: "en-US-x-icu"
                   onUpdate: "RESTRICT"
             dropAttributes:
               - dropAttribute:
