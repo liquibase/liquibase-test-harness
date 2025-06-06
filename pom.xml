@@ -18,8 +18,8 @@
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <gmavenplus-plugin.version>4.2.0</gmavenplus-plugin.version>
-        <junit.version>5.12.2</junit.version>
-        <junit-platform.version>1.12.2</junit-platform.version>
+        <junit.version>5.13.0</junit.version>
+        <junit-platform.version>1.13.0</junit-platform.version>
     </properties>
     <organization>
         <name>Liquibase.org</name>
@@ -89,7 +89,7 @@
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>4.0.26</version>
+            <version>4.0.27</version>
             <type>pom</type>
             <exclusions>
                 <exclusion>
@@ -162,7 +162,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.5</version>
+            <version>42.7.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -234,20 +234,13 @@
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
             <artifactId>jaybird</artifactId>
-            <version>5.0.7.java11</version>
+            <version>5.0.8.java11</version>
         </dependency>
 
         <dependency>
             <groupId>com.ibm.db2</groupId>
             <artifactId>jcc</artifactId>
             <version>11.5.9.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.ibm.db2</groupId>
-            <artifactId>db2-z-licence</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/drivers/db2/db2jcc_license_cisuz.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sybase.jdbc4.jdbc.sybdriver</groupId>
@@ -408,7 +401,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.0</version>
                 <configuration>
                     <filesets>
                         <fileset>
