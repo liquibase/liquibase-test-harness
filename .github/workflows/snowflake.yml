@@ -61,7 +61,7 @@ jobs:
           cat > liquibase.properties << EOF
           # Snowflake connection settings - base URL without parameters
           url=${TH_SNOW_URL}
-          username=${TH_SNOW_USER}
+          username="tf-snow"
 
           # PKI Authentication
           liquibase.snowflake.auth.type=PKI
