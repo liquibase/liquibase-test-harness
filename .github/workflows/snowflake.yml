@@ -35,6 +35,12 @@ jobs:
             role-to-assume: ${{ secrets.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
             aws-region: us-east-1
 
+      - name: Get LIQUIBASETH secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            TH_SNOW_URL, liquibaseoss_url
+
       - name: Install Liquibase
         run: |
           # Add Liquibase repository and install via apt
@@ -53,7 +59,7 @@ jobs:
         run: |
           cat > liquibase.properties << EOF
           # Snowflake connection settings
-          url=jdbc:snowflake://${{secrets.TH_SNOW_URL}}
+          url=jdbc:snowflake://${{env.TH_SNOW_URL}}
           username=tf-snow
           
           # PKI Authentication
