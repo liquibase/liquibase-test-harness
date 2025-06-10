@@ -71,15 +71,29 @@ jobs:
         run: |
           liquibase --defaults-file=liquibase.properties update
 
+      - name: Create Maven Liquibase Properties
+        run: |
+          cat > maven-liquibase.properties << EOF
+          # Snowflake connection settings
+          url=jdbc:snowflake://${{secrets.TH_SNOW_URL}}
+          
+          # PKI Authentication
+          liquibase.snowflake.auth.type=PKI
+          liquibase.snowflake.auth.privateKeyPath=/tmp/snowflake_private_key.p8
+          
+          # Schema configuration
+          liquibaseSchemaName=PUBLIC
+          defaultSchemaName=PUBLIC
+          EOF
+
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: |
-          mvn -Dtest=LiquibaseHarnessSuiteTest 
-          -DconfigFile=/harness-config-cloud.yml 
-          -DdbName=snowflake 
-          -DdbUsername=${{env.TH_DB_ADMIN}} 
-          -DdbUrl='${{secrets.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8' 
+          mvn -Dtest=LiquibaseHarnessSuiteTest \
+          -DconfigFile=/harness-config-cloud.yml \
+          -DdbName=snowflake \
+          -DdbPropertiesFile=maven-liquibase.properties \
           -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
