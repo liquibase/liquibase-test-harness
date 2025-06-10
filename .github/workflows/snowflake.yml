@@ -40,7 +40,6 @@ jobs:
         with:
           secret-ids: |
             TH_SNOW_URL, liquibaseth_url
-            TH_SNOW_USER, liquibaseth_usrname
 
       - name: Install Liquibase
         run: |
