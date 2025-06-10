@@ -47,14 +47,29 @@ jobs:
           echo "${{ secrets.TH_DB_PRIVATE_KEY }}" | awk '{gsub("\\\\n","\n")}1' > /tmp/snowflake_private_key.p8
           chmod 600 /tmp/snowflake_private_key.p8  # Secure the key file
 
+      - name: Create Liquibase Properties File
+        run: |
+          cat > liquibase.properties << EOF
+          # Snowflake connection settings
+          url=jdbc:snowflake://${{secrets.TH_SNOW_URL}}
+          username=tf-snow
+          
+          # PKI Authentication
+          liquibase.snowflake.auth.type=PKI
+          liquibase.snowflake.auth.privateKeyPath=/tmp/snowflake_private_key.p8
+          
+          # Schema configuration
+          liquibaseSchemaName=PUBLIC
+          defaultSchemaName=PUBLIC
+          
+          # Changelog settings
+          changeLogFile=snowflake.sql
+          classpath=src/test/resources/init-changelogs/snowflake
+          EOF
+
       - name: Run Liquibase Update
         run: |
-          liquibase \
-            --classpath="src/test/resources/init-changelogs/snowflake" \
-            --changeLogFile="snowflake.sql" \
-            --username="tf-snow" \
-            --url="${{secrets.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8" \
-            update
+          liquibase --defaults-file=liquibase.properties update
 
       - name: Snowflake Test Run
         env:
