@@ -40,6 +40,7 @@ jobs:
         with:
           secret-ids: |
             TH_SNOW_URL, liquibaseth_url
+            TH_SNOW_USER, liquibaseth_usrname
 
       - name: Install Liquibase
         run: |
@@ -60,7 +61,7 @@ jobs:
           cat > liquibase.properties << EOF
           # Snowflake connection settings - base URL without parameters
           url=${TH_SNOW_URL}
-          username="tf-snow"
+          username=${TH_SNOW_USER}
 
           # PKI Authentication
           liquibase.snowflake.auth.type=PKI
