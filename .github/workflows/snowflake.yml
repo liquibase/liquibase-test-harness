@@ -59,17 +59,13 @@ jobs:
       - name: Create Liquibase Properties File
         run: |
           cat > liquibase.properties << EOF
-          # Snowflake connection settings - base URL without parameters
-          url=${TH_SNOW_URL}
+          # Snowflake connection settings with database in URL
+          url=${TH_SNOW_URL}?db=LTHDB&warehouse=TH_WAREHOUSE&schema=PUBLIC
           username=${TH_SNOW_USER}
 
           # PKI Authentication
           liquibase.snowflake.auth.type=PKI
           liquibase.snowflake.auth.privateKeyPath=/tmp/snowflake_private_key.p8
-          
-          # Database and warehouse settings (as properties, not URL parameters)
-          liquibase.snowflake.database=LTHDB
-          liquibase.snowflake.warehouse=TH_WAREHOUSE
           
           # Schema configuration
           liquibaseSchemaName=PUBLIC
