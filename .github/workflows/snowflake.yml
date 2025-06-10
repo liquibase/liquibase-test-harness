@@ -33,18 +33,28 @@ jobs:
             role-to-assume: ${{ secrets.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
             aws-region: us-east-1
 
+      - name: Install Liquibase
+        run: |
+          # Add Liquibase repository and install via apt
+          wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg && \
+          cat liquibase-keyring.gpg | sudo tee /usr/share/keyrings/liquibase-keyring.gpg > /dev/null && \
+          echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | sudo tee /etc/apt/sources.list.d/liquibase.list
+          sudo apt-get update
+          sudo apt-get install liquibase
+
       - name: Decode Private Key
         run: |
           echo "${{ secrets.TH_DB_PRIVATE_KEY }}" | awk '{gsub("\\\\n","\n")}1' > /tmp/snowflake_private_key.p8
           chmod 600 /tmp/snowflake_private_key.p8  # Secure the key file
 
-      - uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/snowflake"
-          changeLogFile: "snowflake.sql"
-          username: "tf-snow"
-          url: "${{secrets.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8"
+      - name: Run Liquibase Update
+        run: |
+          liquibase \
+            --classpath="src/test/resources/init-changelogs/snowflake" \
+            --changeLogFile="snowflake.sql" \
+            --username="tf-snow" \
+            --url="${{secrets.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8" \
+            update
 
       - name: Snowflake Test Run
         env:
