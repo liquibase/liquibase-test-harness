@@ -39,7 +39,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            TH_SNOW_URL, liquibaseoss_url
+            TH_SNOW_URL, liquibaseth_url
 
       - name: Install Liquibase
         run: |
@@ -60,8 +60,7 @@ jobs:
           cat > liquibase.properties << EOF
           # Snowflake connection settings
           url=jdbc:snowflake://${{env.TH_SNOW_URL}}
-          username=tf-snow
-          
+
           # PKI Authentication
           liquibase.snowflake.auth.type=PKI
           liquibase.snowflake.auth.privateKeyPath=/tmp/snowflake_private_key.p8
