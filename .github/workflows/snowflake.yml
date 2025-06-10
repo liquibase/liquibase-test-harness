@@ -16,6 +16,8 @@ jobs:
         snowflake_th: true
 
   test:
+    env:
+      LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
     runs-on: ubuntu-latest
     needs: [deploy-ephemeral-cloud-infra]
     permissions:
