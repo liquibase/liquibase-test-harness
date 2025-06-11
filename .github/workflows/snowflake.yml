@@ -62,6 +62,7 @@ jobs:
           # Snowflake connection settings with database in URL
           url=${TH_SNOW_URL}?db=LTHDB&warehouse=TH_WAREHOUSE&schema=PUBLIC
           username=${TH_SNOW_USER}
+          driver=net.snowflake.client.jdbc.SnowflakeDriver
 
           # PKI Authentication
           liquibase.snowflake.auth.type=PKI
