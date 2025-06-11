@@ -86,11 +86,12 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: |
           mvn -Dtest=LiquibaseHarnessSuiteTest \
-          -DconfigFile=/harness-config-cloud.yml \
-          -DdbName=snowflake \
-          -DdbPropertiesFile=liquibase.properties \
-          -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
-          -DrollbackStrategy=rollbackByTag test
+              -DconfigFile=/harness-config-cloud.yml \
+              -DdbName=snowflake \
+              -DdbUsername="tf-snow" \
+              -DdbUrl="jdbc:snowflake://BA89345.us-east-2.aws.snowflakecomputing.com?db=LTHDB&schema=PUBLIC&private_key_file=/tmp/snowflake_private_key.p8" \
+              -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
+              -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
