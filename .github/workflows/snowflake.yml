@@ -88,7 +88,7 @@ jobs:
           mvn -Dtest=LiquibaseHarnessSuiteTest \
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
-              -DdbUsername="${TH_SNOW_USER}" \
+              -DdbUsername="tf-snow" \
               -DdbUrl="jdbc:snowflake://BA89345.us-east-2.aws.snowflakecomputing.com?db=LTHDB&schema=PUBLIC&warehouse=TH_WAREHOUSE&private_key_file=/tmp/snowflake_private_key.p8" \
               -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
               -DrollbackStrategy=rollbackByTag test
