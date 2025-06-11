@@ -76,8 +76,6 @@ jobs:
           classpath=src/test/resources/init-changelogs/snowflake
           EOF
 
-          cat liquibase.properties
-
       - name: Run Liquibase Update
         run: |
           liquibase --defaults-file=liquibase.properties update
