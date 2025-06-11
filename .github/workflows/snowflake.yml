@@ -88,6 +88,7 @@ jobs:
           -DconfigFile=/harness-config-cloud.yml \
           -DdbName=snowflake \
           -DdbPropertiesFile=liquibase.properties \
+          -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
           -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
