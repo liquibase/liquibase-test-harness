@@ -16,6 +16,8 @@ jobs:
         snowflake_th: true
 
   test:
+    env:
+      LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
     runs-on: ubuntu-latest
     needs: [deploy-ephemeral-cloud-infra]
     permissions:
@@ -33,29 +35,63 @@ jobs:
             role-to-assume: ${{ secrets.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
             aws-region: us-east-1
 
+      - name: Get LIQUIBASETH secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            TH_SNOW_URL, liquibaseth_url
+            TH_SNOW_USER, liquibaseth_usrname
+
+      - name: Install Liquibase
+        run: |
+          # Add Liquibase repository and install via apt
+          wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg && \
+          cat liquibase-keyring.gpg | sudo tee /usr/share/keyrings/liquibase-keyring.gpg > /dev/null && \
+          echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | sudo tee /etc/apt/sources.list.d/liquibase.list
+          sudo apt-get update
+          sudo apt-get install liquibase
+
       - name: Decode Private Key
         run: |
           echo "${{ secrets.TH_DB_PRIVATE_KEY }}" | awk '{gsub("\\\\n","\n")}1' > /tmp/snowflake_private_key.p8
           chmod 600 /tmp/snowflake_private_key.p8  # Secure the key file
 
-      - uses: liquibase/liquibase-github-action@v7
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/snowflake"
-          changeLogFile: "snowflake.sql"
-          username: "tf-snow"
-          url: "${{secrets.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8"
+      - name: Create Liquibase Properties File
+        run: |
+          cat > liquibase.properties << EOF
+          # Snowflake connection settings with database in URL
+          url=${TH_SNOW_URL}
+          username=${TH_SNOW_USER}
+          driver=net.snowflake.client.jdbc.SnowflakeDriver
+
+          # PKI Authentication
+          liquibase.snowflake.auth.type=PKI
+          liquibase.snowflake.auth.privateKeyPath=/tmp/snowflake_private_key.p8
+          
+          # Schema configuration
+          liquibaseSchemaName=PUBLIC
+          defaultSchemaName=PUBLIC
+          
+          # Changelog settings
+          changeLogFile=snowflake.sql
+          classpath=src/test/resources/init-changelogs/snowflake
+          EOF
+
+      - name: Run Liquibase Update
+        run: |
+          liquibase --defaults-file=liquibase.properties update
 
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: |
-          mvn -Dtest=LiquibaseHarnessSuiteTest 
-          -DconfigFile=/harness-config-cloud.yml 
-          -DdbName=snowflake 
-          -DdbUsername=${{env.TH_DB_ADMIN}} 
-          -DdbUrl='${{secrets.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8' 
-          -DrollbackStrategy=rollbackByTag test
+          mvn -Dtest=LiquibaseHarnessSuiteTest \
+              -DconfigFile=/harness-config-cloud.yml \
+              -DdbName=snowflake \
+              -DdbUsername=${{env.TH_SNOW_USER}} 
+              -DdbUrl='${{env.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8' 
+              -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
+              -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@v4
