@@ -398,7 +398,7 @@ services:
 
   informix-12.10:
     image: ibmcom/informix-developer-database:12.10.FC12W1DE
-    container_name: informix-db
+    container_name: informix-db-12
     hostname: ifx
     ports:
       - "9088:9088"
@@ -413,7 +413,7 @@ services:
 
   informix-14.10:
     image: icr.io/informix/informix-developer-database:14.10.FC7W1DE
-    container_name: informix-db
+    container_name: informix-db-14
     hostname: ifx
     ports:
       - "9088:9088"
