@@ -1,0 +1,80 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "itTest",
+        "changes": [
+          {
+            "createCompositeType": {
+              "typeName": "myType",
+              "typeAttributes": [
+                {
+                  "typeAttribute": {
+                    "name": "attr0",
+                    "type": "int"
+                  }
+                },
+                {
+                  "typeAttribute": {
+                    "name": "attr1",
+                    "type": "int"
+                  }
+                },
+                {
+                  "typeAttribute": {
+                    "name": "attr2",
+                    "type": "int"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "2",
+        "author": "itTest",
+        "changes": [
+          {
+            "alterCompositeTypeAttributes": {
+              "typeName": "myType",
+              "addAttributes": [
+                {
+                  "addAttribute": {
+                    "name": "attr3",
+                    "type": "text",
+                    "collation": "en-US-x-icu",
+                    "onCreate": "CASCADE"
+                  }
+                }
+              ],
+              "alterAttributes": [
+                {
+                  "alterAttribute": {
+                    "name": "attr0",
+                    "newType": "text",
+                    "collation": "en-US-x-icu",
+                    "onUpdate": "RESTRICT"
+                  }
+                }
+              ],
+              "dropAttributes": [
+                {
+                  "dropAttribute": {
+                    "name": "attr1",
+                    "ifExists": "true",
+                    "onDelete": "CASCADE"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "rollback": []
+      }
+    }
+  ]
+}

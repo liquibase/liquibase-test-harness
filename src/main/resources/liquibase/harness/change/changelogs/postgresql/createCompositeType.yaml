@@ -4,12 +4,21 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myType"
+            typeName: "myType"
             typeAttributes:
               - typeAttribute:
-                  name: "attr1"
+                  name: "attr0"
                   type: "int"
               - typeAttribute:
-                  name: "attr2"
+                  name: "Attr1"
+                  type: "int"
+              - typeAttribute:
+                  name: "ATTR2"
                   type: "text"
-                  collation: "en_US"
+                  collation: "en-US-x-icu"
+              - typeAttribute:
+                  name: "att®3"
+                  type: "line"
+              - typeAttribute:
+                  name: "attribute 4"
+                  type: "real"

@@ -7,7 +7,7 @@
         "changes": [
           {
             "createCompositeType": {
-              "name":"myType",
+              "typeName":"myType",
               "typeAttributes": [
                 {
                   "typeAttribute": {
@@ -19,7 +19,19 @@
                   "typeAttribute": {
                     "name": "attr2",
                     "type": "text",
-                    "collation":"en_US"
+                    "collation":"en-US-x-icu"
+                  }
+                },
+                {
+                  "typeAttribute": {
+                    "name": "Attr3",
+                    "type": "real"
+                  }
+                },
+                {
+                  "typeAttribute": {
+                    "name": "ATTR4",
+                    "type": "line"
                   }
                 }
               ]
@@ -28,8 +40,32 @@
           {
             "renameCompositeTypeAttribute": {
               "typeName": "myType",
+              "oldAttributeName": "attr1",
+              "newAttributeName": "att®1",
+              "onUpdate": "CASCADE"
+            }
+          },
+          {
+            "renameCompositeTypeAttribute": {
+              "typeName": "myType",
               "oldAttributeName": "attr2",
-              "newAttributeName": "attr22",
+              "newAttributeName": "attribute 2",
+              "onUpdate": "CASCADE"
+            }
+          },
+          {
+            "renameCompositeTypeAttribute": {
+              "typeName": "myType",
+              "oldAttributeName": "Attr3",
+              "newAttributeName": "AtTrIbUtE3",
+              "onUpdate": "CASCADE"
+            }
+          },
+          {
+            "renameCompositeTypeAttribute": {
+              "typeName": "myType",
+              "oldAttributeName": "ATTR4",
+              "newAttributeName": "attr & 4",
               "onUpdate": "CASCADE"
             }
           }

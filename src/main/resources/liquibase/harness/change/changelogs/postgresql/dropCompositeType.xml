@@ -6,11 +6,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="itTest" id="1">
-        <pro:createCompositeType name="myDelType">
+        <pro:createCompositeType typeName="myDelType">
             <pro:typeAttribute name="attr1" type="int"/>
-            <pro:typeAttribute name="attr2" type="text" collation="en_US"/>
+            <pro:typeAttribute name="attr2" type="text" collation="en-US-x-icu"/>
         </pro:createCompositeType>
-        <pro:dropCompositeType name="myDelType" ifExists="true" onDelete="CASCADE"/>
+        <pro:dropCompositeType typeName="myDelType" ifExists="true" onDelete="CASCADE"/>
         <rollback/>
     </changeSet>
 </databaseChangeLog>

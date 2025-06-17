@@ -23,14 +23,14 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"postgresql:15\",\"postgresql:16\",\"mysql:gcp\",\"mssql:gcp\",\"mssql:gcp2022\"]"
+        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"postgresql:15\",\"postgresql:16\",\"mysql:gcp\",\"mssql:gcp\"]"
 
 jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","postgresql:15","postgresql:16","mysql:gcp","mssql:gcp","mssql:gcp2022"]' }}
+      databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","postgresql:15","postgresql:16","mysql:gcp","mssql:gcp"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
@@ -57,7 +57,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean GCP MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.31.1
+        uses: liquibase-github-actions/drop-all@v4.32.0
         if: ${{ matrix.version == 'gcp' }}
         with:
           url: "${{ secrets.TH_GCP_MYSQL_8_0_URL }}"
@@ -92,7 +92,7 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@v4.31.1
+      - uses: liquibase-github-actions/drop-all@v4.32.0
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         with:
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
@@ -112,8 +112,8 @@ jobs:
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.31.1
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp' }}
+      - uses: liquibase-github-actions/drop-all@v4.32.0
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
           username: "${{secrets.TH_DB_ADMIN}}"
@@ -121,7 +121,7 @@ jobs:
           licenseKey: "${{secrets.LICENSE_KEY}}"
           force: true
           requireForce: true
-          
+
       - uses: liquibase-github-actions/drop-all@v4.31.1
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp2022' }}
         with:
@@ -133,7 +133,7 @@ jobs:
           requireForce: true
 
       - uses: liquibase/liquibase-github-action@v7
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/gcp"
@@ -141,7 +141,7 @@ jobs:
           username: "${{secrets.TH_DB_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
-          
+
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp2022' }}
         with:
@@ -178,7 +178,7 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
           LIQUIBASE_LIQUIBASE_SCHEMA_NAME: lbuser
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=gcp -DdbUsername=${{secrets.TH_DB_ADMIN}} -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_GCP_MSSQL_2019_URL }}' test
-        
+
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp2022' }}
         env:

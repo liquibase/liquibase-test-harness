@@ -4,7 +4,7 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myRenameType"
+            typeName: "myRenameType"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
@@ -12,7 +12,7 @@ databaseChangeLog:
               - typeAttribute:
                   name: "attr2"
                   type: "text"
-                  collation: "en_US"
+                  collation: "en-US-x-icu"
         - renameCompositeType:
             oldTypeName: "myRenameType"
             newTypeName: "myNewNameType"

@@ -4,7 +4,7 @@ databaseChangeLog:
       author: itTest
       changes:
         - createCompositeType:
-            name: "myType"
+            typeName: "myType"
             typeAttributes:
               - typeAttribute:
                   name: "attr1"
@@ -12,13 +12,13 @@ databaseChangeLog:
               - typeAttribute:
                   name: "attr2"
                   type: "text"
-                  collation: "en_US"
+                  collation: "en-US-x-icu"
         - changeCompositeTypeOwner:
             typeName: "myType"
             newOwner: "SESSION_USER"
 
       rollback:
         - dropCompositeType:
-            name: "myType"
+            typeName: "myType"
             ifExists: true
             onDelete: "CASCADE"
