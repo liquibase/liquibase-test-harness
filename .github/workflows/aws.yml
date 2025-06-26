@@ -23,7 +23,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"postgresql:16\",\"postgresql:17\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:aws_2019\",\"postgresql:aurora\"]"
+        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"postgresql:16\",\"postgresql:17\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:aws_2019\",\"postgresql:aurora_16\",\"postgresql:aurora_17\"]"
 
 jobs:
   setup:
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","postgresql:16","postgresql:17","oracle:aws_19",
-        "mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora"]' }}
+        "mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora_16","postgresql:aurora_17"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
@@ -86,7 +86,8 @@ jobs:
           echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
           echo "TH_DB_PASSWD_MSSQL=Test.2024" >> $GITHUB_ENV
           echo "TH_DB=lbcat" >> $GITHUB_ENV  
-          echo "TH_AURORA_POSTGRESQL_ENGINE=16" >> $GITHUB_ENV
+          echo "TH_AURORA_POSTGRESQL_16_ENGINE=16" >> $GITHUB_ENV
+          echo "TH_AURORA_POSTGRESQL_17_ENGINE=17" >> $GITHUB_ENV
           echo "TH_MARIADB_ENGINE=10.6" >> $GITHUB_ENV
           echo "TH_MSSQL_ENGINE=2019" >> $GITHUB_ENV
           echo "TH_MYSQL_ENGINE=8.0" >> $GITHUB_ENV
@@ -112,15 +113,26 @@ jobs:
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_mysql_url" update
 
       - name: Init Aurora Postgresql Database
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora_16' }}
         run: |
-          awslocal rds create-db-cluster --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --engine-version ${{ env.TH_AURORA_POSTGRESQL_ENGINE }} --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
+          awslocal rds create-db-cluster --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --engine-version ${{ env.TH_AURORA_POSTGRESQL_16_ENGINE }} --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
           awslocal rds create-db-instance --db-instance-identifier aurora-postgresql-primary-cluster-instance --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --db-instance-class db.t3.medium
           aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-postgresql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           aurora_postgresql_url="jdbc:postgresql://localhost:$aurora_postgresql_port/${{ env.TH_DB }}"
-          echo "TH_AURORA_POSTGRESQLURL=$aurora_postgresql_url" >> $GITHUB_ENV
+          echo "TH_AURORA_POSTGRESQL16_URL=$aurora_postgresql_16_url" >> $GITHUB_ENV
           sleep 30
-          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_url" update
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_16_url" update
+
+      - name: Init Aurora Postgresql Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora_17' }}
+        run: |
+          awslocal rds create-db-cluster --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --engine-version ${{ env.TH_AURORA_POSTGRESQL_17_ENGINE }} --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
+          awslocal rds create-db-instance --db-instance-identifier aurora-postgresql-primary-cluster-instance --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --db-instance-class db.t3.medium
+          aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-postgresql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
+          aurora_postgresql_url="jdbc:postgresql://localhost:$aurora_postgresql_port/${{ env.TH_DB }}"
+          echo "TH_AURORA_POSTGRESQL17_URL=$aurora_postgresql_17_url" >> $GITHUB_ENV
+          sleep 30
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_16_url" update          
 
       - name: Init MariaDB Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
@@ -297,10 +309,16 @@ jobs:
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_MYSQLURL }}' test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora_16' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=16 -Dprefix=aurora -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_POSTGRESQLURL }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=16 -Dprefix=aurora -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_POSTGRESQL16_URL }}' test
+
+      - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora_17' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=17 -Dprefix=aurora -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_POSTGRESQL17_URL }}' test
 
       - name: Archive AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@v4
