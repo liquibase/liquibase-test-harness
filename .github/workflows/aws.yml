@@ -119,9 +119,9 @@ jobs:
           awslocal rds create-db-instance --db-instance-identifier aurora-postgresql-primary-cluster-instance --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --db-instance-class db.t3.medium
           aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-postgresql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           aurora_postgresql_url="jdbc:postgresql://localhost:$aurora_postgresql_port/${{ env.TH_DB }}"
-          echo "TH_AURORA_POSTGRESQL16_URL=$aurora_postgresql_16_url" >> $GITHUB_ENV
+          echo "TH_AURORA_POSTGRESQL16URL=$aurora_postgresql_url" >> $GITHUB_ENV
           sleep 30
-          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_16_url" update
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_url" update
 
       - name: Init Aurora Postgresql Database
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora_17' }}
@@ -130,9 +130,9 @@ jobs:
           awslocal rds create-db-instance --db-instance-identifier aurora-postgresql-primary-cluster-instance --db-cluster-identifier aurora-postgresql-primary-cluster --engine aurora-postgresql --db-instance-class db.t3.medium
           aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-postgresql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           aurora_postgresql_url="jdbc:postgresql://localhost:$aurora_postgresql_port/${{ env.TH_DB }}"
-          echo "TH_AURORA_POSTGRESQL17_URL=$aurora_postgresql_17_url" >> $GITHUB_ENV
+          echo "TH_AURORA_POSTGRESQL17URL=$aurora_postgresql_url" >> $GITHUB_ENV
           sleep 30
-          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_16_url" update          
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_url" update          
 
       - name: Init MariaDB Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
