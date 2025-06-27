@@ -116,7 +116,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         with:
           url: "${{ secrets.TH_GCP_MSSQL_2019_URL }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
+          username: "${{secrets.MSSQL_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
           force: true
@@ -126,7 +126,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
         with:
           url: "${{ secrets.TH_GCP_MSSQL_2022_URL }}"
-          username: "${{secrets.TH_DB_ADMIN}}"
+          username: "${{secrets.MSSQL_ADMIN}}"
           password: "${{secrets.TH_DB_PASSWD}}"
           licenseKey: "${{secrets.LICENSE_KEY}}"
           force: true
