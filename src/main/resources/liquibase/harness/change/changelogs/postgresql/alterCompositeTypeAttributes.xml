@@ -8,6 +8,7 @@
 
     <changeSet author="itTest" id="1">
         <pro:dropCompositeType typeName="myType" onDelete="CASCADE" ifExists='true'/>
+        <rollback/>
     </changeSet>
 
     <changeSet author="itTest" id="2">
