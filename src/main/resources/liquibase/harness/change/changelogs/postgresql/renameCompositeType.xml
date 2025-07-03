@@ -10,7 +10,7 @@
         <pro:dropCompositeType typeName="myType" onDelete="CASCADE" ifExists='true'/>
     </changeSet>
 
-    <changeSet author="itTest" id="1">
+    <changeSet author="itTest" id="2">
         <pro:createCompositeType typeName="myRenameType">
             <pro:typeAttribute name="attr1" type="int"/>
             <pro:typeAttribute name="attr2" type="text" collation="en-US-x-icu"/>
