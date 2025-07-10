@@ -85,6 +85,7 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
         run: |
+          JDK_JAVA_OPTIONS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
           mvn -Dtest=LiquibaseHarnessSuiteTest \
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
