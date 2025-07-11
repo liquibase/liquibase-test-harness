@@ -1,4 +1,3 @@
-
 name: IBM DB2/Z Cloud
 concurrency: db2z-run
 on:
@@ -14,10 +13,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
       - name: IBM DB2/Z Cloud Test Run
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
-        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbUsername=${{secrets.DB2_USER}} -DdbPassword=${{secrets.DB2_PASS}} -DdbName=db2-z -DrollbackStrategy=rollbackByTag test
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: mvn -Dtest=LiquibaseHarnessSuiteTest -DdbUsername=${{env.DB2_USER}} -DdbPassword=${{env.DB2_PASS}} -DdbName=db2-z -DrollbackStrategy=rollbackByTag test
 
       - name: Archive IBM DB2/Z Cloud Database Test Results
         uses: actions/upload-artifact@v4
