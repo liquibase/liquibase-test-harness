@@ -5,7 +5,7 @@ concurrency: gcp-run
 on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
-    - cron: '0 5 * * *' # Execute every day at 5AM UTC
+    - cron: "0 5 * * *" # Execute every day at 5AM UTC
   workflow_dispatch:
     inputs:
       testClasses:
@@ -23,7 +23,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"postgresql:15\",\"mysql:gcp\",\"mssql:gcp_2019\",\"mssql:gcp_2022\"]"
+        default: '["postgresql:12","postgresql:13","postgresql:14","postgresql:15","mysql:gcp","mssql:gcp_2019","mssql:gcp_2022"]'
 
 jobs:
   setup:
@@ -64,7 +64,7 @@ jobs:
             ,/vault/liquibase
           parse-json-secrets: true
 
-#      This additional init step is required because of mysql driver issue on GH actions
+      #      This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
         run: lpm update && lpm add mysql
 
@@ -120,7 +120,6 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          with:
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
@@ -133,7 +132,6 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          with:
         with:
           url: "${{ env.TH_GCP_MSSQL_2019_URL }}"
           username: "${{env.MSSQL_ADMIN}}"
@@ -144,6 +142,8 @@ jobs:
 
       - uses: liquibase-github-actions/drop-all@v4.32.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
           url: "${{ env.TH_GCP_MSSQL_2022_URL }}"
           username: "${{env.MSSQL_ADMIN}}"
@@ -154,6 +154,8 @@ jobs:
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/gcp"
@@ -164,6 +166,8 @@ jobs:
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/gcp"

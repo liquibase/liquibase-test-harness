@@ -194,10 +194,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+          
       - name: Azure PostgreSQL Flexible Server dropAll
         uses: liquibase-github-actions/drop-all@v4.32.0
         with:
-          url: ${{ secrets[env.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL] }}
+          url: ${{ env[env.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL] }}
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
           licenseKey: "${{env.PRO_LICENSE_KEY}}"
