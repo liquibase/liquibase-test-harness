@@ -73,8 +73,8 @@ jobs:
         uses: liquibase-github-actions/drop-all@v4.32.0
         if: ${{ matrix.database == 'mysql' }}
         with:
-          url: "${{secrets.TH_AZURE_MYSQL_URL}}"
-          username: "${{ format('{0}@{1}', env.TH_DB_ADMIN, secrets.TH_AZURE_MYSQL_FQDN) }}"
+          url: "${{env.TH_AZURE_MYSQL_URL}}"
+          username: "${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }}"
           password: "${{env.TH_DB_PASSWD}}"
           licenseKey: "${{env.PRO_LICENSE_KEY}}"
           force: true
@@ -87,9 +87,9 @@ jobs:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/azure"
           changeLogFile: "mysql.sql"
-          username: "${{ format('{0}@{1}', env.TH_DB_ADMIN, secrets.TH_AZURE_MYSQL_FQDN) }}"
+          username: "${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }}"
           password: "${{env.TH_DB_PASSWD}}"
-          url: "${{secrets.TH_AZURE_MYSQL_URL}}"
+          url: "${{env.TH_AZURE_MYSQL_URL}}"
   test:
     needs: [init-mysql, setup]
     runs-on: ubuntu-latest
@@ -115,7 +115,7 @@ jobs:
         uses: liquibase-github-actions/drop-all@v4.32.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
-          url: "${{secrets.TH_AZURE_URL}}"
+          url: "${{env.TH_AZURE_URL}}"
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
           licenseKey: "${{env.PRO_LICENSE_KEY}}"
@@ -131,13 +131,13 @@ jobs:
           changeLogFile: "sqlserver.sql"
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
-          url: "${{secrets.TH_AZURE_URL}}"
+          url: "${{env.TH_AZURE_URL}}"
 
       - name: Azure MSSQL MI dropAll
         uses: liquibase-github-actions/drop-all@v4.32.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
         with:
-          url: "${{secrets.TH_AZURE_MSSQL_MI_URL}}"
+          url: "${{env.TH_AZURE_MSSQL_MI_URL}}"
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
           licenseKey: "${{env.PRO_LICENSE_KEY}}"
@@ -153,25 +153,25 @@ jobs:
           changeLogFile: "sqlserver.sql"
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
-          url: "${{secrets.TH_AZURE_MSSQL_MI_URL}}"
+          url: "${{env.TH_AZURE_MSSQL_MI_URL}}"
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ format('{0}@{1}', env.TH_DB_ADMIN, secrets.TH_AZURE_MYSQL_FQDN) }} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_MYSQL_URL}}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MYSQL_URL}}' test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_URL}}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_URL}}' test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=mi -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{secrets.TH_AZURE_MSSQL_MI_URL}}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=mi -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MSSQL_MI_URL}}' test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@v4
