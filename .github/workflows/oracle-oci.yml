@@ -21,6 +21,10 @@ on:
           - FoundationalTest
           - AdvancedHarnessSuiteTest
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   setup:
     name: Setup

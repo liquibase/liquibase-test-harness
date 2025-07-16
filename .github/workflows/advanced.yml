@@ -31,6 +31,10 @@ on:
           "edb-postgres-15","edb-postgres-16","edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","db2-luw","H2Database-2.2","sqlite","derby",
           "firebird-3","firebird-4","hsqldb-2.5","hsqldb-2.6","hsqldb-2.7","tidb","informix-12.10","informix-14.10","tidb","diff","diffChangelog"]
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   check_build_safety:
     name: Check if Build should be done

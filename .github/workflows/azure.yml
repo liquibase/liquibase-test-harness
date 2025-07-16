@@ -24,6 +24,10 @@ on:
         required: true
         default: "[\"mysql:azure\", \"mssql:azure\", \"mssql:mi\", \"postgresql:flexible\"]"
 
+permissions:
+  contents: write
+  id-token: write
+  
 jobs:
   setup:
     name: Setup

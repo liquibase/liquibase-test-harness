@@ -6,6 +6,10 @@ on:
     - cron: "0 8 * * *" # Execute every day at 8am
   workflow_dispatch:
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   test:
     runs-on: ubuntu-latest

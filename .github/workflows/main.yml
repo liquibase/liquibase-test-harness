@@ -104,6 +104,13 @@ on:
             "tidb"
           ]
 
+
+permissions:
+  contents: write
+  id-token: write
+  statuses: write
+  packages: read
+  
 jobs:
   authorize:
     environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
@@ -115,9 +122,6 @@ jobs:
     name: Setup
     needs: authorize
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: read
     outputs:
       liquibaseOwner: ${{ steps.configure-build.outputs.liquibaseOwner }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
@@ -379,9 +383,6 @@ jobs:
   finish:
     name: Finish
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      statuses: write
     needs: [setup, test, authorize]
     if: ${{ always() }}
     steps:
