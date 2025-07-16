@@ -104,13 +104,12 @@ on:
             "tidb"
           ]
 
-
 permissions:
   contents: write
   id-token: write
   statuses: write
   packages: read
-  
+
 jobs:
   authorize:
     environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
@@ -253,11 +252,11 @@ jobs:
             [
               {
                 "id": "liquibase-pro",
-                "password": "${{ secrets.GITHUB_TOKEN }}"
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
               },
               {
                 "id": "liquibase",
-                "password": "${{ secrets.GITHUB_TOKEN }}"
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
               }
             ]
 
@@ -269,7 +268,7 @@ jobs:
 
       - name: Install Snapshot Liquibase
         env:
-          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
+          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
@@ -359,7 +358,7 @@ jobs:
 
       - name: Configure Liquibase Version
         env:
-          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
+          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
