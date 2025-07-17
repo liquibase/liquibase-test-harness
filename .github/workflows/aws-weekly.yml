@@ -5,7 +5,7 @@ on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   # Execute every sunday at 4:00 AM
   schedule:
-    - cron: '0 4 * * 0'
+    - cron: "0 4 * * 0"
   workflow_dispatch:
     inputs:
       testClasses:
@@ -23,7 +23,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:aws_2019\",\"postgresql:aurora\"]"
+        default: '["postgresql:12","postgresql:13","postgresql:14","oracle:aws_19","mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora"]'
 
 permissions:
   contents: write
@@ -44,14 +44,14 @@ jobs:
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
     secrets: inherit
     with:
-        deploy: true
-        aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
-        aws_oracle: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'oracle') }}
-        aws_mariadb: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mariadb') }}
-        aws_aurora_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aurora') }}
-        aws_mssql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mssql') }}
-        aws_aurora_postgres: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:aurora') }}
-        aws_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aws') }}
+      deploy: true
+      aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
+      aws_oracle: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'oracle') }}
+      aws_mariadb: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mariadb') }}
+      aws_aurora_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aurora') }}
+      aws_mssql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mssql') }}
+      aws_aurora_postgres: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:aurora') }}
+      aws_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aws') }}
 
   init-mysql:
     runs-on: ubuntu-latest
@@ -87,30 +87,30 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
-            aws-region: us-east-1
+          role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
+          aws-region: us-east-1
 
       - name: Configure Test
         id: setup
         uses: actions/github-script@v7.0.1
         with:
-            script: |
-                let splitValues = "${{ matrix.database }}".split(":")
-                core.setOutput("databasePlatform", splitValues[0]);
-                core.setOutput("databaseVersion", splitValues[1]);
+          script: |
+            let splitValues = "${{ matrix.database }}".split(":")
+            core.setOutput("databasePlatform", splitValues[0]);
+            core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Get AWS secrets
         if: ${{ matrix.version == 'aws' && matrix.database == 'mysql'}}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-            secret-ids: |
-                TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+          secret-ids: |
+            TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
       - name: Get AWS secrets
         if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql'}}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-            secret-ids: |
-                TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+          secret-ids: |
+            TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
       #This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
         run: lpm update && lpm add mysql
@@ -147,7 +147,7 @@ jobs:
             let splitValues = "${{ matrix.database }}".split(":")
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
-            
+
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -165,60 +165,65 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
-            aws-region: us-east-1
+          role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
+          aws-region: us-east-1
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-            secret-ids: |
-                TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+          secret-ids: |
+            TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-            secret-ids: |
-                TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+          secret-ids: |
+            TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+
+        # Unset TH_ORACLEURL_19
+      - name: Unset TH_ORACLEURL_19
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        run: unset TH_ORACLEURL_19
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-            secret-ids: |
-                TH_ORACLEURL_19, /testautomation/db_details/aws_oracle_19_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+          secret-ids: |
+            TH_ORACLEURL_19, /testautomation/db_details/aws_oracle_19_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-            secret-ids: |
-                TH_PGRESURL_12, /testautomation/db_details/aws_postgresql_12_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
-                TH_PGRESURL_13, /testautomation/db_details/aws_postgresql_13_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
-                TH_PGRESURL_14, /testautomation/db_details/aws_postgresql_14_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+          secret-ids: |
+            TH_PGRESURL_12, /testautomation/db_details/aws_postgresql_12_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            TH_PGRESURL_13, /testautomation/db_details/aws_postgresql_13_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            TH_PGRESURL_14, /testautomation/db_details/aws_postgresql_14_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-            secret-ids: |
-                TH_MARIADBURL_10_6, /testautomation/db_details/aws_mariadb_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+          secret-ids: |
+            TH_MARIADBURL_10_6, /testautomation/db_details/aws_mariadb_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-            secret-ids: |
-                TH_MSSQLURL, /testautomation/db_details/aws_mssql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
-                TH_MSSQLURL_HOST, /testautomation/db_details/aws_mssql_host_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+          secret-ids: |
+            TH_MSSQLURL, /testautomation/db_details/aws_mssql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            TH_MSSQLURL_HOST, /testautomation/db_details/aws_mssql_host_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-            secret-ids: |
-                TH_AURORA_POSTGRESQLURL, /testautomation/db_details/aurora_postgresql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+          secret-ids: |
+            TH_AURORA_POSTGRESQLURL, /testautomation/db_details/aurora_postgresql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
@@ -260,7 +265,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         uses: potatoqualitee/mssqlsuite@v1.8
         with:
-            install: sqlengine, sqlclient, sqlpackage
+          install: sqlengine, sqlclient, sqlpackage
 
       - name: Run sqlcmd
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
@@ -348,16 +353,16 @@ jobs:
 
   destroy-ephemeral-cloud-infra:
     if: always()
-    needs: [ deploy-ephemeral-cloud-infra, test ]
+    needs: [deploy-ephemeral-cloud-infra, test]
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
     secrets: inherit
     with:
-        destroy: true
-        stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
-        aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
-        aws_oracle: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'oracle') }}
-        aws_mariadb: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mariadb') }}
-        aws_aurora_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aurora') }}
-        aws_mssql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mssql') }}
-        aws_aurora_postgres: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:aurora') }}
-        aws_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aws') }}
+      destroy: true
+      stack_id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
+      aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
+      aws_oracle: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'oracle') }}
+      aws_mariadb: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mariadb') }}
+      aws_aurora_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aurora') }}
+      aws_mssql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mssql') }}
+      aws_aurora_postgres: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:aurora') }}
+      aws_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aws') }}
