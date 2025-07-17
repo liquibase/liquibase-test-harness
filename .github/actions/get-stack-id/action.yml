@@ -19,19 +19,15 @@ runs:
       id: process-stack-id
       shell: bash
       run: |
-        # Process the stack ID to avoid secret masking
+        # Always construct the stack ID using the run ID to avoid secret masking issues
+        # The upstream workflow skips the stack_id output entirely due to secret detection
         INPUT_STACK_ID="${{ inputs.stack-id }}"
         
-        # Check if the input is masked (contains ***)
-        if [[ "$INPUT_STACK_ID" == *"***"* ]]; then
-          echo "Stack ID is masked, reconstructing from run ID..."
-          # Reconstruct the stack ID using the known pattern
-          # Pattern: liquibase-test-automation-ephemeral-{run_id}
-          RECONSTRUCTED_ID="liquibase-test-automation-ephemeral-${{ inputs.run-id }}"
-          echo "stack-id=$RECONSTRUCTED_ID" >> $GITHUB_OUTPUT
-          echo "Reconstructed stack ID: $RECONSTRUCTED_ID"
-        else
-          echo "Stack ID is not masked, using as-is..."
-          echo "stack-id=$INPUT_STACK_ID" >> $GITHUB_OUTPUT
-          echo "Using stack ID: $INPUT_STACK_ID"
-        fi
+        # Always use the reconstructed stack ID since the upstream output is unreliable
+        # Pattern: liquibase-test-automation-ephemeral-{run_id}
+        RECONSTRUCTED_ID="liquibase-test-automation-ephemeral-${{ inputs.run-id }}"
+        echo "stack-id=$RECONSTRUCTED_ID" >> $GITHUB_OUTPUT
+        echo "Using reconstructed stack ID: $RECONSTRUCTED_ID"
+        
+        # Log the original input for debugging
+        echo "Original input was: '$INPUT_STACK_ID'"
