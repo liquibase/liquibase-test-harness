@@ -182,11 +182,6 @@ jobs:
           secret-ids: |
             TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
-        # Unset TH_ORACLEURL_19
-      - name: Unset TH_ORACLEURL_19
-        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        run: unset TH_ORACLEURL_19
-
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
