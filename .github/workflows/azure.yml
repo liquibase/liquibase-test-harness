@@ -106,6 +106,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+          
       - name: Configure Test
         id: setup
         uses: actions/github-script@v7.0.1
@@ -188,8 +202,6 @@ jobs:
     needs: setup
     if: "contains(needs.setup.outputs.databases, 'postgresql:flexible')"
     runs-on: ubuntu-latest
-    env:
-      TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL: TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_${{ matrix.version }}_URL
     strategy:
       matrix:
         version: [15, 16]
@@ -215,7 +227,7 @@ jobs:
       - name: Azure PostgreSQL Flexible Server dropAll
         uses: liquibase-github-actions/drop-all@v4.32.0
         with:
-          url: ${{ env[env.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL] }}
+          url: ${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
           licenseKey: "${{env.PRO_LICENSE_KEY}}"
@@ -230,12 +242,12 @@ jobs:
           changeLogFile: "postgresql.sql"
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
-          url: ${{ secrets[env.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL] }}
+          url: ${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=flexible_${{ matrix.version }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ secrets[env.TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_URL] }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=flexible_${{ matrix.version }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}' test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@v4

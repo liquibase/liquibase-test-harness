@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   create-release:
     uses: liquibase/build-logic/.github/workflows/create-release.yml@main
