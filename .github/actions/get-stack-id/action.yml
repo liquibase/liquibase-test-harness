@@ -1,0 +1,20 @@
+name: 'Get Stack ID'
+description: 'Get stack ID from deploy-ephemeral-cloud-infra job output without triggering secret masking'
+inputs:
+  stack-id:
+    description: 'Stack ID from deploy-ephemeral-cloud-infra job'
+    required: true
+outputs:
+  stack-id:
+    description: 'Processed stack ID'
+    value: ${{ steps.process-stack-id.outputs.stack-id }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Process stack ID
+      id: process-stack-id
+      shell: bash
+      run: |
+        # Process the stack ID to avoid secret masking
+        STACK_ID="${{ inputs.stack-id }}"
+        echo "stack-id=$STACK_ID" >> $GITHUB_OUTPUT
