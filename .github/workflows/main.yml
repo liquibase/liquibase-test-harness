@@ -4,31 +4,31 @@ name: Default Test Execution
 on:
   # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
     types:
       - opened
       - reopened
-      - synchronize     
+      - synchronize
 
   schedule:
-    - cron: '0 6 * * *' # Execute every day at noon
+    - cron: "0 6 * * *" # Execute every day at noon
   workflow_dispatch:
     inputs:
       distinct_id:
-        description: 'distinct id for the triggered run from OSS'
+        description: "distinct id for the triggered run from OSS"
         required: false
       runDescription:
-        description: 'Description of run'
+        description: "Description of run"
         required: false
       runDetails:
-        description: 'JSON details of run. Provided by automation'
+        description: "JSON details of run. Provided by automation"
         required: false
       liquibaseBranch:
         description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. For forks, use the `owner:branch` format. Can support a comma separated list of branches to search for
         required: false
       liquibaseCommit:
-        description: Liquibase commit to pull artifacts from. Leave empty to use "liquibaseBranch" setting.  
+        description: Liquibase commit to pull artifacts from. Leave empty to use "liquibaseBranch" setting.
         required: false
       testClasses:
         type: choice
@@ -104,6 +104,12 @@ on:
             "tidb"
           ]
 
+permissions:
+  contents: write
+  id-token: write
+  statuses: write
+  packages: read
+
 jobs:
   authorize:
     environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
@@ -115,17 +121,13 @@ jobs:
     name: Setup
     needs: authorize
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: read
-    env:
-      GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
     outputs:
       liquibaseOwner: ${{ steps.configure-build.outputs.liquibaseOwner }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
       liquibaseSha: ${{ steps.configure-build.outputs.liquibaseSha }}
-      databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","percona-xtradb-cluster-8.4",
+      databases:
+        ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","percona-xtradb-cluster-8.4",
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
         "mariadb-10.7","mariadb-11.4","mssql-2017","mssql-2019","mssql-2022","H2Database-2.2","crdb-23.1","crdb-23.2","crdb-24.1",
         "edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-postgres-15","edb-postgres-16",
@@ -134,18 +136,42 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
+      - name: Get GitHub App token
+        id: get-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
+          private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-contents: write
+          permission-actions: write
+
         #https://github.com/Codex-/return-dispatch
       - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
         run: echo ${{ github.event.inputs.distinct_id }}
-        
+
       - name: Configure Build
         id: configure-build
         uses: actions/github-script@v7.0.1
         with:
-          github-token: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          github-token: ${{ steps.get-token.outputs.token }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
-            
+
             let testBranchName = helper.getCurrentBranch();
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
@@ -155,11 +181,11 @@ jobs:
 
             console.log("liquibaseRepo == " + "${{ github.event.inputs.liquibaseRepo }}");
             core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseRepo }}" || "liquibase/liquibase");
-            
+
             let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}";
             let repoOwnerName = liquibaseRepo.split("/")[0]
             let repoName = liquibaseRepo.split("/")[1]
-            
+
             let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}";
             let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
             if (!liquibaseSha) {
@@ -173,13 +199,13 @@ jobs:
             }
             core.setOutput("liquibaseSha", liquibaseSha);
             core.setOutput("liquibaseOwner", repoOwnerName);
-            
+
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
                 runDescription = "None given";
             }
             core.notice("Triggered by this OSS PR: " + runDescription);
-      
+
             let runDetails = null;
             if (context.payload && context.payload.inputs && context.payload.inputs.runDetails) {
                 runDetails = JSON.parse(context.payload.inputs.runDetails);
@@ -197,52 +223,52 @@ jobs:
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v22
         with:
-            repositories: |
-              [
-                {
-                  "id": "liquibase",
-                  "url": "https://maven.pkg.github.com/liquibase/liquibase",
-                  "releases": {
-                    "enabled": "true"
-                  },
-                  "snapshots": {
-                    "enabled": "true",
-                    "updatePolicy": "always"
-                  }
+          repositories: |
+            [
+              {
+                "id": "liquibase",
+                "url": "https://maven.pkg.github.com/liquibase/liquibase",
+                "releases": {
+                  "enabled": "true"
                 },
-                {
-                  "id": "liquibase-pro",
-                  "url": "https://maven.pkg.github.com/liquibase/liquibase-pro",
-                  "releases": {
-                    "enabled": "true"
-                  },
-                  "snapshots": {
-                    "enabled": "true",
-                    "updatePolicy": "always"
-                  }
+                "snapshots": {
+                  "enabled": "true",
+                  "updatePolicy": "always"
                 }
-              ]
-            servers: |
-              [
-                {
-                  "id": "liquibase-pro",
-                  "password": "${{ secrets.GITHUB_TOKEN }}"
+              },
+              {
+                "id": "liquibase-pro",
+                "url": "https://maven.pkg.github.com/liquibase/liquibase-pro",
+                "releases": {
+                  "enabled": "true"
                 },
-                {
-                  "id": "liquibase",
-                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                "snapshots": {
+                  "enabled": "true",
+                  "updatePolicy": "always"
                 }
-              ]
+              }
+            ]
+          servers: |
+            [
+              {
+                "id": "liquibase-pro",
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
+              },
+              {
+                "id": "liquibase",
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
+              }
+            ]
 
       - uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
 
       - name: Install Snapshot Liquibase
         env:
-          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
@@ -258,14 +284,14 @@ jobs:
           "-Dliquibase.sdk.proWorkflowId=build.yml" \
           "-Dliquibase.sdk.workflowId=run-tests.yml"
 
-          
+
           chmod -R 777 bin
           ls -l ./bin
           bin/liquibase --version
-          
+
           buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
           echo "::notice :: Installed Snapshot Liquibase $buildOverview"
-          
+
           buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase-pro')"
           echo "::notice :: Installed Snapshot Liquibase-pro $buildOverview"
 
@@ -277,7 +303,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: [ setup, authorize ]
+    needs: [setup, authorize]
     strategy:
       fail-fast: false
       matrix:
@@ -286,11 +312,35 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
+      - name: Get GitHub App token
+        id: get-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
+          private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-contents: write
+          permission-actions: write
+
       - uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v4
@@ -302,20 +352,20 @@ jobs:
         working-directory: src/test/resources/docker
         run: ./create-infra.sh ${{ matrix.database }}
         env:
-          REPO_URL: ${{ secrets.REPO_URL }}
-          REPO_USER: ${{ secrets.REPO_USER }}
-          REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
+          REPO_URL: ${{ env.REPO_URL }}
+          REPO_USER: ${{ env.REPO_USER }}
+          REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
 
       - name: Configure Liquibase Version
         env:
-          GITHUB_TOKEN: ${{ secrets.INSTALL_SNAPSHOT_LIQUIBASE }}
+          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@v4
@@ -332,20 +382,31 @@ jobs:
   finish:
     name: Finish
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      statuses: write
-    needs: [ setup, test, authorize ]
+    needs: [setup, test, authorize]
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
 
       - name: Get GitHub App token
         id: get-token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.LIQUIBASE_GITHUB_APP_ID }}
-          private-key: ${{ secrets.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
+          app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
+          private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
           owner: liquibase
           repositories: liquibase
           permission-statuses: write

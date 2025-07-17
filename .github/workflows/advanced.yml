@@ -31,6 +31,10 @@ on:
           "edb-postgres-15","edb-postgres-16","edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","db2-luw","H2Database-2.2","sqlite","derby",
           "firebird-3","firebird-4","hsqldb-2.5","hsqldb-2.6","hsqldb-2.7","tidb","informix-12.10","informix-14.10","tidb","diff","diffChangelog"]
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   check_build_safety:
     name: Check if Build should be done
@@ -59,11 +63,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
       - name: Configure Build
         id: configure-build
         uses: actions/github-script@v7.0.1
         with:
-          github-token: ${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}
+          github-token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
 
@@ -141,19 +159,19 @@ jobs:
               {
                 "id": "liquibase-pro",
                 "username": "liquibot",
-                "password": "${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}"
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
               },
               {
                 "id": "liquibase",
                 "username": "liquibot",
-                "password": "${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}"
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
               }
             ]
 
       - name: Install Snapshot Liquibase
         if: steps.configure-build.outputs.useLiquibaseSnapshot == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.LIQUIBOT_PAT_GPM_ACCESS }}
+          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
@@ -197,6 +215,20 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
       - name: Cache installed Liquibase
         uses: actions/cache@v4
         with:
@@ -207,9 +239,9 @@ jobs:
         working-directory: src/test/resources/docker
         run: ./create-infra.sh ${{ matrix.database }}
         env:
-          REPO_URL: ${{ secrets.REPO_URL }}
-          REPO_USER: ${{ secrets.REPO_USER }}
-          REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
+          REPO_URL: ${{ env.REPO_URL }}
+          REPO_USER: ${{ env.REPO_USER }}
+          REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
 
       - name: Configure Liquibase Version
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
@@ -221,7 +253,7 @@ jobs:
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@v4
@@ -244,12 +276,26 @@ jobs:
       - uses: actions/checkout@v4
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
       - name: Get GitHub App token
         id: get-token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.LIQUIBASE_GITHUB_APP_ID }}
-          private-key: ${{ secrets.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
+          app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
+          private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
           owner: liquibase
           repositories: liquibase
           permission-statuses: write 

@@ -2,10 +2,13 @@
 
 name: Oracle Parallel Test Execution
 on:
-
   schedule:
-    - cron: '0 8 * * *' # Execute every day at 8am
+    - cron: "0 8 * * *" # Execute every day at 8am
   workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
 
 jobs:
   test:
@@ -14,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [ 18.4.0, 19.3.0, 23.2.0 ]
+        plan: [18.4.0, 19.3.0, 23.2.0]
 
     steps:
       - uses: actions/checkout@v4
@@ -24,14 +27,28 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
       - uses: actions/setup-java@v4
         with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: 'maven'
+          java-version: "11"
+          distribution: "temurin"
+          cache: "maven"
 
       - name: Docker login to retrive Oracle images from private repo
-        run: docker login "${{ secrets.REPO_URL }}" -u "${{ secrets.REPO_USER }}" -p "${{ secrets.REPO_PASSWORD }}"
+        run: docker login "${{ env.REPO_URL }}" -u "${{ env.REPO_USER }}" -p "${{ env.REPO_PASSWORD }}"
 
       - name: Build Oracle Artifactory test infra
         if: ${{ matrix.plan == '19.3.0' }}
@@ -50,14 +67,14 @@ jobs:
       - name: Sleep for 180 seconds
         uses: whatnick/wait-action@master
         with:
-          time: '180s'
+          time: "180s"
 
       - name: Oracle ${{ matrix.plan }} Test Run
         run: |
           docker ps
           mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
       - name: Archive Oracle ${{ matrix.plan }} test results
         uses: actions/upload-artifact@v4

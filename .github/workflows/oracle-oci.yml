@@ -21,6 +21,10 @@ on:
           - FoundationalTest
           - AdvancedHarnessSuiteTest
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   setup:
     name: Setup
@@ -50,11 +54,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+          
       - name: Oracle OCI Test Run
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
-        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword=${{secrets.TH_DB_PASSWD}} -DdbUrl='${{ secrets.TH_OCI_ORACLE_19c_URL }}' test
+        run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_OCI_ORACLE_19c_URL }}' test
 
       - name: Archive Oracle OCI Test Results
         uses: actions/upload-artifact@v4
