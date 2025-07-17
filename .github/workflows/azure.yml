@@ -74,7 +74,7 @@ jobs:
           parse-json-secrets: true
           
       - name: Clean Azure MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.32.0
+        uses: liquibase-github-actions/drop-all@v4.33.0
         if: ${{ matrix.database == 'mysql' }}
         with:
           url: "${{env.TH_AZURE_MYSQL_URL}}"
@@ -130,7 +130,7 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Azure MSSQL dropAll
-        uses: liquibase-github-actions/drop-all@v4.32.0
+        uses: liquibase-github-actions/drop-all@v4.33.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
         with:
           url: "${{env.TH_AZURE_URL}}"
@@ -152,7 +152,7 @@ jobs:
           url: "${{env.TH_AZURE_URL}}"
 
       - name: Azure MSSQL MI dropAll
-        uses: liquibase-github-actions/drop-all@v4.32.0
+        uses: liquibase-github-actions/drop-all@v4.33.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
         with:
           url: "${{env.TH_AZURE_MSSQL_MI_URL}}"
@@ -225,7 +225,7 @@ jobs:
           parse-json-secrets: true
           
       - name: Azure PostgreSQL Flexible Server dropAll
-        uses: liquibase-github-actions/drop-all@v4.32.0
+        uses: liquibase-github-actions/drop-all@v4.33.0
         with:
           url: ${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}
           username: "${{env.TH_DB_ADMIN}}"
