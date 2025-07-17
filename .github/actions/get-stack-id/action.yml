@@ -4,6 +4,10 @@ inputs:
   stack-id:
     description: 'Stack ID from deploy-ephemeral-cloud-infra job'
     required: true
+  run-id:
+    description: 'GitHub run ID for generating stack name'
+    required: false
+    default: ${{ github.run_id }}
 outputs:
   stack-id:
     description: 'Processed stack ID'
@@ -16,5 +20,18 @@ runs:
       shell: bash
       run: |
         # Process the stack ID to avoid secret masking
-        STACK_ID="${{ inputs.stack-id }}"
-        echo "stack-id=$STACK_ID" >> $GITHUB_OUTPUT
+        INPUT_STACK_ID="${{ inputs.stack-id }}"
+        
+        # Check if the input is masked (contains ***)
+        if [[ "$INPUT_STACK_ID" == *"***"* ]]; then
+          echo "Stack ID is masked, reconstructing from run ID..."
+          # Reconstruct the stack ID using the known pattern
+          # Pattern: liquibase-test-automation-ephemeral-{run_id}
+          RECONSTRUCTED_ID="liquibase-test-automation-ephemeral-${{ inputs.run-id }}"
+          echo "stack-id=$RECONSTRUCTED_ID" >> $GITHUB_OUTPUT
+          echo "Reconstructed stack ID: $RECONSTRUCTED_ID"
+        else
+          echo "Stack ID is not masked, using as-is..."
+          echo "stack-id=$INPUT_STACK_ID" >> $GITHUB_OUTPUT
+          echo "Using stack ID: $INPUT_STACK_ID"
+        fi

@@ -360,6 +360,7 @@ jobs:
         uses: ./.github/actions/get-stack-id
         with:
           stack-id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
+          run-id: ${{ github.run_id }}
 
   destroy-ephemeral-cloud-infra:
     if: always()
