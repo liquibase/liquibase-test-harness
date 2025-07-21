@@ -55,7 +55,7 @@ jobs:
 
   init-mysql:
     runs-on: ubuntu-latest
-    needs: [deploy-ephemeral-cloud-infra]
+    needs: [deploy-ephemeral-cloud-infra, setup]
     container:
       image: liquibase/liquibase:latest
     strategy:
@@ -66,6 +66,7 @@ jobs:
             version: aws
           - database: mysql
             version: aurora
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (contains(needs.setup.outputs.databases, 'mysql:aws') || contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -100,13 +101,13 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Get AWS secrets
-        if: ${{ matrix.version == 'aws' && matrix.database == 'mysql'}}
+        if: ${{ matrix.version == 'aws' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aws'))) }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
             TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
       - name: Get AWS secrets
-        if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql'}}
+        if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
@@ -116,13 +117,13 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Init Database
-        if: ${{ matrix.version == 'aws' && matrix.database == 'mysql'}}
+        if: ${{ matrix.version == 'aws' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aws'))) }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}_cloud.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_MYSQLURL_8_0 }}" update
 
       - name: Init Database
-        if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql'}}
+        if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}_cloud.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
