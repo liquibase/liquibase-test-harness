@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet author="test-harness" id="alterDatabase-setup">
+        <snowflake:createDatabase databaseName="LTHDB_ALTER_TEST_DB"
+                       comment="Database to be altered"/>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterDatabase-rename">
+        <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB"
+                      newName="LTHDB_ALTER_TEST_DB_RENAMED"/>
+        <rollback>
+            <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
+                          newName="LTHDB_ALTER_TEST_DB"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterDatabase-comment">
+        <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
+                      newComment="Modified test database"/>
+        <rollback>
+            <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
+                          newComment="Database to be altered"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterDatabase-retention">
+        <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
+                      newDataRetentionTimeInDays="30"/>
+        <rollback>
+            <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
+                          newDataRetentionTimeInDays="1"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterDatabase-cleanup">
+        <snowflake:dropDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED" ifExists="true"/>
+    </changeSet>
+
+</databaseChangeLog>

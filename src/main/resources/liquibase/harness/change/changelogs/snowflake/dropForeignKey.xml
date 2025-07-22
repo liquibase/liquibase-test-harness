@@ -4,7 +4,35 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <!--    onDelete and onUpdate actions are not really supported, as they aren’t enforced. Also statement that create
+    
+    <!-- Create AUTHORS table for the test -->
+    <changeSet id="createAuthorsTable" author="test-harness">
+        <createTable tableName="authors">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create POSTS table for the test -->
+    <changeSet id="createPostsTable" author="test-harness">
+        <createTable tableName="posts">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="author_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(255)"/>
+            <column name="content" type="text"/>
+        </createTable>
+    </changeSet>
+    
+    <!--    onDelete and onUpdate actions are not really supported, as they aren't enforced. Also statement that create
     foreign key with these attributes silently fail unless ALTER ACCOUNT SET UNSUPPORTED_DDL_ACTION = FAIL;
     https://docs.snowflake.com/en/sql-reference/constraints-properties.html
     https://stackoverflow.com/questions/70802811/snowflake-foreign-keys-arent-created-when-using-on-update-on-delete-actions -->

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet author="test-harness" id="createDatabase-basic">
+        <snowflake:createDatabase databaseName="LTHDB_TEST_DATABASE"
+                       comment="Basic test database"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="LTHDB_TEST_DATABASE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createDatabase-transient">
+        <snowflake:createDatabase databaseName="LTHDB_TEST_TRANSIENT_DB"
+                       transient="true"
+                       comment="Transient test database"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="LTHDB_TEST_TRANSIENT_DB"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createDatabase-retention">
+        <snowflake:createDatabase databaseName="LTHDB_TEST_RETENTION_DB"
+                       dataRetentionTimeInDays="7"
+                       comment="Database with data retention"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="LTHDB_TEST_RETENTION_DB"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createDatabase-full">
+        <snowflake:createDatabase databaseName="LTHDB_TEST_FULL_FEATURE_DB"
+                       transient="false"
+                       dataRetentionTimeInDays="14"
+                       comment="Full featured database"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="LTHDB_TEST_FULL_FEATURE_DB"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

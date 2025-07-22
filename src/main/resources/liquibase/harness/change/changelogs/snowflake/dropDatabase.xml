@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet author="test-harness" id="dropDatabase-setup">
+        <snowflake:createDatabase databaseName="LTHDB_DROP_TEST_DB"
+                       comment="Database to be dropped"/>
+    </changeSet>
+
+    <changeSet author="test-harness" id="dropDatabase-basic">
+        <snowflake:dropDatabase databaseName="LTHDB_DROP_TEST_DB"/>
+        <rollback>
+            <snowflake:createDatabase databaseName="LTHDB_DROP_TEST_DB"
+                           comment="Database to be dropped"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="dropDatabase-ifExists">
+        <snowflake:dropDatabase databaseName="LTHDB_NONEXISTENT_DB"
+                     ifExists="true"/>
+    </changeSet>
+
+    <changeSet author="test-harness" id="dropDatabase-cascade-setup">
+        <snowflake:createDatabase databaseName="LTHDB_CASCADE_TEST_DB"
+                       comment="Database with objects"/>
+    </changeSet>
+
+    <changeSet author="test-harness" id="dropDatabase-cascade">
+        <snowflake:dropDatabase databaseName="LTHDB_CASCADE_TEST_DB"
+                     cascade="true"/>
+        <rollback>
+            <snowflake:createDatabase databaseName="LTHDB_CASCADE_TEST_DB"
+                           comment="Database with objects"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

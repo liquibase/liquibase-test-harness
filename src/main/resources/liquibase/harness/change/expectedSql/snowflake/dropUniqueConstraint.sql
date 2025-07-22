@@ -1,2 +1,2 @@
-ALTER TABLE LTHDB.PUBLIC.authors ADD CONSTRAINT test_unique_constraint UNIQUE (email)
-ALTER TABLE LTHDB.PUBLIC.authors DROP CONSTRAINT test_unique_constraint
+ALTER TABLE LTHDB.TESTHARNESS.authors ADD CONSTRAINT test_unique_constraint UNIQUE (email)
+ALTER TABLE LTHDB.TESTHARNESS.authors DROP CONSTRAINT test_unique_constraint

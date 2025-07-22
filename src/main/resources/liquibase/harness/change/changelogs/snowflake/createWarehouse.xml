@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet author="test-harness" id="createWarehouse-basic">
+        <snowflake:createWarehouse warehouseName="LTHDB_TEST_WAREHOUSE"
+                        warehouseSize="XSMALL"
+                        autoSuspend="60"
+                        autoResume="true"
+                        comment="Test warehouse for harness"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_WAREHOUSE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createWarehouse-multicluster">
+        <snowflake:createWarehouse warehouseName="LTHDB_TEST_MULTICLUSTER_WH"
+                        warehouseSize="MEDIUM"
+                        warehouseType="STANDARD"
+                        minClusterCount="1"
+                        maxClusterCount="3"
+                        scalingPolicy="STANDARD"
+                        autoSuspend="300"
+                        autoResume="true"
+                        comment="Multi-cluster test warehouse"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_MULTICLUSTER_WH"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createWarehouse-advanced">
+        <snowflake:createWarehouse warehouseName="LTHDB_TEST_ADVANCED_WH"
+                        warehouseSize="LARGE"
+                        warehouseType="STANDARD"
+                        autoSuspend="180"
+                        autoResume="false"
+                        initiallySuspended="true"
+                        maxConcurrencyLevel="8"
+                        statementQueuedTimeoutInSeconds="3600"
+                        statementTimeoutInSeconds="172800"
+                        comment="Advanced configuration warehouse"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_ADVANCED_WH"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -356,3 +356,10 @@ databasesUnderTest:
     url: jdbc:informix-sqli://localhost:9088/testdb:INFORMIXSERVER=informix;
     username: informix
     password: in4mix
+
+  - name: snowflake
+    prefix: local
+    version: latest
+    url: jdbc:snowflake://LWMNXLH-AUB54519.snowflakecomputing.com/?warehouse=LTHDB_TEST_WH&role=LIQUIBASE_TEST_HARNESS_ROLE&db=LTHDB&schema=TESTHARNESS
+    username: KevinAtLiquibase
+    password: ZgMGV2V%Lwg57iCZ%W#Ox^5EzoC

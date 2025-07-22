@@ -1,1 +1,1 @@
-COMMENT ON COLUMN LTHDB.PUBLIC.authors.id IS 'A Test Column Remark'
+COMMENT ON COLUMN LTHDB.TESTHARNESS.authors.id IS 'A Test Column Remark'

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="snowflake-cleanup-tracking-tables" author="test-harness" runAlways="true">
+        <comment>Clean up Liquibase tracking tables to fix 'previously run' changeset issues</comment>
+        
+        <!-- Clear all tracking data to ensure clean test state -->
+        <sql>DELETE FROM DATABASECHANGELOG WHERE FILENAME NOT LIKE '%init.xml'</sql>
+        <sql>UPDATE DATABASECHANGELOGLOCK SET LOCKED = FALSE WHERE ID = 1</sql>
+        
+        <!-- Clean up any leftover test objects that might interfere -->
+        <sql>DROP TABLE IF EXISTS valueSequenceNextTable CASCADE</sql>
+        <sql>DROP TABLE IF EXISTS AUTHORS CASCADE</sql>
+        <sql>DROP TABLE IF EXISTS BOOKS CASCADE</sql>
+        <sql>DROP TABLE IF EXISTS TEST_TRANSIENT_TABLE CASCADE</sql>
+        <sql>DROP TABLE IF EXISTS TEST_CLUSTERED_TABLE CASCADE</sql>
+        <sql>DROP TABLE IF EXISTS TEST_RETENTION_TABLE CASCADE</sql>
+        <sql>DROP TABLE IF EXISTS TEST_CHANGE_TRACKING_TABLE CASCADE</sql>
+        <sql>DROP TABLE IF EXISTS TEST_FULL_FEATURE_TABLE CASCADE</sql>
+        <sql>DROP TABLE IF EXISTS TEST_COMPLEX_TYPES_TABLE CASCADE</sql>
+        <sql>DROP SEQUENCE IF EXISTS test_sequence</sql>
+        <sql>DROP SEQUENCE IF EXISTS alter_test_sequence</sql>
+        <sql>DROP SEQUENCE IF EXISTS drop_test_sequence</sql>
+        <sql>DROP SEQUENCE IF EXISTS rename_test_sequence</sql>
+        <sql>DROP SEQUENCE IF EXISTS value_test_sequence</sql>
+        <sql>DROP SEQUENCE IF EXISTS test_sequence_rename_test</sql>
+        
+        <rollback>
+            <!-- No rollback needed for cleanup operations -->
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

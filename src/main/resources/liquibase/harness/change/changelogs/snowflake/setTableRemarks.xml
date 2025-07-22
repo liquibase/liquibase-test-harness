@@ -4,6 +4,20 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    
+    <!-- Create AUTHORS table for the test -->
+    <changeSet id="createAuthorsTable" author="test-harness">
+        <createTable tableName="authors">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)"/>
+        </createTable>
+    </changeSet>
+    
     <!-- different rollback comparing to basic changelog -->
     <changeSet id="1" author="as">
         <setTableRemarks remarks="A Test Remark"

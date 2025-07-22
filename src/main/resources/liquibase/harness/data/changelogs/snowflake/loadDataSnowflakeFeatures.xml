@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Create table with Snowflake features for data loading test -->
+    <changeSet author="test-harness" id="createTable-forData">
+        <sql>
+            CREATE TRANSIENT TABLE TEST_DATA_TABLE (
+                id INTEGER PRIMARY KEY,
+                category VARCHAR(50),
+                json_data VARIANT,
+                array_data ARRAY,
+                timestamp_data TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP
+            ) 
+            CLUSTER BY (category)
+            DATA_RETENTION_TIME_IN_DAYS = 7
+            COMMENT = 'Table for testing data load with Snowflake features'
+        </sql>
+    </changeSet>
+
+    <!-- Load data including complex types -->
+    <changeSet author="test-harness" id="loadData-complexTypes">
+        <loadData tableName="TEST_DATA_TABLE" file="liquibase/harness/data/changelogs/snowflake/loadDataSnowflakeFeatures.csv">
+            <column name="id" type="NUMERIC"/>
+            <column name="category" type="STRING"/>
+            <column name="json_data" type="STRING"/>
+            <column name="array_data" type="STRING"/>
+        </loadData>
+    </changeSet>
+
+    <!-- Load data using SQL with Snowflake functions -->
+    <changeSet author="test-harness" id="loadData-snowflakeFunctions">
+        <sql>
+            INSERT INTO TEST_DATA_TABLE (id, category, json_data, array_data)
+            VALUES 
+            (100, 'CAT_A', PARSE_JSON('{"key": "value100", "num": 100}'), ARRAY_CONSTRUCT('item1', 'item2')),
+            (101, 'CAT_B', PARSE_JSON('{"key": "value101", "num": 101}'), ARRAY_CONSTRUCT('item3', 'item4', 'item5'))
+        </sql>
+    </changeSet>
+
+    <!-- Update data with complex type operations -->
+    <changeSet author="test-harness" id="updateData-complexTypes">
+        <update tableName="TEST_DATA_TABLE">
+            <column name="json_data" value="PARSE_JSON('{&quot;updated&quot;: true, &quot;value&quot;: 999}')" type="STRING"/>
+            <where>id = 1</where>
+        </update>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet author="test-harness" id="cleanup-dataTable">
+        <dropTable tableName="TEST_DATA_TABLE"/>
+    </changeSet>
+
+</databaseChangeLog>

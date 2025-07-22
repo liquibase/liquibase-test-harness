@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet author="test-harness" id="alterWarehouse-setup">
+        <snowflake:createWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
+                        warehouseSize="XSMALL"
+                        autoSuspend="60"
+                        autoResume="true"
+                        comment="Warehouse to be altered"/>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterWarehouse-size">
+        <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
+                       warehouseSize="MEDIUM"/>
+        <rollback>
+            <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
+                           warehouseSize="XSMALL"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterWarehouse-properties">
+        <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
+                       autoSuspend="300"
+                       autoResume="false"
+                       comment="Modified test warehouse"/>
+        <rollback>
+            <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
+                           autoSuspend="60"
+                           autoResume="true"
+                           comment="Warehouse to be altered"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterWarehouse-clustering">
+        <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
+                       warehouseType="STANDARD"
+                       minClusterCount="1"
+                       maxClusterCount="4"
+                       scalingPolicy="ECONOMY"/>
+        <rollback>
+            <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
+                           warehouseType="STANDARD"
+                           minClusterCount="1"
+                           maxClusterCount="1"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterWarehouse-cleanup">
+        <snowflake:dropWarehouse warehouseName="LTHDB_ALTER_TEST_WH" ifExists="true"/>
+    </changeSet>
+
+</databaseChangeLog>

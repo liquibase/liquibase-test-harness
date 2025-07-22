@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="test-harness" id="createSchema-transient">
+        <sql>CREATE TRANSIENT SCHEMA TEST_TRANSIENT_SCHEMA COMMENT = 'Transient test schema'</sql>
+        <rollback>
+            <sql>DROP SCHEMA IF EXISTS TEST_TRANSIENT_SCHEMA</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createSchema-managedAccess">
+        <sql>CREATE SCHEMA TEST_MANAGED_SCHEMA WITH MANAGED ACCESS COMMENT = 'Managed access schema'</sql>
+        <rollback>
+            <sql>DROP SCHEMA IF EXISTS TEST_MANAGED_SCHEMA</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createSchema-retention">
+        <sql>CREATE SCHEMA TEST_RETENTION_SCHEMA DATA_RETENTION_TIME_IN_DAYS = 7 COMMENT = 'Schema with retention'</sql>
+        <rollback>
+            <sql>DROP SCHEMA IF EXISTS TEST_RETENTION_SCHEMA</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createSchema-full">
+        <sql>CREATE TRANSIENT SCHEMA TEST_FULL_SCHEMA WITH MANAGED ACCESS COMMENT = 'Full featured schema'</sql>
+        <rollback>
+            <sql>DROP SCHEMA IF EXISTS TEST_FULL_SCHEMA</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterSchema-comment">
+        <sql>ALTER SCHEMA TEST_TRANSIENT_SCHEMA SET COMMENT = 'Modified transient schema'</sql>
+        <rollback>
+            <sql>ALTER SCHEMA TEST_TRANSIENT_SCHEMA SET COMMENT = 'Transient test schema'</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterSchema-retention">
+        <sql>ALTER SCHEMA TEST_RETENTION_SCHEMA SET DATA_RETENTION_TIME_IN_DAYS = 21</sql>
+        <rollback>
+            <sql>ALTER SCHEMA TEST_RETENTION_SCHEMA SET DATA_RETENTION_TIME_IN_DAYS = 7</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterSchema-rename">
+        <sql>ALTER SCHEMA TEST_MANAGED_SCHEMA RENAME TO TEST_MANAGED_SCHEMA_RENAMED</sql>
+        <rollback>
+            <sql>ALTER SCHEMA TEST_MANAGED_SCHEMA_RENAMED RENAME TO TEST_MANAGED_SCHEMA</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="cleanup-schemas">
+        <sql>DROP SCHEMA IF EXISTS TEST_TRANSIENT_SCHEMA</sql>
+        <sql>DROP SCHEMA IF EXISTS TEST_MANAGED_SCHEMA_RENAMED</sql>
+        <sql>DROP SCHEMA IF EXISTS TEST_RETENTION_SCHEMA</sql>
+        <sql>DROP SCHEMA IF EXISTS TEST_FULL_SCHEMA</sql>
+    </changeSet>
+
+</databaseChangeLog>

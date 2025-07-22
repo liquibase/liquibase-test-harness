@@ -7,9 +7,9 @@
     <!--    datatype attribute is not supported by Snowflake-->
     <changeSet author="oleh" id="1">
         <createSequence incrementBy="1"
-                        sequenceName="test_sequence"
+                        sequenceName="drop_test_sequence"
                         startValue="1"/>
-        <dropSequence sequenceName="test_sequence"/>
+        <dropSequence sequenceName="drop_test_sequence"/>
         <rollback/>
     </changeSet>
 </databaseChangeLog>

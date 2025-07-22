@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="test-harness" id="createTable-transient">
+        <sql>
+            CREATE TRANSIENT TABLE TEST_TRANSIENT_TABLE (
+                id INTEGER PRIMARY KEY,
+                name VARCHAR(100),
+                created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) COMMENT = 'Transient test table'
+        </sql>
+        <rollback>
+            <dropTable tableName="TEST_TRANSIENT_TABLE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createTable-clusterBy">
+        <sql>
+            CREATE TABLE TEST_CLUSTERED_TABLE (
+                id INTEGER,
+                category VARCHAR(50),
+                subcategory VARCHAR(50),
+                data VARCHAR(500),
+                created_date DATE
+            ) CLUSTER BY (category, subcategory)
+            COMMENT = 'Table with clustering keys'
+        </sql>
+        <rollback>
+            <dropTable tableName="TEST_CLUSTERED_TABLE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createTable-dataRetention">
+        <sql>
+            CREATE TABLE TEST_RETENTION_TABLE (
+                id INTEGER,
+                data VARCHAR(200),
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) DATA_RETENTION_TIME_IN_DAYS = 7
+            COMMENT = 'Table with data retention'
+        </sql>
+        <rollback>
+            <dropTable tableName="TEST_RETENTION_TABLE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createTable-changeTracking">
+        <sql>
+            CREATE TABLE TEST_CHANGE_TRACKING_TABLE (
+                id INTEGER PRIMARY KEY,
+                data VARCHAR(200),
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) CHANGE_TRACKING = TRUE
+            COMMENT = 'Table with change tracking'
+        </sql>
+        <rollback>
+            <dropTable tableName="TEST_CHANGE_TRACKING_TABLE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createTable-fullFeatures">
+        <sql>
+            CREATE TRANSIENT TABLE TEST_FULL_FEATURE_TABLE (
+                id INTEGER PRIMARY KEY,
+                category VARCHAR(50),
+                data VARCHAR(500),
+                created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) 
+            CLUSTER BY (category)
+            DATA_RETENTION_TIME_IN_DAYS = 1
+            CHANGE_TRACKING = TRUE
+            COMMENT = 'Full featured Snowflake table'
+        </sql>
+        <rollback>
+            <dropTable tableName="TEST_FULL_FEATURE_TABLE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createTable-complexTypes">
+        <sql>
+            CREATE TABLE TEST_COMPLEX_TYPES_TABLE (
+                id INTEGER PRIMARY KEY,
+                json_data VARIANT,
+                array_data ARRAY,
+                object_data OBJECT,
+                geography_data GEOGRAPHY,
+                binary_data BINARY(100),
+                timestamp_ntz TIMESTAMP_NTZ,
+                timestamp_ltz TIMESTAMP_LTZ,
+                timestamp_tz TIMESTAMP_TZ
+            ) COMMENT = 'Table with Snowflake complex data types'
+        </sql>
+        <rollback>
+            <dropTable tableName="TEST_COMPLEX_TYPES_TABLE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterTable-clustering">
+        <sql>ALTER TABLE TEST_RETENTION_TABLE CLUSTER BY (id)</sql>
+        <rollback>
+            <sql>ALTER TABLE TEST_RETENTION_TABLE DROP CLUSTERING KEY</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterTable-retention">
+        <sql>ALTER TABLE TEST_CLUSTERED_TABLE SET DATA_RETENTION_TIME_IN_DAYS = 30</sql>
+        <rollback>
+            <sql>ALTER TABLE TEST_CLUSTERED_TABLE UNSET DATA_RETENTION_TIME_IN_DAYS</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterTable-changeTracking">
+        <sql>ALTER TABLE TEST_RETENTION_TABLE SET CHANGE_TRACKING = TRUE</sql>
+        <rollback>
+            <sql>ALTER TABLE TEST_RETENTION_TABLE SET CHANGE_TRACKING = FALSE</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="cleanup-tables">
+        <dropTable tableName="TEST_TRANSIENT_TABLE"/>
+        <dropTable tableName="TEST_CLUSTERED_TABLE"/>
+        <dropTable tableName="TEST_RETENTION_TABLE"/>
+        <dropTable tableName="TEST_CHANGE_TRACKING_TABLE"/>
+        <dropTable tableName="TEST_FULL_FEATURE_TABLE"/>
+        <dropTable tableName="TEST_COMPLEX_TYPES_TABLE"/>
+    </changeSet>
+
+</databaseChangeLog>

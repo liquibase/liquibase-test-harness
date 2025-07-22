@@ -14,17 +14,17 @@
 
     <changeSet id="2" author="oleh">
         <createSequence incrementBy="2"
-          sequenceName="test_sequence"
+          sequenceName="value_test_sequence"
           startValue="30"/>
         <rollback>
-            <dropSequence sequenceName="test_sequence"/>
+            <dropSequence sequenceName="value_test_sequence"/>
         </rollback>
     </changeSet>
 
 
     <changeSet id="3" author="oleh">
         <update tableName="valueSequenceNextTable">
-            <column name="test_id" valueSequenceNext="test_sequence"/>
+            <column name="test_id" valueSequenceNext="value_test_sequence"/>
         </update>
         <rollback/>
     </changeSet>

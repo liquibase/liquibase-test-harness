@@ -7,17 +7,15 @@
 <!--    datatype attribute is not supported by Snowflake-->
     <changeSet id="1" author="as">
         <createSequence incrementBy="1"
-                        sequenceName="test_sequence"
+                        sequenceName="alter_test_sequence"
                         startValue="1"/>
         <rollback/>
     </changeSet>
     <changeSet author="as" id="2" >
-        <alterSequence cacheSize="371717"
-                       cycle="true"
-                       incrementBy="10"
-                       sequenceName="test_sequence"/>
+        <alterSequence incrementBy="10"
+                       sequenceName="alter_test_sequence"/>
         <rollback>
-            <dropSequence sequenceName="test_sequence"/>
+            <dropSequence sequenceName="alter_test_sequence"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

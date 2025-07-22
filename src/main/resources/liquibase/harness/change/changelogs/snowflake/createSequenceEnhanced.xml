@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Basic sequence with ORDER option -->
+    <changeSet author="test-harness" id="createSequence-order">
+        <sql>
+            CREATE SEQUENCE TEST_ORDERED_SEQUENCE 
+            START WITH 1 
+            INCREMENT BY 1 
+            ORDER
+        </sql>
+        <rollback>
+            <dropSequence sequenceName="TEST_ORDERED_SEQUENCE"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Sequence with NOORDER option (default) -->
+    <changeSet author="test-harness" id="createSequence-noorder">
+        <sql>
+            CREATE SEQUENCE TEST_NOORDER_SEQUENCE 
+            START WITH 1 
+            INCREMENT BY 1 
+            NOORDER
+        </sql>
+        <rollback>
+            <dropSequence sequenceName="TEST_NOORDER_SEQUENCE"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Sequence with ORDER and other options -->
+    <changeSet author="test-harness" id="createSequence-order-complex">
+        <sql>
+            CREATE SEQUENCE TEST_ORDERED_COMPLEX 
+            START WITH 100 
+            INCREMENT BY 5 
+            ORDER
+            COMMENT = 'Ordered sequence with additional options'
+        </sql>
+        <rollback>
+            <dropSequence sequenceName="TEST_ORDERED_COMPLEX"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Create sequence that will be altered (test different create sequence method) -->
+    <changeSet author="test-harness" id="alterSequence-addOrder">
+        <createSequence sequenceName="TEST_ALTER_ORDER_SEQ"
+                       startValue="1"
+                       incrementBy="1"/>
+    </changeSet>
+
+    <!-- Test sequence with negative increment and ORDER -->
+    <changeSet author="test-harness" id="createSequence-order-negative">
+        <sql>
+            CREATE SEQUENCE TEST_ORDERED_NEGATIVE 
+            START WITH 1000 
+            INCREMENT BY -10 
+            ORDER
+        </sql>
+        <rollback>
+            <dropSequence sequenceName="TEST_ORDERED_NEGATIVE"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Test sequence with ORDER and comment -->
+    <changeSet author="test-harness" id="createSequence-order-cycle">
+        <sql>
+            CREATE SEQUENCE TEST_ORDERED_CYCLE 
+            START WITH 1 
+            INCREMENT BY 1 
+            ORDER
+            COMMENT = 'Ordered sequence for testing'
+        </sql>
+        <rollback>
+            <dropSequence sequenceName="TEST_ORDERED_CYCLE"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet author="test-harness" id="cleanup-sequences">
+        <dropSequence sequenceName="TEST_ORDERED_SEQUENCE"/>
+        <dropSequence sequenceName="TEST_NOORDER_SEQUENCE"/>
+        <dropSequence sequenceName="TEST_ORDERED_COMPLEX"/>
+        <dropSequence sequenceName="TEST_ALTER_ORDER_SEQ"/>
+        <dropSequence sequenceName="TEST_ORDERED_NEGATIVE"/>
+        <dropSequence sequenceName="TEST_ORDERED_CYCLE"/>
+    </changeSet>
+
+</databaseChangeLog>
