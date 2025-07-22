@@ -425,10 +425,14 @@ jobs:
               result = "failure";
             }
 
+            // Get the liquibase repo details directly from inputs
+            let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo || 'liquibase/liquibase' }}";
+            let repoOwnerName = liquibaseRepo.split("/")[0];
+
             console.log("Mark tests as "+result);
             await github.rest.repos.createCommitStatus({
-              "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
-              "repo": "liquibase",
+              "owner": repoOwnerName,
+              "repo": liquibaseRepo,
               "sha": "${{ needs.setup.outputs.liquibaseSha }}",
               "state": result,
               "context": "Run Test-Harness Tests",
