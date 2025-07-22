@@ -1,0 +1,36 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "oleh",
+        "changes": [
+          {
+            "createFileFormat": {
+              "fileFormatName": "ItTestFileFormat",
+              "temporary": false,
+              "replaceIfExists": false,
+              "ifNotExists": true,
+              "comment": "myComment",
+              "fileFormatType": "CSV",
+              "formatTypeOptions": [
+                {
+                  "entry": {
+                    "key": "COMPRESSION",
+                    "value": "ZSTD"
+                  }
+                },
+                {
+                  "entry": {
+                    "key": "BINARY_FORMAT",
+                    "value": "BASE64"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
