@@ -50,8 +50,8 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            TH_SNOW_URL, liquibaseth_url
-            TH_SNOW_USER, liquibaseth_usrname
+            TH_SNOW_URL_GH, liquibaseth_url
+            TH_SNOW_USER_GH, liquibaseth_usrname
 
       - name: Install Liquibase
         run: |
@@ -71,8 +71,8 @@ jobs:
         run: |
           cat > liquibase.properties << EOF
           # Snowflake connection settings with database in URL
-          url=${TH_SNOW_URL}
-          username=${TH_SNOW_USER}
+          url=${TH_SNOW_URL_GH}
+          username=${TH_SNOW_USER_GH}
           driver=net.snowflake.client.jdbc.SnowflakeDriver
 
           # PKI Authentication
@@ -100,8 +100,8 @@ jobs:
           mvn -Dtest=LiquibaseHarnessSuiteTest \
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
-              -DdbUsername=${{env.TH_SNOW_USER}} \
-              -DdbUrl='${{env.TH_SNOW_URL}}&private_key_file=/tmp/snowflake_private_key.p8' \
+              -DdbUsername=${{env.TH_SNOW_USER_GH}} \
+              -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
               -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
               -DrollbackStrategy=rollbackByTag test
 
