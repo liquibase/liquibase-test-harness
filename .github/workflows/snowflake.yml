@@ -89,6 +89,8 @@ jobs:
           EOF
 
       - name: Run Liquibase Update
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         run: |
           liquibase --defaults-file=liquibase.properties update
 
