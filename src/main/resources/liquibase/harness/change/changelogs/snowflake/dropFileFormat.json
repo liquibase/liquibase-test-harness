@@ -8,9 +8,10 @@
           {
             "createFileFormat": {
               "fileFormatName": "ItTestFileFormat",
-              "temporary": false,
               "replaceIfExists": false,
+              "alterIfExists": false,
               "ifNotExists": true,
+              "temporary": false,
               "comment": "myComment",
               "fileFormatType": "CSV",
               "formatTypeOptions": [
@@ -31,7 +32,7 @@
           },
           {
             "dropFileFormat": {
-              "typeName": "ItTestFileFormat"
+              "fileFormatName": "ItTestFileFormat"
             }
           }
         ],
