@@ -8,9 +8,10 @@
           {
             "createFileFormat": {
               "fileFormatName": "ItTestFileFormat",
-              "temporary": false,
               "replaceIfExists": false,
+              "alterIfExists": false,
               "ifNotExists": true,
+              "temporary": false,
               "comment": "myComment",
               "fileFormatType": "CSV",
               "formatTypeOptions": [
@@ -39,7 +40,7 @@
         "rollback": [
           {
             "dropFileFormat": {
-              "typeName":"ItTestFileFormatNew"
+              "fileFormatName":"ItTestFileFormatNew"
             }
           }
         ]

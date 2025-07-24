@@ -2,28 +2,31 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xmlns:pro-snowflake="http://www.liquibase.org/xml/ns/pro-snowflake"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd
+        http://www.liquibase.org/xml/ns/pro-snowflake http://www.liquibase.org/xml/ns/pro-snowflake/liquibase-pro-snowflake-latest.xsd">
     <changeSet author="oleh" id="1">
-        <pro:createFileFormat fileFormatName="ItTestFileFormat"
-                              temporary="false"
-                              replaceIfExists="false"
-                              ifNotExists="true"
-                              comment="myComment"
-                              fileFormatType="CSV">
-            <pro:formatTypeOptions>
-                <pro:entry>
-                    <pro:key>COMPRESSION</pro:key>
-                    <pro:value>ZSTD</pro:value>
-                </pro:entry>
-                <pro:entry>
-                    <pro:key>BINARY_FORMAT</pro:key>
-                    <pro:value>BASE64</pro:value>
-                </pro:entry>
-            </pro:formatTypeOptions>
-        </pro:createFileFormat>
-        <pro:dropFileFormat fileFormatName="ItTestFileFormat"/>
+        <pro-snowflake:createFileFormat fileFormatName="ItTestFileFormat"
+                                        replaceIfExists="false"
+                                        alterIfExists="false"
+                                        ifNotExists="true"
+                                        temporary="false"
+                                        comment="myComment"
+                                        fileFormatType="CSV">
+            <pro-snowflake:formatTypeOptions>
+                <pro-snowflake:entry>
+                    <pro-snowflake:key>COMPRESSION</pro-snowflake:key>
+                    <pro-snowflake:value>ZSTD</pro-snowflake:value>
+                </pro-snowflake:entry>
+                <pro-snowflake:entry>
+                    <pro-snowflake:key>BINARY_FORMAT</pro-snowflake:key>
+                    <pro-snowflake:value>BASE64</pro-snowflake:value>
+                </pro-snowflake:entry>
+            </pro-snowflake:formatTypeOptions>
+        </pro-snowflake:createFileFormat>
+        <pro-snowflake:dropFileFormat fileFormatName="ItTestFileFormat"/>
         <rollback/>
     </changeSet>
 </databaseChangeLog>
