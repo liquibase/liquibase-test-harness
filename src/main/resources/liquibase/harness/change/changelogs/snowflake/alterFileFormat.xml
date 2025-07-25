@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xmlns:pro-snowflake="http://www.liquibase.org/xml/ns/pro-snowflake"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd
+        http://www.liquibase.org/xml/ns/pro-snowflake http://www.liquibase.org/xml/ns/pro-snowflake/liquibase-pro-snowflake-latest.xsd">
+    <changeSet author="oleh" id="1">
+        <pro-snowflake:createFileFormat fileFormatName="ItTestFileFormat"
+                                        replaceIfExists="false"
+                                        alterIfExists="false"
+                                        ifNotExists="true"
+                                        temporary="false"
+                                        comment="myComment"
+                                        fileFormatType="CSV">
+            <pro-snowflake:formatTypeOptions>
+                <pro-snowflake:entry>
+                    <pro-snowflake:key>COMPRESSION</pro-snowflake:key>
+                    <pro-snowflake:value>ZSTD</pro-snowflake:value>
+                </pro-snowflake:entry>
+                <pro-snowflake:entry>
+                    <pro-snowflake:key>BINARY_FORMAT</pro-snowflake:key>
+                    <pro-snowflake:value>BASE64</pro-snowflake:value>
+                </pro-snowflake:entry>
+            </pro-snowflake:formatTypeOptions>
+        </pro-snowflake:createFileFormat>
+        <pro-snowflake:alterFileFormat fileFormatName="ItTestFileFormat" comment="changedComment">
+            <pro-snowflake:formatTypeOptions>
+                <pro-snowflake:entry>
+                    <pro-snowflake:key>COMPRESSION</pro-snowflake:key>
+                    <pro-snowflake:value>DEFLATE</pro-snowflake:value>
+                </pro-snowflake:entry>
+            </pro-snowflake:formatTypeOptions>
+        </pro-snowflake:alterFileFormat>
+        <rollback>
+            <pro-snowflake:dropFileFormat fileFormatName="ItTestFileFormat"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
