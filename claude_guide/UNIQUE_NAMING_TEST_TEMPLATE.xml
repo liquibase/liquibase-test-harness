@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Unique naming pattern for parallel execution -->
+    
+    <!-- Use changeset ID as unique suffix -->
+    <property name="uniqueSuffix" value="${changeSetId}"/>
+    
+    <!-- Step 1: Pre-test cleanup (always runs) -->
+    <changeSet id="cleanup-${testName}" author="test-harness" runAlways="true">
+        <preConditions onFail="CONTINUE">
+            <sqlCheck expectedResult="1">SELECT 1</sqlCheck>
+        </preConditions>
+        <!-- Clean up with unique names -->
+        <sql>DROP WAREHOUSE IF EXISTS WH_${testName}_${uniqueSuffix}</sql>
+        <sql>DROP TABLE IF EXISTS TABLE_${testName}_${uniqueSuffix}</sql>
+        <sql>DROP SEQUENCE IF EXISTS SEQ_${testName}_${uniqueSuffix}</sql>
+        <rollback/>
+    </changeSet>
+
+    <!-- Step 2: The actual test with unique names -->
+    <changeSet id="test-${testName}" author="test-harness">
+        <snowflake:createWarehouse 
+            warehouseName="WH_${testName}_${uniqueSuffix}"
+            warehouseSize="XSMALL"/>
+        <createTable tableName="TABLE_${testName}_${uniqueSuffix}">
+            <column name="id" type="int"/>
+        </createTable>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="WH_${testName}_${uniqueSuffix}"/>
+            <dropTable tableName="TABLE_${testName}_${uniqueSuffix}"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

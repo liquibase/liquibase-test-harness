@@ -1,5 +1,22 @@
 # Claude AI - Liquibase Test Harness Knowledge Base
 
+## CRITICAL: NO WORKAROUNDS POLICY
+
+**NEVER implement workarounds without explicit user approval.** When encountering obstacles:
+1. **STOP** - Do not proceed with alternative solutions
+2. **EXPLAIN** - Clearly describe the problem encountered
+3. **ASK** - Request user guidance on how to properly solve the issue
+4. **WAIT** - Do not continue until receiving explicit direction
+
+The goal is to implement proper solutions, not quick fixes. Namespace-prefixed attributes like `snowflake:transient="true"` MUST work as designed. Do NOT use tablespace or remarks field encoding as workarounds.
+
+## Recent Updates (2025-07-24)
+- ✅ **WAREHOUSE Implementation Complete**: Successfully added RESOURCE_CONSTRAINT, OR REPLACE, IF NOT EXISTS features
+- ✅ **Test Organization Standards**: Established best practices for separate vs. combined test files
+- ✅ **Build Integration Workflow**: Critical patterns for rebuilding extension JAR after code changes
+- ✅ **XSD Schema Resolution**: Solutions for attribute validation issues
+- ✅ **JdbcConnection Pattern**: Fixed compilation errors in snapshot generators
+
 ## Critical Learnings from Snowflake Test Harness Implementation
 
 ### 1. The Persistent Database State Problem
@@ -93,14 +110,56 @@ See the `claude_guide/` directory for:
 - Test harness patterns
 - Maven command cheat sheet
 
+## Implementation and Testing Workflow (2025-07-24 Standards)
+
+### Complete Implementation Process
+1. **Code Implementation Phase**:
+   ```bash
+   # Implement Change, Statement, SQL Generator classes
+   mvn package -DskipTests -f /path/to/liquibase-snowflake/pom.xml
+   cp target/liquibase-snowflake-1.0.0-SNAPSHOT.jar ai-generated/liquibase-4.33.0/lib/
+   ```
+
+2. **Test Organization Standards**:
+   - ✅ **Separate test files** for different core functionality
+   - ✅ **Separate test files** for mutually exclusive features (OR REPLACE vs IF NOT EXISTS)
+   - ✅ **Multiple changesets** within same file for variations of same operation
+   - ✅ **Self-contained tests** with proper setup and cleanup
+
+3. **Test Harness Creation**:
+   - Create `changelogs/snowflake/testName.xml` - Follow naming: `createWarehouseWithResourceConstraint.xml`
+   - Create `expectedSql/snowflake/testName.sql` - Include ALL SQL including init
+   - Create `expectedSnapshot/snowflake/testName.json` - Expected database state
+   - Update `init.xml` to drop any new objects
+
+4. **Critical Build Integration**:
+   - ALWAYS rebuild extension JAR after ANY code changes
+   - Tests are now independent: `mvn test -Dtest=ChangeObjectTests -DchangeObjects=testName -DdbName=snowflake`
+   - Each test includes its own cleanup changeset (FOOLPROOF)
+
+### Test Organization Examples (From WAREHOUSE Implementation)
+```
+✅ CORRECT:
+- createWarehouse.xml (basic operation with 3 changesets for variations)
+- createWarehouseWithResourceConstraint.xml (new parameter feature)
+- createOrReplaceWarehouse.xml (different creation behavior)
+- createWarehouseIfNotExists.xml (mutually exclusive with OR REPLACE)
+
+❌ INCORRECT:
+- createWarehouseAllFeatures.xml (mixing mutually exclusive features)
+- One file with OR REPLACE and IF NOT EXISTS in same test
+```
+
 ## Quick Reference
 
-### Adding a New Test
-1. Create `changelogs/snowflake/myTest.xml` with setup + test
-2. Create `expectedSql/snowflake/myTest.sql` with ALL SQL
+### Adding a New Test (FOOLPROOF Process)
+1. Create `changelogs/snowflake/myTest.xml` with cleanup changeset + test
+2. Create `expectedSql/snowflake/myTest.sql` with ALL SQL (including cleanup)
 3. Create `expectedSnapshot/snowflake/myTest.json` with expected state
-4. Update `init.xml` to drop any new objects
-5. Run: `mvn test -Dtest=ChangeObjectTests -DchangeObjects=init,myTest -DdbName=snowflake`
+4. Rebuild extension if code changes: `mvn package -DskipTests && cp target/*.jar lib/`
+5. Run: `mvn test -Dtest=ChangeObjectTests -DchangeObjects=myTest -DdbName=snowflake`
+
+**No need to call init or update init.xml - each test is completely independent!**
 
 ### Debugging Failed Tests
 1. Check if init is running (look for cleanup SQL in logs)

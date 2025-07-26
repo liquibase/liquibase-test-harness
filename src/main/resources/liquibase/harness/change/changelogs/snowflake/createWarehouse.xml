@@ -6,12 +6,32 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                       http://www.liquibase.org/xml/ns/snowflake
                       http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+
+    <!-- Clean up any warehouses this test might create -->
+    <changeSet author="test-harness" id="cleanup-test-warehouses" runAlways="true">
+        <sql>
+            DROP WAREHOUSE IF EXISTS LTHDB_TEST_WAREHOUSE;
+            DROP WAREHOUSE IF EXISTS LTHDB_TEST_MULTICLUSTER_WH;
+            DROP WAREHOUSE IF EXISTS LTHDB_TEST_ADVANCED_WH;
+            DROP WAREHOUSE IF EXISTS LTHDB_TEST_IF_NOT_EXISTS_WH;
+            DROP WAREHOUSE IF EXISTS LTHDB_TEST_RESOURCE_CONSTRAINT_WH;
+        </sql>
+    </changeSet>
+
+    <!-- Restore warehouse context after dropping warehouses -->
+    <changeSet author="test-harness" id="restore-warehouse-context" runAlways="true">
+        <sql>USE WAREHOUSE LTHDB_TEST_WH</sql>
+    </changeSet>
 
     <changeSet author="test-harness" id="createWarehouse-basic">
         <snowflake:createWarehouse warehouseName="LTHDB_TEST_WAREHOUSE"
                         warehouseSize="XSMALL"
                         autoSuspend="60"
                         autoResume="true"
+                        initiallySuspended="false"
                         comment="Test warehouse for harness"/>
         <rollback>
             <snowflake:dropWarehouse warehouseName="LTHDB_TEST_WAREHOUSE"/>
@@ -27,6 +47,7 @@
                         scalingPolicy="STANDARD"
                         autoSuspend="300"
                         autoResume="true"
+                        initiallySuspended="false"
                         comment="Multi-cluster test warehouse"/>
         <rollback>
             <snowflake:dropWarehouse warehouseName="LTHDB_TEST_MULTICLUSTER_WH"/>
@@ -38,14 +59,53 @@
                         warehouseSize="LARGE"
                         warehouseType="STANDARD"
                         autoSuspend="180"
-                        autoResume="false"
-                        initiallySuspended="true"
+                        autoResume="true"
+                        initiallySuspended="false"
                         maxConcurrencyLevel="8"
                         statementQueuedTimeoutInSeconds="3600"
                         statementTimeoutInSeconds="172800"
                         comment="Advanced configuration warehouse"/>
         <rollback>
             <snowflake:dropWarehouse warehouseName="LTHDB_TEST_ADVANCED_WH"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Test with IF NOT EXISTS option -->
+    <changeSet author="test-harness" id="createWarehouse-ifNotExists">
+        <snowflake:createWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"
+                        warehouseSize="XSMALL"
+                        autoSuspend="60"
+                        autoResume="true"
+                        ifNotExists="true"
+                        comment="Test warehouse with IF NOT EXISTS"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Try to create the same warehouse again - should not fail -->
+    <changeSet author="test-harness" id="createWarehouse-ifNotExists-duplicate">
+        <snowflake:createWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"
+                        warehouseSize="MEDIUM"
+                        autoSuspend="120"
+                        ifNotExists="true"
+                        comment="Duplicate creation should not fail"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Test with RESOURCE_CONSTRAINT option -->
+    <changeSet author="test-harness" id="createWarehouse-resourceConstraint">
+        <snowflake:createWarehouse warehouseName="LTHDB_TEST_RESOURCE_CONSTRAINT_WH"
+                        warehouseSize="XSMALL"
+                        autoSuspend="60"
+                        autoResume="true"
+                        initiallySuspended="false"
+                        resourceConstraint="true"
+                        comment="Test warehouse with resource constraint"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_RESOURCE_CONSTRAINT_WH"/>
         </rollback>
     </changeSet>
 

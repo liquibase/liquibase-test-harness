@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+
+    <!-- Cleanup any existing schema -->
+    <changeSet author="test-harness" id="cleanup-existing-schema" runAlways="true">
+        <sql>DROP SCHEMA IF EXISTS TEST_REPLACE_SCHEMA CASCADE</sql>
+    </changeSet>
+
+    <!-- First create a schema -->
+    <changeSet author="test-harness" id="createSchema-initial" runAlways="true">
+        <snowflake:createSchema schemaName="TEST_REPLACE_SCHEMA" 
+                        comment="Initial schema to be replaced"/>
+        <rollback>
+            <snowflake:dropSchema schemaName="TEST_REPLACE_SCHEMA" ifExists="true" cascade="true"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Then replace it with new configuration -->
+    <changeSet author="test-harness" id="createOrReplaceSchema" runAlways="true">
+        <snowflake:createSchema schemaName="TEST_REPLACE_SCHEMA"
+                        orReplace="true"
+                        comment="Replaced schema with new configuration"/>
+        <rollback>
+            <snowflake:dropSchema schemaName="TEST_REPLACE_SCHEMA" ifExists="true" cascade="true"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

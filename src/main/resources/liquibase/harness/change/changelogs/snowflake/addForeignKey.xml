@@ -4,6 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
 
     <!-- Create AUTHORS table for the test -->
     <changeSet id="createAuthorsTable" author="test-harness">

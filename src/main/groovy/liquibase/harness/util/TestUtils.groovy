@@ -29,14 +29,14 @@ class TestUtils {
     static parseQuery(String script) {
         if (script) {
             script.replaceAll(/(?m)^--.*/, "") //remove comments
-                    .replaceAll(/(?m)^CREATE TABLE .*\w*.*DATABASECHANGELOG.*/, "") //remove create table queries for databasechangelog* tables
-                    .replaceAll(/(?m)^CREATE TABLE .*\w*.*databasechangelog.*/, "")
-                    .replaceAll(/(?m)^INSERT INTO .*\w*.*DATABASECHANGELOG.*/, "") //remove insert queries for databasechangelog* tables
-                    .replaceAll(/(?m)^INSERT INTO .*\w*.*databasechangelog.*/, "")
-                    .replaceAll(/(?m)^UPDATE .*\w*.*DATABASECHANGELOG.*/, "") //remove update queries for databasechangelog* tables
-                    .replaceAll(/(?m)^UPDATE .*\w*.*databasechangelog.*/, "")
-                    .replaceAll(/(?m)^DELETE FROM .*\w*.*databasechangelog.*/, "") //remove delete queries for databasechangelog* tables
-                    .replaceAll(/(?m)^DELETE FROM .*\w*.*DATABASECHANGELOG.*/, "")
+                    .replaceAll(/(?m)^CREATE TABLE (?!DATABASECHANGELOG\s|DATABASECHANGELOGLOCK\s).*DATABASECHANGELOG.*/, "") //remove create table queries for custom databasechangelog* tables
+                    .replaceAll(/(?m)^CREATE TABLE (?!databasechangelog\s|databasechangeloglock\s).*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^INSERT INTO (?!DATABASECHANGELOG\s|DATABASECHANGELOGLOCK\s).*DATABASECHANGELOG.*/, "") //remove insert queries for custom databasechangelog* tables
+                    .replaceAll(/(?m)^INSERT INTO (?!databasechangelog\s|databasechangeloglock\s).*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^UPDATE (?!DATABASECHANGELOG\s|DATABASECHANGELOGLOCK\s).*DATABASECHANGELOG.*/, "") //remove update queries for custom databasechangelog* tables
+                    .replaceAll(/(?m)^UPDATE (?!databasechangelog\s|databasechangeloglock\s).*databasechangelog.*/, "")
+                    .replaceAll(/(?m)^DELETE FROM (?!databasechangelog\s|DATABASECHANGELOGLOCK\s).*databasechangelog.*/, "") //remove delete queries for custom databasechangelog* tables
+                    .replaceAll(/(?m)^DELETE FROM (?!DATABASECHANGELOG\s|databasechangeloglock\s).*DATABASECHANGELOG.*/, "")
                     .replaceAll(/(?m)^SET SEARCH_PATH.*/, "") //specific replacement for Postgres
                     .replaceAll(/\b(?:GO|USE lbcat)\b/, "") //specific replacement for MSSQL
                     .replaceAll(/(?m)^SET GLOBAL log_bin_trust_function_creators = 1/, "") //specific replacement for MySQL

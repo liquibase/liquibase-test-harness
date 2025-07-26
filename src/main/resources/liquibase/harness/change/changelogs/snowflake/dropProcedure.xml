@@ -4,17 +4,42 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-        <!--https://docs.liquibase.com/change-types/community/drop-procedure.html-->
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+    
+    <!-- Setup: Create table that the procedure will use -->
+    <changeSet author="test-harness" id="setup-dropProcedure">
+        <createTable tableName="table1">
+            <column name="column 1" type="varchar(100)"/>
+        </createTable>
+    </changeSet>
+    
+        <!--https://docs.liquibase.com/change-types/community/create-procedure.html-->
     <changeSet author="as" id="1">
-        <comment>test procedure</comment>
+        <comment>create test procedure</comment>
         <createProcedure
-
                 encoding="UTF-8"
                 path="createProcedure.txt"
                 relativeToChangelogFile="true"
                 procedureName="test_procedure">
         </createProcedure>
+        <rollback>
+            <dropProcedure procedureName="test_procedure"/>
+        </rollback>
+    </changeSet>
+    
+    <!--https://docs.liquibase.com/change-types/community/drop-procedure.html-->
+    <changeSet author="as" id="2">
+        <comment>drop test procedure</comment>
         <dropProcedure procedureName="test_procedure"/>
-        <rollback/>
+        <rollback>
+            <createProcedure
+                    encoding="UTF-8"
+                    path="createProcedure.txt"
+                    relativeToChangelogFile="true"
+                    procedureName="test_procedure">
+            </createProcedure>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

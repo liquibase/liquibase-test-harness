@@ -6,16 +6,27 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                       http://www.liquibase.org/xml/ns/snowflake
                       http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
 
-    <changeSet author="test-harness" id="alterWarehouse-setup">
+    <!-- Clean up any warehouses this test might create -->
+    <changeSet author="test-harness" id="cleanup-test-warehouses" runAlways="true">
+        <sql>
+            DROP WAREHOUSE IF EXISTS LTHDB_ALTER_TEST_WH;
+        </sql>
+    </changeSet>
+
+    <changeSet author="test-harness" id="alterWarehouse-setup-v2">
         <snowflake:createWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
                         warehouseSize="XSMALL"
                         autoSuspend="60"
                         autoResume="true"
+                        initiallySuspended="false"
                         comment="Warehouse to be altered"/>
     </changeSet>
 
-    <changeSet author="test-harness" id="alterWarehouse-size">
+    <changeSet author="test-harness" id="alterWarehouse-size-v2">
         <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
                        warehouseSize="MEDIUM"/>
         <rollback>
@@ -24,10 +35,10 @@
         </rollback>
     </changeSet>
 
-    <changeSet author="test-harness" id="alterWarehouse-properties">
+    <changeSet author="test-harness" id="alterWarehouse-properties-v2">
         <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
                        autoSuspend="300"
-                       autoResume="false"
+                       autoResume="true"
                        comment="Modified test warehouse"/>
         <rollback>
             <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
@@ -37,7 +48,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet author="test-harness" id="alterWarehouse-clustering">
+    <changeSet author="test-harness" id="alterWarehouse-clustering-v2">
         <snowflake:alterWarehouse warehouseName="LTHDB_ALTER_TEST_WH"
                        warehouseType="STANDARD"
                        minClusterCount="1"
@@ -51,8 +62,9 @@
         </rollback>
     </changeSet>
 
-    <changeSet author="test-harness" id="alterWarehouse-cleanup">
+    <changeSet author="test-harness" id="alterWarehouse-cleanup-v2">
         <snowflake:dropWarehouse warehouseName="LTHDB_ALTER_TEST_WH" ifExists="true"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH</sql>
     </changeSet>
 
 </databaseChangeLog>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+
+    <changeSet author="test-harness" id="setup-addNotNullConstraint">
+        <createTable tableName="posts">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="inserted_date" type="date"/>
+            <column name="title" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="oleh" id="1-v2">
+        <addNotNullConstraint  columnDataType="date"
+                               columnName="inserted_date"
+                               constraintName="test_notNull"
+                               tableName="posts"
+                               validate="true"/>
+    </changeSet>
+</databaseChangeLog>

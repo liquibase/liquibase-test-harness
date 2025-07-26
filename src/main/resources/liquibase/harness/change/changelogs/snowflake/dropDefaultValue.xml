@@ -4,8 +4,13 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <!--https://docs.liquibase.com/change-types/drop-default-value.html -->
-<!--Snowflake doesn't support adding default value after table is created, that's why this changeLog overrides default-->
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+    <!-- https://docs.liquibase.com/change-types/drop-default-value.html
+         Snowflake doesn't support adding default value after table is created, 
+         that's why this changeLog overrides default -->
+    
     <changeSet author="oleh" id="1">
         <createTable tableName="dropDefaultTest">
             <column name="id" type="int"/>

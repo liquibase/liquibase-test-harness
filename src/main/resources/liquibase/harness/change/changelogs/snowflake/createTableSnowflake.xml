@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    
+    <!-- Include the init.xml to clean up database state -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+    
+    <!-- Test createTable with Snowflake features encoded in remarks and tablespace -->
+    <changeSet author="test" id="test-snowflake-create-table" runAlways="true">
+        <createTable tableName="TEST_SNOWFLAKE_TABLE"
+                     tablespace="TRANSIENT"
+                     remarks="CLUSTER_BY:id|COMMENT:Test Snowflake table">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

@@ -6,6 +6,19 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                       http://www.liquibase.org/xml/ns/snowflake
                       http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+
+    <!-- Clean up any databases this test might create -->
+    <changeSet author="test-harness" id="cleanup-test-databases" runAlways="true">
+        <sql>
+            DROP DATABASE IF EXISTS LTHDB_TEST_DATABASE;
+            DROP DATABASE IF EXISTS LTHDB_TEST_TRANSIENT_DB;
+            DROP DATABASE IF EXISTS LTHDB_TEST_RETENTION_DB;
+            DROP DATABASE IF EXISTS LTHDB_TEST_FULL_FEATURE_DB;
+        </sql>
+    </changeSet>
 
     <changeSet author="test-harness" id="createDatabase-basic">
         <snowflake:createDatabase databaseName="LTHDB_TEST_DATABASE"

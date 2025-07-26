@@ -1,0 +1,14 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Catalog": [
+        {
+          "catalog": {
+            "name": "LTHDB",
+            "default": true
+          }
+        }
+      ]
+    }
+  }
+}

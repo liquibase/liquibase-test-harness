@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+
+    <!-- Clean up any warehouses this test might create -->
+    <changeSet author="test-harness" id="cleanup-test-warehouses" runAlways="true">
+        <sql>
+            DROP WAREHOUSE IF EXISTS LTHDB_TEST_RESOURCE_CONSTRAINT_WH;
+        </sql>
+    </changeSet>
+
+    <!-- Restore warehouse context after dropping warehouses -->
+    <changeSet author="test-harness" id="restore-warehouse-context" runAlways="true">
+        <sql>USE WAREHOUSE LTHDB_TEST_WH</sql>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createWarehouse-resourceConstraint" runAlways="true">
+        <snowflake:createWarehouse warehouseName="LTHDB_TEST_RESOURCE_CONSTRAINT_WH"
+                        warehouseType="SNOWPARK-OPTIMIZED"
+                        warehouseSize="XSMALL"
+                        autoSuspend="60"
+                        autoResume="true"
+                        initiallySuspended="false"
+                        resourceConstraint="MEMORY_1X"
+                        comment="Test warehouse with resource constraint"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_RESOURCE_CONSTRAINT_WH"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

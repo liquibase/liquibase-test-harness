@@ -3,12 +3,14 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-
-    <changeSet author="test-harness" id="testSnowflakeSQL-1">
-        <sql>CREATE WAREHOUSE LTHDB_SQL_TEST_WH WITH WAREHOUSE_SIZE = 'XSMALL' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE COMMENT = 'Test warehouse via SQL'</sql>
-        <rollback>
-            <sql>DROP WAREHOUSE LTHDB_SQL_TEST_WH</sql>
-        </rollback>
+    
+    <!-- Simple test without namespace prefixes -->
+    <changeSet author="test" id="test-simple-snowflake-create-table">
+        <createTable tableName="TEST_SIMPLE_TABLE" remarks="Simple test">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
     </changeSet>
 
 </databaseChangeLog>

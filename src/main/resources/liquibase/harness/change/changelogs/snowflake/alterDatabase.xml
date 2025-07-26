@@ -6,6 +6,17 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                       http://www.liquibase.org/xml/ns/snowflake
                       http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+
+    <!-- Clean up any databases this test might create -->
+    <changeSet author="test-harness" id="cleanup-test-databases" runAlways="true">
+        <sql>
+            DROP DATABASE IF EXISTS LTHDB_ALTER_TEST_DB;
+            DROP DATABASE IF EXISTS LTHDB_ALTER_TEST_DB_RENAMED;
+        </sql>
+    </changeSet>
 
     <changeSet author="test-harness" id="alterDatabase-setup">
         <snowflake:createDatabase databaseName="LTHDB_ALTER_TEST_DB"
@@ -14,28 +25,28 @@
 
     <changeSet author="test-harness" id="alterDatabase-rename">
         <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB"
-                      newName="LTHDB_ALTER_TEST_DB_RENAMED"/>
+                               newDatabaseName="LTHDB_ALTER_TEST_DB_RENAMED"/>
         <rollback>
             <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
-                          newName="LTHDB_ALTER_TEST_DB"/>
+                                   newDatabaseName="LTHDB_ALTER_TEST_DB"/>
         </rollback>
     </changeSet>
 
     <changeSet author="test-harness" id="alterDatabase-comment">
         <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
-                      newComment="Modified test database"/>
+                      comment="Modified test database"/>
         <rollback>
             <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
-                          newComment="Database to be altered"/>
+                          comment="Database to be altered"/>
         </rollback>
     </changeSet>
 
     <changeSet author="test-harness" id="alterDatabase-retention">
         <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
-                      newDataRetentionTimeInDays="30"/>
+                      dataRetentionTimeInDays="30"/>
         <rollback>
             <snowflake:alterDatabase databaseName="LTHDB_ALTER_TEST_DB_RENAMED"
-                          newDataRetentionTimeInDays="1"/>
+                          dataRetentionTimeInDays="1"/>
         </rollback>
     </changeSet>
 

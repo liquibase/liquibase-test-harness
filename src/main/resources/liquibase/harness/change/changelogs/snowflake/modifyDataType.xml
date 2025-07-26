@@ -4,6 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
 <!-- Data types should be synonymous and only increasing length or increasing/decreasing precision is supported -->
 <!-- https://docs.snowflake.com/en/sql-reference/sql/alter-table-column.html -->
     <changeSet id="1" author="as">

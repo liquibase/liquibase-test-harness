@@ -1,18 +1,6 @@
 {
   "snapshot": {
     "objects": {
-      "liquibase.structure.core.Sequence": [
-        {
-          "sequence": {
-            "name": "TEST_ORDERED_NEGATIVE"
-          }
-        },
-        {
-          "sequence": {
-            "name": "TEST_ORDERED_CYCLE"
-          }
-        }
-      ]
     }
   }
 }

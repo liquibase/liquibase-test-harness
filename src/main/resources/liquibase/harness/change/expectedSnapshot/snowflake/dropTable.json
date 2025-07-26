@@ -1,10 +1,11 @@
 {
   "snapshot": {
     "objects": {
+      "_noMatch": true,
       "liquibase.structure.core.Table": [
         {
           "table": {
-            "name": "test_table_package"
+            "name": "test_table"
           }
         }
       ]

@@ -1,3 +1,4 @@
 INVALID TEST
-Snowflake support setting default value only if they are sequences, and only in case column already have one
-https://docs.snowflake.com/en/sql-reference/sql/alter-table-column.html
+-- Snowflake doesn't support ALTER COLUMN SET DEFAULT
+-- https://docs.snowflake.com/en/sql-reference/sql/alter-table-column.html
+-- Default values can only be set when creating a column, not when altering an existing column

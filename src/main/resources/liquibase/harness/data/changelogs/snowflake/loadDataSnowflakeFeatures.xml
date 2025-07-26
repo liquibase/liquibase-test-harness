@@ -4,6 +4,43 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
+    <!-- Drop and recreate schema with tracking tables for complete test isolation -->
+    <changeSet id="reset-schema-loadDataSnowflakeFeatures" author="test-harness" runAlways="true">
+        <preConditions onFail="CONTINUE">
+            <sqlCheck expectedResult="1">SELECT 1</sqlCheck>
+        </preConditions>
+        <sql>
+            DROP SCHEMA IF EXISTS TESTHARNESS CASCADE;
+            CREATE SCHEMA TESTHARNESS;
+            USE SCHEMA TESTHARNESS;
+            CREATE TABLE DATABASECHANGELOG (
+                ID VARCHAR(255) NOT NULL,
+                AUTHOR VARCHAR(255) NOT NULL,
+                FILENAME VARCHAR(255) NOT NULL,
+                DATEEXECUTED TIMESTAMP NOT NULL,
+                ORDEREXECUTED INT NOT NULL,
+                EXECTYPE VARCHAR(10) NOT NULL,
+                MD5SUM VARCHAR(35),
+                DESCRIPTION VARCHAR(255),
+                COMMENTS VARCHAR(255),
+                TAG VARCHAR(255),
+                LIQUIBASE VARCHAR(20),
+                CONTEXTS VARCHAR(255),
+                LABELS VARCHAR(255),
+                DEPLOYMENT_ID VARCHAR(10)
+            );
+            CREATE TABLE DATABASECHANGELOGLOCK (
+                ID INT NOT NULL,
+                LOCKED BOOLEAN NOT NULL,
+                LOCKGRANTED TIMESTAMP,
+                LOCKEDBY VARCHAR(255),
+                PRIMARY KEY (ID)
+            );
+            INSERT INTO DATABASECHANGELOGLOCK (ID, LOCKED) VALUES (1, TRUE);
+        </sql>
+        <rollback/>
+    </changeSet>
+
     <!-- Create table with Snowflake features for data loading test -->
     <changeSet author="test-harness" id="createTable-forData">
         <sql>

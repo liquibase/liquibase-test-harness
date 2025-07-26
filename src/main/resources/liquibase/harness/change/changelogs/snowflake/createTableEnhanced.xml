@@ -1,47 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
 
     <changeSet author="test-harness" id="createTable-transient">
-        <sql>
-            CREATE TRANSIENT TABLE TEST_TRANSIENT_TABLE (
-                id INTEGER PRIMARY KEY,
-                name VARCHAR(100),
-                created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            ) COMMENT = 'Transient test table'
-        </sql>
+        <createTable tableName="TEST_TRANSIENT_TABLE" 
+                     snowflake:transient="true"
+                     snowflake:comment="Transient test table">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
         <rollback>
             <dropTable tableName="TEST_TRANSIENT_TABLE"/>
         </rollback>
     </changeSet>
 
     <changeSet author="test-harness" id="createTable-clusterBy">
-        <sql>
-            CREATE TABLE TEST_CLUSTERED_TABLE (
-                id INTEGER,
-                category VARCHAR(50),
-                subcategory VARCHAR(50),
-                data VARCHAR(500),
-                created_date DATE
-            ) CLUSTER BY (category, subcategory)
-            COMMENT = 'Table with clustering keys'
-        </sql>
+        <createTable tableName="TEST_CLUSTERED_TABLE" 
+                     snowflake:clusterBy="category,subcategory"
+                     snowflake:comment="Table with clustering keys">
+            <column name="id" type="INTEGER"/>
+            <column name="category" type="VARCHAR(50)"/>
+            <column name="subcategory" type="VARCHAR(50)"/>
+            <column name="data" type="VARCHAR(500)"/>
+            <column name="created_date" type="DATE"/>
+        </createTable>
         <rollback>
             <dropTable tableName="TEST_CLUSTERED_TABLE"/>
         </rollback>
     </changeSet>
 
     <changeSet author="test-harness" id="createTable-dataRetention">
-        <sql>
-            CREATE TABLE TEST_RETENTION_TABLE (
-                id INTEGER,
-                data VARCHAR(200),
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            ) DATA_RETENTION_TIME_IN_DAYS = 7
-            COMMENT = 'Table with data retention'
-        </sql>
+        <createTable tableName="TEST_RETENTION_TABLE" 
+                     snowflake:dataRetentionTimeInDays="7"
+                     snowflake:comment="Table with data retention">
+            <column name="id" type="INTEGER"/>
+            <column name="data" type="VARCHAR(200)"/>
+            <column name="timestamp" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
         <rollback>
             <dropTable tableName="TEST_RETENTION_TABLE"/>
         </rollback>
@@ -62,18 +68,19 @@
     </changeSet>
 
     <changeSet author="test-harness" id="createTable-fullFeatures">
-        <sql>
-            CREATE TRANSIENT TABLE TEST_FULL_FEATURE_TABLE (
-                id INTEGER PRIMARY KEY,
-                category VARCHAR(50),
-                data VARCHAR(500),
-                created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            ) 
-            CLUSTER BY (category)
-            DATA_RETENTION_TIME_IN_DAYS = 1
-            CHANGE_TRACKING = TRUE
-            COMMENT = 'Full featured Snowflake table'
-        </sql>
+        <createTable tableName="TEST_FULL_FEATURE_TABLE" 
+                     snowflake:transient="true"
+                     snowflake:clusterBy="category"
+                     snowflake:dataRetentionTimeInDays="1"
+                     snowflake:changeTracking="true"
+                     snowflake:comment="Full featured Snowflake table">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="category" type="VARCHAR(50)"/>
+            <column name="data" type="VARCHAR(500)"/>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
         <rollback>
             <dropTable tableName="TEST_FULL_FEATURE_TABLE"/>
         </rollback>
