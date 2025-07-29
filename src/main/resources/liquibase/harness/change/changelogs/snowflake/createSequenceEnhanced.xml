@@ -20,31 +20,33 @@
         </rollback>
     </changeSet>
 
-    <!-- Sequence with larger increment -->
-    <changeSet author="test-harness" id="createSequence-increment">
-        <createSequence sequenceName="TEST_INCREMENT_SEQUENCE"
+    <!-- Sequence with ORDER namespace attribute -->
+    <changeSet author="test-harness" id="createSequence-ordered">
+        <createSequence sequenceName="TEST_ORDERED_SEQUENCE"
                        startValue="100"
-                       incrementBy="5"/>
+                       incrementBy="5"
+                       snowflake:order="true"/>
         <rollback>
-            <dropSequence sequenceName="TEST_INCREMENT_SEQUENCE"/>
+            <dropSequence sequenceName="TEST_ORDERED_SEQUENCE"/>
         </rollback>
     </changeSet>
 
-    <!-- Sequence with different start value -->
-    <changeSet author="test-harness" id="createSequence-start">
-        <createSequence sequenceName="TEST_START_SEQUENCE"
+    <!-- Sequence with NOORDER namespace attribute -->
+    <changeSet author="test-harness" id="createSequence-noorder">
+        <createSequence sequenceName="TEST_NOORDER_SEQUENCE"
                        startValue="1000"
-                       incrementBy="1"/>
+                       incrementBy="1"
+                       snowflake:noOrder="true"/>
         <rollback>
-            <dropSequence sequenceName="TEST_START_SEQUENCE"/>
+            <dropSequence sequenceName="TEST_NOORDER_SEQUENCE"/>
         </rollback>
     </changeSet>
 
     <!-- Cleanup -->
     <changeSet author="test-harness" id="cleanup-sequences">
         <dropSequence sequenceName="TEST_BASIC_SEQUENCE"/>
-        <dropSequence sequenceName="TEST_INCREMENT_SEQUENCE"/>
-        <dropSequence sequenceName="TEST_START_SEQUENCE"/>
+        <dropSequence sequenceName="TEST_ORDERED_SEQUENCE"/>
+        <dropSequence sequenceName="TEST_NOORDER_SEQUENCE"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/snowflake
+        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- ALWAYS include init.xml first -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+    
+    <!-- Cleanup changeset - CRITICAL for test isolation -->
+    <changeSet id="cleanup-alterTable" author="test-harness" runAlways="true">
+        <sql>
+            -- Drop all test objects this test will create/modify
+            DROP TABLE IF EXISTS LTHDB.TESTHARNESS.TEST_TABLE_CLUSTER CASCADE;
+            DROP TABLE IF EXISTS LTHDB.TESTHARNESS.TEST_TABLE_PROPERTIES CASCADE;
+            DROP TABLE IF EXISTS LTHDB.TESTHARNESS.TEST_TABLE_COMBINED CASCADE;
+            DROP TABLE IF EXISTS LTHDB.TESTHARNESS.TEST_TABLE_DROP_CLUSTER CASCADE;
+        </sql>
+    </changeSet>
+
+    <!-- Create test tables first -->
+    <changeSet id="create-test-tables" author="test-harness">
+        <sql>
+            -- Create test tables for alteration
+            CREATE TABLE LTHDB.TESTHARNESS.TEST_TABLE_CLUSTER (
+                id INT,
+                name VARCHAR(50),
+                created_date DATE,
+                region VARCHAR(20)
+            );
+            
+            CREATE TABLE LTHDB.TESTHARNESS.TEST_TABLE_PROPERTIES (
+                id INT,
+                data VARCHAR(100),
+                timestamp TIMESTAMP
+            );
+            
+            CREATE TABLE LTHDB.TESTHARNESS.TEST_TABLE_COMBINED (
+                id INT,
+                name VARCHAR(50),
+                value DECIMAL(10,2)
+            );
+            
+            CREATE TABLE LTHDB.TESTHARNESS.TEST_TABLE_DROP_CLUSTER (
+                id INT,
+                name VARCHAR(50),
+                value DECIMAL(10,2)
+            ) CLUSTER BY (id, name);
+        </sql>
+    </changeSet>
+
+    <!-- Test 1: Basic clustering -->
+    <changeSet id="test-alterTable-clustering" author="test-harness">
+        <snowflake:alterTable tableName="TEST_TABLE_CLUSTER"
+                             clusterBy="region,created_date"/>
+    </changeSet>
+
+    <!-- Test 2: Drop clustering key -->
+    <changeSet id="test-alterTable-drop-clustering" author="test-harness">
+        <snowflake:alterTable tableName="TEST_TABLE_DROP_CLUSTER"
+                             dropClusteringKey="true"/>
+    </changeSet>
+
+    <!-- Test 3: Property settings -->
+    <changeSet id="test-alterTable-properties" author="test-harness">
+        <snowflake:alterTable tableName="TEST_TABLE_PROPERTIES"
+                             setDataRetentionTimeInDays="30"
+                             setChangeTracking="true"
+                             setEnableSchemaEvolution="false"/>
+    </changeSet>
+
+    <!-- Test 4: Combined operations (clustering + properties in separate changesets) -->
+    <changeSet id="test-alterTable-cluster-first" author="test-harness">
+        <snowflake:alterTable tableName="TEST_TABLE_COMBINED"
+                             clusterBy="id,value"/>
+    </changeSet>
+    
+    <changeSet id="test-alterTable-properties-second" author="test-harness">
+        <snowflake:alterTable tableName="TEST_TABLE_COMBINED"
+                             setDataRetentionTimeInDays="7"
+                             setChangeTracking="false"/>
+    </changeSet>
+
+</databaseChangeLog>

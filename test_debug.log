@@ -1,0 +1,1160 @@
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective settings
+[WARNING] 'profiles.profile[github].repositories.repository.id' must be unique but found duplicate repository with id github @ /Users/kevinchappell/.m2/settings.xml
+[WARNING] 
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< org.liquibase:liquibase-test-harness >----------------
+[INFO] Building Liquibase Test Harness 1.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from github: https://maven.pkg.github.com/liquibase/liquibase-pro/org/liquibase/liquibase-snowflake/0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata org.liquibase:liquibase-snowflake:0-SNAPSHOT/maven-metadata.xml from/to github (https://maven.pkg.github.com/liquibase/liquibase-pro): status code: 401, reason phrase: Unauthorized (401)
+[WARNING] org.liquibase:liquibase-snowflake:0-SNAPSHOT/maven-metadata.xml failed to transfer from https://maven.pkg.github.com/liquibase/liquibase-pro during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of github has elapsed or updates are forced. Original error: Could not transfer metadata org.liquibase:liquibase-snowflake:0-SNAPSHOT/maven-metadata.xml from/to github (https://maven.pkg.github.com/liquibase/liquibase-pro): status code: 401, reason phrase: Unauthorized (401)
+Downloading from github: https://maven.pkg.github.com/liquibase/liquibase-pro/org/liquibase/liquibase-standard/0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata org.liquibase:liquibase-standard:0-SNAPSHOT/maven-metadata.xml from/to github (https://maven.pkg.github.com/liquibase/liquibase-pro): status code: 401, reason phrase: Unauthorized (401)
+[WARNING] org.liquibase:liquibase-standard:0-SNAPSHOT/maven-metadata.xml failed to transfer from https://maven.pkg.github.com/liquibase/liquibase-pro during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of github has elapsed or updates are forced. Original error: Could not transfer metadata org.liquibase:liquibase-standard:0-SNAPSHOT/maven-metadata.xml from/to github (https://maven.pkg.github.com/liquibase/liquibase-pro): status code: 401, reason phrase: Unauthorized (401)
+[INFO] 
+[INFO] --- enforcer:3.6.1:enforce (enforce-maven) @ liquibase-test-harness ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] 
+[INFO] --- gplus:4.2.1:addSources (default) @ liquibase-test-harness ---
+[INFO] 
+[INFO] --- gplus:4.2.1:addTestSources (default) @ liquibase-test-harness ---
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ liquibase-test-harness ---
+[INFO] Copying 3304 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ liquibase-test-harness ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- gplus:4.2.1:compile (default) @ liquibase-test-harness ---
+[INFO] Using isolated classloader, without GMavenPlus classpath.
+[INFO] Using Groovy 4.0.27 to perform compile.
+[INFO] invokedynamic enabled.
+[INFO] Parallel parsing enabled.
+[INFO] Compiled 73 files.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ liquibase-test-harness ---
+[INFO] Copying 144 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ liquibase-test-harness ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] 
+[INFO] --- gplus:4.2.1:compileTests (default) @ liquibase-test-harness ---
+[INFO] Using isolated classloader, without GMavenPlus classpath.
+[INFO] Using Groovy 4.0.27 to perform compileTests.
+[INFO] invokedynamic enabled.
+[INFO] Parallel parsing enabled.
+[INFO] Compiled 12 files.
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ liquibase-test-harness ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+Jul 29, 2025 9:04:57 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: Revalidate SQL: true
+[INFO] Running liquibase.harness.ChangeObjectTests
+Only xml input files are taken into account for this test run
+Jul 29, 2025 9:05:02 AM net.snowflake.client.core.SFSession open
+INFO: Opening session with server: https://rziymts-xbb66763.snowflakecomputing.com:443/, account: rziymts-xbb66763, user: COMMUNITYKEVIN, password is provided, role: LIQUIBASE_TEST_HARNESS_ROLE, database: LTHDB, schema: TESTHARNESS, warehouse: LTHDB_TEST_WH, validate default parameters: null, authenticator: null, ocsp mode: FAIL_OPEN, passcode in password: null, passcode is not provided, private key is not provided, disable socks proxy: null, application: Liquibase, app id: JDBC, app version: 3.23.1, login timeout: null, retry timeout: null, network timeout: null, query timeout: null, connection timeout: null, socket timeout: null, tracing: null, private key file: null, private key pwd is not provided, enable_diagnostics: not provided, diagnostics_allowlist_path: null, session parameters: client store temporary credential: null, gzip disabled: null, browser response timeout: null
+Jul 29, 2025 9:05:02 AM net.snowflake.client.core.SFSession open
+INFO: Connecting to GLOBAL Snowflake domain
+Jul 29, 2025 9:05:02 AM net.snowflake.client.core.FileUtil logWarnWhenAccessibleByOthers
+WARNING: Cache file creation: File /Users/kevinchappell/Library/Caches/Snowflake/ocsp_response_cache.json is accessible by others to:
+Jul 29, 2025 9:05:02 AM net.snowflake.client.core.FileUtil logWarnWhenAccessibleByOthers
+WARNING: Read cache: File /Users/kevinchappell/Library/Caches/Snowflake/ocsp_response_cache.json is accessible by others to:
+Jul 29, 2025 9:05:02 AM net.snowflake.client.core.FileUtil logWarnWhenAccessibleByOthers
+WARNING: Write to cache: File /Users/kevinchappell/Library/Caches/Snowflake/ocsp_response_cache.json is accessible by others to:
+Jul 29, 2025 9:05:04 AM liquibase.database
+INFO: Set default schema name to TESTHARNESS
+Jul 29, 2025 9:05:06 AM liquibase.lockservice
+INFO: Successfully released change log lock
+Jul 29, 2025 9:05:06 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+SEVERE: Provided database name/majorVersion doesn't match with actual        
+    provided: snowflake latest        
+    actual: snowflake         9
+Jul 29, 2025 9:05:06 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: Found 90 changeLogs for snowflake/latest in liquibase/harness/change/changelogs
+Jul 29, 2025 9:05:06 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: Executing liquibase command: updateSql 
+Jul 29, 2025 9:05:06 AM net.snowflake.client.core.SFSession open
+INFO: Opening session with server: https://rziymts-xbb66763.snowflakecomputing.com:443/, account: rziymts-xbb66763, user: COMMUNITYKEVIN, password is provided, role: LIQUIBASE_TEST_HARNESS_ROLE, database: LTHDB, schema: TESTHARNESS, warehouse: LTHDB_TEST_WH, validate default parameters: null, authenticator: null, ocsp mode: FAIL_OPEN, passcode in password: null, passcode is not provided, private key is not provided, disable socks proxy: null, application: Liquibase, app id: JDBC, app version: 3.23.1, login timeout: null, retry timeout: null, network timeout: null, query timeout: null, connection timeout: null, socket timeout: null, tracing: null, private key file: null, private key pwd is not provided, enable_diagnostics: not provided, diagnostics_allowlist_path: null, session parameters: client store temporary credential: null, gzip disabled: null, browser response timeout: null
+Jul 29, 2025 9:05:06 AM net.snowflake.client.core.SFSession open
+INFO: Connecting to GLOBAL Snowflake domain
+Jul 29, 2025 9:05:07 AM liquibase.database
+INFO: Set default schema name to TESTHARNESS
+Jul 29, 2025 9:05:07 AM liquibase.lockservice
+INFO: Successfully acquired change log lock
+[SnowflakeNamespaceAwareXMLParser] Parsing liquibase/harness/change/changelogs/snowflake/alterSequenceWithNoOrder.xml
+[SnowflakeNamespaceAwareXMLParser] Found createSequence: test_alter_sequence
+[SnowflakeNamespaceAwareXMLParser]   Checking attribute: sequenceName (uri: , localName: sequenceName)
+[SnowflakeNamespaceAwareXMLParser]   Checking attribute: startValue (uri: , localName: startValue)
+[SnowflakeNamespaceAwareXMLParser]   Checking attribute: incrementBy (uri: , localName: incrementBy)
+[SnowflakeNamespaceAwareXMLParser] Parsing liquibase/harness/change/changelogs/snowflake/init.xml
+Jul 29, 2025 9:05:08 AM liquibase.changelog
+INFO: Creating database changelog table with name: LTHDB.TESTHARNESS.DATABASECHANGELOG
+Jul 29, 2025 9:05:08 AM liquibase.snapshot
+INFO: Creating snapshot
+Jul 29, 2025 9:05:09 AM liquibase.command
+INFO: Using deploymentId: 3797897943
+Jul 29, 2025 9:05:09 AM liquibase.snapshot
+INFO: Creating snapshot
+Jul 29, 2025 9:05:10 AM liquibase.changelog
+INFO: Custom SQL executed
+Jul 29, 2025 9:05:10 AM liquibase.changelog
+INFO: ChangeSet liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness ran successfully in 192ms
+Jul 29, 2025 9:05:10 AM liquibase.changelog
+INFO: Changelog cache refreshed
+Jul 29, 2025 9:05:10 AM liquibase.changelog
+INFO: ChangeSet liquibase/harness/change/changelogs/snowflake/init.xml::force-changelog-refresh::test-harness ran successfully in 264ms
+Jul 29, 2025 9:05:11 AM liquibase.snapshot
+INFO: Creating snapshot
+Jul 29, 2025 9:05:11 AM liquibase.changelog
+INFO: Sequence test_alter_sequence created
+Jul 29, 2025 9:05:11 AM liquibase.changelog
+INFO: Sequence test_alter_sequence altered
+Jul 29, 2025 9:05:11 AM liquibase.changelog
+INFO: ChangeSet liquibase/harness/change/changelogs/snowflake/alterSequenceWithNoOrder.xml::1-alterSequenceWithNoOrder-v2::testharness ran successfully in 207ms
+Jul 29, 2025 9:05:12 AM liquibase.command
+INFO: Update command completed successfully.
+Jul 29, 2025 9:05:12 AM liquibase.lockservice
+INFO: Successfully released change log lock
+Jul 29, 2025 9:05:13 AM liquibase.lockservice
+INFO: Successfully released change log lock
+Jul 29, 2025 9:05:14 AM liquibase.command
+INFO: Command execution complete
+Jul 29, 2025 9:05:14 AM liquibase.analytics
+SEVERE: Analytics is disabled because this is not a release build and the user has not provided a value for the liquibase.analytics.devOverride option.
+Jul 29, 2025 9:05:14 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: Executing liquibase command: update 
+Jul 29, 2025 9:05:14 AM net.snowflake.client.core.SFSession open
+INFO: Opening session with server: https://rziymts-xbb66763.snowflakecomputing.com:443/, account: rziymts-xbb66763, user: COMMUNITYKEVIN, password is provided, role: LIQUIBASE_TEST_HARNESS_ROLE, database: LTHDB, schema: TESTHARNESS, warehouse: LTHDB_TEST_WH, validate default parameters: null, authenticator: null, ocsp mode: FAIL_OPEN, passcode in password: null, passcode is not provided, private key is not provided, disable socks proxy: null, application: Liquibase, app id: JDBC, app version: 3.23.1, login timeout: null, retry timeout: null, network timeout: null, query timeout: null, connection timeout: null, socket timeout: null, tracing: null, private key file: null, private key pwd is not provided, enable_diagnostics: not provided, diagnostics_allowlist_path: null, session parameters: client store temporary credential: null, gzip disabled: null, browser response timeout: null
+Jul 29, 2025 9:05:14 AM net.snowflake.client.core.SFSession open
+INFO: Connecting to GLOBAL Snowflake domain
+Jul 29, 2025 9:05:14 AM liquibase.database
+INFO: Set default schema name to TESTHARNESS
+[SnowflakeNamespaceAwareXMLParser] Parsing liquibase/harness/change/changelogs/snowflake/alterSequenceWithNoOrder.xml
+[SnowflakeNamespaceAwareXMLParser] Found createSequence: test_alter_sequence
+[SnowflakeNamespaceAwareXMLParser]   Checking attribute: sequenceName (uri: , localName: sequenceName)
+[SnowflakeNamespaceAwareXMLParser]   Checking attribute: startValue (uri: , localName: startValue)
+[SnowflakeNamespaceAwareXMLParser]   Checking attribute: incrementBy (uri: , localName: incrementBy)
+[SnowflakeNamespaceAwareXMLParser] Parsing liquibase/harness/change/changelogs/snowflake/init.xml
+Jul 29, 2025 9:05:15 AM liquibase.changelog
+INFO: Creating database changelog table with name: LTHDB.TESTHARNESS.DATABASECHANGELOG
+Jul 29, 2025 9:05:15 AM liquibase.changelog
+INFO: Reading from LTHDB.TESTHARNESS.DATABASECHANGELOG
+Jul 29, 2025 9:05:18 AM liquibase.lockservice
+INFO: Successfully acquired change log lock
+Jul 29, 2025 9:05:18 AM liquibase.command
+INFO: Using deploymentId: 3797897943
+Jul 29, 2025 9:05:18 AM liquibase.changelog
+INFO: Reading from LTHDB.TESTHARNESS.DATABASECHANGELOG
+Running Changeset: liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness
+Jul 29, 2025 9:05:19 AM liquibase.changelog
+SEVERE: ChangeSet liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness encountered an exception.
+liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:520)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:85)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:188)
+	at liquibase.executor.jvm.SnowflakeJdbcExecutor.execute(SnowflakeJdbcExecutor.java:33)
+	at liquibase.executor.AbstractExecutor.execute(AbstractExecutor.java:148)
+	at liquibase.database.AbstractJdbcDatabase.executeStatements(AbstractJdbcDatabase.java:1198)
+	at liquibase.changelog.ChangeSet.execute(ChangeSet.java:816)
+	at liquibase.changelog.visitor.UpdateVisitor.executeAcceptedChange(UpdateVisitor.java:127)
+	at liquibase.changelog.visitor.UpdateVisitor.visit(UpdateVisitor.java:71)
+	at liquibase.changelog.ChangeLogIterator.lambda$run$0(ChangeLogIterator.java:133)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.changelog.ChangeLogIterator.lambda$run$1(ChangeLogIterator.java:122)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.Scope.child(Scope.java:282)
+	at liquibase.Scope.child(Scope.java:286)
+	at liquibase.changelog.ChangeLogIterator.run(ChangeLogIterator.java:91)
+	at liquibase.command.core.AbstractUpdateCommandStep.lambda$run$0(AbstractUpdateCommandStep.java:114)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.command.core.AbstractUpdateCommandStep.run(AbstractUpdateCommandStep.java:112)
+	at liquibase.command.core.UpdateCommandStep.run(UpdateCommandStep.java:100)
+	at com.datical.liquibase.ext.command.ProUpdateCommandStep.run(ProUpdateCommandStep.java:44)
+	at liquibase.command.CommandScope.lambda$execute$6(CommandScope.java:263)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:201)
+	at liquibase.command.CommandScope.execute(CommandScope.java:251)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.util.TestUtils.executeCommandScope(TestUtils.groovy:61)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.change.ChangeObjectTests.$spock_feature_0_0(ChangeObjectTests.groovy:76)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:187)
+	at org.spockframework.runtime.model.MethodInfo.lambda$new$0(MethodInfo.java:49)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeatureMethod(PlatformSpecRunner.java:324)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:50)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.IterationNode.lambda$around$0(IterationNode.java:67)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunIteration$5(PlatformSpecRunner.java:236)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runIteration(PlatformSpecRunner.java:218)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:67)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask$DefaultDynamicTestExecutor.execute(NodeTestTask.java:232)
+	at org.spockframework.runtime.ParameterizedFeatureChildExecutor.execute(ParameterizedFeatureChildExecutor.java:104)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner$1.runIteration(PlatformParameterizedSpecRunner.java:72)
+	at org.spockframework.runtime.extension.IDataDriver.lambda$static$0(IDataDriver.java:37)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner.runParameterizedFeature(PlatformParameterizedSpecRunner.java:47)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:40)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:16)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.FeatureNode.lambda$around$0(FeatureNode.java:41)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunFeature$4(PlatformSpecRunner.java:199)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeature(PlatformSpecRunner.java:192)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:41)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:12)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.SpecNode.lambda$around$0(SpecNode.java:63)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunSpec$0(PlatformSpecRunner.java:61)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runSpec(PlatformSpecRunner.java:55)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:63)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:11)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:230)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:204)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:172)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:101)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:64)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:150)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:63)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:109)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:91)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:194)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:150)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:124)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: net.snowflake.client.jdbc.SnowflakeSQLException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB'
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowExceptionSub(SnowflakeUtil.java:171)
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowException(SnowflakeUtil.java:103)
+	at net.snowflake.client.core.StmtUtil.pollForOutput(StmtUtil.java:487)
+	at net.snowflake.client.core.StmtUtil.execute(StmtUtil.java:393)
+	at net.snowflake.client.core.SFStatement.executeHelper(SFStatement.java:502)
+	at net.snowflake.client.core.SFStatement.executeQueryInternal(SFStatement.java:211)
+	at net.snowflake.client.core.SFStatement.executeQuery(SFStatement.java:145)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:779)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:697)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.executeInternal(SnowflakeStatementV1.java:350)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.execute(SnowflakeStatementV1.java:425)
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:512)
+	... 140 more
+
+Jul 29, 2025 9:05:20 AM liquibase.util
+INFO: UPDATE SUMMARY
+Jul 29, 2025 9:05:20 AM liquibase.util
+INFO: Run:                          0
+Jul 29, 2025 9:05:20 AM liquibase.util
+INFO: Previously run:               0
+Jul 29, 2025 9:05:20 AM liquibase.util
+INFO: Filtered out:                 0
+Jul 29, 2025 9:05:20 AM liquibase.util
+INFO: -------------------------------
+Jul 29, 2025 9:05:20 AM liquibase.util
+INFO: Total change sets:            3
+Jul 29, 2025 9:05:20 AM liquibase.util
+INFO: Update summary generated
+Jul 29, 2025 9:05:20 AM liquibase.command
+INFO: Update command encountered an exception.
+Jul 29, 2025 9:05:20 AM liquibase.lockservice
+WARNING: Failed to release change log lock
+Jul 29, 2025 9:05:20 AM liquibase.command
+SEVERE: Could not release lock
+liquibase.exception.LockException: liquibase.exception.DatabaseException: liquibase.exception.DatabaseException: Error executing SQL UPDATE LTHDB.TESTHARNESS.DATABASECHANGELOGLOCK SET LOCKED = FALSE, LOCKEDBY = NULL, LOCKGRANTED = NULL WHERE ID = 1: SQL compilation error:
+Schema 'LTHDB.TESTHARNESS' does not exist or not authorized.
+	at liquibase.lockservice.StandardLockService.releaseLock(StandardLockService.java:430)
+	at liquibase.command.core.AbstractUpdateCommandStep.run(AbstractUpdateCommandStep.java:142)
+	at liquibase.command.core.UpdateCommandStep.run(UpdateCommandStep.java:100)
+	at com.datical.liquibase.ext.command.ProUpdateCommandStep.run(ProUpdateCommandStep.java:44)
+	at liquibase.command.CommandScope.lambda$execute$6(CommandScope.java:263)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:201)
+	at liquibase.command.CommandScope.execute(CommandScope.java:251)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.util.TestUtils.executeCommandScope(TestUtils.groovy:61)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.change.ChangeObjectTests.$spock_feature_0_0(ChangeObjectTests.groovy:76)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:187)
+	at org.spockframework.runtime.model.MethodInfo.lambda$new$0(MethodInfo.java:49)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeatureMethod(PlatformSpecRunner.java:324)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:50)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.IterationNode.lambda$around$0(IterationNode.java:67)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunIteration$5(PlatformSpecRunner.java:236)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runIteration(PlatformSpecRunner.java:218)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:67)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask$DefaultDynamicTestExecutor.execute(NodeTestTask.java:232)
+	at org.spockframework.runtime.ParameterizedFeatureChildExecutor.execute(ParameterizedFeatureChildExecutor.java:104)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner$1.runIteration(PlatformParameterizedSpecRunner.java:72)
+	at org.spockframework.runtime.extension.IDataDriver.lambda$static$0(IDataDriver.java:37)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner.runParameterizedFeature(PlatformParameterizedSpecRunner.java:47)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:40)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:16)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.FeatureNode.lambda$around$0(FeatureNode.java:41)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunFeature$4(PlatformSpecRunner.java:199)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeature(PlatformSpecRunner.java:192)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:41)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:12)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.SpecNode.lambda$around$0(SpecNode.java:63)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunSpec$0(PlatformSpecRunner.java:61)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runSpec(PlatformSpecRunner.java:55)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:63)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:11)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:230)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:204)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:172)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:101)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:64)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:150)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:63)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:109)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:91)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:194)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:150)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:124)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: liquibase.exception.DatabaseException: liquibase.exception.DatabaseException: Error executing SQL UPDATE LTHDB.TESTHARNESS.DATABASECHANGELOGLOCK SET LOCKED = FALSE, LOCKEDBY = NULL, LOCKGRANTED = NULL WHERE ID = 1: SQL compilation error:
+Schema 'LTHDB.TESTHARNESS' does not exist or not authorized.
+	at liquibase.executor.jvm.ChangelogJdbcMdcListener.query(ChangelogJdbcMdcListener.java:62)
+	at liquibase.lockservice.StandardLockService.releaseLock(StandardLockService.java:384)
+	... 114 more
+Caused by: liquibase.exception.DatabaseException: Error executing SQL UPDATE LTHDB.TESTHARNESS.DATABASECHANGELOGLOCK SET LOCKED = FALSE, LOCKEDBY = NULL, LOCKGRANTED = NULL WHERE ID = 1: SQL compilation error:
+Schema 'LTHDB.TESTHARNESS' does not exist or not authorized.
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:106)
+	at liquibase.executor.jvm.JdbcExecutor.update(JdbcExecutor.java:366)
+	at liquibase.executor.jvm.JdbcExecutor.update(JdbcExecutor.java:334)
+	at liquibase.lockservice.StandardLockService.lambda$releaseLock$7(StandardLockService.java:384)
+	at liquibase.executor.jvm.ChangelogJdbcMdcListener.lambda$query$1(ChangelogJdbcMdcListener.java:55)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:201)
+	at liquibase.executor.jvm.ChangelogJdbcMdcListener.query(ChangelogJdbcMdcListener.java:55)
+	... 115 more
+Caused by: net.snowflake.client.jdbc.SnowflakeSQLException: SQL compilation error:
+Schema 'LTHDB.TESTHARNESS' does not exist or not authorized.
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowExceptionSub(SnowflakeUtil.java:171)
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowException(SnowflakeUtil.java:103)
+	at net.snowflake.client.core.StmtUtil.pollForOutput(StmtUtil.java:487)
+	at net.snowflake.client.core.StmtUtil.execute(StmtUtil.java:393)
+	at net.snowflake.client.core.SFStatement.executeHelper(SFStatement.java:502)
+	at net.snowflake.client.core.SFStatement.executeQueryInternal(SFStatement.java:211)
+	at net.snowflake.client.core.SFStatement.executeQuery(SFStatement.java:145)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:779)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:697)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.executeUpdateInternal(SnowflakeStatementV1.java:228)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.executeLargeUpdate(SnowflakeStatementV1.java:202)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.executeUpdate(SnowflakeStatementV1.java:188)
+	at liquibase.executor.jvm.JdbcExecutor$1UpdateStatementCallback.doInStatement(JdbcExecutor.java:357)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:85)
+	... 122 more
+
+Jul 29, 2025 9:05:20 AM liquibase.command
+WARNING: Update command encountered exception
+liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness:
+     Reason: liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+	at liquibase.changelog.ChangeLogIterator.run(ChangeLogIterator.java:155)
+	at liquibase.command.core.AbstractUpdateCommandStep.lambda$run$0(AbstractUpdateCommandStep.java:114)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.command.core.AbstractUpdateCommandStep.run(AbstractUpdateCommandStep.java:112)
+	at liquibase.command.core.UpdateCommandStep.run(UpdateCommandStep.java:100)
+	at com.datical.liquibase.ext.command.ProUpdateCommandStep.run(ProUpdateCommandStep.java:44)
+	at liquibase.command.CommandScope.lambda$execute$6(CommandScope.java:263)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:201)
+	at liquibase.command.CommandScope.execute(CommandScope.java:251)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.util.TestUtils.executeCommandScope(TestUtils.groovy:61)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.change.ChangeObjectTests.$spock_feature_0_0(ChangeObjectTests.groovy:76)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:187)
+	at org.spockframework.runtime.model.MethodInfo.lambda$new$0(MethodInfo.java:49)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeatureMethod(PlatformSpecRunner.java:324)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:50)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.IterationNode.lambda$around$0(IterationNode.java:67)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunIteration$5(PlatformSpecRunner.java:236)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runIteration(PlatformSpecRunner.java:218)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:67)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask$DefaultDynamicTestExecutor.execute(NodeTestTask.java:232)
+	at org.spockframework.runtime.ParameterizedFeatureChildExecutor.execute(ParameterizedFeatureChildExecutor.java:104)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner$1.runIteration(PlatformParameterizedSpecRunner.java:72)
+	at org.spockframework.runtime.extension.IDataDriver.lambda$static$0(IDataDriver.java:37)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner.runParameterizedFeature(PlatformParameterizedSpecRunner.java:47)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:40)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:16)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.FeatureNode.lambda$around$0(FeatureNode.java:41)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunFeature$4(PlatformSpecRunner.java:199)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeature(PlatformSpecRunner.java:192)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:41)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:12)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.SpecNode.lambda$around$0(SpecNode.java:63)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunSpec$0(PlatformSpecRunner.java:61)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runSpec(PlatformSpecRunner.java:55)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:63)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:11)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:230)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:204)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:172)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:101)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:64)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:150)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:63)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:109)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:91)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:194)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:150)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:124)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: liquibase.exception.MigrationFailedException: Migration failed for changeset liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness:
+     Reason: liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+	at liquibase.changelog.ChangeSet.execute(ChangeSet.java:873)
+	at liquibase.changelog.visitor.UpdateVisitor.executeAcceptedChange(UpdateVisitor.java:127)
+	at liquibase.changelog.visitor.UpdateVisitor.visit(UpdateVisitor.java:71)
+	at liquibase.changelog.ChangeLogIterator.lambda$run$0(ChangeLogIterator.java:133)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.changelog.ChangeLogIterator.lambda$run$1(ChangeLogIterator.java:122)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.Scope.child(Scope.java:282)
+	at liquibase.Scope.child(Scope.java:286)
+	at liquibase.changelog.ChangeLogIterator.run(ChangeLogIterator.java:91)
+	... 119 more
+Caused by: liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:520)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:85)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:188)
+	at liquibase.executor.jvm.SnowflakeJdbcExecutor.execute(SnowflakeJdbcExecutor.java:33)
+	at liquibase.executor.AbstractExecutor.execute(AbstractExecutor.java:148)
+	at liquibase.database.AbstractJdbcDatabase.executeStatements(AbstractJdbcDatabase.java:1198)
+	at liquibase.changelog.ChangeSet.execute(ChangeSet.java:816)
+	... 134 more
+Caused by: net.snowflake.client.jdbc.SnowflakeSQLException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB'
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowExceptionSub(SnowflakeUtil.java:171)
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowException(SnowflakeUtil.java:103)
+	at net.snowflake.client.core.StmtUtil.pollForOutput(StmtUtil.java:487)
+	at net.snowflake.client.core.StmtUtil.execute(StmtUtil.java:393)
+	at net.snowflake.client.core.SFStatement.executeHelper(SFStatement.java:502)
+	at net.snowflake.client.core.SFStatement.executeQueryInternal(SFStatement.java:211)
+	at net.snowflake.client.core.SFStatement.executeQuery(SFStatement.java:145)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:779)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:697)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.executeInternal(SnowflakeStatementV1.java:350)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.execute(SnowflakeStatementV1.java:425)
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:512)
+	... 140 more
+
+Jul 29, 2025 9:05:20 AM liquibase.command
+INFO: Logging exception.
+ERROR: Exception Details
+ERROR: Exception Primary Class:  SnowflakeSQLException
+ERROR: Exception Primary Reason:  SQL access control error:
+Insufficient privileges to operate on database 'LTHDB'
+ERROR: Exception Primary Source:  Snowflake 9.20.3
+Jul 29, 2025 9:05:20 AM liquibase.command
+INFO: Command execution complete
+Jul 29, 2025 9:05:20 AM liquibase.analytics
+SEVERE: Analytics is disabled because this is not a release build and the user has not provided a value for the liquibase.analytics.devOverride option.
+Jul 29, 2025 9:05:21 AM liquibase.command
+INFO: Logging exception.
+ERROR: Exception Details
+ERROR: Exception Primary Class:  SnowflakeSQLException
+ERROR: Exception Primary Reason:  SQL access control error:
+Insufficient privileges to operate on database 'LTHDB'
+ERROR: Exception Primary Source:  Snowflake 9.20.3
+Jul 29, 2025 9:05:21 AM liquibase.command
+INFO: Command execution complete
+Jul 29, 2025 9:05:21 AM liquibase.analytics
+SEVERE: Analytics is disabled because this is not a release build and the user has not provided a value for the liquibase.analytics.devOverride option.
+liquibase.exception.CommandExecutionException: liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness:
+     Reason: liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+	at liquibase.command.CommandScope.lambda$execute$6(CommandScope.java:310)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:201)
+	at liquibase.command.CommandScope.execute(CommandScope.java:251)
+	at com.datical.liquibase.ext.command.InternalRollbackOnErrorCommandStep.executeCommand(InternalRollbackOnErrorCommandStep.java:318)
+	at com.datical.liquibase.ext.command.ProUpdateCommandStep.run(ProUpdateCommandStep.java:60)
+	at liquibase.command.CommandScope.lambda$execute$6(CommandScope.java:263)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:201)
+	at liquibase.command.CommandScope.execute(CommandScope.java:251)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.util.TestUtils.executeCommandScope(TestUtils.groovy:61)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.change.ChangeObjectTests.$spock_feature_0_0(ChangeObjectTests.groovy:76)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:187)
+	at org.spockframework.runtime.model.MethodInfo.lambda$new$0(MethodInfo.java:49)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeatureMethod(PlatformSpecRunner.java:324)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:50)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.IterationNode.lambda$around$0(IterationNode.java:67)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunIteration$5(PlatformSpecRunner.java:236)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runIteration(PlatformSpecRunner.java:218)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:67)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask$DefaultDynamicTestExecutor.execute(NodeTestTask.java:232)
+	at org.spockframework.runtime.ParameterizedFeatureChildExecutor.execute(ParameterizedFeatureChildExecutor.java:104)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner$1.runIteration(PlatformParameterizedSpecRunner.java:72)
+	at org.spockframework.runtime.extension.IDataDriver.lambda$static$0(IDataDriver.java:37)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner.runParameterizedFeature(PlatformParameterizedSpecRunner.java:47)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:40)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:16)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.FeatureNode.lambda$around$0(FeatureNode.java:41)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunFeature$4(PlatformSpecRunner.java:199)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeature(PlatformSpecRunner.java:192)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:41)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:12)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.SpecNode.lambda$around$0(SpecNode.java:63)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunSpec$0(PlatformSpecRunner.java:61)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runSpec(PlatformSpecRunner.java:55)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:63)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:11)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:230)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:204)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:172)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:101)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:64)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:150)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:63)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:109)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:91)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:194)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:150)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:124)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness:
+     Reason: liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+	at liquibase.changelog.ChangeLogIterator.run(ChangeLogIterator.java:155)
+	at liquibase.command.core.AbstractUpdateCommandStep.lambda$run$0(AbstractUpdateCommandStep.java:114)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.command.core.AbstractUpdateCommandStep.run(AbstractUpdateCommandStep.java:112)
+	at liquibase.command.core.UpdateCommandStep.run(UpdateCommandStep.java:100)
+	at com.datical.liquibase.ext.command.ProUpdateCommandStep.run(ProUpdateCommandStep.java:44)
+	... 111 more
+Caused by: liquibase.exception.MigrationFailedException: Migration failed for changeset liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness:
+     Reason: liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+	at liquibase.changelog.ChangeSet.execute(ChangeSet.java:873)
+	at liquibase.changelog.visitor.UpdateVisitor.executeAcceptedChange(UpdateVisitor.java:127)
+	at liquibase.changelog.visitor.UpdateVisitor.visit(UpdateVisitor.java:71)
+	at liquibase.changelog.ChangeLogIterator.lambda$run$0(ChangeLogIterator.java:133)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.changelog.ChangeLogIterator.lambda$run$1(ChangeLogIterator.java:122)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.Scope.child(Scope.java:282)
+	at liquibase.Scope.child(Scope.java:286)
+	at liquibase.changelog.ChangeLogIterator.run(ChangeLogIterator.java:91)
+	... 119 more
+Caused by: liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:520)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:85)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:188)
+	at liquibase.executor.jvm.SnowflakeJdbcExecutor.execute(SnowflakeJdbcExecutor.java:33)
+	at liquibase.executor.AbstractExecutor.execute(AbstractExecutor.java:148)
+	at liquibase.database.AbstractJdbcDatabase.executeStatements(AbstractJdbcDatabase.java:1198)
+	at liquibase.changelog.ChangeSet.execute(ChangeSet.java:816)
+	... 134 more
+Caused by: net.snowflake.client.jdbc.SnowflakeSQLException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB'
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowExceptionSub(SnowflakeUtil.java:171)
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowException(SnowflakeUtil.java:103)
+	at net.snowflake.client.core.StmtUtil.pollForOutput(StmtUtil.java:487)
+	at net.snowflake.client.core.StmtUtil.execute(StmtUtil.java:393)
+	at net.snowflake.client.core.SFStatement.executeHelper(SFStatement.java:502)
+	at net.snowflake.client.core.SFStatement.executeQueryInternal(SFStatement.java:211)
+	at net.snowflake.client.core.SFStatement.executeQuery(SFStatement.java:145)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:779)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:697)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.executeInternal(SnowflakeStatementV1.java:350)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.execute(SnowflakeStatementV1.java:425)
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:512)
+	... 140 more
+Jul 29, 2025 9:05:21 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+SEVERE: Failed to execute command scope for command liquibase.command.CommandDefinition@ce0038c9. null
+Jul 29, 2025 9:05:21 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: If this is expected to be invalid query for this database/version, create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.
+Jul 29, 2025 9:05:21 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: Executing liquibase command: rollbackToDate 
+Jul 29, 2025 9:05:21 AM net.snowflake.client.core.SFSession open
+INFO: Opening session with server: https://rziymts-xbb66763.snowflakecomputing.com:443/, account: rziymts-xbb66763, user: COMMUNITYKEVIN, password is provided, role: LIQUIBASE_TEST_HARNESS_ROLE, database: LTHDB, schema: TESTHARNESS, warehouse: LTHDB_TEST_WH, validate default parameters: null, authenticator: null, ocsp mode: FAIL_OPEN, passcode in password: null, passcode is not provided, private key is not provided, disable socks proxy: null, application: Liquibase, app id: JDBC, app version: 3.23.1, login timeout: null, retry timeout: null, network timeout: null, query timeout: null, connection timeout: null, socket timeout: null, tracing: null, private key file: null, private key pwd is not provided, enable_diagnostics: not provided, diagnostics_allowlist_path: null, session parameters: client store temporary credential: null, gzip disabled: null, browser response timeout: null
+Jul 29, 2025 9:05:21 AM net.snowflake.client.core.SFSession open
+INFO: Connecting to GLOBAL Snowflake domain
+[SnowflakeNamespaceAwareXMLParser] Parsing liquibase/harness/change/changelogs/snowflake/alterSequenceWithNoOrder.xml
+[SnowflakeNamespaceAwareXMLParser] Found createSequence: test_alter_sequence
+[SnowflakeNamespaceAwareXMLParser]   Checking attribute: sequenceName (uri: , localName: sequenceName)
+[SnowflakeNamespaceAwareXMLParser]   Checking attribute: startValue (uri: , localName: startValue)
+[SnowflakeNamespaceAwareXMLParser]   Checking attribute: incrementBy (uri: , localName: incrementBy)
+[SnowflakeNamespaceAwareXMLParser] Parsing liquibase/harness/change/changelogs/snowflake/init.xml
+Jul 29, 2025 9:05:23 AM liquibase.changelog
+INFO: Creating database changelog table with name: LTHDB.null.DATABASECHANGELOG
+Jul 29, 2025 9:05:23 AM liquibase.command
+INFO: Logging exception.
+ERROR: Exception Details
+ERROR: Exception Primary Class:  SnowflakeSQLException
+ERROR: Exception Primary Reason:  SQL compilation error:
+syntax error line 1 at position 19 unexpected 'null'.
+syntax error line 1 at position 18 unexpected '.'.
+syntax error line 1 at position 42 unexpected '('.
+ERROR: Exception Primary Source:  Snowflake 9.20.3
+Jul 29, 2025 9:05:23 AM liquibase.command
+INFO: Command execution complete
+Jul 29, 2025 9:05:23 AM liquibase.analytics
+SEVERE: Analytics is disabled because this is not a release build and the user has not provided a value for the liquibase.analytics.devOverride option.
+liquibase.exception.CommandExecutionException: liquibase.exception.ChangeLogParseException: liquibase.exception.SetupException: An error occurred while attempting to create the database changelog table.  Please make sure that you have both read and write permissions for the 'LTHDB.null.DATABASECHANGELOG' table.
+	at liquibase.command.CommandScope.lambda$execute$6(CommandScope.java:310)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:201)
+	at liquibase.command.CommandScope.execute(CommandScope.java:251)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.util.TestUtils.executeCommandScope(TestUtils.groovy:61)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.util.rollback.RollbackToDate.performRollback(RollbackToDate.groovy:21)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+	at liquibase.harness.change.ChangeObjectTests.$spock_feature_0_0(ChangeObjectTests.groovy:89)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:187)
+	at org.spockframework.runtime.model.MethodInfo.lambda$new$0(MethodInfo.java:49)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeatureMethod(PlatformSpecRunner.java:324)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:50)
+	at org.spockframework.runtime.IterationNode.execute(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.IterationNode.lambda$around$0(IterationNode.java:67)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunIteration$5(PlatformSpecRunner.java:236)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runIteration(PlatformSpecRunner.java:218)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:67)
+	at org.spockframework.runtime.IterationNode.around(IterationNode.java:13)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask$DefaultDynamicTestExecutor.execute(NodeTestTask.java:232)
+	at org.spockframework.runtime.ParameterizedFeatureChildExecutor.execute(ParameterizedFeatureChildExecutor.java:104)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner$1.runIteration(PlatformParameterizedSpecRunner.java:72)
+	at org.spockframework.runtime.extension.IDataDriver.lambda$static$0(IDataDriver.java:37)
+	at org.spockframework.runtime.PlatformParameterizedSpecRunner.runParameterizedFeature(PlatformParameterizedSpecRunner.java:47)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:40)
+	at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:16)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:157)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.FeatureNode.lambda$around$0(FeatureNode.java:41)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunFeature$4(PlatformSpecRunner.java:199)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runFeature(PlatformSpecRunner.java:192)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:41)
+	at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:12)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+	at org.spockframework.runtime.SpecNode.lambda$around$0(SpecNode.java:63)
+	at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunSpec$0(PlatformSpecRunner.java:61)
+	at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+	at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+	at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+	at org.spockframework.runtime.PlatformSpecRunner.runSpec(PlatformSpecRunner.java:55)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:63)
+	at org.spockframework.runtime.SpecNode.around(SpecNode.java:11)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:161)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:147)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:145)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:101)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:230)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:204)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:172)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:101)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:64)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:150)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:63)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:109)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:91)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:194)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:150)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:124)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: liquibase.exception.ChangeLogParseException: liquibase.exception.SetupException: An error occurred while attempting to create the database changelog table.  Please make sure that you have both read and write permissions for the 'LTHDB.null.DATABASECHANGELOG' table.
+	at liquibase.parser.core.xml.AbstractChangeLogParser.parse(AbstractChangeLogParser.java:25)
+	at liquibase.command.core.helpers.DatabaseChangelogCommandStep.lambda$getDatabaseChangeLog$0(DatabaseChangelogCommandStep.java:143)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.Scope.child(Scope.java:282)
+	at liquibase.Scope.child(Scope.java:286)
+	at liquibase.command.core.helpers.DatabaseChangelogCommandStep.getDatabaseChangeLog(DatabaseChangelogCommandStep.java:138)
+	at liquibase.command.core.helpers.DatabaseChangelogCommandStep.run(DatabaseChangelogCommandStep.java:84)
+	at liquibase.command.CommandScope.lambda$execute$6(CommandScope.java:263)
+	... 112 more
+Caused by: liquibase.exception.SetupException: An error occurred while attempting to create the database changelog table.  Please make sure that you have both read and write permissions for the 'LTHDB.null.DATABASECHANGELOG' table.
+	at liquibase.changelog.DatabaseChangeLog.handleInclude(DatabaseChangeLog.java:657)
+	at liquibase.changelog.DatabaseChangeLog.handleChildNodeHelper(DatabaseChangeLog.java:479)
+	at liquibase.changelog.DatabaseChangeLog.handleChildNode(DatabaseChangeLog.java:464)
+	at liquibase.changelog.DatabaseChangeLog.load(DatabaseChangeLog.java:431)
+	at liquibase.parser.core.xml.AbstractChangeLogParser.parse(AbstractChangeLogParser.java:23)
+	... 122 more
+Caused by: liquibase.exception.DatabaseException: An error occurred while attempting to create the database changelog table.  Please make sure that you have both read and write permissions for the 'LTHDB.null.DATABASECHANGELOG' table.
+	at liquibase.changelog.StandardChangeLogHistoryService.init(StandardChangeLogHistoryService.java:288)
+	at liquibase.changelog.DatabaseChangeLog.include(DatabaseChangeLog.java:1125)
+	at liquibase.changelog.DatabaseChangeLog.handleInclude(DatabaseChangeLog.java:646)
+	... 126 more
+Caused by: liquibase.exception.DatabaseException: liquibase.exception.DatabaseException: SQL compilation error:
+syntax error line 1 at position 19 unexpected 'null'.
+syntax error line 1 at position 18 unexpected '.'.
+syntax error line 1 at position 42 unexpected '('. [Failed SQL: (1003) CREATE TABLE LTHDB.null.DATABASECHANGELOG (ID VARCHAR(255) NOT NULL, AUTHOR VARCHAR(255) NOT NULL, FILENAME VARCHAR(255) NOT NULL, DATEEXECUTED TIMESTAMP_NTZ NOT NULL, ORDEREXECUTED INT NOT NULL, EXECTYPE VARCHAR(10) NOT NULL, MD5SUM VARCHAR(35), DESCRIPTION VARCHAR(255), COMMENTS VARCHAR(255), TAG VARCHAR(255), LIQUIBASE VARCHAR(20), CONTEXTS VARCHAR(255), LABELS VARCHAR(255), DEPLOYMENT_ID VARCHAR(10))]
+	at liquibase.executor.jvm.ChangelogJdbcMdcListener.execute(ChangelogJdbcMdcListener.java:40)
+	at liquibase.changelog.StandardChangeLogHistoryService.init(StandardChangeLogHistoryService.java:278)
+	... 128 more
+Caused by: liquibase.exception.DatabaseException: SQL compilation error:
+syntax error line 1 at position 19 unexpected 'null'.
+syntax error line 1 at position 18 unexpected '.'.
+syntax error line 1 at position 42 unexpected '('. [Failed SQL: (1003) CREATE TABLE LTHDB.null.DATABASECHANGELOG (ID VARCHAR(255) NOT NULL, AUTHOR VARCHAR(255) NOT NULL, FILENAME VARCHAR(255) NOT NULL, DATEEXECUTED TIMESTAMP_NTZ NOT NULL, ORDEREXECUTED INT NOT NULL, EXECTYPE VARCHAR(10) NOT NULL, MD5SUM VARCHAR(35), DESCRIPTION VARCHAR(255), COMMENTS VARCHAR(255), TAG VARCHAR(255), LIQUIBASE VARCHAR(20), CONTEXTS VARCHAR(255), LABELS VARCHAR(255), DEPLOYMENT_ID VARCHAR(10))]
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:520)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:85)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:188)
+	at liquibase.executor.jvm.SnowflakeJdbcExecutor.execute(SnowflakeJdbcExecutor.java:33)
+	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:156)
+	at liquibase.changelog.StandardChangeLogHistoryService.lambda$init$1(StandardChangeLogHistoryService.java:278)
+	at liquibase.executor.jvm.ChangelogJdbcMdcListener.lambda$execute$0(ChangelogJdbcMdcListener.java:33)
+	at liquibase.Scope.lambda$child$0(Scope.java:216)
+	at liquibase.Scope.child(Scope.java:225)
+	at liquibase.Scope.child(Scope.java:215)
+	at liquibase.Scope.child(Scope.java:194)
+	at liquibase.executor.jvm.ChangelogJdbcMdcListener.execute(ChangelogJdbcMdcListener.java:32)
+	... 129 more
+Caused by: net.snowflake.client.jdbc.SnowflakeSQLException: SQL compilation error:
+syntax error line 1 at position 19 unexpected 'null'.
+syntax error line 1 at position 18 unexpected '.'.
+syntax error line 1 at position 42 unexpected '('.
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowExceptionSub(SnowflakeUtil.java:171)
+	at net.snowflake.client.jdbc.SnowflakeUtil.checkErrorAndThrowException(SnowflakeUtil.java:103)
+	at net.snowflake.client.core.StmtUtil.pollForOutput(StmtUtil.java:487)
+	at net.snowflake.client.core.StmtUtil.execute(StmtUtil.java:393)
+	at net.snowflake.client.core.SFStatement.executeHelper(SFStatement.java:502)
+	at net.snowflake.client.core.SFStatement.executeQueryInternal(SFStatement.java:211)
+	at net.snowflake.client.core.SFStatement.executeQuery(SFStatement.java:145)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:779)
+	at net.snowflake.client.core.SFStatement.execute(SFStatement.java:697)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.executeInternal(SnowflakeStatementV1.java:350)
+	at net.snowflake.client.jdbc.SnowflakeStatementV1.execute(SnowflakeStatementV1.java:425)
+	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:512)
+	... 140 more
+Jul 29, 2025 9:05:23 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+SEVERE: Failed to execute command scope for command liquibase.command.CommandDefinition@9eeeeccd. null
+Jul 29, 2025 9:05:23 AM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: If this is expected to be invalid query for this database/version, create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.
+[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 25.82 s <<< FAILURE! -- in liquibase.harness.ChangeObjectTests
+[ERROR] liquibase.harness.ChangeObjectTests.apply alterSequenceWithNoOrder against snowflake latest -- Time elapsed: 16.79 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness:
+     Reason: liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+	at liquibase.harness.util.TestUtils.executeCommandScope(TestUtils.groovy:71)
+	at liquibase.harness.change.ChangeObjectTests.apply #testInput.changeObject against #testInput.databaseName #testInput.version(ChangeObjectTests.groovy:76)
+	Suppressed: org.opentest4j.AssertionFailedError: liquibase.exception.ChangeLogParseException: liquibase.exception.SetupException: An error occurred while attempting to create the database changelog table.  Please make sure that you have both read and write permissions for the 'LTHDB.null.DATABASECHANGELOG' table.
+		at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+		at liquibase.harness.util.TestUtils.executeCommandScope(TestUtils.groovy:71)
+		at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+		at liquibase.harness.util.rollback.RollbackToDate.performRollback(RollbackToDate.groovy:21)
+		at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:321)
+		at liquibase.harness.change.ChangeObjectTests.$spock_feature_0_0(ChangeObjectTests.groovy:89)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+		at org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:187)
+		at org.spockframework.runtime.model.MethodInfo.lambda$new$0(MethodInfo.java:49)
+		at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+		at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+		at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+		at org.spockframework.runtime.PlatformSpecRunner.runFeatureMethod(PlatformSpecRunner.java:324)
+		at org.spockframework.runtime.IterationNode.execute(IterationNode.java:50)
+		at org.spockframework.runtime.IterationNode.execute(IterationNode.java:13)
+		at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+		at org.spockframework.runtime.IterationNode.lambda$around$0(IterationNode.java:67)
+		at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunIteration$5(PlatformSpecRunner.java:236)
+		at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+		at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+		at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+		at org.spockframework.runtime.PlatformSpecRunner.runIteration(PlatformSpecRunner.java:218)
+		at org.spockframework.runtime.IterationNode.around(IterationNode.java:67)
+		at org.spockframework.runtime.IterationNode.around(IterationNode.java:13)
+		at org.spockframework.runtime.ParameterizedFeatureChildExecutor.execute(ParameterizedFeatureChildExecutor.java:104)
+		at org.spockframework.runtime.PlatformParameterizedSpecRunner$1.runIteration(PlatformParameterizedSpecRunner.java:72)
+		at org.spockframework.runtime.extension.IDataDriver.lambda$static$0(IDataDriver.java:37)
+		at org.spockframework.runtime.PlatformParameterizedSpecRunner.runParameterizedFeature(PlatformParameterizedSpecRunner.java:47)
+		at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:40)
+		at org.spockframework.runtime.ParameterizedFeatureNode.execute(ParameterizedFeatureNode.java:16)
+		at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+		at org.spockframework.runtime.FeatureNode.lambda$around$0(FeatureNode.java:41)
+		at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunFeature$4(PlatformSpecRunner.java:199)
+		at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+		at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+		at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+		at org.spockframework.runtime.PlatformSpecRunner.runFeature(PlatformSpecRunner.java:192)
+		at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:41)
+		at org.spockframework.runtime.FeatureNode.around(FeatureNode.java:12)
+		at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+		at org.spockframework.runtime.SpockNode.sneakyInvoke(SpockNode.java:40)
+		at org.spockframework.runtime.SpecNode.lambda$around$0(SpecNode.java:63)
+		at org.spockframework.runtime.PlatformSpecRunner.lambda$createMethodInfoForDoRunSpec$0(PlatformSpecRunner.java:61)
+		at org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:156)
+		at org.spockframework.runtime.PlatformSpecRunner.invokeRaw(PlatformSpecRunner.java:407)
+		at org.spockframework.runtime.PlatformSpecRunner.invoke(PlatformSpecRunner.java:390)
+		at org.spockframework.runtime.PlatformSpecRunner.runSpec(PlatformSpecRunner.java:55)
+		at org.spockframework.runtime.SpecNode.around(SpecNode.java:63)
+		at org.spockframework.runtime.SpecNode.around(SpecNode.java:11)
+		at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   ChangeObjectTests>ChangeObjectTests.apply #testInput.changeObject against #testInput.databaseName #testInput.version:76 liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset liquibase/harness/change/changelogs/snowflake/init.xml::reset-schema::test-harness:
+     Reason: liquibase.exception.DatabaseException: SQL access control error:
+Insufficient privileges to operate on database 'LTHDB' [Failed SQL: (3001) CREATE SCHEMA TESTHARNESS]
+[INFO] 
+[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  30.767 s
+[INFO] Finished at: 2025-07-29T09:05:23-05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project liquibase-test-harness: There are test failures.
+[ERROR] 
+[ERROR] See /Users/kevinchappell/Documents/GitHub/liquibase-test-harness/target/surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

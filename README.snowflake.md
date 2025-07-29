@@ -15,15 +15,27 @@
 
 ## Configuration
 
-1. Copy the Snowflake harness config template:
+1. Create the harness config file:
    ```bash
-   cp harness-config.snowflake.yml src/test/resources/harness-config.yml
+   cp src/test/resources/harness-config.local.yml src/test/resources/harness-config.yml
    ```
 
-2. Edit `src/test/resources/harness-config.yml` and replace the placeholders:
-   - `<YOUR_ACCOUNT>`: Your Snowflake account identifier
-   - `<YOUR_USERNAME>`: Your Snowflake username
-   - `<YOUR_PASSWORD>`: Your Snowflake password
+2. Edit `src/test/resources/harness-config.yml` with the CORRECT database/schema for test harness:
+   ```yaml
+   databasesUnderTest:
+     - name: snowflake
+       prefix: local
+       version: latest
+       url: "jdbc:snowflake://<YOUR_ACCOUNT>.snowflakecomputing.com/?db=LTHDB&warehouse=LTHDB_TEST_WH&schema=TESTHARNESS&role=LIQUIBASE_TEST_HARNESS_ROLE"
+       username: "<YOUR_USERNAME>"
+       password: "<YOUR_PASSWORD>"
+   ```
+
+   **CRITICAL**: Test harness REQUIRES these exact values:
+   - Database: `LTHDB` (NOT LIQUIBASE_SNOWFLAKE_TEST)
+   - Schema: `TESTHARNESS` (NOT TEST_SCHEMA)
+   - Role: `LIQUIBASE_TEST_HARNESS_ROLE`
+   - Warehouse: `LTHDB_TEST_WH`
 
 ## Running Tests
 
@@ -62,3 +74,8 @@ All test resources use the `LTHDB_` prefix to avoid conflicts:
 1. **Cannot find harness-config.yml in classpath**: Ensure the config file is in `src/test/resources/`
 2. **Database snowflake latest is offline**: Check your Snowflake credentials and connection URL
 3. **Permission errors**: Ensure the LIQUIBASE_TEST_HARNESS_ROLE has all necessary privileges
+4. **"CREATE TABLE LTHDB.null.DATABASECHANGELOGLOCK" error**: This indicates wrong database/schema in config. Test harness MUST use LTHDB/TESTHARNESS, not integration test values
+5. **Test harness vs Integration tests confusion**: 
+   - Integration tests use: LIQUIBASE_SNOWFLAKE_TEST/TEST_SCHEMA
+   - Test harness uses: LTHDB/TESTHARNESS
+   - These are DIFFERENT environments - don't mix them!

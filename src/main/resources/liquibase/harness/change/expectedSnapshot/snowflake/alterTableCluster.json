@@ -4,29 +4,7 @@
       "liquibase.structure.core.Table": [
         {
           "table": {
-            "name": "test_cluster_table"
-          }
-        }
-      ],
-      "liquibase.structure.core.Column": [
-        {
-          "column": {
-            "name": "id"
-          }
-        },
-        {
-          "column": {
-            "name": "region"
-          }
-        },
-        {
-          "column": {
-            "name": "product"
-          }
-        },
-        {
-          "column": {
-            "name": "sales_date"
+            "name": "TEST_TABLE_CLUSTER"
           }
         }
       ]
