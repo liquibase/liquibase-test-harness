@@ -1,0 +1,239 @@
+{
+  "schemas": {
+    "LTHDB.TESTHARNESS": {
+      "name": "TESTHARNESS",
+      "catalog": {
+        "name": "LTHDB",
+        "default": true
+      },
+      "default": true
+    }
+  },
+  "tables": {
+    "LTHDB.TESTHARNESS.DATABASECHANGELOG": {
+      "name": "DATABASECHANGELOG",
+      "schema": {
+        "name": "TESTHARNESS",
+        "catalog": {
+          "name": "LTHDB",
+          "default": true
+        },
+        "default": true
+      },
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": false,
+          "order": "1!{java.lang.Integer}"
+        },
+        "AUTHOR": {
+          "name": "AUTHOR",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": false,
+          "order": "2!{java.lang.Integer}"
+        },
+        "FILENAME": {
+          "name": "FILENAME",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": false,
+          "order": "3!{java.lang.Integer}"
+        },
+        "DATEEXECUTED": {
+          "name": "DATEEXECUTED",
+          "type": {
+            "typeName": "TIMESTAMP",
+            "dataTypeId": "93"
+          },
+          "nullable": false,
+          "order": "4!{java.lang.Integer}"
+        },
+        "ORDEREXECUTED": {
+          "name": "ORDEREXECUTED",
+          "type": {
+            "typeName": "INT",
+            "dataTypeId": "4"
+          },
+          "nullable": false,
+          "order": "5!{java.lang.Integer}"
+        },
+        "EXECTYPE": {
+          "name": "EXECTYPE",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": false,
+          "order": "6!{java.lang.Integer}"
+        },
+        "MD5SUM": {
+          "name": "MD5SUM",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": true,
+          "order": "7!{java.lang.Integer}"
+        },
+        "DESCRIPTION": {
+          "name": "DESCRIPTION",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": true,
+          "order": "8!{java.lang.Integer}"
+        },
+        "COMMENTS": {
+          "name": "COMMENTS",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": true,
+          "order": "9!{java.lang.Integer}"
+        },
+        "TAG": {
+          "name": "TAG",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": true,
+          "order": "10!{java.lang.Integer}"
+        },
+        "LIQUIBASE": {
+          "name": "LIQUIBASE",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": true,
+          "order": "11!{java.lang.Integer}"
+        },
+        "CONTEXTS": {
+          "name": "CONTEXTS",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": true,
+          "order": "12!{java.lang.Integer}"
+        },
+        "LABELS": {
+          "name": "LABELS",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": true,
+          "order": "13!{java.lang.Integer}"
+        },
+        "DEPLOYMENT_ID": {
+          "name": "DEPLOYMENT_ID",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": true,
+          "order": "14!{java.lang.Integer}"
+        }
+      }
+    },
+    "LTHDB.TESTHARNESS.DATABASECHANGELOGLOCK": {
+      "name": "DATABASECHANGELOGLOCK",
+      "schema": {
+        "name": "TESTHARNESS",
+        "catalog": {
+          "name": "LTHDB",
+          "default": true
+        },
+        "default": true
+      },
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": {
+            "typeName": "INT",
+            "dataTypeId": "4"
+          },
+          "nullable": false,
+          "order": "1!{java.lang.Integer}"
+        },
+        "LOCKED": {
+          "name": "LOCKED",
+          "type": {
+            "typeName": "BOOLEAN",
+            "dataTypeId": "16"
+          },
+          "nullable": false,
+          "order": "2!{java.lang.Integer}"
+        },
+        "LOCKGRANTED": {
+          "name": "LOCKGRANTED",
+          "type": {
+            "typeName": "TIMESTAMP",
+            "dataTypeId": "93"
+          },
+          "nullable": true,
+          "order": "3!{java.lang.Integer}"
+        },
+        "LOCKEDBY": {
+          "name": "LOCKEDBY",
+          "type": {
+            "typeName": "VARCHAR",
+            "dataTypeId": "12"
+          },
+          "nullable": true,
+          "order": "4!{java.lang.Integer}"
+        }
+      },
+      "primaryKey": {
+        "name": "SYS_C00272521",
+        "columnNames": "ID",
+        "table": {
+          "name": "DATABASECHANGELOGLOCK",
+          "schema": {
+            "name": "TESTHARNESS",
+            "catalog": {
+              "name": "LTHDB",
+              "default": true
+            },
+            "default": true
+          }
+        },
+        "validate": true
+      }
+    }
+  },
+  "indexes": {},
+  "sequences": {},
+  "uniqueConstraints": {},
+  "primaryKeys": {
+    "LTHDB.TESTHARNESS.DATABASECHANGELOGLOCK.SYS_C00272521": {
+      "name": "SYS_C00272521",
+      "columnNames": "ID",
+      "table": {
+        "name": "DATABASECHANGELOGLOCK",
+        "schema": {
+          "name": "TESTHARNESS",
+          "catalog": {
+            "name": "LTHDB",
+            "default": true
+          },
+          "default": true
+        }
+      },
+      "validate": true
+    }
+  }
+}

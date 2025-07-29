@@ -1,0 +1,165 @@
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective settings
+[WARNING] 'profiles.profile[github].repositories.repository.id' must be unique but found duplicate repository with id github @ /Users/kevinchappell/.m2/settings.xml
+[WARNING] 
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< org.liquibase:liquibase-test-harness >----------------
+[INFO] Building Liquibase Test Harness 1.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from github: https://maven.pkg.github.com/liquibase/liquibase-pro/org/liquibase/liquibase-standard/0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata org.liquibase:liquibase-standard:0-SNAPSHOT/maven-metadata.xml from/to github (https://maven.pkg.github.com/liquibase/liquibase-pro): status code: 401, reason phrase: Unauthorized (401)
+[WARNING] org.liquibase:liquibase-standard:0-SNAPSHOT/maven-metadata.xml failed to transfer from https://maven.pkg.github.com/liquibase/liquibase-pro during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of github has elapsed or updates are forced. Original error: Could not transfer metadata org.liquibase:liquibase-standard:0-SNAPSHOT/maven-metadata.xml from/to github (https://maven.pkg.github.com/liquibase/liquibase-pro): status code: 401, reason phrase: Unauthorized (401)
+[INFO] 
+[INFO] --- enforcer:3.6.1:enforce (enforce-maven) @ liquibase-test-harness ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] 
+[INFO] --- gplus:4.2.1:addSources (default) @ liquibase-test-harness ---
+[INFO] 
+[INFO] --- gplus:4.2.1:addTestSources (default) @ liquibase-test-harness ---
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ liquibase-test-harness ---
+[INFO] Copying 3280 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ liquibase-test-harness ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- gplus:4.2.1:compile (default) @ liquibase-test-harness ---
+[INFO] Using isolated classloader, without GMavenPlus classpath.
+[INFO] Using Groovy 4.0.27 to perform compile.
+[INFO] invokedynamic enabled.
+[INFO] Parallel parsing enabled.
+[INFO] Compiled 73 files.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ liquibase-test-harness ---
+[INFO] Copying 144 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ liquibase-test-harness ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] 
+[INFO] --- gplus:4.2.1:compileTests (default) @ liquibase-test-harness ---
+[INFO] Using isolated classloader, without GMavenPlus classpath.
+[INFO] Using Groovy 4.0.27 to perform compileTests.
+[INFO] invokedynamic enabled.
+[INFO] Parallel parsing enabled.
+[INFO] Compiled 12 files.
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ liquibase-test-harness ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+Jul 25, 2025 2:23:10 PM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: Revalidate SQL: true
+[INFO] Running liquibase.harness.ChangeObjectTests
+Only xml input files are taken into account for this test run
+Jul 25, 2025 2:23:10 PM net.snowflake.client.core.SFSession open
+INFO: Opening session with server: https://LWMNXLH-AUB54519.snowflakecomputing.com:443/, account: LWMNXLH-AUB54519, user: KevinAtLiquibase, password is provided, role: LIQUIBASE_TEST_HARNESS_ROLE, database: LTHDB, schema: TESTHARNESS, warehouse: LTHDB_TEST_WH, validate default parameters: null, authenticator: null, ocsp mode: FAIL_OPEN, passcode in password: null, passcode is not provided, private key is not provided, disable socks proxy: null, application: Liquibase, app id: JDBC, app version: 3.23.1, login timeout: null, retry timeout: null, network timeout: null, query timeout: null, connection timeout: null, socket timeout: null, tracing: null, private key file: null, private key pwd is not provided, enable_diagnostics: not provided, diagnostics_allowlist_path: null, session parameters: client store temporary credential: null, gzip disabled: null, browser response timeout: null
+Jul 25, 2025 2:23:10 PM net.snowflake.client.core.SFSession open
+INFO: Connecting to GLOBAL Snowflake domain
+Jul 25, 2025 2:23:10 PM net.snowflake.client.core.FileUtil logWarnWhenAccessibleByOthers
+WARNING: Cache file creation: File /Users/kevinchappell/Library/Caches/Snowflake/ocsp_response_cache.json is accessible by others to:
+Jul 25, 2025 2:23:10 PM net.snowflake.client.core.FileUtil logWarnWhenAccessibleByOthers
+WARNING: Read cache: File /Users/kevinchappell/Library/Caches/Snowflake/ocsp_response_cache.json is accessible by others to:
+Jul 25, 2025 2:23:10 PM net.snowflake.client.core.FileUtil logWarnWhenAccessibleByOthers
+WARNING: Write to cache: File /Users/kevinchappell/Library/Caches/Snowflake/ocsp_response_cache.json is accessible by others to:
+Jul 25, 2025 2:23:12 PM liquibase.database
+INFO: Set default schema name to TESTHARNESS
+Jul 25, 2025 2:23:15 PM liquibase.lockservice
+INFO: Successfully released change log lock
+Jul 25, 2025 2:23:15 PM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+SEVERE: Provided database name/majorVersion doesn't match with actual        
+    provided: snowflake latest        
+    actual: snowflake         9
+Jul 25, 2025 2:23:15 PM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: Found 82 changeLogs for snowflake/latest in liquibase/harness/change/changelogs
+Jul 25, 2025 2:23:15 PM org.codehaus.groovy.vmplugin.v8.IndyInterface fromCache
+INFO: Executing liquibase command: updateSql 
+Jul 25, 2025 2:23:15 PM net.snowflake.client.core.SFSession open
+INFO: Opening session with server: https://LWMNXLH-AUB54519.snowflakecomputing.com:443/, account: LWMNXLH-AUB54519, user: KevinAtLiquibase, password is provided, role: LIQUIBASE_TEST_HARNESS_ROLE, database: LTHDB, schema: TESTHARNESS, warehouse: LTHDB_TEST_WH, validate default parameters: null, authenticator: null, ocsp mode: FAIL_OPEN, passcode in password: null, passcode is not provided, private key is not provided, disable socks proxy: null, application: Liquibase, app id: JDBC, app version: 3.23.1, login timeout: null, retry timeout: null, network timeout: null, query timeout: null, connection timeout: null, socket timeout: null, tracing: null, private key file: null, private key pwd is not provided, enable_diagnostics: not provided, diagnostics_allowlist_path: null, session parameters: client store temporary credential: null, gzip disabled: null, browser response timeout: null
+Jul 25, 2025 2:23:15 PM net.snowflake.client.core.SFSession open
+INFO: Connecting to GLOBAL Snowflake domain
+Jul 25, 2025 2:23:16 PM liquibase.database
+INFO: Set default schema name to TESTHARNESS
+Jul 25, 2025 2:23:16 PM liquibase.lockservice
+INFO: Successfully acquired change log lock
+Jul 25, 2025 2:23:17 PM liquibase.changelog
+INFO: Reading from LTHDB.TESTHARNESS.DATABASECHANGELOG
+Jul 25, 2025 2:23:17 PM liquibase.command
+INFO: Using deploymentId: 3471390163
+Jul 25, 2025 2:23:17 PM liquibase.changelog
+INFO: Reading from LTHDB.TESTHARNESS.DATABASECHANGELOG
+Jul 25, 2025 2:23:18 PM liquibase.changelog
+INFO: Table TEST_SNOWFLAKE_TABLE created
+Jul 25, 2025 2:23:18 PM liquibase.changelog
+INFO: ChangeSet liquibase/harness/change/changelogs/snowflake/createTableSnowflake.xml::test-snowflake-create-table::test ran successfully in 164ms
+Jul 25, 2025 2:23:18 PM liquibase.command
+INFO: Update command completed successfully.
+Jul 25, 2025 2:23:18 PM liquibase.lockservice
+INFO: Successfully released change log lock
+Jul 25, 2025 2:23:19 PM liquibase.lockservice
+INFO: Successfully released change log lock
+Jul 25, 2025 2:23:19 PM liquibase.command
+INFO: Command execution complete
+Jul 25, 2025 2:23:19 PM liquibase.analytics
+SEVERE: Analytics is disabled because this is not a release build and the user has not provided a value for the liquibase.analytics.devOverride option.
+FAIL! Expected sql doesn't match generated sql! Deleting expectedSql file will test that new sql works correctly and will auto-generate a new version if it passes. 
+EXPECTED SQL: 
+CREATE TRANSIENT TABLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) CLUSTER BY (id) DATA_RETENTION_TIME_IN_DAYS = 7 COMMENT = 'Test Snowflake table' 
+GENERATED SQL: 
+CREATE TABLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) COMMENT = 'Test Snowflake table'
+COMMENT ON TABLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE IS 'Test Snowflake table'
+[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 9.973 s <<< FAILURE! -- in liquibase.harness.ChangeObjectTests
+[ERROR] liquibase.harness.ChangeObjectTests.apply createTableSnowflake against snowflake latest -- Time elapsed: 4.287 s <<< FAILURE!
+Condition not satisfied:
+
+generatedSql == expectedSql
+|            |  |
+|            |  CREATE TRANSIENT TABLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) CLUSTER BY (id) DATA_RETENTION_TIME_IN_DAYS = 7 COMMENT = 'Test Snowflake table'
+|            false
+|            82 differences (63% similarity) (comparing subset start: 7, end1: 233, end2: 209)
+|            T(-)A(---------)BLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) C(OMMEN)T( =) ('Test) (Snowflake) (table'\nCOMM)ENT( )ON( )T(ABL)E( LTH)D(B.TESTH)A(RNE)S(S.TEST_SN)O(WFLAK)E(_)T(ABLE) (IS)
+|            T(R)A(NSIENT TA)BLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) C(LUS--)T(ER) (BY---) ((id)-----) (DATA_RE~T---)ENT(I)ON(_)T(IM-)E(_IN_)D(-------)A(Y--)S( = 7 C---)O(MM---)E(N)T(----) (=-)
+CREATE TABLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) COMMENT = 'Test Snowflake table'
+COMMENT ON TABLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE IS 'Test Snowflake table'
+
+	at liquibase.harness.change.ChangeObjectTests.apply #testInput.changeObject against #testInput.databaseName #testInput.version(ChangeObjectTests.groovy:68)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   ChangeObjectTests>ChangeObjectTests.apply #testInput.changeObject against #testInput.databaseName #testInput.version:68 Condition not satisfied:
+
+generatedSql == expectedSql
+|            |  |
+|            |  CREATE TRANSIENT TABLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) CLUSTER BY (id) DATA_RETENTION_TIME_IN_DAYS = 7 COMMENT = 'Test Snowflake table'
+|            false
+|            82 differences (63% similarity) (comparing subset start: 7, end1: 233, end2: 209)
+|            T(-)A(---------)BLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) C(OMMEN)T( =) ('Test) (Snowflake) (table'\nCOMM)ENT( )ON( )T(ABL)E( LTH)D(B.TESTH)A(RNE)S(S.TEST_SN)O(WFLAK)E(_)T(ABLE) (IS)
+|            T(R)A(NSIENT TA)BLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) C(LUS--)T(ER) (BY---) ((id)-----) (DATA_RE~T---)ENT(I)ON(_)T(IM-)E(_IN_)D(-------)A(Y--)S( = 7 C---)O(MM---)E(N)T(----) (=-)
+CREATE TABLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE (id INT NOT NULL, name VARCHAR(100), CONSTRAINT PK_TEST_SNOWFLAKE_TABLE PRIMARY KEY (id)) COMMENT = 'Test Snowflake table'
+COMMENT ON TABLE LTHDB.TESTHARNESS.TEST_SNOWFLAKE_TABLE IS 'Test Snowflake table'
+
+[INFO] 
+[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.208 s
+[INFO] Finished at: 2025-07-25T14:23:20-05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project liquibase-test-harness: There are test failures.
+[ERROR] 
+[ERROR] See /Users/kevinchappell/Documents/GitHub/liquibase-test-harness/target/surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

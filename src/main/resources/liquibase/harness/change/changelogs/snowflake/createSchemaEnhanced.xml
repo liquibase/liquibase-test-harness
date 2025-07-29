@@ -12,11 +12,13 @@
 
     <!-- Clean up any schemas this test might create -->
     <changeSet author="test-harness" id="cleanup-test-schemas" runAlways="true">
-        <sql>DROP SCHEMA IF EXISTS TEST_TRANSIENT_SCHEMA CASCADE</sql>
-        <sql>DROP SCHEMA IF EXISTS TEST_MANAGED_SCHEMA CASCADE</sql>
-        <sql>DROP SCHEMA IF EXISTS TEST_MANAGED_SCHEMA_RENAMED CASCADE</sql>
-        <sql>DROP SCHEMA IF EXISTS TEST_RETENTION_SCHEMA CASCADE</sql>
-        <sql>DROP SCHEMA IF EXISTS TEST_FULL_SCHEMA CASCADE</sql>
+        <sql>
+            DROP SCHEMA IF EXISTS TEST_TRANSIENT_SCHEMA CASCADE;
+            DROP SCHEMA IF EXISTS TEST_MANAGED_SCHEMA CASCADE;
+            DROP SCHEMA IF EXISTS TEST_MANAGED_SCHEMA_RENAMED CASCADE;
+            DROP SCHEMA IF EXISTS TEST_RETENTION_SCHEMA CASCADE;
+            DROP SCHEMA IF EXISTS TEST_FULL_SCHEMA CASCADE;
+        </sql>
     </changeSet>
 
     <changeSet author="test-harness" id="createSchema-transient">
@@ -24,7 +26,7 @@
                       transient="true" 
                       comment="Transient test schema"/>
         <rollback>
-            <sql>DROP SCHEMA IF EXISTS TEST_TRANSIENT_SCHEMA</sql>
+            <snowflake:dropSchema schemaName="TEST_TRANSIENT_SCHEMA" cascade="true"/>
         </rollback>
     </changeSet>
 
@@ -33,7 +35,7 @@
                       managedAccess="true" 
                       comment="Managed access schema"/>
         <rollback>
-            <sql>DROP SCHEMA IF EXISTS TEST_MANAGED_SCHEMA</sql>
+            <snowflake:dropSchema schemaName="TEST_MANAGED_SCHEMA" cascade="true"/>
         </rollback>
     </changeSet>
 
@@ -42,7 +44,7 @@
                       dataRetentionTimeInDays="7" 
                       comment="Schema with retention"/>
         <rollback>
-            <sql>DROP SCHEMA IF EXISTS TEST_RETENTION_SCHEMA</sql>
+            <snowflake:dropSchema schemaName="TEST_RETENTION_SCHEMA" cascade="true"/>
         </rollback>
     </changeSet>
 
@@ -52,7 +54,7 @@
                       managedAccess="true" 
                       comment="Full featured schema"/>
         <rollback>
-            <sql>DROP SCHEMA IF EXISTS TEST_FULL_SCHEMA</sql>
+            <snowflake:dropSchema schemaName="TEST_FULL_SCHEMA" cascade="true"/>
         </rollback>
     </changeSet>
 
@@ -84,10 +86,10 @@
     </changeSet>
 
     <changeSet author="test-harness" id="cleanup-schemas">
-        <sql>DROP SCHEMA IF EXISTS TEST_TRANSIENT_SCHEMA CASCADE</sql>
-        <sql>DROP SCHEMA IF EXISTS TEST_MANAGED_SCHEMA_RENAMED CASCADE</sql>
-        <sql>DROP SCHEMA IF EXISTS TEST_RETENTION_SCHEMA CASCADE</sql>
-        <sql>DROP SCHEMA IF EXISTS TEST_FULL_SCHEMA CASCADE</sql>
+        <snowflake:dropSchema schemaName="TEST_TRANSIENT_SCHEMA"/>
+        <snowflake:dropSchema schemaName="TEST_MANAGED_SCHEMA_RENAMED"/>
+        <snowflake:dropSchema schemaName="TEST_RETENTION_SCHEMA"/>
+        <snowflake:dropSchema schemaName="TEST_FULL_SCHEMA"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+
+    <!-- Cleanup: Remove any test tables -->
+    <changeSet id="cleanup-alterTableCluster" author="test-harness" runAlways="true">
+        <sql>DROP TABLE IF EXISTS test_cluster_table CASCADE</sql>
+    </changeSet>
+
+    <!-- Setup: Create test table for clustering operations -->
+    <changeSet id="setup-alterTableCluster" author="test-harness">
+        <createTable tableName="test_cluster_table">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="region" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sales_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Test 1: Add clustering key -->
+    <changeSet id="test-clusterBy" author="test-harness">
+        <snowflake:alterTableCluster tableName="test_cluster_table" clusterBy="region, product"/>
+    </changeSet>
+
+    <!-- Test 2: Suspend reclustering -->
+    <changeSet id="test-suspendRecluster" author="test-harness">
+        <snowflake:alterTableCluster tableName="test_cluster_table" suspendRecluster="true"/>
+    </changeSet>
+
+    <!-- Test 3: Resume reclustering -->
+    <changeSet id="test-resumeRecluster" author="test-harness">
+        <snowflake:alterTableCluster tableName="test_cluster_table" resumeRecluster="true"/>
+    </changeSet>
+
+    <!-- Test 4: Drop clustering key -->
+    <changeSet id="test-dropClusteringKey" author="test-harness">
+        <snowflake:alterTableCluster tableName="test_cluster_table" dropClusteringKey="true"/>
+    </changeSet>
+
+</databaseChangeLog>

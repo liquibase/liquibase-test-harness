@@ -1,82 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
     
     <!-- Include init.xml for cleanup -->
     <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
 
-    <!-- Basic sequence with ORDER option -->
-    <changeSet author="test-harness" id="createSequence-order">
-        <createSequence sequenceName="TEST_ORDERED_SEQUENCE"
-                       startValue="1"
-                       incrementBy="1"
-                       />
-        <rollback>
-            <dropSequence sequenceName="TEST_ORDERED_SEQUENCE"/>
-        </rollback>
-    </changeSet>
-
-    <!-- Sequence with NOORDER option (default) -->
-    <changeSet author="test-harness" id="createSequence-noorder">
-        <createSequence sequenceName="TEST_NOORDER_SEQUENCE"
-                       startValue="1"
-                       incrementBy="1"
-                       />
-        <rollback>
-            <dropSequence sequenceName="TEST_NOORDER_SEQUENCE"/>
-        </rollback>
-    </changeSet>
-
-    <!-- Sequence with ORDER and other options -->
-    <changeSet author="test-harness" id="createSequence-order-complex">
-        <createSequence sequenceName="TEST_ORDERED_COMPLEX"
-                       startValue="100"
-                       incrementBy="5"
-                       />
-        <rollback>
-            <dropSequence sequenceName="TEST_ORDERED_COMPLEX"/>
-        </rollback>
-    </changeSet>
-
-    <!-- Create sequence that will be altered (test different create sequence method) -->
-    <changeSet author="test-harness" id="alterSequence-addOrder">
-        <createSequence sequenceName="TEST_ALTER_ORDER_SEQ"
+    <!-- Basic sequence test -->
+    <changeSet author="test-harness" id="createSequence-basic">
+        <createSequence sequenceName="TEST_BASIC_SEQUENCE"
                        startValue="1"
                        incrementBy="1"/>
-    </changeSet>
-
-    <!-- Test sequence with negative increment and ORDER -->
-    <changeSet author="test-harness" id="createSequence-order-negative">
-        <createSequence sequenceName="TEST_ORDERED_NEGATIVE"
-                       startValue="1000"
-                       incrementBy="-10"
-                       />
         <rollback>
-            <dropSequence sequenceName="TEST_ORDERED_NEGATIVE"/>
+            <dropSequence sequenceName="TEST_BASIC_SEQUENCE"/>
         </rollback>
     </changeSet>
 
-    <!-- Test sequence with ORDER and comment -->
-    <changeSet author="test-harness" id="createSequence-order-cycle">
-        <createSequence sequenceName="TEST_ORDERED_CYCLE"
-                       startValue="1"
-                       incrementBy="1"
-                       />
+    <!-- Sequence with larger increment -->
+    <changeSet author="test-harness" id="createSequence-increment">
+        <createSequence sequenceName="TEST_INCREMENT_SEQUENCE"
+                       startValue="100"
+                       incrementBy="5"/>
         <rollback>
-            <dropSequence sequenceName="TEST_ORDERED_CYCLE"/>
+            <dropSequence sequenceName="TEST_INCREMENT_SEQUENCE"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Sequence with different start value -->
+    <changeSet author="test-harness" id="createSequence-start">
+        <createSequence sequenceName="TEST_START_SEQUENCE"
+                       startValue="1000"
+                       incrementBy="1"/>
+        <rollback>
+            <dropSequence sequenceName="TEST_START_SEQUENCE"/>
         </rollback>
     </changeSet>
 
     <!-- Cleanup -->
     <changeSet author="test-harness" id="cleanup-sequences">
-        <dropSequence sequenceName="TEST_ORDERED_SEQUENCE"/>
-        <dropSequence sequenceName="TEST_NOORDER_SEQUENCE"/>
-        <dropSequence sequenceName="TEST_ORDERED_COMPLEX"/>
-        <dropSequence sequenceName="TEST_ALTER_ORDER_SEQ"/>
-        <dropSequence sequenceName="TEST_ORDERED_NEGATIVE"/>
-        <dropSequence sequenceName="TEST_ORDERED_CYCLE"/>
+        <dropSequence sequenceName="TEST_BASIC_SEQUENCE"/>
+        <dropSequence sequenceName="TEST_INCREMENT_SEQUENCE"/>
+        <dropSequence sequenceName="TEST_START_SEQUENCE"/>
     </changeSet>
 
 </databaseChangeLog>

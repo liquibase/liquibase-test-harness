@@ -1,0 +1,2 @@
+-- Liquibase Snowflake SQL
+CREATE SCHEMA TEST_SIMPLE_SCHEMA;

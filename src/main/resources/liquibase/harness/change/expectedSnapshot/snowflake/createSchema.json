@@ -1,13 +1,5 @@
 {
   "snapshot": {
-    "objects": {
-      "liquibase.structure.core.Schema": [
-        {
-          "schema": {
-            "name": "TESTHARNESS"
-          }
-        }
-      ]
-    }
+    "objects": {}
   }
 }

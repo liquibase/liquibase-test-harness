@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+    
+    <!-- Include init.xml for cleanup -->
+    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
+
+    <!-- Clean up any schemas this test might create -->
+    <changeSet author="test-harness" id="cleanup-test-schemas" runAlways="true">
+        <sql>
+            DROP SCHEMA IF EXISTS TEST_DROP_SCHEMA CASCADE;
+            DROP SCHEMA IF EXISTS TEST_DROP_CASCADE_SCHEMA CASCADE;
+            DROP SCHEMA IF EXISTS TEST_DROP_RESTRICT_SCHEMA CASCADE;
+            DROP SCHEMA IF EXISTS TEST_DROP_IF_EXISTS_SCHEMA CASCADE;
+        </sql>
+    </changeSet>
+
+    <!-- Setup: Create schemas to drop -->
+    <changeSet author="test-harness" id="dropSchema-setup">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS TEST_DROP_SCHEMA COMMENT = 'Schema to be dropped';
+            CREATE SCHEMA IF NOT EXISTS TEST_DROP_CASCADE_SCHEMA COMMENT = 'Schema to be dropped with cascade';
+            CREATE SCHEMA IF NOT EXISTS TEST_DROP_RESTRICT_SCHEMA COMMENT = 'Schema to be dropped with restrict';
+            CREATE SCHEMA IF NOT EXISTS TEST_DROP_IF_EXISTS_SCHEMA COMMENT = 'Schema to test IF EXISTS';
+        </sql>
+        
+        <!-- Create a table in cascade schema to test CASCADE -->
+        <createTable tableName="TEST_TABLE" schemaName="TEST_DROP_CASCADE_SCHEMA">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Test: Basic drop schema -->
+    <changeSet author="test-harness" id="dropSchema-basic">
+        <snowflake:dropSchema schemaName="TEST_DROP_SCHEMA"/>
+        <rollback>
+            <sql>CREATE SCHEMA TEST_DROP_SCHEMA COMMENT = 'Schema to be dropped'</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Test: Drop schema with CASCADE -->
+    <changeSet author="test-harness" id="dropSchema-cascade">
+        <snowflake:dropSchema schemaName="TEST_DROP_CASCADE_SCHEMA" 
+                     cascade="true"/>
+        <rollback>
+            <sql>CREATE SCHEMA TEST_DROP_CASCADE_SCHEMA COMMENT = 'Schema to be dropped with cascade'</sql>
+            <createTable tableName="TEST_TABLE" schemaName="TEST_DROP_CASCADE_SCHEMA">
+                <column name="id" type="INTEGER">
+                    <constraints primaryKey="true"/>
+                </column>
+            </createTable>
+        </rollback>
+    </changeSet>
+
+    <!-- Test: Drop schema with RESTRICT (default behavior) -->
+    <changeSet author="test-harness" id="dropSchema-restrict">
+        <snowflake:dropSchema schemaName="TEST_DROP_RESTRICT_SCHEMA" 
+                     cascade="false"/>
+        <rollback>
+            <sql>CREATE SCHEMA TEST_DROP_RESTRICT_SCHEMA COMMENT = 'Schema to be dropped with restrict'</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Test: Drop schema with IF EXISTS -->
+    <changeSet author="test-harness" id="dropSchema-ifExists">
+        <snowflake:dropSchema schemaName="TEST_DROP_IF_EXISTS_SCHEMA" 
+                     ifExists="true"/>
+        <rollback>
+            <sql>CREATE SCHEMA TEST_DROP_IF_EXISTS_SCHEMA COMMENT = 'Schema to test IF EXISTS'</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Test: Drop non-existent schema with IF EXISTS (should not fail) -->
+    <changeSet author="test-harness" id="dropSchema-nonExistentIfExists">
+        <snowflake:dropSchema schemaName="NON_EXISTENT_SCHEMA" 
+                     ifExists="true"/>
+        <rollback>
+            <!-- Nothing to rollback -->
+        </rollback>
+    </changeSet>
+
+    <!-- Include cleanup.xml at the end -->
+    <include file="liquibase/harness/change/changelogs/snowflake/cleanup.xml"/>
+
+</databaseChangeLog>

@@ -54,14 +54,15 @@
     </changeSet>
 
     <changeSet author="test-harness" id="createTable-changeTracking">
-        <sql>
-            CREATE TABLE TEST_CHANGE_TRACKING_TABLE (
-                id INTEGER PRIMARY KEY,
-                data VARCHAR(200),
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            ) CHANGE_TRACKING = TRUE
-            COMMENT = 'Table with change tracking'
-        </sql>
+        <createTable tableName="TEST_CHANGE_TRACKING_TABLE"
+                     snowflake:changeTracking="true"
+                     snowflake:comment="Table with change tracking">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="data" type="VARCHAR(200)"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
         <rollback>
             <dropTable tableName="TEST_CHANGE_TRACKING_TABLE"/>
         </rollback>
@@ -87,19 +88,20 @@
     </changeSet>
 
     <changeSet author="test-harness" id="createTable-complexTypes">
-        <sql>
-            CREATE TABLE TEST_COMPLEX_TYPES_TABLE (
-                id INTEGER PRIMARY KEY,
-                json_data VARIANT,
-                array_data ARRAY,
-                object_data OBJECT,
-                geography_data GEOGRAPHY,
-                binary_data BINARY(100),
-                timestamp_ntz TIMESTAMP_NTZ,
-                timestamp_ltz TIMESTAMP_LTZ,
-                timestamp_tz TIMESTAMP_TZ
-            ) COMMENT = 'Table with Snowflake complex data types'
-        </sql>
+        <createTable tableName="TEST_COMPLEX_TYPES_TABLE"
+                     snowflake:comment="Table with Snowflake complex data types">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="json_data" type="VARIANT"/>
+            <column name="array_data" type="ARRAY"/>
+            <column name="object_data" type="OBJECT"/>
+            <column name="geography_data" type="GEOGRAPHY"/>
+            <column name="binary_data" type="BINARY(100)"/>
+            <column name="timestamp_ntz" type="TIMESTAMP_NTZ"/>
+            <column name="timestamp_ltz" type="TIMESTAMP_LTZ"/>
+            <column name="timestamp_tz" type="TIMESTAMP_TZ"/>
+        </createTable>
         <rollback>
             <dropTable tableName="TEST_COMPLEX_TYPES_TABLE"/>
         </rollback>
@@ -126,6 +128,44 @@
         </rollback>
     </changeSet>
 
+    <changeSet author="test-harness" id="createTable-withStageFileFormat">
+        <createTable tableName="TEST_STAGE_FILE_FORMAT_TABLE"
+                     snowflake:stageFileFormat="CSV"
+                     snowflake:stageCopyOptions="ON_ERROR='CONTINUE'"
+                     snowflake:comment="Table with stage file format">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="data" type="VARCHAR(500)"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="TEST_STAGE_FILE_FORMAT_TABLE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="test-harness" id="createTable-withConstraints">
+        <createTable tableName="TEST_CONSTRAINTS_TABLE"
+                     snowflake:comment="Table with various constraints">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true" primaryKeyName="PK_TEST_CONSTRAINTS"/>
+            </column>
+            <column name="email" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="UQ_EMAIL"/>
+            </column>
+            <column name="parent_id" type="INTEGER">
+                <constraints nullable="true" 
+                           foreignKeyName="FK_PARENT"
+                           references="TEST_CONSTRAINTS_TABLE(id)"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints checkConstraint="status IN ('ACTIVE', 'INACTIVE')"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="TEST_CONSTRAINTS_TABLE"/>
+        </rollback>
+    </changeSet>
+
     <changeSet author="test-harness" id="cleanup-tables">
         <dropTable tableName="TEST_TRANSIENT_TABLE"/>
         <dropTable tableName="TEST_CLUSTERED_TABLE"/>
@@ -133,6 +173,8 @@
         <dropTable tableName="TEST_CHANGE_TRACKING_TABLE"/>
         <dropTable tableName="TEST_FULL_FEATURE_TABLE"/>
         <dropTable tableName="TEST_COMPLEX_TYPES_TABLE"/>
+        <dropTable tableName="TEST_STAGE_FILE_FORMAT_TABLE"/>
+        <dropTable tableName="TEST_CONSTRAINTS_TABLE"/>
     </changeSet>
 
 </databaseChangeLog>

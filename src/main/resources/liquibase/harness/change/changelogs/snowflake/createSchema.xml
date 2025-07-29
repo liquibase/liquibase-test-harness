@@ -1,38 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-                      http://www.liquibase.org/xml/ns/snowflake
-                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/snowflake
+        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
 
-    <!-- Include init.xml for cleanup -->
+    <!-- 1. Include init.xml first -->
     <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
 
-    <!-- Clean up any schemas this test might create -->
-    <changeSet author="test-harness" id="cleanup-test-schemas" runAlways="true">
+    <!-- 2. Test-specific cleanup -->
+    <changeSet id="cleanup-test-schemas" author="test-harness" runAlways="true">
         <sql>
-            DROP SCHEMA IF EXISTS TEST_BASIC_SCHEMA CASCADE;
-            DROP SCHEMA IF EXISTS TEST_SCHEMA_WITH_REMARKS CASCADE;
+            DROP SCHEMA IF EXISTS TEST_SCHEMA CASCADE;
+            DROP SCHEMA IF EXISTS SCHEMA_WITH_COMMENT CASCADE;
+            DROP SCHEMA IF EXISTS TRANSIENT_SCHEMA CASCADE;
+            DROP SCHEMA IF EXISTS MANAGED_SCHEMA CASCADE;
+            DROP SCHEMA IF EXISTS RETENTION_SCHEMA CASCADE;
         </sql>
     </changeSet>
 
-    <!-- Basic schema creation -->
-    <changeSet author="test-harness" id="createSchema-basic">
-        <snowflake:createSchema schemaName="TEST_BASIC_SCHEMA"/>
-        <rollback>
-            <sql>DROP SCHEMA IF EXISTS TEST_BASIC_SCHEMA CASCADE</sql>
-        </rollback>
+    <!-- 3. Test changesets -->
+    <!-- Test basic schema creation -->
+    <changeSet id="1" author="test-harness">
+        <snowflake:createSchema schemaName="TEST_SCHEMA"/>
     </changeSet>
 
-    <!-- Schema with remarks -->
-    <changeSet author="test-harness" id="createSchema-with-remarks">
-        <snowflake:createSchema schemaName="TEST_SCHEMA_WITH_REMARKS"
-                               comment="Basic test schema created by Liquibase"/>
-        <rollback>
-            <sql>DROP SCHEMA IF EXISTS TEST_SCHEMA_WITH_REMARKS CASCADE</sql>
-        </rollback>
+    <!-- Test schema with comment -->
+    <changeSet id="2" author="test-harness">
+        <snowflake:createSchema schemaName="SCHEMA_WITH_COMMENT"
+                               comment="This is a test schema with comment"/>
     </changeSet>
+
+    <!-- Test transient schema -->
+    <changeSet id="3" author="test-harness">
+        <snowflake:createSchema schemaName="TRANSIENT_SCHEMA"
+                               transient="true"/>
+    </changeSet>
+
+    <!-- Test managed access schema -->
+    <changeSet id="4" author="test-harness">
+        <snowflake:createSchema schemaName="MANAGED_SCHEMA"
+                               managedAccess="true"
+                               comment="Schema with managed access"/>
+    </changeSet>
+
+    <!-- Test schema with retention -->
+    <changeSet id="5" author="test-harness">
+        <snowflake:createSchema schemaName="RETENTION_SCHEMA"
+                               dataRetentionTimeInDays="7"
+                               comment="Schema with 7 day retention"/>
+    </changeSet>
+
+    <!-- 4. No account-level cleanup needed (schemas are schema-level objects) -->
+
+    <!-- 5. Include cleanup.xml at the END to reset database for next test -->
+    <include file="liquibase/harness/change/changelogs/snowflake/cleanup.xml"/>
 
 </databaseChangeLog>

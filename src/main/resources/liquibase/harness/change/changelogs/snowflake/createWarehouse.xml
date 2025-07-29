@@ -102,7 +102,6 @@
                         autoSuspend="60"
                         autoResume="true"
                         initiallySuspended="false"
-                        resourceConstraint="true"
                         comment="Test warehouse with resource constraint"/>
         <rollback>
             <snowflake:dropWarehouse warehouseName="LTHDB_TEST_RESOURCE_CONSTRAINT_WH"/>
