@@ -13,6 +13,11 @@ src/test/resources/derby/lbcat/*
 src/test/resources/sqlite/*
 src/test/resources/H2/
 derby.log
+*.log
+test_*.txt
+*_output.txt
+manual-cleanup.sql
+debug_*.groovy
 .classpath
 .settings/
 # Local .terraform directories

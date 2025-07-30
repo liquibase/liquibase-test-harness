@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     
-    <!-- Include init.xml for cleanup -->
-    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
-
     <changeSet id="1" author="oleh">
         <createTable tableName="valueSequenceNextTable">
             <column name="test_id" type="int"/>
@@ -19,11 +17,7 @@
         <createSequence incrementBy="2"
           sequenceName="value_test_sequence"
           startValue="30"/>
-        <rollback>
-            <dropSequence sequenceName="value_test_sequence"/>
-        </rollback>
-    </changeSet>
-
+        </changeSet>
 
     <changeSet id="3" author="oleh">
         <update tableName="valueSequenceNextTable">

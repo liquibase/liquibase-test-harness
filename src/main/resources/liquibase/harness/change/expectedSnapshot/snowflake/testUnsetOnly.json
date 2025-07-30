@@ -1,7 +1,7 @@
 {
   "schemas": {
-    "LTHDB.TESTHARNESS": {
-      "name": "TESTHARNESS",
+    "LTHDB.TEST_TestUnsetOnly": {
+      "name": "TEST_TestUnsetOnly",
       "catalog": {
         "name": "LTHDB",
         "default": true
@@ -10,10 +10,10 @@
     }
   },
   "tables": {
-    "LTHDB.TESTHARNESS.DATABASECHANGELOG": {
+    "LTHDB.TEST_TestUnsetOnly.DATABASECHANGELOG": {
       "name": "DATABASECHANGELOG",
       "schema": {
-        "name": "TESTHARNESS",
+        "name": "TEST_TestUnsetOnly",
         "catalog": {
           "name": "LTHDB",
           "default": true
@@ -149,10 +149,10 @@
         }
       }
     },
-    "LTHDB.TESTHARNESS.DATABASECHANGELOGLOCK": {
+    "LTHDB.TEST_TestUnsetOnly.DATABASECHANGELOGLOCK": {
       "name": "DATABASECHANGELOGLOCK",
       "schema": {
-        "name": "TESTHARNESS",
+        "name": "TEST_TestUnsetOnly",
         "catalog": {
           "name": "LTHDB",
           "default": true
@@ -203,7 +203,7 @@
         "table": {
           "name": "DATABASECHANGELOGLOCK",
           "schema": {
-            "name": "TESTHARNESS",
+            "name": "TEST_TestUnsetOnly",
             "catalog": {
               "name": "LTHDB",
               "default": true
@@ -219,13 +219,13 @@
   "sequences": {},
   "uniqueConstraints": {},
   "primaryKeys": {
-    "LTHDB.TESTHARNESS.DATABASECHANGELOGLOCK.SYS_C00272521": {
+    "LTHDB.TEST_TestUnsetOnly.DATABASECHANGELOGLOCK.SYS_C00272521": {
       "name": "SYS_C00272521",
       "columnNames": "ID",
       "table": {
         "name": "DATABASECHANGELOGLOCK",
         "schema": {
-          "name": "TESTHARNESS",
+          "name": "TEST_TestUnsetOnly",
           "catalog": {
             "name": "LTHDB",
             "default": true

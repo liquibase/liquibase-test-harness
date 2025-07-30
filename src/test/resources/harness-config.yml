@@ -1,6 +1,10 @@
 inputFormat: xml
 context: testContext
 
+# Lifecycle hooks configuration
+lifecycleHooks:
+  enabled: true
+
 databasesUnderTest:
   - name: snowflake
     prefix: local
@@ -8,3 +12,5 @@ databasesUnderTest:
     url: "jdbc:snowflake://rziymts-xbb66763.snowflakecomputing.com/?db=LTHDB&warehouse=LTHDB_TEST_WH&schema=TESTHARNESS&role=LIQUIBASE_TEST_HARNESS_ROLE"
     username: "COMMUNITYKEVIN"
     password: "uQ1lAjwVisliu8CpUTVh0UnxoTUk3"
+    initScript: "harness/init/snowflake/cloud-init-robust.sql"
+    useSchemaIsolation: true

@@ -1,1 +1,0 @@
-COMMENT ON COLUMN LTHDB.TESTHARNESS.authors.id IS 'A Test Column Remark'

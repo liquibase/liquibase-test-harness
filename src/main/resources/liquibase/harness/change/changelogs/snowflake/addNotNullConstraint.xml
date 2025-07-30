@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     
-    <!-- Include init.xml for cleanup -->
-    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
-
     <changeSet author="test-harness" id="setup-addNotNullConstraint">
         <createTable tableName="posts">
             <column name="id" type="int">

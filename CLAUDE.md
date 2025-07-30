@@ -87,6 +87,30 @@ When adding new tests, ALWAYS update init.xml to drop any new objects:
 <sql>DROP TABLE IF EXISTS <new_table_name> CASCADE</sql>
 ```
 
+### 9. Schema Isolation Implementation (2025-07-30)
+**Key Discovery**: Cloud databases need schema isolation to prevent test interference.
+
+**Solution**: Implemented `SchemaIsolationHook` that:
+- Creates unique `TEST_<TESTNAME>` schemas for each test
+- Configurable per database via `useSchemaIsolation: true`
+- Automatically cleans up after test completion
+- Updates expected SQL to use isolated schema names
+
+**Implementation Pattern**:
+```yaml
+lifecycleHooks:
+  enabled: true
+databasesUnderTest:
+  - name: snowflake
+    useSchemaIsolation: true
+```
+
+**Critical Learnings**:
+- Must switch to original schema before dropping test schema
+- Expected SQL files must be updated to use TEST_<TESTNAME> schema
+- Test-level init scripts supported via `{testName}.init.sql`
+- Hanging issues resolved by proper schema context switching
+
 ## Common Pitfalls to Avoid
 
 1. **Don't assume ephemeral databases** - Cloud databases persist

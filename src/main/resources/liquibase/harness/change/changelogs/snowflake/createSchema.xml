@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - Account-level objects still need cleanup -->
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -8,10 +9,6 @@
         http://www.liquibase.org/xml/ns/snowflake
         http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
 
-    <!-- 1. Include init.xml first -->
-    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
-
-    <!-- 2. Test-specific cleanup -->
     <changeSet id="cleanup-test-schemas" author="test-harness" runAlways="true">
         <sql>
             DROP SCHEMA IF EXISTS TEST_SCHEMA CASCADE;
@@ -22,7 +19,6 @@
         </sql>
     </changeSet>
 
-    <!-- 3. Test changesets -->
     <!-- Test basic schema creation -->
     <changeSet id="1" author="test-harness">
         <snowflake:createSchema schemaName="TEST_SCHEMA"/>
@@ -53,10 +49,4 @@
                                dataRetentionTimeInDays="7"
                                comment="Schema with 7 day retention"/>
     </changeSet>
-
-    <!-- 4. No account-level cleanup needed (schemas are schema-level objects) -->
-
-    <!-- 5. Include cleanup.xml at the END to reset database for next test -->
-    <include file="liquibase/harness/change/changelogs/snowflake/cleanup.xml"/>
-
 </databaseChangeLog>

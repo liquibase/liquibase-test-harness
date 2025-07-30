@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    
-    <!-- Include init.xml for cleanup -->
-    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
     
     <!-- Setup: Create table that the procedure will use -->
     <changeSet author="test-harness" id="setup-dropProcedure">
@@ -24,22 +22,11 @@
                 relativeToChangelogFile="true"
                 procedureName="test_procedure">
         </createProcedure>
-        <rollback>
-            <dropProcedure procedureName="test_procedure"/>
-        </rollback>
-    </changeSet>
+        </changeSet>
     
     <!--https://docs.liquibase.com/change-types/community/drop-procedure.html-->
     <changeSet author="as" id="2">
         <comment>drop test procedure</comment>
         <dropProcedure procedureName="test_procedure"/>
-        <rollback>
-            <createProcedure
-                    encoding="UTF-8"
-                    path="createProcedure.txt"
-                    relativeToChangelogFile="true"
-                    procedureName="test_procedure">
-            </createProcedure>
-        </rollback>
-    </changeSet>
+        </changeSet>
 </databaseChangeLog>

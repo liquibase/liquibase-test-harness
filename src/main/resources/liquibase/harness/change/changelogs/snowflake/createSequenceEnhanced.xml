@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
@@ -7,18 +8,12 @@
                       http://www.liquibase.org/xml/ns/snowflake
                       http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
     
-    <!-- Include init.xml for cleanup -->
-    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
-
     <!-- Basic sequence test -->
     <changeSet author="test-harness" id="createSequence-basic">
         <createSequence sequenceName="TEST_BASIC_SEQUENCE"
                        startValue="1"
                        incrementBy="1"/>
-        <rollback>
-            <dropSequence sequenceName="TEST_BASIC_SEQUENCE"/>
-        </rollback>
-    </changeSet>
+        </changeSet>
 
     <!-- Sequence with ORDER namespace attribute -->
     <changeSet author="test-harness" id="createSequence-ordered">
@@ -26,10 +21,7 @@
                        startValue="100"
                        incrementBy="5"
                        snowflake:order="true"/>
-        <rollback>
-            <dropSequence sequenceName="TEST_ORDERED_SEQUENCE"/>
-        </rollback>
-    </changeSet>
+        </changeSet>
 
     <!-- Sequence with NOORDER namespace attribute -->
     <changeSet author="test-harness" id="createSequence-noorder">
@@ -37,16 +29,7 @@
                        startValue="1000"
                        incrementBy="1"
                        snowflake:noOrder="true"/>
-        <rollback>
-            <dropSequence sequenceName="TEST_NOORDER_SEQUENCE"/>
-        </rollback>
-    </changeSet>
+        </changeSet>
 
     <!-- Cleanup -->
-    <changeSet author="test-harness" id="cleanup-sequences">
-        <dropSequence sequenceName="TEST_BASIC_SEQUENCE"/>
-        <dropSequence sequenceName="TEST_ORDERED_SEQUENCE"/>
-        <dropSequence sequenceName="TEST_NOORDER_SEQUENCE"/>
-    </changeSet>
-
-</databaseChangeLog>
+    </databaseChangeLog>

@@ -13,4 +13,6 @@ class DatabaseUnderTest {
     String password
     String url
     String dbSchema
+    String initScript
+    boolean useSchemaIsolation = false
 }

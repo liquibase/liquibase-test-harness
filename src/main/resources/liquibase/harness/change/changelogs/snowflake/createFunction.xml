@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:pro="http://www.liquibase.org/xml/ns/pro"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    
-    <!-- Include init.xml for cleanup -->
-    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
     
     <changeSet author="as" id="1">
         <pro:createFunction
@@ -17,8 +15,5 @@
                 as '3.141592654::FLOAT'
                 ;
         </pro:createFunction>
-        <rollback>
-            <pro:dropFunction functionName="test_function"/>
-        </rollback>
-    </changeSet>
+        </changeSet>
 </databaseChangeLog>

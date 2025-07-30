@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "DATABASECHANGELOG"
+          }
+        },
+        {
+          "table": {
+            "name": "DATABASECHANGELOGLOCK"
+          }
+        }
+      ]
+    }
+  }
+}

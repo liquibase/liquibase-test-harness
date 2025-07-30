@@ -1,0 +1,17 @@
+# Test configuration for schema isolation integration tests
+inputFormat: xml
+context: schemaIsolationTest
+
+# Enable lifecycle hooks for testing
+lifecycleHooks:
+  enabled: true
+
+# Test databases with schema isolation
+databasesUnderTest:
+  - name: snowflake
+    version: latest
+    url: ${LIQUIBASE_HARNESS_SNOWFLAKE_URL}
+    username: ${LIQUIBASE_HARNESS_SNOWFLAKE_USERNAME}
+    password: ${LIQUIBASE_HARNESS_SNOWFLAKE_PASSWORD}
+    dbSchema: TESTHARNESS
+    useSchemaIsolation: true  # Enable schema isolation for this database

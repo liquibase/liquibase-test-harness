@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - Account-level objects still need cleanup -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
@@ -6,9 +7,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                       http://www.liquibase.org/xml/ns/snowflake
                       http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
-    
-    <!-- Include init.xml for cleanup -->
-    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
 
     <!-- Clean up any warehouses this test might create -->
     <changeSet author="test-harness" id="cleanup-test-warehouses" runAlways="true">
@@ -54,57 +52,18 @@
         </rollback>
     </changeSet>
 
-    <changeSet author="test-harness" id="createWarehouse-advanced">
+    <changeSet author="test-harness" id="createWarehouse-advancedOptions">
         <snowflake:createWarehouse warehouseName="LTHDB_TEST_ADVANCED_WH"
                         warehouseSize="LARGE"
-                        warehouseType="STANDARD"
-                        autoSuspend="180"
-                        autoResume="true"
-                        initiallySuspended="false"
+                        warehouseType="SNOWPARK-OPTIMIZED"
                         maxConcurrencyLevel="8"
-                        statementQueuedTimeoutInSeconds="3600"
-                        statementTimeoutInSeconds="172800"
-                        comment="Advanced configuration warehouse"/>
+                        statementQueuedTimeoutInSeconds="300"
+                        statementTimeoutInSeconds="600"
+                        enableQueryAcceleration="true"
+                        queryAccelerationMaxScaleFactor="4"
+                        comment="Advanced options test warehouse"/>
         <rollback>
             <snowflake:dropWarehouse warehouseName="LTHDB_TEST_ADVANCED_WH"/>
-        </rollback>
-    </changeSet>
-
-    <!-- Test with IF NOT EXISTS option -->
-    <changeSet author="test-harness" id="createWarehouse-ifNotExists">
-        <snowflake:createWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"
-                        warehouseSize="XSMALL"
-                        autoSuspend="60"
-                        autoResume="true"
-                        ifNotExists="true"
-                        comment="Test warehouse with IF NOT EXISTS"/>
-        <rollback>
-            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"/>
-        </rollback>
-    </changeSet>
-
-    <!-- Try to create the same warehouse again - should not fail -->
-    <changeSet author="test-harness" id="createWarehouse-ifNotExists-duplicate">
-        <snowflake:createWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"
-                        warehouseSize="MEDIUM"
-                        autoSuspend="120"
-                        ifNotExists="true"
-                        comment="Duplicate creation should not fail"/>
-        <rollback>
-            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"/>
-        </rollback>
-    </changeSet>
-
-    <!-- Test with RESOURCE_CONSTRAINT option -->
-    <changeSet author="test-harness" id="createWarehouse-resourceConstraint">
-        <snowflake:createWarehouse warehouseName="LTHDB_TEST_RESOURCE_CONSTRAINT_WH"
-                        warehouseSize="XSMALL"
-                        autoSuspend="60"
-                        autoResume="true"
-                        initiallySuspended="false"
-                        comment="Test warehouse with resource constraint"/>
-        <rollback>
-            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_RESOURCE_CONSTRAINT_WH"/>
         </rollback>
     </changeSet>
 

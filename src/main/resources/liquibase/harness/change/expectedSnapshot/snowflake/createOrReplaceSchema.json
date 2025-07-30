@@ -4,7 +4,7 @@
       "liquibase.structure.core.Schema": [
         {
           "schema": {
-            "name": "TESTHARNESS"
+            "name": "TEST_CreateOrReplaceSchema"
           }
         }
       ]

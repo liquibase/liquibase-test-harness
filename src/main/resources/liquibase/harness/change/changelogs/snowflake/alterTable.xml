@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -8,49 +9,38 @@
         http://www.liquibase.org/xml/ns/snowflake
         http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
 
-    <!-- ALWAYS include init.xml first -->
-    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
-    
-    <!-- Cleanup changeset - CRITICAL for test isolation -->
-    <changeSet id="cleanup-alterTable" author="test-harness" runAlways="true">
-        <sql>
-            -- Drop all test objects this test will create/modify
-            DROP TABLE IF EXISTS LTHDB.TESTHARNESS.TEST_TABLE_CLUSTER CASCADE;
-            DROP TABLE IF EXISTS LTHDB.TESTHARNESS.TEST_TABLE_PROPERTIES CASCADE;
-            DROP TABLE IF EXISTS LTHDB.TESTHARNESS.TEST_TABLE_COMBINED CASCADE;
-            DROP TABLE IF EXISTS LTHDB.TESTHARNESS.TEST_TABLE_DROP_CLUSTER CASCADE;
-        </sql>
+    <!-- Create test tables using Liquibase changeTypes for proper schema isolation -->
+    <changeSet id="create-test-table-cluster" author="test-harness">
+        <createTable tableName="TEST_TABLE_CLUSTER">
+            <column name="id" type="INT"/>
+            <column name="name" type="VARCHAR(50)"/>
+            <column name="created_date" type="DATE"/>
+            <column name="region" type="VARCHAR(20)"/>
+        </createTable>
     </changeSet>
 
-    <!-- Create test tables first -->
-    <changeSet id="create-test-tables" author="test-harness">
-        <sql>
-            -- Create test tables for alteration
-            CREATE TABLE LTHDB.TESTHARNESS.TEST_TABLE_CLUSTER (
-                id INT,
-                name VARCHAR(50),
-                created_date DATE,
-                region VARCHAR(20)
-            );
-            
-            CREATE TABLE LTHDB.TESTHARNESS.TEST_TABLE_PROPERTIES (
-                id INT,
-                data VARCHAR(100),
-                timestamp TIMESTAMP
-            );
-            
-            CREATE TABLE LTHDB.TESTHARNESS.TEST_TABLE_COMBINED (
-                id INT,
-                name VARCHAR(50),
-                value DECIMAL(10,2)
-            );
-            
-            CREATE TABLE LTHDB.TESTHARNESS.TEST_TABLE_DROP_CLUSTER (
-                id INT,
-                name VARCHAR(50),
-                value DECIMAL(10,2)
-            ) CLUSTER BY (id, name);
-        </sql>
+    <changeSet id="create-test-table-properties" author="test-harness">
+        <createTable tableName="TEST_TABLE_PROPERTIES">
+            <column name="id" type="INT"/>
+            <column name="data" type="VARCHAR(100)"/>
+            <column name="timestamp" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-test-table-combined" author="test-harness">
+        <createTable tableName="TEST_TABLE_COMBINED">
+            <column name="id" type="INT"/>
+            <column name="name" type="VARCHAR(50)"/>
+            <column name="value" type="DECIMAL(10,2)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-test-table-drop-cluster" author="test-harness">
+        <createTable tableName="TEST_TABLE_DROP_CLUSTER" snowflake:clusterBy="id,name">
+            <column name="id" type="INT"/>
+            <column name="name" type="VARCHAR(50)"/>
+            <column name="value" type="DECIMAL(10,2)"/>
+        </createTable>
     </changeSet>
 
     <!-- Test 1: Basic clustering -->

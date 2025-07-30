@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - Account-level objects still need cleanup -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
@@ -6,10 +7,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                       http://www.liquibase.org/xml/ns/snowflake
                       http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
-    
-    <!-- Include init.xml for cleanup -->
-    <include file="liquibase/harness/change/changelogs/snowflake/init.xml"/>
-
     <!-- Clean up any schemas this test might create -->
     <changeSet author="test-harness" id="cleanup-test-schemas" runAlways="true">
         <sql>
@@ -87,6 +84,5 @@
     </changeSet>
 
     <!-- Include cleanup.xml at the end -->
-    <include file="liquibase/harness/change/changelogs/snowflake/cleanup.xml"/>
 
 </databaseChangeLog>
