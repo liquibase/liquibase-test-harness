@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro-snowflake="http://www.liquibase.org/xml/ns/pro-snowflake"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="IntegrationTest">
+        <sql>
+            CREATE OR ALTER FILE FORMAT ItTestFileFormat
+              TYPE = CSV
+              FIELD_DELIMITER = '|'
+              SKIP_HEADER = 1
+              NULL_IF = ('NULL', 'null')
+              EMPTY_FIELD_AS_NULL = true
+              COMPRESSION = DEFLATE;
+        </sql>
+        <rollback>
+            DROP FILE FORMAT IF EXISTS ItTestFileFormat;
+        </rollback>
+    </changeSet>
+    <changeSet id="2" author="IntegrationTest">
+        <sql>
+            CREATE OR ALTER TAG T1 ALLOWED_VALUES 'INTERNAL', 'AWS', 'AWS_COMPAT', 'AZURE', 'GCP';
+        </sql>
+        <rollback>
+            DROP TAG IF EXISTS T1;
+        </rollback>
+    </changeSet>
+    <changeSet author="IntegrationTest" id="3">
+        <pro-snowflake:createStage stageName="testStage"
+                                   stageType="INTERNAL">
+            <pro-snowflake:fileFormat fileFormatName="ItTestFileFormat"
+                                      fileFormatType="CSV">
+                <pro-snowflake:formatTypeOptions>
+                    <pro-snowflake:entry>
+                        <pro-snowflake:key>SKIP_HEADER</pro-snowflake:key>
+                        <pro-snowflake:value>2</pro-snowflake:value>
+                    </pro-snowflake:entry>
+                    <pro-snowflake:entry>
+                        <pro-snowflake:key>COMPRESSION</pro-snowflake:key>
+                        <pro-snowflake:value>GZIP</pro-snowflake:value>
+                    </pro-snowflake:entry>
+                </pro-snowflake:formatTypeOptions>
+            </pro-snowflake:fileFormat>
+            <pro-snowflake:stageParams storageEncryptionType="SNOWFLAKE_SSE"/>
+            <pro-snowflake:directoryTableParams enable="true" autoRefresh="true"/>
+            <pro-snowflake:tag tagName="T1" tagValue="INTERNAL"/>
+        </pro-snowflake:createStage>
+    </changeSet>
+</databaseChangeLog>
