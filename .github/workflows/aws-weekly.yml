@@ -219,7 +219,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            TH_AURORA_POSTGRESQLURL, /testautomation/db_details/aurora_postgresql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            TH_AURORA_POSTGRESQLURL, /testautomation/db_details/aurora_postgresql16_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
