@@ -265,7 +265,7 @@ jobs:
 
       - name: Run sqlcmd
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        run: sqlcmd -S ${{ env.TH_MSSQLURL_HOST }} -U ${{env.TH_DB_ADMIN}} -P ${{env.TH_DB_PASSWD}} -Q "CREATE DATABASE lbcat"
+        run: sqlcmd -S ${{ env.TH_MSSQLURL_HOST }} -U ${{env.TH_DB_ADMIN}} -P ${{env.TH_DB_PASSWD}} -C -Q "CREATE DATABASE lbcat"
 
       - uses: liquibase/liquibase-github-action@v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
