@@ -259,7 +259,7 @@ jobs:
 
       - name: Install a SQL Server suite of tools
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: potatoqualitee/mssqlsuite@v1.10
+        uses: potatoqualitee/mssqlsuite@v1.11
         with:
           install: sqlengine, sqlclient, sqlpackage
 
