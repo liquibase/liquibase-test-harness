@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: IntegrationTest
+      changes:
+        - sql: "CREATE OR ALTER FILE FORMAT ItTestFileFormat
+              TYPE = CSV
+              FIELD_DELIMITER = '|'
+              SKIP_HEADER = 1
+              NULL_IF = ('NULL', 'null')
+              EMPTY_FIELD_AS_NULL = true
+              COMPRESSION = DEFLATE;"
+        - sql: "CREATE OR ALTER TAG T1 ALLOWED_VALUES 'INTERNAL', 'AWS', 'AWS_COMPAT', 'AZURE', 'GCP';"
+        - createStage:
+            stageName: "testStage"
+            stageType: "INTERNAL"
+            fileFormat:
+              fileFormatName: "ItTestFileFormat"
+              fileFormatType: "CSV"
+              formatTypeOptions:
+                - entry:
+                    key: "SKIP_HEADER"
+                    value: "2"
+                - entry:
+                    key: "COMPRESSION"
+                    value: "GZIP"
+            stageParams:
+              storageEncryptionType: "SNOWFLAKE_SSE"
+            directoryTableParams:
+              enable: "true"
+              autoRefresh: "true"
+            tag:
+              tagName: "T1"
+              tagValue: "INTERNAL"
+      rollback:
+        - sql: "DROP STAGE testStage; DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;"
