@@ -16,19 +16,9 @@
               EMPTY_FIELD_AS_NULL = true
               COMPRESSION = DEFLATE;
         </sql>
-        <rollback>
-            DROP FILE FORMAT IF EXISTS ItTestFileFormat;
-        </rollback>
-    </changeSet>
-    <changeSet id="2" author="IntegrationTest">
         <sql>
             CREATE OR ALTER TAG T1 ALLOWED_VALUES 'INTERNAL', 'AWS', 'AWS_COMPAT', 'AZURE', 'GCP';
         </sql>
-        <rollback>
-            DROP TAG IF EXISTS T1;
-        </rollback>
-    </changeSet>
-    <changeSet author="IntegrationTest" id="3">
         <pro-snowflake:createStage stageName="testStage"
                                    stageType="INTERNAL">
             <pro-snowflake:fileFormat fileFormatName="ItTestFileFormat"
@@ -48,5 +38,8 @@
             <pro-snowflake:directoryTableParams enable="true" autoRefresh="true"/>
             <pro-snowflake:tag tagName="T1" tagValue="INTERNAL"/>
         </pro-snowflake:createStage>
+        <rollback>
+            DROP STAGE testStage; DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;
+        </rollback>
     </changeSet>
 </databaseChangeLog>
