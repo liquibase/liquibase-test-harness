@@ -1,17 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    
-    <!--    datatype attribute is not supported by Snowflake-->
-    <changeSet author="oleh" id="1">
-        <createSequence incrementBy="1"
-                        sequenceName="drop_test_sequence"
-                        startValue="1"/>
-        <dropSequence sequenceName="drop_test_sequence"/>
-        <rollback/>
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet id="1" author="test">
+        <snowflake:createSequence sequenceName="DROP_TEST_SEQ" comment="Sequence to be dropped"/>
     </changeSet>
+
+    <changeSet id="2" author="test">
+        <snowflake:dropSequence sequenceName="DROP_TEST_SEQ"/>
+        <rollback>
+            <snowflake:createSequence sequenceName="DROP_TEST_SEQ" comment="Sequence to be dropped"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="test">
+        <snowflake:createSequence sequenceName="DROP_IF_EXISTS_SEQ" comment="Sequence to be dropped with IF EXISTS"/>
+    </changeSet>
+
+    <changeSet id="4" author="test">
+        <snowflake:dropSequence sequenceName="DROP_IF_EXISTS_SEQ" ifExists="true"/>
+        <rollback>
+            <snowflake:createSequence sequenceName="DROP_IF_EXISTS_SEQ" comment="Sequence to be dropped with IF EXISTS"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="test">
+        <snowflake:createSequence sequenceName="CASCADE_DROP_SEQ" comment="Sequence to be dropped with CASCADE"/>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <snowflake:dropSequence sequenceName="CASCADE_DROP_SEQ" cascade="true"/>
+        <rollback>
+            <snowflake:createSequence sequenceName="CASCADE_DROP_SEQ" comment="Sequence to be dropped with CASCADE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="7" author="test">
+        <snowflake:createSequence sequenceName="RESTRICT_DROP_SEQ" comment="Sequence to be dropped with RESTRICT"/>
+    </changeSet>
+
+    <changeSet id="8" author="test">
+        <snowflake:dropSequence sequenceName="RESTRICT_DROP_SEQ" restrict="true"/>
+        <rollback>
+            <snowflake:createSequence sequenceName="RESTRICT_DROP_SEQ" comment="Sequence to be dropped with RESTRICT"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Final cleanup -->
+    <changeSet id="99" author="test">
+        <snowflake:dropSequence sequenceName="DROP_TEST_SEQ" ifExists="true"/>
+        <snowflake:dropSequence sequenceName="DROP_IF_EXISTS_SEQ" ifExists="true"/>
+        <snowflake:dropSequence sequenceName="CASCADE_DROP_SEQ" ifExists="true"/>
+        <snowflake:dropSequence sequenceName="RESTRICT_DROP_SEQ" ifExists="true"/>
+    </changeSet>
+
 </databaseChangeLog>

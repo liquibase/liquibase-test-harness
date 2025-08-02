@@ -1,70 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Schema Isolated Test - Account-level objects still need cleanup -->
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-                      http://www.liquibase.org/xml/ns/snowflake
-                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
 
-    <!-- Clean up any warehouses this test might create -->
-    <changeSet author="test-harness" id="cleanup-test-warehouses" runAlways="true">
-        <sql>
-            DROP WAREHOUSE IF EXISTS LTHDB_TEST_WAREHOUSE;
-            DROP WAREHOUSE IF EXISTS LTHDB_TEST_MULTICLUSTER_WH;
-            DROP WAREHOUSE IF EXISTS LTHDB_TEST_ADVANCED_WH;
-            DROP WAREHOUSE IF EXISTS LTHDB_TEST_IF_NOT_EXISTS_WH;
-            DROP WAREHOUSE IF EXISTS LTHDB_TEST_RESOURCE_CONSTRAINT_WH;
-        </sql>
-    </changeSet>
-
-    <!-- Restore warehouse context after dropping warehouses -->
-    <changeSet author="test-harness" id="restore-warehouse-context" runAlways="true">
-        <sql>USE WAREHOUSE LTHDB_TEST_WH</sql>
-    </changeSet>
-
-    <changeSet author="test-harness" id="createWarehouse-basic">
-        <snowflake:createWarehouse warehouseName="LTHDB_TEST_WAREHOUSE"
-                        warehouseSize="XSMALL"
-                        autoSuspend="60"
-                        autoResume="true"
-                        initiallySuspended="false"
-                        comment="Test warehouse for harness"/>
+    <changeSet id="1" author="test">
+        <snowflake:createWarehouse warehouseName="BASIC_WAREHOUSE"/>
         <rollback>
-            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_WAREHOUSE"/>
+            <snowflake:dropWarehouse warehouseName="BASIC_WAREHOUSE"/>
         </rollback>
     </changeSet>
 
-    <changeSet author="test-harness" id="createWarehouse-multicluster">
-        <snowflake:createWarehouse warehouseName="LTHDB_TEST_MULTICLUSTER_WH"
-                        warehouseSize="MEDIUM"
-                        warehouseType="STANDARD"
-                        minClusterCount="1"
-                        maxClusterCount="3"
-                        scalingPolicy="STANDARD"
-                        autoSuspend="300"
-                        autoResume="true"
-                        initiallySuspended="false"
-                        comment="Multi-cluster test warehouse"/>
+    <changeSet id="2" author="test">
+        <snowflake:createWarehouse warehouseName="SIZED_WAREHOUSE" 
+                                   warehouseSize="MEDIUM" 
+                                   autoSuspend="300" 
+                                   autoResume="true"/>
         <rollback>
-            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_MULTICLUSTER_WH"/>
+            <snowflake:dropWarehouse warehouseName="SIZED_WAREHOUSE"/>
         </rollback>
     </changeSet>
 
-    <changeSet author="test-harness" id="createWarehouse-advancedOptions">
-        <snowflake:createWarehouse warehouseName="LTHDB_TEST_ADVANCED_WH"
-                        warehouseSize="LARGE"
-                        warehouseType="SNOWPARK-OPTIMIZED"
-                        maxConcurrencyLevel="8"
-                        statementQueuedTimeoutInSeconds="300"
-                        statementTimeoutInSeconds="600"
-                        enableQueryAcceleration="true"
-                        queryAccelerationMaxScaleFactor="4"
-                        comment="Advanced options test warehouse"/>
+    <changeSet id="3" author="test">
+        <snowflake:createWarehouse warehouseName="MULTI_CLUSTER_WAREHOUSE" 
+                                   warehouseSize="LARGE"
+                                   minClusterCount="1" 
+                                   maxClusterCount="3" 
+                                   scalingPolicy="STANDARD"/>
         <rollback>
-            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_ADVANCED_WH"/>
+            <snowflake:dropWarehouse warehouseName="MULTI_CLUSTER_WAREHOUSE"/>
         </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="test">
+        <snowflake:createWarehouse warehouseName="SUSPENDED_WAREHOUSE" 
+                                   initiallySuspended="true" 
+                                   comment="Start suspended to save costs"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="SUSPENDED_WAREHOUSE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="test">
+        <snowflake:createWarehouse warehouseName="ACCELERATED_WAREHOUSE" 
+                                   warehouseSize="XLARGE"
+                                   enableQueryAcceleration="true" 
+                                   queryAccelerationMaxScaleFactor="10"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="ACCELERATED_WAREHOUSE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <snowflake:createWarehouse warehouseName="SNOWPARK_WAREHOUSE" 
+                                   warehouseType="SNOWPARK-OPTIMIZED"
+                                   warehouseSize="MEDIUM"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="SNOWPARK_WAREHOUSE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="7" author="test">
+        <snowflake:createWarehouse warehouseName="REPLACE_WAREHOUSE" 
+                                   orReplace="true"
+                                   warehouseSize="SMALL"
+                                   comment="Replaced warehouse"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="REPLACE_WAREHOUSE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="8" author="test">
+        <snowflake:createWarehouse warehouseName="IF_NOT_EXISTS_WAREHOUSE" 
+                                   ifNotExists="true"
+                                   warehouseSize="XSMALL"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="IF_NOT_EXISTS_WAREHOUSE" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet id="99" author="test">
+        <snowflake:dropWarehouse warehouseName="BASIC_WAREHOUSE" ifExists="true"/>
+        <snowflake:dropWarehouse warehouseName="SIZED_WAREHOUSE" ifExists="true"/>
+        <snowflake:dropWarehouse warehouseName="MULTI_CLUSTER_WAREHOUSE" ifExists="true"/>
+        <snowflake:dropWarehouse warehouseName="SUSPENDED_WAREHOUSE" ifExists="true"/>
+        <snowflake:dropWarehouse warehouseName="ACCELERATED_WAREHOUSE" ifExists="true"/>
+        <snowflake:dropWarehouse warehouseName="SNOWPARK_WAREHOUSE" ifExists="true"/>
+        <snowflake:dropWarehouse warehouseName="REPLACE_WAREHOUSE" ifExists="true"/>
+        <snowflake:dropWarehouse warehouseName="IF_NOT_EXISTS_WAREHOUSE" ifExists="true"/>
     </changeSet>
 
 </databaseChangeLog>

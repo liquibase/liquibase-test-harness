@@ -1,0 +1,23 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.database.object.Warehouse": [
+        {
+          "warehouse": {
+            "name": "TEST_COMPLEX_WH",
+            "type": "SNOWPARK-OPTIMIZED",
+            "size": "MEDIUM",
+            "minClusterCount": 2,
+            "maxClusterCount": 5,
+            "autoSuspend": 600,
+            "autoResume": false,
+            "enableQueryAcceleration": true,
+            "queryAccelerationMaxScaleFactor": 8,
+            "scalingPolicy": "ECONOMY",
+            "comment": "Complex test warehouse with all optional properties"
+          }
+        }
+      ]
+    }
+  }
+}

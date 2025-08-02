@@ -1,16 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    
-    <!--    only 'sequenceName', 'startValue' and 'incrementBy' attribute are supported by Snowflake
-    https://docs.snowflake.com/en/sql-reference/sql/create-sequence.html-->
-    <changeSet author="oleh" id="1">
-        <createSequence incrementBy="5"
-                        sequenceName="test_sequence"
-                        startValue="1"/>
-        </changeSet>
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet id="1" author="test">
+        <snowflake:createSequence sequenceName="BASIC_SEQ"/>
+        <rollback>
+            <snowflake:dropSequence sequenceName="BASIC_SEQ"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="test">
+        <snowflake:createSequence sequenceName="CONFIGURED_SEQ" 
+                                  startValue="100" 
+                                  incrementBy="5" 
+                                  comment="Test sequence with configuration"/>
+        <rollback>
+            <snowflake:dropSequence sequenceName="CONFIGURED_SEQ"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="test">
+        <snowflake:createSequence sequenceName="BOUNDED_SEQ" 
+                                  startValue="1" 
+                                  incrementBy="1" 
+                                  minValue="1" 
+                                  maxValue="999999" 
+                                  cycle="false"/>
+        <rollback>
+            <snowflake:dropSequence sequenceName="BOUNDED_SEQ"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="test">
+        <snowflake:createSequence sequenceName="ORDERED_SEQ" 
+                                  ordered="true" 
+                                  comment="Ordered sequence for testing"/>
+        <rollback>
+            <snowflake:dropSequence sequenceName="ORDERED_SEQ"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="test">
+        <snowflake:createSequence sequenceName="REPLACE_SEQ" 
+                                  orReplace="true"
+                                  startValue="10" 
+                                  incrementBy="2"/>
+        <rollback>
+            <snowflake:dropSequence sequenceName="REPLACE_SEQ"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <snowflake:createSequence sequenceName="IF_NOT_EXISTS_SEQ" 
+                                  ifNotExists="true"
+                                  startValue="1000" 
+                                  cacheSize="20"/>
+        <rollback>
+            <snowflake:dropSequence sequenceName="IF_NOT_EXISTS_SEQ" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet id="99" author="test">
+        <snowflake:dropSequence sequenceName="BASIC_SEQ" ifExists="true"/>
+        <snowflake:dropSequence sequenceName="CONFIGURED_SEQ" ifExists="true"/>
+        <snowflake:dropSequence sequenceName="BOUNDED_SEQ" ifExists="true"/>
+        <snowflake:dropSequence sequenceName="ORDERED_SEQ" ifExists="true"/>
+        <snowflake:dropSequence sequenceName="REPLACE_SEQ" ifExists="true"/>
+        <snowflake:dropSequence sequenceName="IF_NOT_EXISTS_SEQ" ifExists="true"/>
+    </changeSet>
+
 </databaseChangeLog>

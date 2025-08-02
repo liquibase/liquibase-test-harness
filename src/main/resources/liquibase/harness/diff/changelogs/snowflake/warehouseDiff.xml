@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.33.xsd">
+
+    <!-- Create warehouses with different configurations for diff testing -->
+    
+    <changeSet id="1" author="test-harness" labels="ref">
+        <createWarehouse warehouseName="DIFF_TEST_WH_BASE">
+            <property name="warehouseType" value="STANDARD"/>
+            <property name="warehouseSize" value="SMALL"/>
+            <property name="minClusterCount" value="1"/>
+            <property name="maxClusterCount" value="1"/>
+            <property name="autoSuspend" value="300"/>
+            <property name="autoResume" value="TRUE"/>
+            <property name="comment" value="Base warehouse for diff testing"/>
+        </createWarehouse>
+        <rollback>
+            <dropWarehouse warehouseName="DIFF_TEST_WH_BASE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="test-harness" labels="ref">
+        <createWarehouse warehouseName="DIFF_TEST_WH_REF">
+            <property name="warehouseType" value="STANDARD"/>
+            <property name="warehouseSize" value="MEDIUM"/>
+            <property name="minClusterCount" value="2"/>
+            <property name="maxClusterCount" value="3"/>
+            <property name="autoSuspend" value="600"/>
+            <property name="autoResume" value="FALSE"/>
+            <property name="comment" value="Reference warehouse for diff testing"/>
+        </createWarehouse>
+        <rollback>
+            <dropWarehouse warehouseName="DIFF_TEST_WH_REF"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="test-harness">
+        <createWarehouse warehouseName="DIFF_TEST_WH_UNIQUE">
+            <property name="warehouseType" value="SNOWPARK-OPTIMIZED"/>
+            <property name="warehouseSize" value="LARGE"/>
+            <property name="minClusterCount" value="1"/>
+            <property name="maxClusterCount" value="5"/>
+            <property name="autoSuspend" value="900"/>
+            <property name="autoResume" value="TRUE"/>
+            <property name="enableQueryAcceleration" value="TRUE"/>
+            <property name="queryAccelerationMaxScaleFactor" value="16"/>
+            <property name="scalingPolicy" value="ECONOMY"/>
+            <property name="comment" value="Unique warehouse for diff testing"/>
+        </createWarehouse>
+        <rollback>
+            <dropWarehouse warehouseName="DIFF_TEST_WH_UNIQUE"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

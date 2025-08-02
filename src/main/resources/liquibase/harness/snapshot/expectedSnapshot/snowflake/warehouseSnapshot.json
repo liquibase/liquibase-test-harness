@@ -1,0 +1,20 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.database.object.Warehouse": [
+        {
+          "warehouse": {
+            "name": "TEST_HARNESS_WH",
+            "type": "STANDARD",
+            "size": "SMALL",
+            "minClusterCount": 1,
+            "maxClusterCount": 1,
+            "autoSuspend": 300,
+            "autoResume": true,
+            "comment": "Test warehouse for snapshot harness testing"
+          }
+        }
+      ]
+    }
+  }
+}

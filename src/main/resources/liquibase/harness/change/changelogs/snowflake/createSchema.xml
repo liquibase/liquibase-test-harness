@@ -1,52 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Schema Isolated Test - Account-level objects still need cleanup -->
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-        http://www.liquibase.org/xml/ns/snowflake
-        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
 
-    <changeSet id="cleanup-test-schemas" author="test-harness" runAlways="true">
-        <sql>
-            DROP SCHEMA IF EXISTS TEST_SCHEMA CASCADE;
-            DROP SCHEMA IF EXISTS SCHEMA_WITH_COMMENT CASCADE;
-            DROP SCHEMA IF EXISTS TRANSIENT_SCHEMA CASCADE;
-            DROP SCHEMA IF EXISTS MANAGED_SCHEMA CASCADE;
-            DROP SCHEMA IF EXISTS RETENTION_SCHEMA CASCADE;
-        </sql>
+    <changeSet id="1" author="test">
+        <snowflake:createSchema schemaName="BASIC_SCHEMA"/>
+        <rollback>
+            <snowflake:dropSchema schemaName="BASIC_SCHEMA"/>
+        </rollback>
     </changeSet>
 
-    <!-- Test basic schema creation -->
-    <changeSet id="1" author="test-harness">
-        <snowflake:createSchema schemaName="TEST_SCHEMA"/>
+    <changeSet id="2" author="test">
+        <snowflake:createSchema schemaName="CONFIGURED_SCHEMA" 
+                                comment="Test schema with configuration" 
+                                dataRetentionTimeInDays="7"
+                                maxDataExtensionTimeInDays="30"/>
+        <rollback>
+            <snowflake:dropSchema schemaName="CONFIGURED_SCHEMA"/>
+        </rollback>
     </changeSet>
 
-    <!-- Test schema with comment -->
-    <changeSet id="2" author="test-harness">
-        <snowflake:createSchema schemaName="SCHEMA_WITH_COMMENT"
-                               comment="This is a test schema with comment"/>
+    <changeSet id="3" author="test">
+        <snowflake:createSchema schemaName="TRANSIENT_SCHEMA" 
+                                transient="true" 
+                                comment="Transient schema for testing"/>
+        <rollback>
+            <snowflake:dropSchema schemaName="TRANSIENT_SCHEMA"/>
+        </rollback>
     </changeSet>
 
-    <!-- Test transient schema -->
-    <changeSet id="3" author="test-harness">
-        <snowflake:createSchema schemaName="TRANSIENT_SCHEMA"
-                               transient="true"/>
+    <changeSet id="4" author="test">
+        <snowflake:createSchema schemaName="MANAGED_SCHEMA" 
+                                managed="true"
+                                comment="Managed access schema"/>
+        <rollback>
+            <snowflake:dropSchema schemaName="MANAGED_SCHEMA"/>
+        </rollback>
     </changeSet>
 
-    <!-- Test managed access schema -->
-    <changeSet id="4" author="test-harness">
-        <snowflake:createSchema schemaName="MANAGED_SCHEMA"
-                               managedAccess="true"
-                               comment="Schema with managed access"/>
+    <changeSet id="5" author="test">
+        <snowflake:createSchema schemaName="REPLACE_SCHEMA" 
+                                orReplace="true"
+                                comment="Schema with OR REPLACE"/>
+        <rollback>
+            <snowflake:dropSchema schemaName="REPLACE_SCHEMA"/>
+        </rollback>
     </changeSet>
 
-    <!-- Test schema with retention -->
-    <changeSet id="5" author="test-harness">
-        <snowflake:createSchema schemaName="RETENTION_SCHEMA"
-                               dataRetentionTimeInDays="7"
-                               comment="Schema with 7 day retention"/>
+    <changeSet id="6" author="test">
+        <snowflake:createSchema schemaName="IF_NOT_EXISTS_SCHEMA" 
+                                ifNotExists="true"
+                                dataRetentionTimeInDays="14"
+                                defaultDdlCollation="utf8"/>
+        <rollback>
+            <snowflake:dropSchema schemaName="IF_NOT_EXISTS_SCHEMA" ifExists="true"/>
+        </rollback>
     </changeSet>
+
+    <changeSet id="7" author="test">
+        <snowflake:createSchema schemaName="CLONE_SCHEMA" 
+                                fromSchema="BASIC_SCHEMA"
+                                comment="Cloned schema for testing"/>
+        <rollback>
+            <snowflake:dropSchema schemaName="CLONE_SCHEMA"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet id="99" author="test">
+        <snowflake:dropSchema schemaName="BASIC_SCHEMA" ifExists="true"/>
+        <snowflake:dropSchema schemaName="CONFIGURED_SCHEMA" ifExists="true"/>
+        <snowflake:dropSchema schemaName="TRANSIENT_SCHEMA" ifExists="true"/>
+        <snowflake:dropSchema schemaName="MANAGED_SCHEMA" ifExists="true"/>
+        <snowflake:dropSchema schemaName="REPLACE_SCHEMA" ifExists="true"/>
+        <snowflake:dropSchema schemaName="IF_NOT_EXISTS_SCHEMA" ifExists="true"/>
+        <snowflake:dropSchema schemaName="CLONE_SCHEMA" ifExists="true"/>
+    </changeSet>
+
 </databaseChangeLog>

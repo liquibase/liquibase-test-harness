@@ -4,6 +4,8 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
+import liquibase.harness.lifecycle.TestLifecycleManager
+import liquibase.harness.lifecycle.TestContext
 import org.junit.jupiter.api.Assumptions
 import spock.lang.Shared
 import spock.lang.Specification
@@ -21,6 +23,8 @@ class SnapshotObjectTests extends Specification {
     RollbackStrategy strategy
     @Shared
     List<DatabaseUnderTest> databases
+    @Shared
+    TestLifecycleManager lifecycleManager = TestLifecycleManager.getInstance()
 
     def setupSpec() {
         databases = TestConfig.instance.getFilteredDatabasesUnderTest()
@@ -30,9 +34,31 @@ class SnapshotObjectTests extends Specification {
 
     @Unroll
     def "apply #testInput.snapshotObject against #testInput.databaseName #testInput.databaseVersion"() {
-        given: "read input data for snapshot command test"
+        given: "setup lifecycle context and read input data for snapshot command test"
+        DatabaseUnderTest databaseUnderTest = databases.find { it.name == testInput.databaseName && it.version == testInput.databaseVersion }
+        TestContext lifecycleContext = databaseUnderTest ? new TestContext(
+            databaseUnderTest,
+            this.class.simpleName,
+            testInput.snapshotObject
+        ) : null
+        
+        // Execute pre-test lifecycle hooks if database found
+        if (lifecycleContext) {
+            lifecycleManager.beforeTest(lifecycleContext)
+        }
+        
+        and: "read input data for snapshot command test"
         Map<String, Object> argsMap = new HashMap()
-        argsMap.put("url", testInput.url)
+        
+        // Use isolated schema in URL if schema isolation is active
+        String testUrl = testInput.url
+        if (lifecycleContext && lifecycleContext.getMetadata("testSchema")) {
+            String isolatedSchema = lifecycleContext.getMetadata("testSchema")
+            // Replace schema in URL with isolated test schema
+            testUrl = testInput.url.replaceAll(/schema=\w+/, "schema=${isolatedSchema}")
+        }
+        
+        argsMap.put("url", testUrl)
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangelogFile)
@@ -60,9 +86,14 @@ class SnapshotObjectTests extends Specification {
         then: "compare generated to expected snapshot"
         snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
 
-        cleanup: "rollback changes"
+        cleanup: "rollback changes and execute post-test lifecycle hooks"
         if (shouldRunChangeSet) {
             strategy.performRollback(argsMap)
+        }
+        
+        // Execute post-test lifecycle hooks if database context exists
+        if (lifecycleContext) {
+            lifecycleManager.afterTest(lifecycleContext)
         }
 
         where:

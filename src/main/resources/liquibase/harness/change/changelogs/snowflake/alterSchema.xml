@@ -1,100 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Schema Isolated Test - Account-level objects still need cleanup -->
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-                      http://www.liquibase.org/xml/ns/snowflake
-                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
-    <!-- Clean up any schemas this test might create -->
-    <changeSet author="test-harness" id="cleanup-test-schemas" runAlways="true">
-        <sql>
-            DROP SCHEMA IF EXISTS TEST_ALTER_SCHEMA CASCADE;
-            DROP SCHEMA IF EXISTS TEST_RENAME_SCHEMA CASCADE;
-            DROP SCHEMA IF EXISTS TEST_RENAMED_SCHEMA CASCADE;
-        </sql>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet id="1" author="test">
+        <snowflake:createSchema schemaName="TEST_ALTER_SCHEMA" comment="Initial schema"/>
     </changeSet>
 
-    <!-- Setup: Create test schemas -->
-    <changeSet author="test-harness" id="alterSchema-setup">
-        <sql>
-            CREATE SCHEMA IF NOT EXISTS TEST_ALTER_SCHEMA 
-                COMMENT = 'Initial schema for alter tests'
-                DATA_RETENTION_TIME_IN_DAYS = 7;
-                
-            CREATE SCHEMA IF NOT EXISTS TEST_RENAME_SCHEMA 
-                WITH MANAGED ACCESS
-                COMMENT = 'Schema to be renamed';
-        </sql>
-    </changeSet>
-
-    <!-- Test: Alter schema comment -->
-    <changeSet author="test-harness" id="alterSchema-comment">
-        <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" 
-                     newComment="Modified schema comment"/>
+    <changeSet id="2" author="test">
+        <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" newSchemaName="TEST_RENAMED_SCHEMA"/>
         <rollback>
-            <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" 
-                         newComment="Initial schema for alter tests"/>
+            <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" newSchemaName="TEST_ALTER_SCHEMA"/>
         </rollback>
     </changeSet>
 
-    <!-- Test: Alter schema retention -->
-    <changeSet author="test-harness" id="alterSchema-retention">
-        <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" 
-                     newDataRetentionTimeInDays="30"/>
-        <rollback>
-            <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" 
-                         newDataRetentionTimeInDays="7"/>
-        </rollback>
-    </changeSet>
-
-    <!-- Test: Enable managed access -->
-    <changeSet author="test-harness" id="alterSchema-enableManagedAccess">
-        <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" 
-                     enableManagedAccess="true"/>
-        <rollback>
-            <!-- Cannot disable managed access once enabled -->
-        </rollback>
-    </changeSet>
-
-    <!-- Test: Rename schema -->
-    <changeSet author="test-harness" id="alterSchema-rename">
-        <snowflake:alterSchema schemaName="TEST_RENAME_SCHEMA" 
-                     newName="TEST_RENAMED_SCHEMA"/>
+    <changeSet id="3" author="test">
+        <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" 
+                               dataRetentionTimeInDays="7" 
+                               comment="Updated schema with retention"/>
         <rollback>
             <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" 
-                         newName="TEST_RENAME_SCHEMA"/>
+                                   dataRetentionTimeInDays="1" 
+                                   comment="Initial schema"/>
         </rollback>
     </changeSet>
 
-    <!-- Test: Unset data retention - TEMPORARILY DISABLED due to validation issue -->
-    <!-- 
-    <changeSet author="test-harness" id="alterSchema-unsetRetention">
-        <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" 
-                     unsetDataRetentionTimeInDays="true"/>
+    <changeSet id="4" author="test">
+        <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" 
+                               ifExists="true"
+                               unsetComment="true"/>
         <rollback>
-            <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" 
-                         newDataRetentionTimeInDays="30"/>
+            <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" 
+                                   comment="Updated schema with retention"/>
         </rollback>
     </changeSet>
-    -->
 
-    <!-- Test: Unset comment - RE-ENABLED after cleaning up JAR conflicts -->
-    <changeSet author="test-harness" id="alterSchema-unsetComment">
-        <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" 
-                     unsetComment="true"/>
+    <changeSet id="5" author="test">
+        <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" 
+                               newMaxDataExtensionTimeInDays="30"
+                               newDefaultDdlCollation="en-ci"/>
         <rollback>
-            <snowflake:alterSchema schemaName="TEST_ALTER_SCHEMA" 
-                         newComment="Modified schema comment"/>
+            <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" 
+                                   unsetMaxDataExtensionTimeInDays="true"
+                                   unsetDefaultDdlCollation="true"/>
         </rollback>
     </changeSet>
 
-    <!-- Cleanup -->
-    <changeSet author="test-harness" id="cleanup-schemas">
-        <snowflake:dropSchema schemaName="TEST_ALTER_SCHEMA"/>
-        <snowflake:dropSchema schemaName="TEST_RENAMED_SCHEMA"/>
+    <changeSet id="6" author="test">
+        <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" 
+                               enableManagedAccess="true"/>
+        <rollback>
+            <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" 
+                                   disableManagedAccess="true"/>
+        </rollback>
     </changeSet>
 
-    <!-- Include cleanup.xml at the end -->
+    <changeSet id="7" author="test">
+        <snowflake:alterSchema schemaName="TEST_RENAMED_SCHEMA" 
+                               unsetDataRetentionTimeInDays="true"
+                               unsetMaxDataExtensionTimeInDays="true"
+                               unsetDefaultDdlCollation="true"/>
+    </changeSet>
+
+    <changeSet id="8" author="test">
+        <snowflake:dropSchema schemaName="TEST_RENAMED_SCHEMA" ifExists="true"/>
+    </changeSet>
+
 </databaseChangeLog>

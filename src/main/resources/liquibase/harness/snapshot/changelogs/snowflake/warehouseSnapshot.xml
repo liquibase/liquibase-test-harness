@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet id="cleanup-warehouse" author="test-harness" runAlways="true">
+        <sql>
+            DROP WAREHOUSE IF EXISTS TEST_HARNESS_WH CASCADE;
+            USE WAREHOUSE LTHDB_TEST_WH;
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-test-warehouse" author="test-harness">
+        <snowflake:createWarehouse warehouseName="TEST_HARNESS_WH"
+                        warehouseType="STANDARD"
+                        warehouseSize="SMALL"
+                        minClusterCount="1"
+                        maxClusterCount="1"
+                        autoSuspend="300"
+                        autoResume="true"
+                        comment="Test warehouse for snapshot harness testing"/>
+        <rollback>
+            <snowflake:dropWarehouse warehouseName="TEST_HARNESS_WH"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

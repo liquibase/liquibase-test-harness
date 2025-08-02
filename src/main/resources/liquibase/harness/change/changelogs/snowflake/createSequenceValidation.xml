@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Test OR REPLACE functionality -->
+    <changeSet id="test-or-replace" author="test-harness">
+        <snowflake:createSequence sequenceName="VALIDATION_TEST_SEQ"
+                                  orReplace="true"
+                                  startValue="1"
+                                  incrementBy="1"/>
+    </changeSet>
+
+    <!-- Test IF NOT EXISTS functionality -->
+    <changeSet id="test-if-not-exists" author="test-harness">
+        <snowflake:createSequence sequenceName="ANOTHER_VALIDATION_SEQ"
+                                  ifNotExists="true"
+                                  startValue="100"
+                                  incrementBy="5"/>
+    </changeSet>
+
+    <!-- Test order attribute combinations -->
+    <changeSet id="test-order-combinations" author="test-harness">
+        <snowflake:createSequence sequenceName="ORDER_TEST_SEQ"
+                                  order="true"
+                                  startValue="1000"
+                                  incrementBy="1"/>
+    </changeSet>
+
+
+</databaseChangeLog>

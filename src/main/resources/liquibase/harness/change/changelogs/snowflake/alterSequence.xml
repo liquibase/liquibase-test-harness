@@ -1,20 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    
-    <!--    datatype attribute is not supported by Snowflake-->
-    <changeSet id="1" author="as">
-        <createSequence incrementBy="1"
-                        sequenceName="alter_test_sequence"
-                        startValue="1"/>
-        <rollback/>
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet id="1" author="test">
+        <snowflake:createSequence sequenceName="TEST_ALTER_SEQ" 
+                                  startValue="1" 
+                                  incrementBy="1" 
+                                  comment="Initial sequence"/>
     </changeSet>
-    <changeSet author="as" id="2" >
-        <alterSequence incrementBy="10"
-                       sequenceName="alter_test_sequence"/>
-        </changeSet>
+
+    <changeSet id="2" author="test">
+        <snowflake:alterSequence sequenceName="TEST_ALTER_SEQ" newSequenceName="TEST_RENAMED_SEQ"/>
+        <rollback>
+            <snowflake:alterSequence sequenceName="TEST_RENAMED_SEQ" newSequenceName="TEST_ALTER_SEQ"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="test">
+        <snowflake:alterSequence sequenceName="TEST_RENAMED_SEQ" 
+                                 setIncrementBy="5" 
+                                 setComment="Updated sequence with increment"/>
+        <rollback>
+            <snowflake:alterSequence sequenceName="TEST_RENAMED_SEQ" 
+                                     setIncrementBy="1" 
+                                     setComment="Initial sequence"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="test">
+        <snowflake:alterSequence sequenceName="TEST_RENAMED_SEQ" 
+                                 ifExists="true"
+                                 unsetComment="true"/>
+        <rollback>
+            <snowflake:alterSequence sequenceName="TEST_RENAMED_SEQ" 
+                                     setComment="Updated sequence with increment"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="test">
+        <snowflake:alterSequence sequenceName="TEST_RENAMED_SEQ" 
+                                 setOrder="true"/>
+        <rollback>
+            <snowflake:alterSequence sequenceName="TEST_RENAMED_SEQ" 
+                                     setNoOrder="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <snowflake:alterSequence sequenceName="TEST_RENAMED_SEQ" 
+                                 setNoOrder="true"/>
+        <rollback>
+            <snowflake:alterSequence sequenceName="TEST_RENAMED_SEQ" 
+                                     setOrder="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="7" author="test">
+        <snowflake:dropSequence sequenceName="TEST_RENAMED_SEQ" ifExists="true"/>
+    </changeSet>
+
 </databaseChangeLog>

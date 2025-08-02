@@ -22,7 +22,15 @@ The Liquibase Test Harness now supports lifecycle hooks that allow you to run in
 - `ScriptBasedLifecycleHook` for SQL script execution
 - `SchemaIsolationHook` for per-test schema isolation
 - `TestLifecycleManager` singleton for managing hooks
-- Integration with `ChangeObjectTests`
+
+✅ Test type integration:
+- `ChangeObjectTests` - Full lifecycle support with schema isolation
+- `SnapshotObjectTests` - Full lifecycle support with schema isolation
+
+❌ Test types without lifecycle integration:
+- `DiffTests` - No lifecycle hooks (could be added if needed)
+- `DiffChangelogTests` - No lifecycle hooks (could be added if needed) 
+- `ChangeDataTests` - No lifecycle hooks (could be added if needed)
 
 ✅ Snowflake scripts created:
 - `init.sql` - Clears DATABASECHANGELOG entries before tests
@@ -53,7 +61,12 @@ Lifecycle hooks are disabled by default. To enable them:
 
 ### Enabling Schema Isolation
 
-Schema isolation creates a unique schema for each test to prevent interference between tests on cloud databases:
+Schema isolation creates a unique schema for each test to prevent interference between tests on cloud databases.
+
+**Currently supported test types:**
+- ✅ `ChangeObjectTests` - Changetype tests (creating tables, warehouses, etc.)
+- ✅ `SnapshotObjectTests` - Database snapshot tests  
+- ❌ `DiffTests`, `DiffChangelogTests`, `ChangeDataTests` - Not yet implemented
 
 ```yaml
 # harness-config.yml
@@ -66,10 +79,11 @@ databasesUnderTest:
     # ... other database config
 ```
 
-When enabled, each test will:
-1. Create a schema named `TEST_<TESTNAME>` (e.g., `TEST_CREATETABLE`)
+When enabled for supported test types, each test will:
+1. Create a schema named `TEST_<TESTNAME>` (e.g., `TEST_CREATETABLE`, `TEST_WAREHOUSESNAPSHOT`)
 2. Run all test operations in that isolated schema
 3. Clean up the schema after test completion
+4. Solve DATABASECHANGELOG persistence issues on cloud databases
 
 ### Adding Scripts
 
@@ -184,6 +198,7 @@ The `SchemaIsolationHook` provides test isolation for cloud databases:
 - **Clean state**: Each test starts with a fresh schema
 - **Debugging**: Failed test schemas can be preserved for investigation
 - **Cloud database support**: Essential for databases that persist between runs
+- **DATABASECHANGELOG isolation**: Solves persistent state issues on cloud databases
 
 ### Configuration:
 ```yaml
@@ -193,11 +208,19 @@ databasesUnderTest:
     # Original schema restored after test
 ```
 
+### Supported Test Types:
+- ✅ **ChangeObjectTests**: Changetype tests with full schema isolation
+- ✅ **SnapshotObjectTests**: Database snapshot tests with full schema isolation  
+- ❌ **DiffTests**: Not yet implemented (could be added)
+- ❌ **DiffChangelogTests**: Not yet implemented (could be added)
+- ❌ **ChangeDataTests**: Not yet implemented (could be added)
+
 ### Important Notes:
 - Test names are sanitized (special characters replaced with underscores)
 - Expected SQL files must use the isolated schema name (e.g., `TEST_CREATETABLE`)
 - The original schema is restored before dropping the test schema
 - Currently only implemented for Snowflake, but extensible to other databases
+- Snapshot tests now include schema isolation and URL updating for proper isolation
 
 ## Notes
 

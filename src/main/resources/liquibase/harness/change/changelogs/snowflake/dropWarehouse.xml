@@ -1,53 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Schema Isolated Test - Account-level objects still need cleanup -->
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-                      http://www.liquibase.org/xml/ns/snowflake
-                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
-    <!-- Clean up any warehouses this test might create -->
-    <changeSet author="test-harness" id="cleanup-test-warehouses" runAlways="true">
-        <sql>
-            USE WAREHOUSE LTHDB_TEST_WH;
-            DROP WAREHOUSE IF EXISTS LTHDB_DROP_TEST_WH;
-            DROP WAREHOUSE IF EXISTS LTHDB_NONEXISTENT_WH;
-        </sql>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Create warehouses to drop -->
+    <changeSet id="1" author="test">
+        <snowflake:createWarehouse warehouseName="WAREHOUSE_TO_DROP"/>
+        <snowflake:createWarehouse warehouseName="WAREHOUSE_IF_EXISTS"/>
     </changeSet>
 
-    <changeSet author="test-harness" id="dropWarehouse-setup" runAlways="true">
-        <snowflake:createWarehouse warehouseName="LTHDB_DROP_TEST_WH"
-                        warehouseSize="XSMALL"
-                        autoSuspend="60"
-                        autoResume="true"
-                        initiallySuspended="false"
-                        comment="Warehouse to be dropped"/>
-    </changeSet>
-
-    <changeSet author="test-harness" id="dropWarehouse-ensure-context" runAlways="true">
-        <sql>USE WAREHOUSE LTHDB_TEST_WH</sql>
-    </changeSet>
-
-    <changeSet author="test-harness" id="dropWarehouse-basic" runAlways="true">
-        <snowflake:dropWarehouse warehouseName="LTHDB_DROP_TEST_WH" ifExists="true"/>
+    <!-- Basic drop -->
+    <changeSet id="2" author="test">
+        <snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_DROP"/>
         <rollback>
-            <snowflake:createWarehouse warehouseName="LTHDB_DROP_TEST_WH"
-                            warehouseSize="XSMALL"
-                            autoSuspend="60"
-                            autoResume="true"
-                            comment="Warehouse to be dropped"/>
+            <snowflake:createWarehouse warehouseName="WAREHOUSE_TO_DROP"/>
         </rollback>
     </changeSet>
 
-    <changeSet author="test-harness" id="dropWarehouse-ifExists" runAlways="true">
-        <snowflake:dropWarehouse warehouseName="LTHDB_NONEXISTENT_WH"
-                      ifExists="true"/>
+    <!-- Drop with IF EXISTS (warehouse exists) -->
+    <changeSet id="3" author="test">
+        <snowflake:dropWarehouse warehouseName="WAREHOUSE_IF_EXISTS" ifExists="true"/>
+        <rollback>
+            <snowflake:createWarehouse warehouseName="WAREHOUSE_IF_EXISTS"/>
+        </rollback>
     </changeSet>
 
-    <!-- Restore warehouse context after dropping test warehouses -->
-    <changeSet author="test-harness" id="dropWarehouse-restore-warehouse">
-        <sql>USE WAREHOUSE LTHDB_TEST_WH</sql>
+    <!-- Drop with IF EXISTS (warehouse doesn't exist - should succeed) -->
+    <changeSet id="4" author="test">
+        <snowflake:dropWarehouse warehouseName="NONEXISTENT_WAREHOUSE" ifExists="true"/>
+        <rollback>
+            <!-- No rollback needed -->
+        </rollback>
+    </changeSet>
+
+    <!-- Create and drop multiple warehouses -->
+    <changeSet id="5" author="test">
+        <snowflake:createWarehouse warehouseName="TEMP_WAREHOUSE_1" warehouseSize="XSMALL"/>
+        <snowflake:createWarehouse warehouseName="TEMP_WAREHOUSE_2" warehouseSize="XSMALL"/>
+        <snowflake:createWarehouse warehouseName="TEMP_WAREHOUSE_3" warehouseSize="XSMALL"/>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_1" ifExists="true"/>
+        <snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_2" ifExists="true"/>
+        <snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_3" ifExists="true"/>
     </changeSet>
 
 </databaseChangeLog>

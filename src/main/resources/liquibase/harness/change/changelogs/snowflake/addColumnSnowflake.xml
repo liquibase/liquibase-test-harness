@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Setup: Create base table for column testing -->
+    <changeSet id="setup" author="test-harness">
+        <createTable tableName="COLUMN_TEST_TABLE">
+            <column name="id" type="INT"/>
+            <column name="name" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Test adding various Snowflake data types -->
+    <changeSet id="add-snowflake-columns" author="test-harness">
+        <addColumn tableName="COLUMN_TEST_TABLE">
+            <column name="variant_col" type="VARIANT"/>
+            <column name="array_col" type="ARRAY"/>
+            <column name="object_col" type="OBJECT"/>
+            <column name="geography_col" type="GEOGRAPHY"/>
+            <column name="timestamp_ntz" type="TIMESTAMP_NTZ"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- Test adding columns with constraints -->
+    <changeSet id="add-constrained-columns" author="test-harness">
+        <addColumn tableName="COLUMN_TEST_TABLE">
+            <column name="not_null_col" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="default_col" type="INT" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
