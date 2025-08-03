@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1"
+      author: "test"
+      changes:
+        - createSchema:
+            schemaName: "BASIC_SCHEMA"
+      rollback:
+        - dropSchema:
+            schemaName: "BASIC_SCHEMA"
+
+  - changeSet:
+      id: "2"
+      author: "test"
+      changes:
+        - createSchema:
+            schemaName: "CONFIGURED_SCHEMA"
+            comment: "Test schema with configuration"
+            dataRetentionTimeInDays: 7
+      rollback:
+        - dropSchema:
+            schemaName: "CONFIGURED_SCHEMA"
+
+  - changeSet:
+      id: "3"
+      author: "test"
+      changes:
+        - createSchema:
+            schemaName: "TRANSIENT_SCHEMA"
+            transient: true
+            comment: "Transient schema for testing"
+      rollback:
+        - dropSchema:
+            schemaName: "TRANSIENT_SCHEMA"
+
+  # Cleanup
+  - changeSet:
+      id: "99"
+      author: "test"
+      changes:
+        - dropSchema:
+            schemaName: "BASIC_SCHEMA"
+            ifExists: true
+        - dropSchema:
+            schemaName: "CONFIGURED_SCHEMA"
+            ifExists: true
+        - dropSchema:
+            schemaName: "TRANSIENT_SCHEMA"
+            ifExists: true

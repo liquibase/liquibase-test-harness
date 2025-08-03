@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Setup: Create base file format for testing alterations -->
+    <changeSet id="setup" author="test-harness">
+        <snowflake:createFileFormat 
+            fileFormatName="TEST_ALTER_FORMAT"
+            fileFormatType="CSV"
+            fieldDelimiter=","
+            skipHeader="1"
+            trimSpace="false"
+            comment="Initial format to be altered"/>
+    </changeSet>
+
+    <!-- Test: Alter file format properties -->
+    <changeSet id="alter-file-format" author="test-harness">
+        <snowflake:alterFileFormat 
+            fileFormatName="TEST_ALTER_FORMAT"
+            operationType="SET"
+            fieldDelimiter="|"
+            skipHeader="2"
+            trimSpace="true"
+            newComment="Modified CSV format with new properties"/>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet id="cleanup" author="test-harness">
+        <snowflake:dropFileFormat fileFormatName="TEST_ALTER_FORMAT" ifExists="true"/>
+    </changeSet>
+
+</databaseChangeLog>

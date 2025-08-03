@@ -1,0 +1,22 @@
+databaseChangeLog:
+  # Cleanup: Remove test file format if it exists
+  - changeSet:
+      id: "cleanup-file-format"
+      author: "test-harness"
+      runAlways: true
+      changes:
+        - sql:
+            sql: "DROP FILE FORMAT IF EXISTS TEST_CSV_FORMAT"
+
+  # Test: Create basic CSV file format
+  - changeSet:
+      id: "create-file-format-test"
+      author: "test-harness"
+      changes:
+        - createFileFormat:
+            fileFormatName: "TEST_CSV_FORMAT"
+            fileFormatType: "CSV"
+            fieldDelimiter: ","
+            skipHeader: 1
+            trimSpace: true
+            comment: "Test CSV format for harness validation"

@@ -1,0 +1,65 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "test",
+        "changes": [
+          {
+            "createSchema": {
+              "schemaName": "BASIC_SCHEMA"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropSchema": {
+              "schemaName": "BASIC_SCHEMA"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "2",
+        "author": "test",
+        "changes": [
+          {
+            "createSchema": {
+              "schemaName": "CONFIGURED_SCHEMA",
+              "remarks": "Test schema with configuration"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropSchema": {
+              "schemaName": "CONFIGURED_SCHEMA"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "99",
+        "author": "test",
+        "changes": [
+          {
+            "dropSchema": {
+              "schemaName": "BASIC_SCHEMA",
+              "ifExists": true
+            }
+          },
+          {
+            "dropSchema": {
+              "schemaName": "CONFIGURED_SCHEMA",
+              "ifExists": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1"
+      author: "test-harness"
+      changes:
+        - snowflake:createWarehouse:
+            warehouseName: "TEST_WAREHOUSE_ALTER"
+            warehouseSize: "XSMALL"
+
+  - changeSet:
+      id: "2"
+      author: "test-harness"
+      changes:
+        - snowflake:alterWarehouse:
+            warehouseName: "TEST_WAREHOUSE_ALTER"
+            newWarehouseName: "TEST_WAREHOUSE_RENAMED"
+      rollback:
+        - snowflake:alterWarehouse:
+            warehouseName: "TEST_WAREHOUSE_RENAMED"
+            newWarehouseName: "TEST_WAREHOUSE_ALTER"
+
+  - changeSet:
+      id: "3"
+      author: "test-harness"
+      changes:
+        - snowflake:alterWarehouse:
+            warehouseName: "TEST_WAREHOUSE_RENAMED"
+            warehouseSize: "SMALL"
+            autoSuspend: 300
+            comment: "Updated warehouse properties"
+
+  - changeSet:
+      id: "4"
+      author: "test-harness"
+      changes:
+        - snowflake:alterWarehouse:
+            warehouseName: "TEST_WAREHOUSE_RENAMED"
+            action: "SUSPEND"
+
+  - changeSet:
+      id: "5"
+      author: "test-harness"
+      changes:
+        - snowflake:alterWarehouse:
+            warehouseName: "TEST_WAREHOUSE_RENAMED"
+            action: "RESUME"
+
+  - changeSet:
+      id: "cleanup"
+      author: "test-harness"
+      changes:
+        - snowflake:dropWarehouse:
+            warehouseName: "TEST_WAREHOUSE_RENAMED"
+            ifExists: true

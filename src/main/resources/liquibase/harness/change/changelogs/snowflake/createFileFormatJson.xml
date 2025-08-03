@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Cleanup: Remove test JSON file format if it exists -->
+    <changeSet id="cleanup-json-file-format" author="test-harness" runAlways="true">
+        <sql>DROP FILE FORMAT IF EXISTS TEST_JSON_FORMAT</sql>
+    </changeSet>
+
+    <!-- Test: Create JSON file format with compression and options -->
+    <changeSet id="create-json-file-format-test" author="test-harness">
+        <snowflake:createFileFormat 
+            fileFormatName="TEST_JSON_FORMAT"
+            fileFormatType="JSON"
+            compression="GZIP"
+            stripOuterArray="true"
+            allowDuplicate="false"
+            comment="Test JSON format with compression"/>
+    </changeSet>
+
+</databaseChangeLog>

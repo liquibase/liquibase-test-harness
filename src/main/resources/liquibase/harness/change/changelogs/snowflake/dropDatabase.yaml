@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: "setup"
+      author: "test"
+      changes:
+        - createDatabase:
+            databaseName: "DATABASE_TO_DROP"
+            comment: "Test database that will be dropped"
+
+  - changeSet:
+      id: "1"
+      author: "test"
+      changes:
+        - dropDatabase:
+            databaseName: "DATABASE_TO_DROP"
+
+  - changeSet:
+      id: "2"
+      author: "test"
+      changes:
+        - createDatabase:
+            databaseName: "DATABASE_FOR_IF_EXISTS"
+            comment: "Database for IF EXISTS test"
+        - dropDatabase:
+            databaseName: "DATABASE_FOR_IF_EXISTS"
+            ifExists: true
+
+  - changeSet:
+      id: "3"
+      author: "test"
+      changes:
+        - dropDatabase:
+            databaseName: "NONEXISTENT_DATABASE"
+            ifExists: true
+
+  # Cleanup - drops should be idempotent
+  - changeSet:
+      id: "99"
+      author: "test"
+      changes:
+        - dropDatabase:
+            databaseName: "DATABASE_TO_DROP"
+            ifExists: true
+        - dropDatabase:
+            databaseName: "DATABASE_FOR_IF_EXISTS"
+            ifExists: true
+        - dropDatabase:
+            databaseName: "NONEXISTENT_DATABASE"
+            ifExists: true
