@@ -1,1 +1,19 @@
-{}
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.appdba.fileformat.FileFormat": [
+        {
+          "fileFormat": {
+            "comment": "changedComment",
+            "fileFormatType": "CSV",
+            "formatTypeOptions": {
+              "COMPRESSION": "DEFLATE",
+              "BINARY_FORMAT": "BASE64"
+            },
+            "name": "ITTESTFILEFORMAT"
+          }
+        }
+      ]
+    }
+  }
+}

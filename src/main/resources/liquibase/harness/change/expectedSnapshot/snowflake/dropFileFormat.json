@@ -1,1 +1,14 @@
-{}
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "com.datical.liquibase.ext.appdba.fileformat.FileFormat": [
+        {
+          "fileFormat": {
+            "name": "ITTESTFILEFORMAT"
+          }
+        }
+      ]
+    }
+  }
+}
