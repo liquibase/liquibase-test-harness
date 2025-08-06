@@ -1,20 +1,32 @@
 {
   "snapshot": {
     "objects": {
-      "liquibase.database.object.Warehouse": [
+      "liquibase.database.object.Account": [
         {
-          "warehouse": {
-            "name": "TEST_COMPLEX_WH",
-            "type": "SNOWPARK-OPTIMIZED",
-            "size": "MEDIUM",
-            "minClusterCount": 2,
-            "maxClusterCount": 5,
-            "autoSuspend": 600,
-            "autoResume": false,
-            "enableQueryAcceleration": true,
-            "queryAccelerationMaxScaleFactor": 8,
-            "scalingPolicy": "ECONOMY",
-            "comment": "Complex test warehouse with all optional properties"
+          "account": {
+            "name": "ACCOUNT_NAME_PLACEHOLDER",
+            "region": "US_WEST_2",
+            "cloud": "AWS",
+            "accountUrl": "rziymts-xbb66763.snowflakecomputing.com",
+            "databaseObjects": {
+              "liquibase.database.object.Warehouse": [
+                {
+                  "warehouse": {
+                    "name": "TEST_COMPLEX_WH",
+                    "type": "SNOWPARK-OPTIMIZED",
+                    "size": "MEDIUM",
+                    "minClusterCount": 2,
+                    "maxClusterCount": 5,
+                    "autoSuspend": 600,
+                    "autoResume": false,
+                    "enableQueryAcceleration": true,
+                    "queryAccelerationMaxScaleFactor": 8,
+                    "scalingPolicy": "ECONOMY",
+                    "comment": "Complex test warehouse with all optional properties"
+                  }
+                }
+              ]
+            }
           }
         }
       ]

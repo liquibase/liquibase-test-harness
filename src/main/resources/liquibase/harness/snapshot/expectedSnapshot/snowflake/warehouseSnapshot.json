@@ -1,17 +1,29 @@
 {
   "snapshot": {
     "objects": {
-      "liquibase.database.object.Warehouse": [
+      "liquibase.database.object.Account": [
         {
-          "warehouse": {
-            "name": "TEST_HARNESS_WH",
-            "type": "STANDARD",
-            "size": "SMALL",
-            "minClusterCount": 1,
-            "maxClusterCount": 1,
-            "autoSuspend": 300,
-            "autoResume": true,
-            "comment": "Test warehouse for snapshot harness testing"
+          "account": {
+            "name": "ACCOUNT_NAME_PLACEHOLDER",
+            "region": "US_WEST_2",
+            "cloud": "AWS",
+            "accountUrl": "rziymts-xbb66763.snowflakecomputing.com",
+            "databaseObjects": {
+              "liquibase.database.object.Warehouse": [
+                {
+                  "warehouse": {
+                    "name": "TEST_HARNESS_WH",
+                    "type": "STANDARD",
+                    "size": "SMALL",
+                    "minClusterCount": 1,
+                    "maxClusterCount": 1,
+                    "autoSuspend": 300,
+                    "autoResume": true,
+                    "comment": "Test warehouse for snapshot harness testing"
+                  }
+                }
+              ]
+            }
           }
         }
       ]
