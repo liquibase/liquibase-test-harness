@@ -27,6 +27,12 @@ Unexpected Column(s):
      lbcat.test_table_reference.test_column
      lbcat.test_table_for_column.varcharColumn
 Changed Column(s): NONE
+Missing Composite Type(s): NONE
+Unexpected Composite Type(s): NONE
+Changed Composite Type(s): NONE
+Missing Data Type Attribute(s): NONE
+Unexpected Data Type Attribute(s): NONE
+Changed Data Type Attribute(s): NONE
 Missing Database Package(s): NONE
 Unexpected Database Package(s): NONE
 Changed Database Package(s): NONE
