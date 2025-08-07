@@ -85,6 +85,19 @@ jobs:
             ,/vault/liquibase
           parse-json-secrets: true
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
+          aws-region: us-east-1
+
+      - name: Get AWS secrets
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            TH_ORACLEURL_19_TH, /testautomation/db_details/aws_oracle_19_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}          
+
       - name: Start & Configure LocalStack
         env:
           LOCALSTACK_OAUTH_TOKEN: ${{ env.LOCALSTACK_OAUTH_TOKEN }}
