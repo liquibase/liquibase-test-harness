@@ -92,7 +92,6 @@ jobs:
           aws-region: us-east-1
 
       - name: Get AWS secrets
-        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
