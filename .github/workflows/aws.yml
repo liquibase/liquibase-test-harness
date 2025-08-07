@@ -95,7 +95,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            TH_ORACLEURL_19_TH, /testautomation/db_details/aws_oracle_19_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}          
+            TH_ORACLEURL_19_TH, /testautomation/db_details/aws_oracle_19_jdbc       
 
       - name: Start & Configure LocalStack
         env:
