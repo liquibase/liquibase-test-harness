@@ -5,6 +5,6 @@ databasesUnderTest:
   - name: snowflake
     prefix: local
     version: latest
-    url: "jdbc:snowflake://rziymts-xbb66763.snowflakecomputing.com/?db=LIQUIBASE_SNOWFLAKE_TEST&warehouse=XSMALL_WH&schema=TEST_SCHEMA&role=ACCOUNTADMIN"
-    username: "COMMUNITYKEVIN"
-    password: "uQ1lAjwVisliu8CpUTVh0UnxoTUk3"
+    url: "jdbc:snowflake://cpewcva-wqb65055.snowflakecomputing.com/?db=LIQUIBASE_SNOWFLAKE_TEST&warehouse=XSMALL_WH&schema=TEST_SCHEMA&role=ACCOUNTADMIN"
+    username: "KEVINSF1"
+    password: "U%nF6Q@5ZEXSI@rmwC3G4uTjsZsm4"
