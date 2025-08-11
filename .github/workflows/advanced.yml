@@ -61,7 +61,7 @@ jobs:
         "hsqldb-2.5","hsqldb-2.6","hsqldb-2.7","tidb","diff","diffChangelog"]' }}
       testClasses: ${{ 'AdvancedHarnessSuiteTest' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v4
@@ -207,7 +207,7 @@ jobs:
         database: ${{ fromJson(needs.setup.outputs.databases) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-java@v4
         with:
@@ -273,7 +273,7 @@ jobs:
     needs: [ setup, test ]
     if: ${{ always() }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
       - name: Configure AWS credentials for vault access
