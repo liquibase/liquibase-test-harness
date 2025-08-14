@@ -11,12 +11,6 @@ databaseChangeLog:
               EMPTY_FIELD_AS_NULL = true
               COMPRESSION = DEFLATE;"
         - sql: "CREATE OR ALTER TAG T1 ALLOWED_VALUES 'INTERNAL', 'AWS', 'AWS_COMPAT', 'AZURE', 'GCP';"
-      rollback:
-        - sql: "DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;"
-  - changeSet:
-      id: 2
-      author: IntegrationTest
-      changes:
         - createStage:
             stageName: "testStage"
             stageType: "INTERNAL"
@@ -38,3 +32,7 @@ databaseChangeLog:
             tag:
               tagName: "T1"
               tagValue: "INTERNAL"
+        - dropStage:
+            stageName: "testStage"
+      rollback:
+        - sql: "DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;"
