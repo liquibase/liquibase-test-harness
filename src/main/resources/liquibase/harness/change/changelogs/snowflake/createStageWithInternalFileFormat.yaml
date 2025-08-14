@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: IntegrationTest
+      changes:
+        - createStage:
+            stageName: "testStage"
+            stageType: "INTERNAL"
+            fileFormat:
+              fileFormatType: "CSV"
+              formatTypeOptions:
+                - entry:
+                    key: "SKIP_HEADER"
+                    value: "2"
+                - entry:
+                    key: "COMPRESSION"
+                    value: "GZIP"
+            stageParams:
+              storageEncryptionType: "SNOWFLAKE_SSE"
+            directoryTableParams:
+              enable: "true"
+              autoRefresh: "true"

@@ -10,20 +10,7 @@
           },
           {
             "sql": "CREATE OR ALTER TAG T1 ALLOWED_VALUES 'INTERNAL', 'AWS', 'AWS_COMPAT', 'AZURE', 'GCP';"
-          }
-        ],
-        "rollback": [
-          {
-            "sql": "DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;"
-          }
-        ]
-      }
-    },
-    {
-      "changeSet": {
-        "id": 2,
-        "author": "IntegrationTest",
-        "changes": [
+          },
           {
             "createStage": {
               "stageName": "testStage",
@@ -58,6 +45,16 @@
                 "tagValue": "INTERNAL"
               }
             }
+          },
+          {
+            "dropStage": {
+              "stageName": "testStage"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "sql": "DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;"
           }
         ]
       }

@@ -7,24 +7,9 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="1" author="IntegrationTest">
-        <sql>
-            CREATE OR ALTER FILE FORMAT ItTestFileFormat TYPE = CSV FIELD_DELIMITER = '|' SKIP_HEADER = 1 NULL_IF = ('NULL', 'null') EMPTY_FIELD_AS_NULL = true COMPRESSION = DEFLATE;
-        </sql>
-        <sql>
-            CREATE OR ALTER TAG T1 ALLOWED_VALUES 'INTERNAL', 'AWS', 'AWS_COMPAT', 'AZURE', 'GCP';
-        </sql>
-        <rollback>
-            <sql>
-                DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;
-            </sql>
-        </rollback>
-    </changeSet>
-
-    <changeSet id="2" author="IntegrationTest">
         <pro-snowflake:createStage stageName="testStage"
                                    stageType="INTERNAL">
-            <pro-snowflake:fileFormat fileFormatName="ItTestFileFormat"
-                                      fileFormatType="CSV">
+            <pro-snowflake:fileFormat fileFormatType="CSV">
                 <pro-snowflake:formatTypeOptions>
                     <pro-snowflake:entry>
                         <pro-snowflake:key>SKIP_HEADER</pro-snowflake:key>
@@ -38,7 +23,6 @@
             </pro-snowflake:fileFormat>
             <pro-snowflake:stageParams storageEncryptionType="SNOWFLAKE_SSE"/>
             <pro-snowflake:directoryTableParams enable="true" autoRefresh="true"/>
-            <pro-snowflake:tag tagName="T1" tagValue="INTERNAL"/>
         </pro-snowflake:createStage>
     </changeSet>
 </databaseChangeLog>

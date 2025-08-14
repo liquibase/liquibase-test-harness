@@ -13,14 +13,6 @@
         <sql>
             CREATE OR ALTER TAG T1 ALLOWED_VALUES 'INTERNAL', 'AWS', 'AWS_COMPAT', 'AZURE', 'GCP';
         </sql>
-        <rollback>
-            <sql>
-                DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;
-            </sql>
-        </rollback>
-    </changeSet>
-
-    <changeSet id="2" author="IntegrationTest">
         <pro-snowflake:createStage stageName="testStage"
                                    stageType="INTERNAL">
             <pro-snowflake:fileFormat fileFormatName="ItTestFileFormat"
@@ -40,5 +32,11 @@
             <pro-snowflake:directoryTableParams enable="true" autoRefresh="true"/>
             <pro-snowflake:tag tagName="T1" tagValue="INTERNAL"/>
         </pro-snowflake:createStage>
+        <pro-snowflake:dropStage stageName="testStage"/>
+        <rollback>
+            <sql>
+                DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;
+            </sql>
+        </rollback>
     </changeSet>
 </databaseChangeLog>
