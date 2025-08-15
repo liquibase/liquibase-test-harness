@@ -58,4 +58,4 @@ terraform.rc
 .classpath
 .project
 .settings/org.eclipse.jdt.apt.core.prefs
-.settings/org.eclipse.jdt.core.prefs
+.settings/org.eclipse.jdt.core.prefssrc/test/resources/harness-config.local.yml

@@ -232,9 +232,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-snowflake</artifactId>
-            <version>0-SNAPSHOT</version>
+            <groupId>org.liquibase.ext</groupId>
+            <artifactId>liquibase-commercial-snowflake</artifactId>
+            <version>4.34.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -299,6 +299,14 @@
             <groupId>org.liquibase.ext</groupId>
             <artifactId>liquibase-disable-analytics</artifactId>
             <version>1.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- Byte Buddy for Spock mocking support -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.14.18</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

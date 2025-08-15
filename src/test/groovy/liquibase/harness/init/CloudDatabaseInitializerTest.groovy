@@ -7,6 +7,8 @@ import spock.lang.Specification
 import java.sql.Connection
 import java.sql.Statement
 import java.sql.SQLException
+import net.bytebuddy.ByteBuddy
+import net.bytebuddy.implementation.MethodDelegation
 
 class CloudDatabaseInitializerTest extends Specification {
     
@@ -93,43 +95,37 @@ class CloudDatabaseInitializerTest extends Specification {
     
     def "CloudDatabaseInitializer should initialize only once per database"() {
         given:
-        def mockDatabase = Mock(Database)
-        def mockJdbcConnection = Mock(JdbcConnection)
-        def mockConnection = Mock(Connection)
-        def mockStatement = Mock(Statement)
-        
-        mockDatabase.getConnection() >> mockJdbcConnection
-        mockJdbcConnection.getUnderlyingConnection() >> mockConnection
-        mockConnection.createStatement() >> mockStatement
-        
         def database = new DatabaseUnderTest(
             name: "snowflake",
             url: "jdbc:snowflake://test.snowflakecomputing.com/db",
-            initScript: "harness/init/snowflake/cloud-init.sql",
-            database: mockDatabase
+            initScript: "test-init.sql"
         )
         
         def initializer = CloudDatabaseInitializer.getInstance()
+        def executionCount = 0
         
-        // Mock the resource loading
-        CloudDatabaseInitializer.metaClass.executeInitScript = { DatabaseUnderTest db ->
-            // Simulate successful execution
+        // Create a test version that tracks executions
+        def testInitializer = new CloudDatabaseInitializer() {
+            @Override
+            protected void executeInitScript(DatabaseUnderTest db) {
+                executionCount++
+                // Mock successful execution
+            }
         }
         
         when: "First initialization"
-        def result1 = initializer.initializeIfNeeded(database)
+        def result1 = testInitializer.initializeIfNeeded(database)
         
         then:
         result1 == true
+        executionCount == 1
         
         when: "Second initialization attempt"
-        def result2 = initializer.initializeIfNeeded(database)
+        def result2 = testInitializer.initializeIfNeeded(database)
         
         then:
         result2 == false
-        
-        cleanup:
-        CloudDatabaseInitializer.metaClass = null
+        executionCount == 1  // Should not execute again
     }
     
     def "CloudDatabaseInitializer should handle SQL script execution"() {
@@ -143,7 +139,17 @@ class CloudDatabaseInitializerTest extends Specification {
             url: "jdbc:snowflake://test.snowflakecomputing.com/db"
         )
         
-        def initializer = CloudDatabaseInitializer.getInstance()
+        def testInitializer = new CloudDatabaseInitializer() {
+            @Override
+            protected Connection createConnection(DatabaseUnderTest db) {
+                return mockConnection
+            }
+            
+            @Override
+            protected void logDebug(String message) {
+                println "DEBUG: ${message}"  // Print debug messages to see what's happening
+            }
+        }
         
         def sqlContent = """
         -- Comment line
@@ -155,21 +161,16 @@ class CloudDatabaseInitializerTest extends Specification {
         USE SCHEMA TEST_SCHEMA;
         """
         
-        // Override createConnection to return our mock
-        CloudDatabaseInitializer.metaClass.createConnection = { DatabaseUnderTest db ->
-            return mockConnection
-        }
-        
         when:
-        initializer.executeSQLScript(database, sqlContent)
+        testInitializer.executeSQLScript(database, sqlContent)
         
         then:
-        1 * mockStatement.execute("CREATE SCHEMA TEST_SCHEMA")
-        1 * mockStatement.execute("GRANT ALL ON SCHEMA TEST_SCHEMA TO ROLE TEST_ROLE")
-        1 * mockStatement.execute("USE SCHEMA TEST_SCHEMA")
-        
-        cleanup:
-        CloudDatabaseInitializer.metaClass = null
+        // More flexible matching since SQL parsing might add/remove whitespace
+        1 * mockStatement.execute({ it.contains("CREATE SCHEMA TEST_SCHEMA") })
+        1 * mockStatement.execute({ it.contains("GRANT ALL ON SCHEMA TEST_SCHEMA TO ROLE TEST_ROLE") })
+        1 * mockStatement.execute({ it.contains("USE SCHEMA TEST_SCHEMA") })
+        1 * mockStatement.close()
+        1 * mockConnection.close()
     }
     
     def "CloudDatabaseInitializer should continue on SQL errors when configured"() {
@@ -179,15 +180,18 @@ class CloudDatabaseInitializerTest extends Specification {
         def mockConnection = Mock(Connection)
         def mockStatement = Mock(Statement)
         mockConnection.createStatement() >> mockStatement
-        mockStatement.execute("CREATE SCHEMA TEST") >> { throw new SQLException("Schema exists") }
-        mockStatement.execute("USE SCHEMA TEST") >> true
         
         def database = new DatabaseUnderTest(
             name: "snowflake",
             url: "jdbc:snowflake://test.snowflakecomputing.com/db"
         )
         
-        def initializer = CloudDatabaseInitializer.getInstance()
+        def testInitializer = new CloudDatabaseInitializer() {
+            @Override
+            protected Connection createConnection(DatabaseUnderTest db) {
+                return mockConnection
+            }
+        }
         
         def sqlContent = """
         CREATE SCHEMA TEST;
@@ -195,10 +199,14 @@ class CloudDatabaseInitializerTest extends Specification {
         """
         
         when:
-        initializer.executeSQLScript(database, sqlContent)
+        testInitializer.executeSQLScript(database, sqlContent)
         
         then:
         noExceptionThrown()
+        1 * mockStatement.execute("CREATE SCHEMA TEST") >> { throw new SQLException("Schema exists") }
+        1 * mockStatement.execute("USE SCHEMA TEST")
+        1 * mockStatement.close()
+        1 * mockConnection.close()
         
         cleanup:
         System.clearProperty("liquibase.harness.cloud.init.continueOnSqlError")
