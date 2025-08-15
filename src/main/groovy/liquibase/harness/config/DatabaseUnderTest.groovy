@@ -13,6 +13,13 @@ class DatabaseUnderTest {
     String password
     String url
     String dbSchema
+    
+    // Cloud database initialization properties
     String initScript
+    String initChangelog
+    Map<String, String> initProperties = [:]
+    boolean skipInit = false
+    
+    // Schema isolation configuration
     boolean useSchemaIsolation = false
 }

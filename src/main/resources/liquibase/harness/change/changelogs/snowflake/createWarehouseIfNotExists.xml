@@ -2,45 +2,41 @@
 <!-- Schema Isolated Test - Account-level objects still need cleanup -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xmlns:pro-snowflake="http://www.liquibase.org/xml/ns/pro-snowflake"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-                      http://www.liquibase.org/xml/ns/snowflake
-                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
-    <!-- Clean up any warehouses this test might create -->
+                      http://www.liquibase.org/xml/ns/pro-snowflake
+                      http://www.liquibase.org/xml/ns/pro-snowflake/liquibase-pro-snowflake-latest.xsd">
+    <!-- Clean up any warehouses this test might create and restore warehouse context -->
     <changeSet author="test-harness" id="cleanup-test-warehouses" runAlways="true">
         <sql>
             DROP WAREHOUSE IF EXISTS LTHDB_TEST_IF_NOT_EXISTS_WH;
         </sql>
-    </changeSet>
-
-    <!-- Restore warehouse context after dropping warehouses -->
-    <changeSet author="test-harness" id="restore-warehouse-context" runAlways="true">
-        <sql>USE WAREHOUSE LTHDB_TEST_WH</sql>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
     </changeSet>
 
     <changeSet author="test-harness" id="createWarehouse-ifNotExists" runAlways="true">
-        <snowflake:createWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"
+        <pro-snowflake:createWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"
                         warehouseSize="XSMALL"
                         autoSuspend="60"
                         autoResume="true"
                         ifNotExists="true"
                         comment="Test warehouse with IF NOT EXISTS"/>
         <rollback>
-            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"/>
+            <pro-snowflake:dropWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"/>
         </rollback>
     </changeSet>
 
     <!-- Try to create the same warehouse again - should not fail -->
     <changeSet author="test-harness" id="createWarehouse-ifNotExists-duplicate" runAlways="true">
-        <snowflake:createWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"
-                        warehouseSize="MEDIUM"
+        <pro-snowflake:createWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"
+                        warehouseSize="SMALL"
                         autoSuspend="120"
                         autoResume="true"
                         ifNotExists="true"
                         comment="Duplicate creation should not fail"/>
         <rollback>
-            <snowflake:dropWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"/>
+            <pro-snowflake:dropWarehouse warehouseName="LTHDB_TEST_IF_NOT_EXISTS_WH"/>
         </rollback>
     </changeSet>
 

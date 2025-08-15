@@ -9,8 +9,8 @@ databasesUnderTest:
   - name: snowflake
     prefix: local
     version: latest
-    url: "jdbc:snowflake://cpewcva-wqb65055.snowflakecomputing.com/?db=LTHDB&warehouse=LTHDB_TEST_WH&schema=TESTHARNESS&role=LIQUIBASE_TEST_HARNESS_ROLE"
-    username: "KEVINSF1"
-    password: "U%nF6Q@5ZEXSI@rmwC3G4uTjsZsm4"
+    url: "jdbc:snowflake://jmlrlid-thb99023.snowflakecomputing.com/?db=LTHDB&warehouse=LTHDB_TEST_WH&schema=TESTHARNESS&role=LIQUIBASE_TEST_HARNESS_ROLE"
+    username: "KEVINSF2"
+    password: "FMr2Dmeh@^WyAQIzZd#z2%fuuMsFEA%"
     initScript: "harness/init/snowflake/cloud-init-robust.sql"
     useSchemaIsolation: true

@@ -37,6 +37,8 @@ class SchemaIsolationHook implements TestLifecycleHook {
             def connection = context.database.database.getConnection()?.getUnderlyingConnection()
             if (connection) {
                 def statement = connection.createStatement()
+                println("SchemaIsolationHook: Executing USE WAREHOUSE LTHDB_TEST_WH")
+                statement.execute("USE WAREHOUSE LTHDB_TEST_WH")
                 println("SchemaIsolationHook: Executing USE SCHEMA ${schemaName}")
                 statement.execute("USE SCHEMA ${schemaName}")
                 statement.close()
@@ -100,6 +102,7 @@ class SchemaIsolationHook implements TestLifecycleHook {
     private void setupSchema(DatabaseUnderTest database, String schemaName) {
         // Create the isolated test schema (drop first if it exists)
         executeSQL(database, "USE DATABASE LTHDB")
+        executeSQL(database, "USE WAREHOUSE LTHDB_TEST_WH")
         executeSQL(database, "DROP SCHEMA IF EXISTS ${schemaName} CASCADE")
         executeSQL(database, "CREATE SCHEMA ${schemaName}")
         executeSQL(database, "GRANT ALL PRIVILEGES ON SCHEMA ${schemaName} TO ROLE LIQUIBASE_TEST_HARNESS_ROLE")
@@ -108,6 +111,7 @@ class SchemaIsolationHook implements TestLifecycleHook {
     private void cleanupSchema(DatabaseUnderTest database, String schemaName) {
         // First switch to the original schema, then drop the test schema
         executeSQL(database, "USE DATABASE LTHDB")
+        executeSQL(database, "USE WAREHOUSE LTHDB_TEST_WH")
         executeSQL(database, "USE SCHEMA TESTHARNESS")
         executeSQL(database, "DROP SCHEMA IF EXISTS ${schemaName} CASCADE")
     }

@@ -2,37 +2,50 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xmlns:pro-snowflake="http://www.liquibase.org/xml/ns/pro-snowflake"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-                        http://www.liquibase.org/xml/ns/snowflake
-                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+                        http://www.liquibase.org/xml/ns/pro-snowflake
+                        http://www.liquibase.org/xml/ns/pro-snowflake/liquibase-pro-snowflake-latest.xsd">
+
+    <!-- Initial cleanup -->
+    <changeSet id="0" author="test-harness">
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_DROP" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_IF_EXISTS" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_1" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_2" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_3" ifExists="true"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
+    </changeSet>
 
     <!-- Create warehouses to drop -->
     <changeSet id="1" author="test">
-        <snowflake:createWarehouse warehouseName="WAREHOUSE_TO_DROP"/>
-        <snowflake:createWarehouse warehouseName="WAREHOUSE_IF_EXISTS"/>
+        <pro-snowflake:createWarehouse warehouseName="WAREHOUSE_TO_DROP"/>
+        <pro-snowflake:createWarehouse warehouseName="WAREHOUSE_IF_EXISTS"/>
     </changeSet>
 
     <!-- Basic drop -->
     <changeSet id="2" author="test">
-        <snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_DROP"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_TO_DROP"/>
         <rollback>
-            <snowflake:createWarehouse warehouseName="WAREHOUSE_TO_DROP"/>
+            <pro-snowflake:createWarehouse warehouseName="WAREHOUSE_TO_DROP"/>
         </rollback>
     </changeSet>
 
     <!-- Drop with IF EXISTS (warehouse exists) -->
     <changeSet id="3" author="test">
-        <snowflake:dropWarehouse warehouseName="WAREHOUSE_IF_EXISTS" ifExists="true"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
+        <pro-snowflake:dropWarehouse warehouseName="WAREHOUSE_IF_EXISTS" ifExists="true"/>
         <rollback>
-            <snowflake:createWarehouse warehouseName="WAREHOUSE_IF_EXISTS"/>
+            <pro-snowflake:createWarehouse warehouseName="WAREHOUSE_IF_EXISTS"/>
         </rollback>
     </changeSet>
 
     <!-- Drop with IF EXISTS (warehouse doesn't exist - should succeed) -->
     <changeSet id="4" author="test">
-        <snowflake:dropWarehouse warehouseName="NONEXISTENT_WAREHOUSE" ifExists="true"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
+        <pro-snowflake:dropWarehouse warehouseName="NONEXISTENT_WAREHOUSE" ifExists="true"/>
         <rollback>
             <!-- No rollback needed -->
         </rollback>
@@ -40,15 +53,16 @@
 
     <!-- Create and drop multiple warehouses -->
     <changeSet id="5" author="test">
-        <snowflake:createWarehouse warehouseName="TEMP_WAREHOUSE_1" warehouseSize="XSMALL"/>
-        <snowflake:createWarehouse warehouseName="TEMP_WAREHOUSE_2" warehouseSize="XSMALL"/>
-        <snowflake:createWarehouse warehouseName="TEMP_WAREHOUSE_3" warehouseSize="XSMALL"/>
+        <pro-snowflake:createWarehouse warehouseName="TEMP_WAREHOUSE_1" warehouseSize="XSMALL"/>
+        <pro-snowflake:createWarehouse warehouseName="TEMP_WAREHOUSE_2" warehouseSize="XSMALL"/>
+        <pro-snowflake:createWarehouse warehouseName="TEMP_WAREHOUSE_3" warehouseSize="XSMALL"/>
     </changeSet>
 
     <changeSet id="6" author="test">
-        <snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_1" ifExists="true"/>
-        <snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_2" ifExists="true"/>
-        <snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_3" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_1" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_2" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="TEMP_WAREHOUSE_3" ifExists="true"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
     </changeSet>
 
 </databaseChangeLog>

@@ -17,10 +17,13 @@ import java.util.concurrent.ConcurrentHashMap
  * Handles one-time initialization of cloud databases.
  * This is a singleton to ensure initialization happens only once per JVM.
  */
-@Singleton
 class CloudDatabaseInitializer {
     
     private static final CloudDatabaseInitializer INSTANCE = new CloudDatabaseInitializer()
+    
+    protected CloudDatabaseInitializer() {
+        // Protected constructor for testing
+    }
     
     // Track which databases have been initialized
     private final Set<String> initializedDatabases = ConcurrentHashMap.newKeySet()
@@ -99,7 +102,7 @@ class CloudDatabaseInitializer {
         }
     }
     
-    private void executeInitScript(DatabaseUnderTest database) {
+    protected void executeInitScript(DatabaseUnderTest database) {
         def scriptPath = resolveScriptPath(database.initScript, database)
         def resourceAccessor = new ClassLoaderResourceAccessor()
         
@@ -125,7 +128,7 @@ class CloudDatabaseInitializer {
         logInfo("Init script completed successfully")
     }
     
-    private void executeSQLScript(DatabaseUnderTest database, String sqlContent) {
+    protected void executeSQLScript(DatabaseUnderTest database, String sqlContent) {
         Connection connection = null
         Statement statement = null
         
@@ -138,10 +141,19 @@ class CloudDatabaseInitializer {
             def statements = sqlContent.split(';')
             statements.each { sqlStatement ->
                 sqlStatement = sqlStatement.trim()
-                if (sqlStatement && !sqlStatement.isEmpty() && !sqlStatement.startsWith('--')) {
-                    logDebug("Executing SQL: ${sqlStatement.take(100)}...")
+                
+                // Remove comment lines and empty lines
+                def lines = sqlStatement.split('\n')
+                def cleanLines = lines.findAll { line ->
+                    def trimmed = line.trim()
+                    return trimmed && !trimmed.startsWith('--')
+                }
+                def cleanStatement = cleanLines.join(' ').trim()
+                
+                if (cleanStatement && !cleanStatement.isEmpty()) {
+                    logDebug("Executing SQL: ${cleanStatement.take(100)}...")
                     try {
-                        statement.execute(sqlStatement)
+                        statement.execute(cleanStatement)
                     } catch (Exception e) {
                         // Log but continue - some statements might fail safely
                         logWarn("SQL statement failed (continuing): ${e.message}")
@@ -206,7 +218,7 @@ class CloudDatabaseInitializer {
         }
     }
     
-    private Connection createConnection(DatabaseUnderTest database) {
+    protected Connection createConnection(DatabaseUnderTest database) {
         // Apply any init properties
         def props = new Properties()
         if (database.initProperties) {
@@ -250,11 +262,11 @@ class CloudDatabaseInitializer {
         }
     }
     
-    private boolean shouldFailOnInitError() {
+    protected boolean shouldFailOnInitError() {
         return System.getProperty("liquibase.harness.cloud.init.failOnError", "false") == "true"
     }
     
-    private boolean shouldContinueOnSQLError() {
+    protected boolean shouldContinueOnSQLError() {
         return System.getProperty("liquibase.harness.cloud.init.continueOnSqlError", "true") == "true"
     }
     
@@ -266,7 +278,7 @@ class CloudDatabaseInitializer {
     }
     
     // Logging methods
-    private void logInfo(String message) {
+    protected void logInfo(String message) {
         try {
             Scope.getCurrentScope().getUI().sendMessage("[Cloud Init] INFO: " + message)
         } catch (Exception e) {
@@ -274,7 +286,7 @@ class CloudDatabaseInitializer {
         }
     }
     
-    private void logWarn(String message) {
+    protected void logWarn(String message) {
         try {
             Scope.getCurrentScope().getUI().sendMessage("[Cloud Init] WARN: " + message)
         } catch (Exception e) {
@@ -282,7 +294,7 @@ class CloudDatabaseInitializer {
         }
     }
     
-    private void logError(String message, Exception e) {
+    protected void logError(String message, Exception e) {
         try {
             Scope.getCurrentScope().getUI().sendErrorMessage("[Cloud Init] ERROR: " + message)
             if (e && isDebugEnabled()) {
@@ -296,13 +308,13 @@ class CloudDatabaseInitializer {
         }
     }
     
-    private void logDebug(String message) {
+    protected void logDebug(String message) {
         if (isDebugEnabled()) {
             logInfo("DEBUG: " + message)
         }
     }
     
-    private boolean isDebugEnabled() {
+    protected boolean isDebugEnabled() {
         return System.getProperty("liquibase.harness.cloud.init.debug", "false") == "true"
     }
 }
