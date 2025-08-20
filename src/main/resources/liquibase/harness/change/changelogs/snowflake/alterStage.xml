@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro-snowflake="http://www.liquibase.org/xml/ns/pro-snowflake"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="IntegrationTest">
+        <sql>
+            CREATE OR ALTER FILE FORMAT ItTestFileFormat TYPE = CSV FIELD_DELIMITER = '|' SKIP_HEADER = 1 NULL_IF = ('NULL', 'null') EMPTY_FIELD_AS_NULL = true COMPRESSION = DEFLATE;
+        </sql>
+        <sql>
+            CREATE OR ALTER TAG T1 ALLOWED_VALUES 'INTERNAL', 'AWS', 'AWS_COMPAT', 'AZURE', 'GCP';
+        </sql>
+        <rollback>
+            <sql>
+                DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="IntegrationTest">
+        <pro-snowflake:createStage stageName="testAwsStage" stageType="AWS" replaceIfExists="true">
+            <pro-snowflake:fileFormat fileFormatName="ItTestFileFormat" fileFormatType="CSV">
+                <pro-snowflake:formatTypeOptions>
+                    <pro-snowflake:entry>
+                        <pro-snowflake:key>SKIP_HEADER</pro-snowflake:key>
+                        <pro-snowflake:value>2</pro-snowflake:value>
+                    </pro-snowflake:entry>
+                    <pro-snowflake:entry>
+                        <pro-snowflake:key>COMPRESSION</pro-snowflake:key>
+                        <pro-snowflake:value>GZIP</pro-snowflake:value>
+                    </pro-snowflake:entry>
+                </pro-snowflake:formatTypeOptions>
+            </pro-snowflake:fileFormat>
+            <pro-snowflake:stageParams storageEncryptionType="AWS_SSE_S3"
+                                       url="s3://liquibase-dev-snowflake-data/"
+                                       storageIntegration="aws_snowflake_integration"/>
+            <pro-snowflake:directoryTableParams enable="true" autoRefresh="true"/>
+            <pro-snowflake:tag tagName="T1" tagValue="INTERNAL"/>
+        </pro-snowflake:createStage>
+        <pro-snowflake:alterStageTags stageName="testAwsStage">
+            <pro-snowflake:setTags>
+                <pro-snowflake:tag tagName="T1" tagValue="AWS"/>
+            </pro-snowflake:setTags>
+        </pro-snowflake:alterStageTags>
+        <pro-snowflake:alterStageTags stageName="testAwsStage">
+            <pro-snowflake:unsetTags>
+                <pro-snowflake:unsetTag tagName="T2"/>
+            </pro-snowflake:unsetTags>
+        </pro-snowflake:alterStageTags>
+        <pro-snowflake:alterStageComment stageName="testAwsStage" unsetComment="true"/>
+        <pro-snowflake:alterStageComment stageName="testAwsStage">
+            <pro-snowflake:newComment>ABC!@</pro-snowflake:newComment>
+        </pro-snowflake:alterStageComment>
+        <pro-snowflake:alterStageParams stageName="testAwsStage" stageType="AWS">
+            <pro-snowflake:newStageParams storageEncryptionType="NONE"/>
+        </pro-snowflake:alterStageParams>
+        <pro-snowflake:alterStageFileFormat stageName="testAwsStage" >
+            <pro-snowflake:fileFormat fileFormatType="CSV">
+                <pro-snowflake:formatTypeOptions>
+                    <pro-snowflake:entry>
+                        <pro-snowflake:key>SKIP_HEADER</pro-snowflake:key>
+                        <pro-snowflake:value>1</pro-snowflake:value>
+                    </pro-snowflake:entry>
+                </pro-snowflake:formatTypeOptions>
+            </pro-snowflake:fileFormat>
+        </pro-snowflake:alterStageFileFormat>
+        <pro-snowflake:renameStage stageName="testAwsStage" newStageName="testAwsStage_NEW"/>
+        <rollback>
+            <pro-snowflake:dropStage stageName="testAwsStage_NEW"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

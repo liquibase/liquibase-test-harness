@@ -1,0 +1,79 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: IntegrationTest
+      changes:
+        - sql: "CREATE OR ALTER FILE FORMAT ItTestFileFormat
+              TYPE = CSV
+              FIELD_DELIMITER = '|'
+              SKIP_HEADER = 1
+              NULL_IF = ('NULL', 'null')
+              EMPTY_FIELD_AS_NULL = true
+              COMPRESSION = DEFLATE;"
+        - sql: "CREATE OR ALTER TAG T1 ALLOWED_VALUES 'INTERNAL', 'AWS', 'AWS_COMPAT', 'AZURE', 'GCP';"
+      rollback:
+        - sql: "DROP TAG T1; DROP FILE FORMAT ItTestFileFormat;"
+  - changeSet:
+      id: 2
+      author: IntegrationTest
+      changes:
+        - createStage:
+            stageName: "testAwsStage"
+            stageType: "AWS"
+            replaceIfExists: true
+            fileFormat:
+              fileFormatName: "ItTestFileFormat"
+              fileFormatType: "CSV"
+              formatTypeOptions:
+                - entry:
+                    key: "SKIP_HEADER"
+                    value: "2"
+                - entry:
+                    key: "COMPRESSION"
+                    value: "GZIP"
+            stageParams:
+              storageEncryptionType: "AWS_SSE_S3"
+              url: "s3://liquibase-dev-snowflake-data/"
+              storageIntegration: "aws_snowflake_integration"
+            directoryTableParams:
+              enable: "true"
+              autoRefresh: "true"
+            tag:
+              tagName: "T1"
+              tagValue: "INTERNAL"
+        - alterStageTags:
+            stageName: "testAwsStage"
+            setTags:
+              tag:
+                tagName: "T1"
+                tagValue: "AWS"
+        - alterStageTags:
+            stageName: "testAwsStage"
+            unsetTags:
+              unsetTag:
+                tagName: "T2"
+        - alterStageComment:
+            stageName: "testAwsStage"
+            unsetComment: true
+        - alterStageComment:
+            stageName: "testAwsStage"
+            newComment: "ABC!@"
+        - alterStageParams:
+            stageName: "testAwsStage"
+            stageType: "AWS"
+            newStageParams:
+              storageEncryptionType: "NONE"
+        - alterStageFileFormat:
+            stageName: "testAwsStage"
+            fileFormat:
+              fileFormatType: "CSV"
+              formatTypeOptions:
+                - entry:
+                    key: "SKIP_HEADER"
+                    value: "1"
+        - renameStage:
+            stageName: "testAwsStage"
+            newStageName: "testAwsStage_NEW"
+      rollback:
+        - dropStage:
+            stageName: "testAwsStage_NEW"
