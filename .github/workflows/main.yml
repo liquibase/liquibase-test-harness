@@ -260,7 +260,7 @@ jobs:
               }
             ]
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v5
         with:
           java-version: "17"
           distribution: "temurin"
@@ -336,7 +336,7 @@ jobs:
           permission-contents: write
           permission-actions: write
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           java-version: "17"
           distribution: "temurin"
