@@ -18,6 +18,7 @@ class TestConfig {
     String context
     List<DatabaseUnderTest> databasesUnderTest
     Boolean databasesConnected = false
+    LifecycleHooksConfig lifecycleHooks
 
     TestConfig() {
     }

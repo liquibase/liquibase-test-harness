@@ -1,0 +1,14 @@
+{
+  "schemas": [
+    {
+      "schema": {
+        "name": "TEST_SCHEMA_SQL"
+      }
+    },
+    {
+      "schema": {
+        "name": "TEST_SCHEMA_NAMESPACE"
+      }
+    }
+  ]
+}

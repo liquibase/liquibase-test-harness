@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+         http://www.liquibase.org/xml/ns/snowflake
+         http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+    
+    <changeSet author="testharness" id="1-dropSequenceWithCascade-v2">
+        <createSequence sequenceName="test_drop_sequence"
+                       startValue="1"
+                       incrementBy="1"/>
+        <dropSequence sequenceName="test_drop_sequence" 
+                     snowflake:cascade="true"/>
+        <rollback/>
+    </changeSet>
+</databaseChangeLog>

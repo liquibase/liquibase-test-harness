@@ -1,0 +1,9 @@
+{
+  "schemas": [
+    {
+      "schema": {
+        "name": "TEST_SIMPLE_SCHEMA"
+      }
+    }
+  ]
+}

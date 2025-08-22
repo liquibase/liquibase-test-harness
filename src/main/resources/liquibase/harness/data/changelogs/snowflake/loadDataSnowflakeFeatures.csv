@@ -1,0 +1,6 @@
+id,category,json_data,array_data
+1,CAT_A,"{""key"": ""value1"", ""num"": 1}","[""a"", ""b"", ""c""]"
+2,CAT_B,"{""key"": ""value2"", ""num"": 2}","[""x"", ""y""]"
+3,CAT_A,"{""key"": ""value3"", ""num"": 3}","[""1"", ""2"", ""3"", ""4""]"
+4,CAT_C,"{""key"": ""value4"", ""num"": 4}","[""alpha"", ""beta""]"
+5,CAT_B,"{""key"": ""value5"", ""num"": 5}","[""test""]"

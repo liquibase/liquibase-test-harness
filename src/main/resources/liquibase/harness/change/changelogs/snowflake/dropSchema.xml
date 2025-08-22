@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet id="1" author="test">
+        <snowflake:createSchema schemaName="DROP_TEST_SCHEMA" comment="Schema to be dropped"/>
+    </changeSet>
+
+    <changeSet id="2" author="test">
+        <snowflake:dropSchema schemaName="DROP_TEST_SCHEMA"/>
+        <rollback>
+            <snowflake:createSchema schemaName="DROP_TEST_SCHEMA" comment="Schema to be dropped"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="test">
+        <snowflake:createSchema schemaName="DROP_IF_EXISTS_SCHEMA" comment="Schema to be dropped with IF EXISTS"/>
+    </changeSet>
+
+    <changeSet id="4" author="test">
+        <snowflake:dropSchema schemaName="DROP_IF_EXISTS_SCHEMA" ifExists="true"/>
+        <rollback>
+            <snowflake:createSchema schemaName="DROP_IF_EXISTS_SCHEMA" comment="Schema to be dropped with IF EXISTS"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="test">
+        <snowflake:createSchema schemaName="CASCADE_DROP_SCHEMA" comment="Schema to be dropped with CASCADE"/>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <snowflake:dropSchema schemaName="CASCADE_DROP_SCHEMA" cascade="true"/>
+        <rollback>
+            <snowflake:createSchema schemaName="CASCADE_DROP_SCHEMA" comment="Schema to be dropped with CASCADE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="7" author="test">
+        <snowflake:createSchema schemaName="RESTRICT_DROP_SCHEMA" comment="Schema to be dropped with RESTRICT"/>
+    </changeSet>
+
+    <changeSet id="8" author="test">
+        <snowflake:dropSchema schemaName="RESTRICT_DROP_SCHEMA" restrict="true"/>
+        <rollback>
+            <snowflake:createSchema schemaName="RESTRICT_DROP_SCHEMA" comment="Schema to be dropped with RESTRICT"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Final cleanup -->
+    <changeSet id="99" author="test">
+        <snowflake:dropSchema schemaName="DROP_TEST_SCHEMA" ifExists="true"/>
+        <snowflake:dropSchema schemaName="DROP_IF_EXISTS_SCHEMA" ifExists="true"/>
+        <snowflake:dropSchema schemaName="CASCADE_DROP_SCHEMA" ifExists="true"/>
+        <snowflake:dropSchema schemaName="RESTRICT_DROP_SCHEMA" ifExists="true"/>
+    </changeSet>
+
+</databaseChangeLog>
