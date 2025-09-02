@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-        <!--https://docs.liquibase.com/change-types/community/create-procedure.html-->
-    <changeSet author="as" id="1">
+    
+    <!--https://docs.liquibase.com/change-types/community/create-procedure.html-->
+    <changeSet author="test-harness" id="setup-createProcedureFromFile-v2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="table1"/>
+            </not>
+        </preConditions>
+        <createTable tableName="table1">
+            <column name="column 1" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet author="as" id="1-v4">
         <comment>test procedure</comment>
         <createProcedure
 
@@ -14,8 +27,5 @@
                 relativeToChangelogFile="true"
                 procedureName="test_procedure()">
         </createProcedure>
-        <rollback>
-            <dropProcedure procedureName="test_procedure"/>
-        </rollback>
-    </changeSet>
+        </changeSet>
 </databaseChangeLog>

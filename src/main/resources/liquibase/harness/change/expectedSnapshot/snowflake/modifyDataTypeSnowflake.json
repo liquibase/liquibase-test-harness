@@ -1,0 +1,13 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "MODIFY_TYPE_TEST_TABLE"
+          }
+        }
+      ]
+    }
+  }
+}

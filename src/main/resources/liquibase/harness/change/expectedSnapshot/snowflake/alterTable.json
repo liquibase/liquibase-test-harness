@@ -1,0 +1,28 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "TEST_TABLE_CLUSTER"
+          }
+        },
+        {
+          "table": {
+            "name": "TEST_TABLE_PROPERTIES"
+          }
+        },
+        {
+          "table": {
+            "name": "TEST_TABLE_COMBINED"
+          }
+        },
+        {
+          "table": {
+            "name": "TEST_TABLE_DROP_CLUSTER"
+          }
+        }
+      ]
+    }
+  }
+}

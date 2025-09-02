@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Setup: Create base table for column remarks testing -->
+    <changeSet id="setup" author="test-harness">
+        <createTable tableName="REMARKS_TEST_TABLE">
+            <column name="id" type="INT"/>
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Test setting column remarks -->
+    <changeSet id="set-column-remarks" author="test-harness">
+        <setColumnRemarks columnName="id"
+                          remarks="Primary identifier column"
+                          tableName="REMARKS_TEST_TABLE"/>
+        <setColumnRemarks columnName="name"
+                          remarks="Name field with special characters: äöü"
+                          tableName="REMARKS_TEST_TABLE"/>
+        <setColumnRemarks columnName="description"
+                          remarks="Long description field for additional information"
+                          tableName="REMARKS_TEST_TABLE"/>
+    </changeSet>
+
+    <!-- Test clearing column remarks -->
+    <changeSet id="clear-column-remarks" author="test-harness">
+        <setColumnRemarks columnName="description"
+                          remarks=""
+                          tableName="REMARKS_TEST_TABLE"/>
+    </changeSet>
+
+</databaseChangeLog>

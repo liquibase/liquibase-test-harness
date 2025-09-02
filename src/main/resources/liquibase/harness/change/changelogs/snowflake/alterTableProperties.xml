@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Setup: Create base table for property testing -->
+    <changeSet id="setup" author="test-harness">
+        <createTable tableName="PROP_TEST_TABLE">
+            <column name="id" type="INT"/>
+            <column name="name" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Test comprehensive property changes -->
+    <changeSet id="set-properties" author="test-harness">
+        <snowflake:alterTable tableName="PROP_TEST_TABLE"
+                             setDataRetentionTimeInDays="7"
+                             setChangeTracking="true"
+                             setEnableSchemaEvolution="true"/>
+    </changeSet>
+
+    <!-- Test clustering key operations -->
+    <changeSet id="add-cluster" author="test-harness">
+        <snowflake:alterTable tableName="PROP_TEST_TABLE"
+                             clusterBy="id"/>
+    </changeSet>
+
+</databaseChangeLog>

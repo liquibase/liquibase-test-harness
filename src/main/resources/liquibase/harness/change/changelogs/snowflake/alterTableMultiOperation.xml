@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Setup: Create base table for multi-operation testing -->
+    <changeSet id="setup" author="test-harness">
+        <createTable tableName="MULTI_OP_TEST_TABLE">
+            <column name="id" type="INT"/>
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Test combining multiple property changes -->
+    <changeSet id="multi-property-changes" author="test-harness">
+        <snowflake:alterTable tableName="MULTI_OP_TEST_TABLE"
+                             setDataRetentionTimeInDays="14"
+                             setChangeTracking="true"
+                             setEnableSchemaEvolution="true"/>
+    </changeSet>
+
+    <!-- Test clustering operation separately -->
+    <changeSet id="add-clustering" author="test-harness">
+        <snowflake:alterTable tableName="MULTI_OP_TEST_TABLE"
+                             clusterBy="id,name"/>
+    </changeSet>
+
+    <!-- Test dropping cluster key -->
+    <changeSet id="drop-clustering" author="test-harness">
+        <snowflake:alterTable tableName="MULTI_OP_TEST_TABLE"
+                             dropClusteringKey="true"/>
+    </changeSet>
+
+</databaseChangeLog>

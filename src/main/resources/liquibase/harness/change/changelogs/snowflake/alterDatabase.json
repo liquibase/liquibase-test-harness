@@ -1,0 +1,82 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:createDatabase": {
+              "databaseName": "TEST_ALTER_DB",
+              "comment": "Initial database"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "2",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:alterDatabase": {
+              "databaseName": "TEST_ALTER_DB",
+              "operationType": "RENAME",
+              "newDatabaseName": "TEST_RENAMED_DB"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "snowflake:alterDatabase": {
+              "databaseName": "TEST_RENAMED_DB",
+              "operationType": "RENAME",
+              "newDatabaseName": "TEST_ALTER_DB"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "3",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:alterDatabase": {
+              "databaseName": "TEST_RENAMED_DB",
+              "operationType": "SET",
+              "dataRetentionTimeInDays": "7",
+              "comment": "Updated database with retention"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "snowflake:alterDatabase": {
+              "databaseName": "TEST_RENAMED_DB",
+              "operationType": "SET",
+              "dataRetentionTimeInDays": "1",
+              "comment": "Initial database"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "cleanup",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:dropDatabase": {
+              "databaseName": "TEST_RENAMED_DB",
+              "ifExists": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
