@@ -79,7 +79,7 @@ jobs:
 
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v7.0.1
+        uses: actions/github-script@v8
         with:
           github-token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           script: |
