@@ -1,0 +1,59 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:createWarehouse": {
+              "warehouseName": "TEST_WAREHOUSE_BASIC"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "2", 
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:createWarehouse": {
+              "warehouseName": "TEST_WAREHOUSE_CONFIGURED",
+              "warehouseSize": "SMALL",
+              "warehouseType": "STANDARD",
+              "maxClusterCount": 3,
+              "minClusterCount": 1,
+              "scalingPolicy": "STANDARD",
+              "autoSuspend": 60,
+              "autoResume": true,
+              "comment": "Test warehouse from JSON",
+              "enableQueryAcceleration": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "cleanup",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:dropWarehouse": {
+              "warehouseName": "TEST_WAREHOUSE_BASIC",
+              "ifExists": true
+            }
+          },
+          {
+            "snowflake:dropWarehouse": {
+              "warehouseName": "TEST_WAREHOUSE_CONFIGURED", 
+              "ifExists": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

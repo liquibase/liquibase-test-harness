@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- CREATE OPERATIONS - Test various schema creation scenarios -->
+    <changeSet id="1" author="test">
+        <snowflake:createSchema schemaName="BASIC_SCHEMA"/>
+    </changeSet>
+
+    <changeSet id="2" author="test">
+        <snowflake:createSchema schemaName="CONFIGURED_SCHEMA" 
+                                comment="Test schema with configuration" 
+                                dataRetentionTimeInDays="7"
+                                maxDataExtensionTimeInDays="30"/>
+    </changeSet>
+
+    <changeSet id="3" author="test">
+        <snowflake:createSchema schemaName="TRANSIENT_SCHEMA" 
+                                transient="true" 
+                                comment="Transient schema for testing"/>
+    </changeSet>
+
+    <changeSet id="4" author="test">
+        <snowflake:createSchema schemaName="MANAGED_SCHEMA" 
+                                managed="true"
+                                comment="Managed access schema"/>
+    </changeSet>
+
+    <changeSet id="5" author="test">
+        <snowflake:createSchema schemaName="REPLACE_SCHEMA" 
+                                orReplace="true"
+                                comment="Schema with OR REPLACE"/>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <snowflake:createSchema schemaName="IF_NOT_EXISTS_SCHEMA" 
+                                ifNotExists="true"
+                                dataRetentionTimeInDays="14"
+                                defaultDdlCollation="utf8"/>
+    </changeSet>
+
+    <changeSet id="7" author="test">
+        <snowflake:createSchema schemaName="CLONE_SCHEMA" 
+                                fromSchema="BASIC_SCHEMA"
+                                comment="Cloned schema for testing"/>
+    </changeSet>
+
+    <!-- CLEANUP OPERATIONS - Drop all created schemas (reverse order for dependencies) -->
+    <changeSet id="97" author="test">
+        <snowflake:dropSchema schemaName="CLONE_SCHEMA"/>
+    </changeSet>
+
+    <changeSet id="98" author="test">
+        <snowflake:dropSchema schemaName="IF_NOT_EXISTS_SCHEMA"/>
+    </changeSet>
+
+    <changeSet id="99" author="test">
+        <snowflake:dropSchema schemaName="REPLACE_SCHEMA"/>
+    </changeSet>
+
+    <changeSet id="100" author="test">
+        <snowflake:dropSchema schemaName="MANAGED_SCHEMA"/>
+    </changeSet>
+
+    <changeSet id="101" author="test">
+        <snowflake:dropSchema schemaName="TRANSIENT_SCHEMA"/>
+    </changeSet>
+
+    <changeSet id="102" author="test">
+        <snowflake:dropSchema schemaName="CONFIGURED_SCHEMA"/>
+    </changeSet>
+
+    <changeSet id="103" author="test">
+        <snowflake:dropSchema schemaName="BASIC_SCHEMA"/>
+    </changeSet>
+
+</databaseChangeLog>

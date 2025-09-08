@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <changeSet id="1" author="test">
+        <snowflake:createDatabase databaseName="BASIC_DB"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="BASIC_DB"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="test">
+        <snowflake:createDatabase databaseName="CONFIGURED_DB" 
+                                  comment="Test database with configuration" 
+                                  dataRetentionTimeInDays="7"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="CONFIGURED_DB"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="test">
+        <snowflake:createDatabase databaseName="TRANSIENT_DB" 
+                                  transient="true" 
+                                  comment="Transient database for testing"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="TRANSIENT_DB"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="test">
+        <snowflake:createDatabase databaseName="REPLACE_DB" 
+                                  orReplace="true"
+                                  comment="Database with OR REPLACE"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="REPLACE_DB"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="test">
+        <snowflake:createDatabase databaseName="IF_NOT_EXISTS_DB" 
+                                  ifNotExists="true"
+                                  dataRetentionTimeInDays="14"
+                                  maxDataExtensionTimeInDays="90"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="IF_NOT_EXISTS_DB" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <snowflake:createDatabase databaseName="CLONE_DB" 
+                                  fromDatabase="BASIC_DB"
+                                  comment="Cloned database for testing"/>
+        <rollback>
+            <snowflake:dropDatabase databaseName="CLONE_DB"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet id="99" author="test">
+        <snowflake:dropDatabase databaseName="BASIC_DB" ifExists="true"/>
+        <snowflake:dropDatabase databaseName="CONFIGURED_DB" ifExists="true"/>
+        <snowflake:dropDatabase databaseName="TRANSIENT_DB" ifExists="true"/>
+        <snowflake:dropDatabase databaseName="REPLACE_DB" ifExists="true"/>
+        <snowflake:dropDatabase databaseName="IF_NOT_EXISTS_DB" ifExists="true"/>
+        <snowflake:dropDatabase databaseName="CLONE_DB" ifExists="true"/>
+    </changeSet>
+
+</databaseChangeLog>

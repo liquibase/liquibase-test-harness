@@ -1,0 +1,23 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Sequence": [
+        {
+          "sequence": {
+            "name": "VALIDATION_TEST_SEQ"
+          }
+        },
+        {
+          "sequence": {
+            "name": "ANOTHER_VALIDATION_SEQ"
+          }
+        },
+        {
+          "sequence": {
+            "name": "ORDER_TEST_SEQ"
+          }
+        }
+      ]
+    }
+  }
+}

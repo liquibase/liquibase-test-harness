@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Setup: Create file format to be dropped -->
+    <changeSet id="setup" author="test-harness">
+        <snowflake:createFileFormat 
+            fileFormatName="TEST_DROP_FORMAT"
+            fileFormatType="JSON"
+            comment="Format to be dropped"/>
+    </changeSet>
+
+    <!-- Test: Drop file format -->
+    <changeSet id="drop-file-format" author="test-harness">
+        <snowflake:dropFileFormat fileFormatName="TEST_DROP_FORMAT"/>
+    </changeSet>
+
+    <!-- Test: Drop file format with IF EXISTS -->
+    <changeSet id="drop-file-format-if-exists" author="test-harness">
+        <snowflake:dropFileFormat 
+            fileFormatName="TEST_NONEXISTENT_FORMAT" 
+            ifExists="true"/>
+    </changeSet>
+
+</databaseChangeLog>

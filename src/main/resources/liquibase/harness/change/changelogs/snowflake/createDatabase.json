@@ -1,0 +1,180 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "test",
+        "changes": [
+          {
+            "createDatabase": {
+              "databaseName": "BASIC_DB"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropDatabase": {
+              "databaseName": "BASIC_DB"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "2",
+        "author": "test",
+        "changes": [
+          {
+            "createDatabase": {
+              "databaseName": "CONFIGURED_DB",
+              "comment": "Test database with configuration",
+              "dataRetentionTimeInDays": 7
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropDatabase": {
+              "databaseName": "CONFIGURED_DB"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "3",
+        "author": "test",
+        "changes": [
+          {
+            "createDatabase": {
+              "databaseName": "TRANSIENT_DB",
+              "transient": true,
+              "comment": "Transient database for testing"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropDatabase": {
+              "databaseName": "TRANSIENT_DB"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "4",
+        "author": "test",
+        "changes": [
+          {
+            "createDatabase": {
+              "databaseName": "REPLACE_DB",
+              "orReplace": true,
+              "comment": "Database with OR REPLACE"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropDatabase": {
+              "databaseName": "REPLACE_DB"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "5",
+        "author": "test",
+        "changes": [
+          {
+            "createDatabase": {
+              "databaseName": "IF_NOT_EXISTS_DB",
+              "ifNotExists": true,
+              "dataRetentionTimeInDays": 14,
+              "maxDataExtensionTimeInDays": 90
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropDatabase": {
+              "databaseName": "IF_NOT_EXISTS_DB",
+              "ifExists": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "6",
+        "author": "test",
+        "changes": [
+          {
+            "createDatabase": {
+              "databaseName": "CLONE_DB",
+              "fromDatabase": "BASIC_DB",
+              "comment": "Cloned database for testing"
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropDatabase": {
+              "databaseName": "CLONE_DB"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "99",
+        "author": "test",
+        "changes": [
+          {
+            "dropDatabase": {
+              "databaseName": "BASIC_DB",
+              "ifExists": true
+            }
+          },
+          {
+            "dropDatabase": {
+              "databaseName": "CONFIGURED_DB",
+              "ifExists": true
+            }
+          },
+          {
+            "dropDatabase": {
+              "databaseName": "TRANSIENT_DB",
+              "ifExists": true
+            }
+          },
+          {
+            "dropDatabase": {
+              "databaseName": "REPLACE_DB",
+              "ifExists": true
+            }
+          },
+          {
+            "dropDatabase": {
+              "databaseName": "IF_NOT_EXISTS_DB",
+              "ifExists": true
+            }
+          },
+          {
+            "dropDatabase": {
+              "databaseName": "CLONE_DB",
+              "ifExists": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
