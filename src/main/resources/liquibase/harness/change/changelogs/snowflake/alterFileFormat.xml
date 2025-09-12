@@ -16,22 +16,13 @@
                                         comment="myComment"
                                         fileFormatType="CSV">
             <pro-snowflake:formatTypeOptions>
-                <pro-snowflake:entry>
-                    <pro-snowflake:key>COMPRESSION</pro-snowflake:key>
-                    <pro-snowflake:value>ZSTD</pro-snowflake:value>
-                </pro-snowflake:entry>
-                <pro-snowflake:entry>
-                    <pro-snowflake:key>BINARY_FORMAT</pro-snowflake:key>
-                    <pro-snowflake:value>BASE64</pro-snowflake:value>
-                </pro-snowflake:entry>
+                <pro-snowflake:entry key="COMPRESSION" value="ZSTD"/>
+                <pro-snowflake:entry key="BINARY_FORMAT" value="BASE64"/>
             </pro-snowflake:formatTypeOptions>
         </pro-snowflake:createFileFormat>
-        <pro-snowflake:alterFileFormat fileFormatName="ItTestFileFormat" comment="changedComment">
+        <pro-snowflake:alterFileFormat fileFormatName="ItTestFileFormat" newComment="changedComment">
             <pro-snowflake:formatTypeOptions>
-                <pro-snowflake:entry>
-                    <pro-snowflake:key>COMPRESSION</pro-snowflake:key>
-                    <pro-snowflake:value>DEFLATE</pro-snowflake:value>
-                </pro-snowflake:entry>
+                <pro-snowflake:entry key="COMPRESSION" value="DEFLATE"/>
             </pro-snowflake:formatTypeOptions>
         </pro-snowflake:alterFileFormat>
         <rollback>
