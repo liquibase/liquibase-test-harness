@@ -39,15 +39,17 @@ databaseChangeLog:
               enable: "true"
               autoRefresh: "true"
             tags:
-              - entry:
-                  key: "T1"
-                  value: "INTERNAL"
+              entries:
+                - entry:
+                    key: "T1"
+                    value: "INTERNAL"
         - alterStageTags:
             stageName: "testAwsStage"
             setTags:
-              - entry:
-                  key: "T1"
-                  value: "AWS"
+              entries:
+                - entry:
+                    key: "T1"
+                    value: "AWS"
         - alterStageTags:
             stageName: "testAwsStage"
             unsetTags:
@@ -69,9 +71,10 @@ databaseChangeLog:
             fileFormat:
               fileFormatType: "CSV"
               formatTypeOptions:
-                - entry:
-                    key: "SKIP_HEADER"
-                    value: "1"
+                entries:
+                  - entry:
+                      key: "SKIP_HEADER"
+                      value: "1"
         - renameStage:
             stageName: "testAwsStage"
             newStageName: "testAwsStage_NEW"

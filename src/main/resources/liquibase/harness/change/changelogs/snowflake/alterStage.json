@@ -32,20 +32,22 @@
               "fileFormat": {
                 "fileFormatName": "ItTestFileFormat",
                 "fileFormatType": "CSV",
-                "formatTypeOptions": [
-                  {
-                    "entry": {
-                      "key": "SKIP_HEADER",
-                      "value": "2"
+                "formatTypeOptions": {
+                  "entries": [
+                    {
+                      "entry": {
+                        "key": "SKIP_HEADER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "entry": {
+                        "key": "COMPRESSION",
+                        "value": "GZIP"
+                      }
                     }
-                  },
-                  {
-                    "entry": {
-                      "key": "COMPRESSION",
-                      "value": "GZIP"
-                    }
-                  }
-                ]
+                  ]
+                }
               },
               "stageParams": {
                 "storageEncryptionType": "AWS_SSE_S3",
@@ -56,35 +58,43 @@
                 "enable": "true",
                 "autoRefresh": "true"
               },
-              "tags": [
-                {
-                  "entry": {
-                    "key": "T1",
-                    "value": "INTERNAL"
+              "tags": {
+                "entries": [
+                  {
+                    "entry": {
+                      "key": "T1",
+                      "value": "INTERNAL"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             }
           },
           {
             "alterStageTags": {
               "stageName": "testAwsStage",
               "setTags": {
-                "entry": {
-                  "key": "T1",
-                  "value": "AWS"
-                }
+                "entries": [
+                  {
+                    "entry": {
+                      "key": "T1",
+                      "value": "AWS"
+                    }
+                  }
+                ]
               }
             }
           },
           {
             "alterStageTags": {
               "stageName": "testAwsStage",
-              "unsetTags": {
-                "unsetTag": {
-                  "tagName": "T1"
+              "unsetTags": [
+                {
+                  "unsetTag": {
+                    "tagName": "T1"
+                  }
                 }
-              }
+              ]
             }
           },
           {
@@ -113,14 +123,16 @@
               "stageName": "testAwsStage",
               "fileFormat": {
                 "fileFormatType": "CSV",
-                "formatTypeOptions": [
-                  {
-                    "entry": {
-                      "key": "SKIP_HEADER",
-                      "value": "1"
+                "formatTypeOptions": {
+                  "entries": [
+                    {
+                      "entry": {
+                        "key": "SKIP_HEADER",
+                        "value": "1"
+                      }
                     }
-                  }
-                ]
+                  ]
+                }
               }
             }
           },
