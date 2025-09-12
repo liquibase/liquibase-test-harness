@@ -12,20 +12,22 @@ databaseChangeLog:
             comment: "myComment"
             fileFormatType: "CSV"
             formatTypeOptions:
-              - entry:
-                  key: "COMPRESSION"
-                  value: "ZSTD"
-              - entry:
-                  key: "BINARY_FORMAT"
-                  value: "BASE64"
+              entries:
+                - entry:
+                    key: "COMPRESSION"
+                    value: "ZSTD"
+                - entry:
+                    key: "BINARY_FORMAT"
+                    value: "BASE64"
 
         - alterFileFormat:
             fileFormatName: "ItTestFileFormat"
-            comment: "changedComment"
+            newComment: "changedComment"
             formatTypeOptions:
-              - entry:
-                  key: "COMPRESSION"
-                  value: "DEFLATE"
+              entries:
+                - entry:
+                    key: "COMPRESSION"
+                    value: "DEFLATE"
 
       rollback:
         - dropFileFormat:

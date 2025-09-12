@@ -14,20 +14,22 @@
               "temporary": false,
               "comment": "myComment",
               "fileFormatType": "CSV",
-              "formatTypeOptions": [
-                {
-                  "entry": {
-                    "key": "COMPRESSION",
-                    "value": "ZSTD"
+              "formatTypeOptions": {
+                "entries": [
+                  {
+                    "entry": {
+                      "key": "COMPRESSION",
+                      "value": "ZSTD"
+                    }
+                  },
+                  {
+                    "entry": {
+                      "key": "BINARY_FORMAT",
+                      "value": "BASE64"
+                    }
                   }
-                },
-                {
-                  "entry": {
-                    "key": "BINARY_FORMAT",
-                    "value": "BASE64"
-                  }
-                }
-              ]
+                ]
+              }
             }
           },
           {

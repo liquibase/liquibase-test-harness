@@ -12,12 +12,13 @@ databaseChangeLog:
             comment: "myComment"
             fileFormatType: "CSV"
             formatTypeOptions:
-              - entry:
-                  key: "COMPRESSION"
-                  value: "ZSTD"
-              - entry:
-                  key: "BINARY_FORMAT"
-                  value: "BASE64"
+              entries:
+                - entry:
+                    key: "COMPRESSION"
+                    value: "ZSTD"
+                - entry:
+                    key: "BINARY_FORMAT"
+                    value: "BASE64"
 
         - renameFileFormat:
             oldFileFormatName: "ItTestFileFormat"
