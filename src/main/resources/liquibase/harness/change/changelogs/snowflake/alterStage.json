@@ -56,19 +56,23 @@
                 "enable": "true",
                 "autoRefresh": "true"
               },
-              "tag": {
-                "tagName": "T1",
-                "tagValue": "INTERNAL"
-              }
+              "tags": [
+                {
+                  "entry": {
+                    "key": "T1",
+                    "value": "INTERNAL"
+                  }
+                }
+              ]
             }
           },
           {
             "alterStageTags": {
               "stageName": "testAwsStage",
               "setTags": {
-                "tag": {
-                  "tagName": "T1",
-                  "tagValue": "AWS"
+                "entry": {
+                  "key": "T1",
+                  "value": "AWS"
                 }
               }
             }
@@ -78,7 +82,7 @@
               "stageName": "testAwsStage",
               "unsetTags": {
                 "unsetTag": {
-                  "tagName": "T2"
+                  "tagName": "T1"
                 }
               }
             }

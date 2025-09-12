@@ -29,9 +29,10 @@ databaseChangeLog:
             directoryTableParams:
               enable: "true"
               autoRefresh: "true"
-            tag:
-              tagName: "T1"
-              tagValue: "INTERNAL"
+            tags:
+              - entry:
+                  key: "T1"
+                  value: "INTERNAL"
         - dropStage:
             stageName: "testStage"
       rollback:

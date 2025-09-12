@@ -24,30 +24,26 @@
         <pro-snowflake:createStage stageName="testAwsStage" stageType="AWS" replaceIfExists="true">
             <pro-snowflake:fileFormat fileFormatName="ItTestFileFormat" fileFormatType="CSV">
                 <pro-snowflake:formatTypeOptions>
-                    <pro-snowflake:entry>
-                        <pro-snowflake:key>SKIP_HEADER</pro-snowflake:key>
-                        <pro-snowflake:value>2</pro-snowflake:value>
-                    </pro-snowflake:entry>
-                    <pro-snowflake:entry>
-                        <pro-snowflake:key>COMPRESSION</pro-snowflake:key>
-                        <pro-snowflake:value>GZIP</pro-snowflake:value>
-                    </pro-snowflake:entry>
+                    <pro-snowflake:entry key="SKIP_HEADER" value="2"/>
+                    <pro-snowflake:entry key="COMPRESSION" value="GZIP"/>
                 </pro-snowflake:formatTypeOptions>
             </pro-snowflake:fileFormat>
             <pro-snowflake:stageParams storageEncryptionType="AWS_SSE_S3"
                                        url="s3://liquibase-dev-snowflake-data/"
                                        storageIntegration="aws_snowflake_integration"/>
             <pro-snowflake:directoryTableParams enable="true" autoRefresh="true"/>
-            <pro-snowflake:tag tagName="T1" tagValue="INTERNAL"/>
+            <pro-snowflake:tags>
+                <pro-snowflake:entry key="T1" value="INTERNAL"/>
+            </pro-snowflake:tags>
         </pro-snowflake:createStage>
         <pro-snowflake:alterStageTags stageName="testAwsStage">
             <pro-snowflake:setTags>
-                <pro-snowflake:tag tagName="T1" tagValue="AWS"/>
+                <pro-snowflake:entry key="T1" value="AWS"/>
             </pro-snowflake:setTags>
         </pro-snowflake:alterStageTags>
         <pro-snowflake:alterStageTags stageName="testAwsStage">
             <pro-snowflake:unsetTags>
-                <pro-snowflake:unsetTag tagName="T2"/>
+                <pro-snowflake:unsetTag tagName="T1"/>
             </pro-snowflake:unsetTags>
         </pro-snowflake:alterStageTags>
         <pro-snowflake:alterStageComment stageName="testAwsStage" unsetComment="true"/>
@@ -60,10 +56,7 @@
         <pro-snowflake:alterStageFileFormat stageName="testAwsStage" >
             <pro-snowflake:fileFormat fileFormatType="CSV">
                 <pro-snowflake:formatTypeOptions>
-                    <pro-snowflake:entry>
-                        <pro-snowflake:key>SKIP_HEADER</pro-snowflake:key>
-                        <pro-snowflake:value>1</pro-snowflake:value>
-                    </pro-snowflake:entry>
+                    <pro-snowflake:entry key="SKIP_HEADER" value="1"/>
                 </pro-snowflake:formatTypeOptions>
             </pro-snowflake:fileFormat>
         </pro-snowflake:alterStageFileFormat>

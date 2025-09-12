@@ -1,2 +1,29 @@
 {
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.appdba.stage.SnowflakeStage": [
+        {
+          "snowflakeStage": {
+            "directoryTableParams": {
+              "autoRefresh": true,
+              "enable": true
+            },
+            "innerFileFormat": {
+              "name": "ItTestFileFormat",
+              "fileFormatType": "CSV",
+              "formatTypeOptions": {
+                "COMPRESSION": "GZIP",
+                "SKIP_HEADER": "2"
+              }
+          },
+            "name": "TESTSTAGE",
+            "stageType": "INTERNAL",
+            "tags": {
+              "T1": "INTERNAL"
+            }
+          }
+        }
+      ]
+    }
+  }
 }
