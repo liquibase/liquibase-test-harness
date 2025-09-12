@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-
+  workflow_dispatch:
 jobs:
   extension-deploy-master-snapshot:
     uses: liquibase/build-logic/.github/workflows/build-extension-jar.yml@main

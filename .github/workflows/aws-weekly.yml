@@ -38,7 +38,7 @@ jobs:
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
   deploy-ephemeral-cloud-infra:
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
@@ -69,10 +69,10 @@ jobs:
     if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (contains(needs.setup.outputs.databases, 'mysql:aws') || contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configure AWS credentials for vault access
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -86,14 +86,14 @@ jobs:
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
 
       - name: Configure Test
         id: setup
-        uses: actions/github-script@v7.0.1
+        uses: actions/github-script@v8
         with:
           script: |
             let splitValues = "${{ matrix.database }}".split(":")
@@ -138,11 +138,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configure Test
         id: setup
-        uses: actions/github-script@v7.0.1
+        uses: actions/github-script@v8
         with:
           script: |
             let splitValues = "${{ matrix.database }}".split(":")
@@ -150,7 +150,7 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Configure AWS credentials for vault access
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -164,7 +164,7 @@ jobs:
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
@@ -259,7 +259,7 @@ jobs:
 
       - name: Install a SQL Server suite of tools
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: potatoqualitee/mssqlsuite@v1.10
+        uses: potatoqualitee/mssqlsuite@v1.11
         with:
           install: sqlengine, sqlclient, sqlpackage
 
@@ -355,7 +355,7 @@ jobs:
       stack-id: ${{ steps.get-stack-id.outputs.stack-id }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Get Stack ID
         id: get-stack-id
         uses: ./.github/actions/get-stack-id
