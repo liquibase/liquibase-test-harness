@@ -18,19 +18,15 @@
             <pro-snowflake:fileFormat fileFormatName="ItTestFileFormat"
                                       fileFormatType="CSV">
                 <pro-snowflake:formatTypeOptions>
-                    <pro-snowflake:entry>
-                        <pro-snowflake:key>SKIP_HEADER</pro-snowflake:key>
-                        <pro-snowflake:value>2</pro-snowflake:value>
-                    </pro-snowflake:entry>
-                    <pro-snowflake:entry>
-                        <pro-snowflake:key>COMPRESSION</pro-snowflake:key>
-                        <pro-snowflake:value>GZIP</pro-snowflake:value>
-                    </pro-snowflake:entry>
+                    <pro-snowflake:entry key="SKIP_HEADER" value="2"/>
+                    <pro-snowflake:entry key="COMPRESSION" value="GZIP"/>
                 </pro-snowflake:formatTypeOptions>
             </pro-snowflake:fileFormat>
             <pro-snowflake:stageParams storageEncryptionType="SNOWFLAKE_SSE"/>
             <pro-snowflake:directoryTableParams enable="true" autoRefresh="true"/>
-            <pro-snowflake:tag tagName="T1" tagValue="INTERNAL"/>
+            <pro-snowflake:tags>
+                <pro-snowflake:entry key="T1" value="INTERNAL"/>
+            </pro-snowflake:tags>
         </pro-snowflake:createStage>
         <pro-snowflake:dropStage stageName="testStage"/>
         <rollback>

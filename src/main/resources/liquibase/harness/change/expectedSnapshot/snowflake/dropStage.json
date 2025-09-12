@@ -1,2 +1,14 @@
 {
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "com.datical.liquibase.ext.appdba.stage.SnowflakeStage": [
+        {
+          "snowflakeStage": {
+            "name": "TESTSTAGE"
+          }
+        }
+      ]
+    }
+  }
 }

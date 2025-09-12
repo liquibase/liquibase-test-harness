@@ -38,20 +38,23 @@ databaseChangeLog:
             directoryTableParams:
               enable: "true"
               autoRefresh: "true"
-            tag:
-              tagName: "T1"
-              tagValue: "INTERNAL"
+            tags:
+              entries:
+                - entry:
+                    key: "T1"
+                    value: "INTERNAL"
         - alterStageTags:
             stageName: "testAwsStage"
             setTags:
-              tag:
-                tagName: "T1"
-                tagValue: "AWS"
+              entries:
+                - entry:
+                    key: "T1"
+                    value: "AWS"
         - alterStageTags:
             stageName: "testAwsStage"
             unsetTags:
               unsetTag:
-                tagName: "T2"
+                tagName: "T1"
         - alterStageComment:
             stageName: "testAwsStage"
             unsetComment: true
@@ -68,9 +71,10 @@ databaseChangeLog:
             fileFormat:
               fileFormatType: "CSV"
               formatTypeOptions:
-                - entry:
-                    key: "SKIP_HEADER"
-                    value: "1"
+                entries:
+                  - entry:
+                      key: "SKIP_HEADER"
+                      value: "1"
         - renameStage:
             stageName: "testAwsStage"
             newStageName: "testAwsStage_NEW"

@@ -1,2 +1,31 @@
 {
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.appdba.stage.SnowflakeStage": [
+        {
+          "snowflakeStage": {
+            "directoryTableParams": {
+              "autoRefresh": true,
+              "enable": true
+            },
+            "innerFileFormat": {
+              "fileFormatType": "CSV",
+              "formatTypeOptions": {
+                "SKIP_HEADER": "1"
+              }
+            },
+            "stageParams": {
+              "hasCredentials": false,
+              "hasEncryptionKey": false,
+              "storageIntegration": "AWS_SNOWFLAKE_INTEGRATION",
+              "url": "s3://liquibase-dev-snowflake-data/"
+            },
+            "name": "TESTAWSSTAGE_NEW",
+            "comment": "ABC!@",
+            "stageType": "AWS"
+          }
+        }
+      ]
+    }
+  }
 }

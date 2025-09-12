@@ -31,20 +31,22 @@
               "fileFormat": {
                 "fileFormatName": "ItTestFileFormat",
                 "fileFormatType": "CSV",
-                "formatTypeOptions": [
-                  {
-                    "entry": {
-                      "key": "SKIP_HEADER",
-                      "value": "2"
+                "formatTypeOptions": {
+                  "entries": [
+                    {
+                      "entry": {
+                        "key": "SKIP_HEADER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "entry": {
+                        "key": "COMPRESSION",
+                        "value": "GZIP"
+                      }
                     }
-                  },
-                  {
-                    "entry": {
-                      "key": "COMPRESSION",
-                      "value": "GZIP"
-                    }
-                  }
-                ]
+                  ]
+                }
               },
               "stageParams": {
                 "storageEncryptionType": "SNOWFLAKE_SSE"
@@ -53,9 +55,15 @@
                 "enable": "true",
                 "autoRefresh": "true"
               },
-              "tag": {
-                "tagName": "T1",
-                "tagValue": "INTERNAL"
+              "tags": {
+                "entries": [
+                  {
+                    "entry": {
+                      "key": "T1",
+                      "value": "INTERNAL"
+                    }
+                  }
+                ]
               }
             }
           }
