@@ -52,18 +52,22 @@ jobs:
           secret-ids: |
             TH_SNOW_URL_GH, liquibaseth_url
             TH_SNOW_USER_GH, liquibaseth_usrname
+      - name: Write secrets to files
+        run: |
+          echo "$TH_SNOW_URL_GH" > snowflake_url
+          echo "$TH_SNOW_USER_GH" > snowflake_user
 
       - name: download the TH_SNOW_URL_GH
         uses: actions/upload-artifact@v4
         with:
           name: TH_SNOW_URL_GH
-          path: /tmp/snowflake_url
+          path: snowflake_url
 
       - name: download TH_SNOW_USER_GH
         uses: actions/upload-artifact@v4
         with:
           name: TH_SNOW_USER_GH
-          path: /tmp/snowflake_user
+          path: snowflake_user
 
   #     - name: Install Liquibase
   #       run: |
