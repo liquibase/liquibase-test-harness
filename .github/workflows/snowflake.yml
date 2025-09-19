@@ -11,6 +11,7 @@ permissions:
   id-token: write
 
 jobs:
+  # verify validity of this job `deploy-ephemeral-cloud-infra` in https://datical.atlassian.net/browse/DAT-20624?focusedCommentId=170423
   deploy-ephemeral-cloud-infra:
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
     secrets: inherit
@@ -51,7 +52,6 @@ jobs:
         with:
           secret-ids: |
             TH_SNOW_URL_GH, liquibaseth_url
-            TH_SNOW_USER_GH, liquibaseth_usrname
 
       - name: Install Liquibase
         run: |
@@ -64,14 +64,14 @@ jobs:
 
       - name: Decode Private Key
         run: |
-          echo "${{ env.TH_DB_PRIVATE_KEY }}" | awk '{gsub("\\\\n","\n")}1' > /tmp/snowflake_private_key.p8
+          echo "${{ env.TH_DB_LIQUIBASETH_PRIVATE_KEY }}" | awk '{gsub("\\\\n","\n")}1' > /tmp/snowflake_private_key.p8
           chmod 600 /tmp/snowflake_private_key.p8  # Secure the key file
 
       - name: Create Liquibase Properties File
         run: |
           cat > liquibase.properties << EOF
           # Snowflake connection settings with database in URL
-          url=${liquibaseth_jdbc_url}
+          url=${TH_SNOW_URL_GH}
           username=LIQUIBASETH
           driver=net.snowflake.client.jdbc.SnowflakeDriver
 
@@ -103,7 +103,7 @@ jobs:
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
               -DdbUsername=LIQUIBASETH \
-              -DdbUrl='${{env.liquibaseth_jdbc_url}}&private_key_file=/tmp/snowflake_private_key.p8' \
+              -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
               -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
               -DrollbackStrategy=rollbackByTag test
 
@@ -129,6 +129,7 @@ jobs:
           stack-id: ${{ needs.deploy-ephemeral-cloud-infra.outputs.stack_id }}
           run-id: ${{ github.run_id }}
 
+  # verify validity of this job `destroy-ephemeral-cloud-infra` in https://datical.atlassian.net/browse/DAT-20624?focusedCommentId=170423
   destroy-ephemeral-cloud-infra:
     if: always()
     needs: [ deploy-ephemeral-cloud-infra, test, get-stack-id ]
