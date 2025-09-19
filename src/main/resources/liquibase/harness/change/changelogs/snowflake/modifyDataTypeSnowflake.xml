@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Setup: Create base table for data type modification testing -->
+    <changeSet id="setup" author="test-harness">
+        <createTable tableName="MODIFY_TYPE_TEST_TABLE">
+            <column name="int_col" type="INT"/>
+            <column name="varchar_col" type="VARCHAR(50)"/>
+            <column name="number_col" type="NUMBER(10,2)"/>
+            <column name="text_col" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Test basic type conversions -->
+    <changeSet id="modify-basic-types" author="test-harness">
+        <modifyDataType columnName="int_col"
+                        newDataType="BIGINT"
+                        tableName="MODIFY_TYPE_TEST_TABLE"/>
+        <modifyDataType columnName="varchar_col"
+                        newDataType="VARCHAR(100)"
+                        tableName="MODIFY_TYPE_TEST_TABLE"/>
+    </changeSet>
+
+
+</databaseChangeLog>

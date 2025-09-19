@@ -1,0 +1,13 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "COLUMN_TEST_TABLE"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -94,6 +94,22 @@ That file contains a list of the database connections to test against, as well a
 
 See `src/test/resources/harness-config.yml` to see what this repository is configured to use.
 
+#### Schema Isolation for Cloud Databases
+
+For cloud databases that persist between test runs (e.g., Snowflake), you can enable schema isolation to ensure tests don't interfere with each other:
+
+```yaml
+lifecycleHooks:
+  enabled: true
+
+databasesUnderTest:
+  - name: snowflake
+    useSchemaIsolation: true
+    # ... other config
+```
+
+This creates a unique schema (`TEST_<TESTNAME>`) for each test, providing clean isolation. See [LIFECYCLE_HOOKS.md](LIFECYCLE_HOOKS.md) for more details.
+
 ## For use in extensions
 
 For more information on using the test harness in your extension, see [README.extensions.md] 

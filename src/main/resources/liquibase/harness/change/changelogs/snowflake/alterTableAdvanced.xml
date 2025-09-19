@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Setup: Create base table for advanced features testing -->
+    <changeSet id="setup" author="test-harness">
+        <createTable tableName="ADVANCED_TEST_TABLE">
+            <column name="id" type="INT"/>
+            <column name="user_id" type="VARCHAR(100)"/>
+            <column name="department" type="VARCHAR(100)"/>
+            <column name="data" type="VARCHAR(255)"/>
+            <column name="location" type="GEOGRAPHY"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Test search optimization -->
+    <changeSet id="search-optimization" author="test-harness">
+        <snowflake:alterTable tableName="ADVANCED_TEST_TABLE"
+                             addSearchOptimization="EQUALITY(user_id, department)"/>
+    </changeSet>
+
+    <!-- Test tag management - commented out as it requires pre-existing tags -->
+    <!--
+    <changeSet id="tag-management" author="test-harness">
+        <snowflake:alterTable tableName="ADVANCED_TEST_TABLE"
+                             setTag="cost_center = 'engineering', env = 'test'"/>
+    </changeSet>
+    -->
+
+    <!-- Test row access policy (commented out as it may require specific policies to exist) -->
+    <!-- 
+    <changeSet id="row-access-policy" author="test-harness">
+        <snowflake:alterTable tableName="ADVANCED_TEST_TABLE"
+                             addRowAccessPolicy="test_policy ON (user_id, department)"/>
+    </changeSet>
+    -->
+
+    <!-- Test aggregation policy (commented out as it may require specific policies to exist) -->
+    <!-- 
+    <changeSet id="aggregation-policy" author="test-harness">
+        <snowflake:alterTable tableName="ADVANCED_TEST_TABLE"
+                             setAggregationPolicy="data_protection_policy"
+                             forceAggregationPolicy="true"/>
+    </changeSet>
+    -->
+
+    <!-- Test unset operations - commented out as it requires pre-existing tags -->
+    <!--
+    <changeSet id="unset-operations" author="test-harness">
+        <snowflake:alterTable tableName="ADVANCED_TEST_TABLE"
+                             unsetTag="cost_center, env"/>
+    </changeSet>
+    -->
+
+    <!-- Test drop search optimization -->
+    <changeSet id="drop-search-optimization" author="test-harness">
+        <snowflake:alterTable tableName="ADVANCED_TEST_TABLE"
+                             dropSearchOptimization="true"/>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet id="cleanup" author="test-harness">
+        <dropTable tableName="ADVANCED_TEST_TABLE"/>
+    </changeSet>
+
+</databaseChangeLog>

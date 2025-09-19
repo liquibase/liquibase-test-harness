@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/snowflake
+        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- ALWAYS include init.xml first -->
+    <!-- Cleanup changeset - CRITICAL for test isolation -->
+    <!-- Create test table first -->
+    <changeSet id="create-test-table" author="test-harness">
+        <sql>
+            -- Create test table for clustering
+            CREATE TABLE LTHDB.TESTHARNESS.TEST_TABLE_CLUSTER (
+                id INT,
+                name VARCHAR(50),
+                created_date DATE,
+                region VARCHAR(20)
+            );
+        </sql>
+    </changeSet>
+
+    <!-- Test: Basic clustering -->
+    <changeSet id="test-alterTable-clustering" author="test-harness">
+        <snowflake:alterTable tableName="TEST_TABLE_CLUSTER"
+                             clusterBy="region,created_date"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                      http://www.liquibase.org/xml/ns/snowflake
+                      http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+    
+    <changeSet author="test-harness" id="createTable-transient">
+        <createTable tableName="TEST_TRANSIENT_TABLE" 
+                     snowflake:transient="true"
+                     snowflake:comment="Transient test table">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        </changeSet>
+
+    <changeSet author="test-harness" id="createTable-clusterBy">
+        <createTable tableName="TEST_CLUSTERED_TABLE" 
+                     snowflake:clusterBy="category,subcategory"
+                     snowflake:comment="Table with clustering keys">
+            <column name="id" type="INTEGER"/>
+            <column name="category" type="VARCHAR(50)"/>
+            <column name="subcategory" type="VARCHAR(50)"/>
+            <column name="data" type="VARCHAR(500)"/>
+            <column name="created_date" type="DATE"/>
+        </createTable>
+        </changeSet>
+
+    <changeSet author="test-harness" id="createTable-dataRetention">
+        <createTable tableName="TEST_RETENTION_TABLE" 
+                     snowflake:dataRetentionTimeInDays="7"
+                     snowflake:comment="Table with data retention">
+            <column name="id" type="INTEGER"/>
+            <column name="data" type="VARCHAR(200)"/>
+            <column name="timestamp" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        </changeSet>
+
+    <changeSet author="test-harness" id="createTable-changeTracking">
+        <createTable tableName="TEST_CHANGE_TRACKING_TABLE"
+                     snowflake:changeTracking="true"
+                     snowflake:comment="Table with change tracking">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="data" type="VARCHAR(200)"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        </changeSet>
+
+    <changeSet author="test-harness" id="createTable-fullFeatures">
+        <createTable tableName="TEST_FULL_FEATURE_TABLE" 
+                     snowflake:transient="true"
+                     snowflake:clusterBy="category"
+                     snowflake:dataRetentionTimeInDays="1"
+                     snowflake:changeTracking="true"
+                     snowflake:comment="Full featured Snowflake table">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="category" type="VARCHAR(50)"/>
+            <column name="data" type="VARCHAR(500)"/>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        </changeSet>
+
+    <changeSet author="test-harness" id="createTable-complexTypes">
+        <createTable tableName="TEST_COMPLEX_TYPES_TABLE"
+                     snowflake:comment="Table with Snowflake complex data types">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="json_data" type="VARIANT"/>
+            <column name="array_data" type="ARRAY"/>
+            <column name="object_data" type="OBJECT"/>
+            <column name="geography_data" type="GEOGRAPHY"/>
+            <column name="binary_data" type="BINARY(100)"/>
+            <column name="timestamp_ntz" type="TIMESTAMP_NTZ"/>
+            <column name="timestamp_ltz" type="TIMESTAMP_LTZ"/>
+            <column name="timestamp_tz" type="TIMESTAMP_TZ"/>
+        </createTable>
+        </changeSet>
+
+    <changeSet author="test-harness" id="alterTable-clustering">
+        <snowflake:alterTable tableName="TEST_RETENTION_TABLE" clusterBy="id"/>
+        </changeSet>
+
+    <changeSet author="test-harness" id="alterTable-retention">
+        <snowflake:alterTable tableName="TEST_CLUSTERED_TABLE" setDataRetentionTimeInDays="30"/>
+        </changeSet>
+
+    <changeSet author="test-harness" id="alterTable-changeTracking">
+        <snowflake:alterTable tableName="TEST_RETENTION_TABLE" setChangeTracking="true"/>
+        </changeSet>
+
+    <changeSet author="test-harness" id="createTable-withStageFileFormat">
+        <createTable tableName="TEST_STAGE_FILE_FORMAT_TABLE"
+                     snowflake:stageFileFormat="CSV"
+                     snowflake:stageCopyOptions="ON_ERROR='CONTINUE'"
+                     snowflake:comment="Table with stage file format">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="data" type="VARCHAR(500)"/>
+        </createTable>
+        </changeSet>
+
+    <changeSet author="test-harness" id="createTable-withConstraints">
+        <createTable tableName="TEST_CONSTRAINTS_TABLE"
+                     snowflake:comment="Table with various constraints">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true" primaryKeyName="PK_TEST_CONSTRAINTS"/>
+            </column>
+            <column name="email" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="UQ_EMAIL"/>
+            </column>
+            <column name="parent_id" type="INTEGER">
+                <constraints nullable="true" 
+                           foreignKeyName="FK_PARENT"
+                           references="TEST_CONSTRAINTS_TABLE(id)"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints checkConstraint="status IN ('ACTIVE', 'INACTIVE')"/>
+            </column>
+        </createTable>
+        </changeSet>
+
+    </databaseChangeLog>

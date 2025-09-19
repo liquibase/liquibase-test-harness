@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:snowflake="http://www.liquibase.org/xml/ns/snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/snowflake
+                        http://www.liquibase.org/xml/ns/snowflake/liquibase-snowflake-latest.xsd">
+
+    <!-- Setup: Create base table for enhanced features testing -->
+    <changeSet id="setup" author="test-harness">
+        <createTable tableName="ENHANCED_TEST_TABLE">
+            <column name="id" type="INT"/>
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="created_date" type="DATE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Test enhanced properties with new attributes -->
+    <changeSet id="enhanced-properties" author="test-harness">
+        <snowflake:alterTable tableName="ENHANCED_TEST_TABLE"
+                             setDataRetentionTimeInDays="30"
+                             setMaxDataExtensionTimeInDays="60"
+                             setDefaultDdlCollation="utf8_general_ci"
+                             setChangeTracking="true"
+                             setEnableSchemaEvolution="true"/>
+    </changeSet>
+
+    <!-- Test enhanced clustering validation (max 4 columns) -->
+    <changeSet id="enhanced-clustering" author="test-harness">
+        <snowflake:alterTable tableName="ENHANCED_TEST_TABLE"
+                             clusterBy="id,name,created_date"/>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet id="cleanup" author="test-harness">
+        <dropTable tableName="ENHANCED_TEST_TABLE"/>
+    </changeSet>
+
+</databaseChangeLog>

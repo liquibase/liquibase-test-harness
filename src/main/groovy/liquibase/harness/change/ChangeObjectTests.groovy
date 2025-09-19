@@ -5,6 +5,8 @@ import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackStrategy
+import liquibase.harness.lifecycle.TestLifecycleManager
+import liquibase.harness.lifecycle.TestContext
 import org.junit.jupiter.api.Assumptions
 import spock.lang.Shared
 import spock.lang.Specification
@@ -20,6 +22,8 @@ class ChangeObjectTests extends Specification {
     RollbackStrategy strategy
     @Shared
     List<DatabaseUnderTest> databases
+    @Shared
+    TestLifecycleManager lifecycleManager = TestLifecycleManager.getInstance()
 
     def setupSpec() {
         databases = TestConfig.instance.getFilteredDatabasesUnderTest()
@@ -29,7 +33,20 @@ class ChangeObjectTests extends Specification {
 
     @Unroll
     def "apply #testInput.changeObject against #testInput.databaseName #testInput.version"() {
-        given: "read expected sql and snapshot files, create arguments map for executing command scope"
+        given: "setup lifecycle context and read expected files"
+        DatabaseUnderTest databaseUnderTest = databases.find { it.name == testInput.databaseName && it.version == testInput.version }
+        TestContext lifecycleContext = databaseUnderTest ? new TestContext(
+            databaseUnderTest,
+            this.class.simpleName,
+            testInput.changeObject
+        ) : null
+        
+        // Execute pre-test lifecycle hooks if database found
+        if (lifecycleContext) {
+            lifecycleManager.beforeTest(lifecycleContext)
+        }
+        
+        and: "read expected sql and snapshot files, create arguments map for executing command scope"
         String expectedSql = parseQuery(getSqlFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
                 "liquibase/harness/change/expectedSql"))
         String expectedSnapshot = getJSONFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
@@ -41,6 +58,16 @@ class ChangeObjectTests extends Specification {
         argsMap.put("username", testInput.username)
         argsMap.put("password", testInput.password)
         argsMap.put("snapshotFormat", "JSON")
+        
+        // For tests with schema isolation enabled, configure the isolated schema
+        if (databaseUnderTest?.useSchemaIsolation && lifecycleContext) {
+            def isolatedSchema = lifecycleContext.getMetadata("testSchema")
+            if (isolatedSchema) {
+                // Don't modify URL, just set defaultSchemaName
+                argsMap.put("defaultSchemaName", isolatedSchema)
+                println("Set defaultSchemaName: ${isolatedSchema}")
+            }
+        }
 
         and: "ignore testcase if it's invalid for this combination of db type and/or version"
         shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
@@ -87,6 +114,11 @@ class ChangeObjectTests extends Specification {
         cleanup: "rollback changes if we ran changeSet"
         if (shouldRunChangeSet) {
             strategy.performRollback(argsMap)
+            
+            // Execute post-test lifecycle hooks if context exists
+            if (lifecycleContext) {
+                lifecycleManager.afterTest(lifecycleContext)
+            }
         }
 
         where: "test input in next data table"
