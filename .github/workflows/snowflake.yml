@@ -54,13 +54,13 @@ jobs:
             TH_SNOW_USER_GH, liquibaseth_usrname
 
       - name: download the TH_SNOW_URL_GH
-        uses: actions/download-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: TH_SNOW_URL_GH
           path: /tmp/snowflake_url
 
       - name: download TH_SNOW_USER_GH
-        uses: actions/download-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: TH_SNOW_USER_GH
           path: /tmp/snowflake_user
