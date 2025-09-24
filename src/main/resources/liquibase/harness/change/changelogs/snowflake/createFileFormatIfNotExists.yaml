@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1"
+      author: "test-harness"
+      changes:
+        - snowflake:createFileFormat:
+            fileFormatName: "TEST_FORMAT_IF_NOT_EXISTS"
+            fileFormatType: "CSV"
+            fieldDelimiter: ","
+            skipHeader: 1
+
+  - changeSet:
+      id: "2"
+      author: "test-harness"
+      changes:
+        - snowflake:createFileFormat:
+            fileFormatName: "TEST_FORMAT_IF_NOT_EXISTS"
+            ifNotExists: true
+            fileFormatType: "CSV"
+            fieldDelimiter: ","
+            skipHeader: 1
+
+  - changeSet:
+      id: "3"
+      author: "test-harness"
+      changes:
+        - snowflake:createFileFormat:
+            fileFormatName: "NEW_FORMAT_IF_NOT_EXISTS"
+            ifNotExists: true
+            fileFormatType: "JSON"
+            compression: "GZIP"
+
+  - changeSet:
+      id: "cleanup"
+      author: "test-harness"
+      changes:
+        - snowflake:dropFileFormat:
+            fileFormatName: "TEST_FORMAT_IF_NOT_EXISTS"
+            ifExists: true
+        - snowflake:dropFileFormat:
+            fileFormatName: "NEW_FORMAT_IF_NOT_EXISTS"
+            ifExists: true

@@ -1,0 +1,75 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:createFileFormat": {
+              "fileFormatName": "TEST_FORMAT_OR_REPLACE",
+              "fileFormatType": "CSV",
+              "fieldDelimiter": ",",
+              "skipHeader": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "2",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:createFileFormat": {
+              "fileFormatName": "TEST_FORMAT_OR_REPLACE",
+              "orReplace": true,
+              "fileFormatType": "CSV",
+              "fieldDelimiter": ";",
+              "skipHeader": 2,
+              "comment": "Replaced file format"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "3",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:createFileFormat": {
+              "fileFormatName": "NEW_FORMAT_OR_REPLACE",
+              "orReplace": true,
+              "fileFormatType": "JSON",
+              "compression": "GZIP",
+              "stripOuterArray": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "cleanup",
+        "author": "test-harness",
+        "changes": [
+          {
+            "snowflake:dropFileFormat": {
+              "fileFormatName": "TEST_FORMAT_OR_REPLACE",
+              "ifExists": true
+            }
+          },
+          {
+            "snowflake:dropFileFormat": {
+              "fileFormatName": "NEW_FORMAT_OR_REPLACE",
+              "ifExists": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

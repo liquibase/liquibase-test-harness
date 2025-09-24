@@ -1,0 +1,122 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "test",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "SIMPLE_TEST_TABLE",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "INTEGER",
+                    "constraints": {
+                      "primaryKey": true
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "name",
+                    "type": "VARCHAR(100)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "description",
+                    "type": "TEXT"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "created_date",
+                    "type": "TIMESTAMP",
+                    "defaultValueComputed": "CURRENT_TIMESTAMP"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropTable": {
+              "tableName": "SIMPLE_TEST_TABLE"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "2",
+        "author": "test",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "CONFIGURED_TEST_TABLE",
+              "remarks": "Table with configuration",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "BIGINT",
+                    "constraints": {
+                      "primaryKey": true
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "status",
+                    "type": "VARCHAR(20)",
+                    "defaultValue": "ACTIVE"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "amount",
+                    "type": "DECIMAL(10,2)"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "rollback": [
+          {
+            "dropTable": {
+              "tableName": "CONFIGURED_TEST_TABLE"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "99",
+        "author": "test",
+        "changes": [
+          {
+            "dropTable": {
+              "tableName": "SIMPLE_TEST_TABLE",
+              "cascadeConstraints": true
+            }
+          },
+          {
+            "dropTable": {
+              "tableName": "CONFIGURED_TEST_TABLE",
+              "cascadeConstraints": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

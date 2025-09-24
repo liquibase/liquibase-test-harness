@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:pro-snowflake="http://www.liquibase.org/xml/ns/pro-snowflake"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/pro-snowflake
+                        http://www.liquibase.org/xml/ns/pro-snowflake/liquibase-pro-snowflake-latest.xsd">
+
+    <changeSet id="1" author="test">
+        <pro-snowflake:createWarehouse warehouseName="CREATEWAREHOUSE_BASIC_WH" ifNotExists="true"/>
+        <rollback>
+            <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_BASIC_WH" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="test">
+        <pro-snowflake:createWarehouse warehouseName="CREATEWAREHOUSE_SIZED_WH" 
+                                   warehouseSize="SMALL" 
+                                   autoSuspend="300" 
+                                   autoResume="true"
+                                   ifNotExists="true"/>
+        <rollback>
+            <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_SIZED_WH" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="test">
+        <pro-snowflake:createWarehouse warehouseName="CREATEWAREHOUSE_MULTICLUSTER_WH" 
+                                   warehouseSize="SMALL"
+                                   minClusterCount="1" 
+                                   maxClusterCount="3" 
+                                   scalingPolicy="STANDARD"
+                                   ifNotExists="true"/>
+        <rollback>
+            <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_MULTICLUSTER_WH" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="test">
+        <pro-snowflake:createWarehouse warehouseName="CREATEWAREHOUSE_SUSPENDED_WH" 
+                                   initiallySuspended="true" 
+                                   comment="Start suspended to save costs"
+                                   ifNotExists="true"/>
+        <rollback>
+            <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_SUSPENDED_WH" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="test">
+        <pro-snowflake:createWarehouse warehouseName="CREATEWAREHOUSE_ACCELERATED_WH" 
+                                   warehouseSize="SMALL"
+                                   enableQueryAcceleration="true" 
+                                   queryAccelerationMaxScaleFactor="10"
+                                   ifNotExists="true"/>
+        <rollback>
+            <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_ACCELERATED_WH" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <pro-snowflake:createWarehouse warehouseName="CREATEWAREHOUSE_SNOWPARK_WH" 
+                                   warehouseType="SNOWPARK-OPTIMIZED"
+                                   warehouseSize="MEDIUM"
+                                   ifNotExists="true"/>
+        <rollback>
+            <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_SNOWPARK_WH" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="7" author="test">
+        <pro-snowflake:createWarehouse warehouseName="CREATEWAREHOUSE_REPLACE_WH" 
+                                   orReplace="true"
+                                   warehouseSize="SMALL"
+                                   comment="Replaced warehouse"/>
+        <rollback>
+            <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_REPLACE_WH"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="8" author="test">
+        <pro-snowflake:createWarehouse warehouseName="CREATEWAREHOUSE_IFNOTEXISTS_WH" 
+                                   ifNotExists="true"
+                                   warehouseSize="XSMALL"/>
+        <rollback>
+            <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_IFNOTEXISTS_WH" ifExists="true"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Cleanup -->
+    <changeSet id="99" author="test">
+        <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_BASIC_WH" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_SIZED_WH" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_MULTICLUSTER_WH" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_SUSPENDED_WH" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_ACCELERATED_WH" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_SNOWPARK_WH" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_REPLACE_WH" ifExists="true"/>
+        <pro-snowflake:dropWarehouse warehouseName="CREATEWAREHOUSE_IFNOTEXISTS_WH" ifExists="true"/>
+        <sql>USE WAREHOUSE LTHDB_TEST_WH;</sql>
+    </changeSet>
+  </databaseChangeLog>
