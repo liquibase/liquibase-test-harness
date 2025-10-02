@@ -1,1 +1,0 @@
-CREATE TABLE "PUBLIC".test_table_package (test_id INT NOT NULL)

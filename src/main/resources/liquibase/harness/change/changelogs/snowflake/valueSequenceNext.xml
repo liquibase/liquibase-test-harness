@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema Isolated Test - No init.xml or cleanup needed -->
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-
+    
     <changeSet id="1" author="oleh">
         <createTable tableName="valueSequenceNextTable">
             <column name="test_id" type="int"/>
@@ -14,17 +15,13 @@
 
     <changeSet id="2" author="oleh">
         <createSequence incrementBy="2"
-          sequenceName="test_sequence"
+          sequenceName="value_test_sequence"
           startValue="30"/>
-        <rollback>
-            <dropSequence sequenceName="test_sequence"/>
-        </rollback>
-    </changeSet>
-
+        </changeSet>
 
     <changeSet id="3" author="oleh">
         <update tableName="valueSequenceNextTable">
-            <column name="test_id" valueSequenceNext="test_sequence"/>
+            <column name="test_id" valueSequenceNext="value_test_sequence"/>
         </update>
         <rollback/>
     </changeSet>

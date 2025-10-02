@@ -1,0 +1,130 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1"
+      author: "test"
+      changes:
+        - createWarehouse:
+            warehouseName: "BASIC_WAREHOUSE"
+      rollback:
+        - dropWarehouse:
+            warehouseName: "BASIC_WAREHOUSE"
+
+  - changeSet:
+      id: "2"
+      author: "test"
+      changes:
+        - createWarehouse:
+            warehouseName: "SIZED_WAREHOUSE"
+            warehouseSize: "MEDIUM"
+            autoSuspend: 300
+            autoResume: true
+      rollback:
+        - dropWarehouse:
+            warehouseName: "SIZED_WAREHOUSE"
+
+  - changeSet:
+      id: "3"
+      author: "test"
+      changes:
+        - createWarehouse:
+            warehouseName: "MULTI_CLUSTER_WAREHOUSE"
+            warehouseSize: "LARGE"
+            minClusterCount: 1
+            maxClusterCount: 3
+            scalingPolicy: "STANDARD"
+      rollback:
+        - dropWarehouse:
+            warehouseName: "MULTI_CLUSTER_WAREHOUSE"
+
+  - changeSet:
+      id: "4"
+      author: "test"
+      changes:
+        - createWarehouse:
+            warehouseName: "SUSPENDED_WAREHOUSE"
+            initiallySuspended: true
+            comment: "Start suspended to save costs"
+      rollback:
+        - dropWarehouse:
+            warehouseName: "SUSPENDED_WAREHOUSE"
+
+  - changeSet:
+      id: "5"
+      author: "test"
+      changes:
+        - createWarehouse:
+            warehouseName: "ACCELERATED_WAREHOUSE"
+            warehouseSize: "XLARGE"
+            enableQueryAcceleration: true
+            queryAccelerationMaxScaleFactor: 10
+      rollback:
+        - dropWarehouse:
+            warehouseName: "ACCELERATED_WAREHOUSE"
+
+  - changeSet:
+      id: "6"
+      author: "test"
+      changes:
+        - createWarehouse:
+            warehouseName: "SNOWPARK_WAREHOUSE"
+            warehouseType: "SNOWPARK-OPTIMIZED"
+            warehouseSize: "MEDIUM"
+      rollback:
+        - dropWarehouse:
+            warehouseName: "SNOWPARK_WAREHOUSE"
+
+  - changeSet:
+      id: "7"
+      author: "test"
+      changes:
+        - createWarehouse:
+            warehouseName: "REPLACE_WAREHOUSE"
+            orReplace: true
+            warehouseSize: "SMALL"
+            comment: "Replaced warehouse"
+      rollback:
+        - dropWarehouse:
+            warehouseName: "REPLACE_WAREHOUSE"
+
+  - changeSet:
+      id: "8"
+      author: "test"
+      changes:
+        - createWarehouse:
+            warehouseName: "IF_NOT_EXISTS_WAREHOUSE"
+            ifNotExists: true
+            warehouseSize: "XSMALL"
+      rollback:
+        - dropWarehouse:
+            warehouseName: "IF_NOT_EXISTS_WAREHOUSE"
+            ifExists: true
+
+  # Cleanup
+  - changeSet:
+      id: "99"
+      author: "test"
+      changes:
+        - dropWarehouse:
+            warehouseName: "BASIC_WAREHOUSE"
+            ifExists: true
+        - dropWarehouse:
+            warehouseName: "SIZED_WAREHOUSE"
+            ifExists: true
+        - dropWarehouse:
+            warehouseName: "MULTI_CLUSTER_WAREHOUSE"
+            ifExists: true
+        - dropWarehouse:
+            warehouseName: "SUSPENDED_WAREHOUSE"
+            ifExists: true
+        - dropWarehouse:
+            warehouseName: "ACCELERATED_WAREHOUSE"
+            ifExists: true
+        - dropWarehouse:
+            warehouseName: "SNOWPARK_WAREHOUSE"
+            ifExists: true
+        - dropWarehouse:
+            warehouseName: "REPLACE_WAREHOUSE"
+            ifExists: true
+        - dropWarehouse:
+            warehouseName: "IF_NOT_EXISTS_WAREHOUSE"
+            ifExists: true

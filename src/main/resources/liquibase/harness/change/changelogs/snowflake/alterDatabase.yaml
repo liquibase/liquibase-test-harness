@@ -1,0 +1,88 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1"
+      author: "test-harness"
+      changes:
+        - snowflake:createDatabase:
+            databaseName: "TEST_ALTER_DB"
+            comment: "Initial database"
+
+  - changeSet:
+      id: "2"
+      author: "test-harness"
+      changes:
+        - snowflake:alterDatabase:
+            databaseName: "TEST_ALTER_DB"
+            operationType: "RENAME"
+            newDatabaseName: "TEST_RENAMED_DB"
+      rollback:
+        - snowflake:alterDatabase:
+            databaseName: "TEST_RENAMED_DB"
+            operationType: "RENAME"
+            newDatabaseName: "TEST_ALTER_DB"
+
+  - changeSet:
+      id: "3"
+      author: "test-harness"
+      changes:
+        - snowflake:alterDatabase:
+            databaseName: "TEST_RENAMED_DB"
+            operationType: "SET"
+            dataRetentionTimeInDays: "7"
+            comment: "Updated database with retention"
+      rollback:
+        - snowflake:alterDatabase:
+            databaseName: "TEST_RENAMED_DB"
+            operationType: "SET"
+            dataRetentionTimeInDays: "1"
+            comment: "Initial database"
+
+  - changeSet:
+      id: "4"
+      author: "test-harness"
+      changes:
+        - snowflake:alterDatabase:
+            databaseName: "TEST_RENAMED_DB"
+            operationType: "UNSET"
+            ifExists: true
+            unsetComment: true
+      rollback:
+        - snowflake:alterDatabase:
+            databaseName: "TEST_RENAMED_DB"
+            operationType: "SET"
+            comment: "Updated database with retention"
+
+  - changeSet:
+      id: "5"
+      author: "test-harness"
+      changes:
+        - snowflake:alterDatabase:
+            databaseName: "TEST_RENAMED_DB"
+            operationType: "SET"
+            newMaxDataExtensionTimeInDays: "30"
+            newDefaultDdlCollation: "en-ci"
+      rollback:
+        - snowflake:alterDatabase:
+            databaseName: "TEST_RENAMED_DB"
+            operationType: "UNSET"
+            unsetMaxDataExtensionTimeInDays: true
+            unsetDefaultDdlCollation: true
+
+  - changeSet:
+      id: "6"
+      author: "test-harness"
+      changes:
+        - snowflake:alterDatabase:
+            databaseName: "TEST_RENAMED_DB"
+            operationType: "UNSET"
+            unsetDataRetentionTimeInDays: true
+            unsetMaxDataExtensionTimeInDays: true
+            unsetDefaultDdlCollation: true
+
+  - changeSet:
+      id: "7"
+      author: "test-harness"
+      changes:
+        - snowflake:dropDatabase:
+            databaseName: "TEST_RENAMED_DB"
+            ifExists: true
