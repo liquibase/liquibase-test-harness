@@ -9,6 +9,7 @@ import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
 import liquibase.ui.UIService
+import org.yaml.snakeyaml.Yaml
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -17,8 +18,61 @@ class GenerateChangelogTestHelper {
     final static String baseChangelogPath = "liquibase/harness/generateChangelog/"
     final static UIService uiService = Scope.getCurrentScope().getUI()
 
+    private static List<String> communityGenerateChangelogObjects
+    private static List<String> secureGenerateChangelogObjects
+    private static List<String> communityChangetypes
+    private static List<String> secureChangetypes
+
+    static {
+        // Load changetypes from the YAML file
+        def yamlFile = new File("supported-changetypes.yml")
+        if (yamlFile.exists()) {
+            Yaml yaml = new Yaml()
+            def config = yaml.load(yamlFile.text)
+            communityChangetypes = config.community_changetypes
+            secureChangetypes = config.secure_changetypes
+        } else {
+            // Fallback to hardcoded lists if file doesn't exist
+            communityChangetypes = [
+                'createTable', 'createTableDataTypeText', 'createTableTimestamp', 'dropTable', 'renameTable',
+                'addColumn', 'dropColumn', 'renameColumn',
+                'createIndex', 'dropIndex',
+                'createView', 'dropView',
+                'addCheckConstraint', 'addDefaultValue', 'addDefaultValueBoolean', 'addDefaultValueNumeric',
+                'addDefaultValueDate', 'addNotNullConstraint', 'addPrimaryKey', 'addUniqueConstraint',
+                'dropCheckConstraint', 'dropDefaultValue', 'dropNotNullConstraint', 'dropPrimaryKey', 'dropUniqueConstraint',
+                'sql', 'sqlFile'
+            ]
+            secureChangetypes = [
+                'setTableRemarks', 'setColumnRemarks', 'addAutoIncrement',
+                'createSequence', 'dropSequence', 'alterSequence', 'renameSequence', 'addDefaultValueSequenceNext',
+                'createFunction', 'dropFunction', 'createProcedure', 'dropProcedure', 'createProcedureFromFile',
+                'createPackage', 'createPackageBody',
+                'createTrigger', 'dropTrigger', 'disableTrigger', 'enableTrigger', 'renameTrigger',
+                'addForeignKey', 'dropForeignKey', 'dropAllForeignKeyConstraints',
+                'disableCheckConstraint', 'enableCheckConstraint',
+                'addLookupTable', 'mergeColumns', 'modifyDataType',
+                'addDefaultValueComputed', 'modifySql', 'executeCommand', 'renameView'
+            ]
+        }
+
+        // Define generateChangelog objects based on their change types
+        // Community: basic structures
+        communityGenerateChangelogObjects = [
+            'createTable', 'createView', 'createIndex',
+            'addColumn', 'addPrimaryKey', 'addUniqueConstraint', 'addCheckConstraint'
+        ]
+        // Secure: advanced structures
+        secureGenerateChangelogObjects = [
+            'createSequence', 'createFunction', 'createProcedure', 'createTrigger',
+            'createPackage', 'createPackageBody', 'createSynonym', 'addForeignKey'
+        ]
+    }
+
     static List<TestInput> buildTestInput() {
         String commandLineChanges = System.getProperty("change")
+        String testMode = System.getProperty("testMode") // 'secure', 'community', or null (all tests)
+
         List commandLineChangesList = Collections.emptyList()
         if (commandLineChanges) {
             commandLineChangesList = Arrays.asList(commandLineChanges.contains(",")
@@ -26,13 +80,33 @@ class GenerateChangelogTestHelper {
                     : commandLineChanges)
         }
 
+        // Determine which generateChangelog objects to test based on testMode
+        List<String> allowedChangelogObjects = []
+        String modeMessage = ""
+
+        if (testMode == "secure") {
+            allowedChangelogObjects = secureGenerateChangelogObjects
+            modeMessage = "Running Secure generateChangelog tests"
+        } else if (testMode == "community") {
+            allowedChangelogObjects = communityGenerateChangelogObjects
+            modeMessage = "Running Community generateChangelog tests"
+        } else {
+            // Run all tests (both community and secure) - testMode is null, empty, or "all"
+            allowedChangelogObjects = communityGenerateChangelogObjects + secureGenerateChangelogObjects
+            modeMessage = "Running all generateChangelog tests (Community + Secure)"
+        }
+
+        uiService.sendMessage(modeMessage)
+
         List<TestInput> inputList = new ArrayList<>()
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
             for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath +
                     "expectedChangeLog", "xml").entrySet()) {
-                if (!commandLineChangesList || commandLineChangesList.contains(changeLogEntry.key)) {
+                // Filter based on testMode and commandLine filters
+                if (allowedChangelogObjects.contains(changeLogEntry.key) &&
+                    (!commandLineChangesList || commandLineChangesList.contains(changeLogEntry.key))) {
                     inputList.add(TestInput.builder()
                             .databaseName(databaseUnderTest.name)
                             .url(databaseUnderTest.url)

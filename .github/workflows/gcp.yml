@@ -20,6 +20,14 @@ on:
           - SnapshotObjectTests
           - GenerateChangelogTest
           - FoundationalTest
+      testMode:
+        description: >-
+          Select test mode:
+          'secure' – run Secure tests only.
+          'community' – run Community tests only.
+          'all' – run all tests (Community + Secure).
+        required: true
+        default: 'secure'
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
@@ -126,6 +134,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         with:
           url: "${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
           username: "${{env.TH_DB_ADMIN}}"
@@ -138,6 +147,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
@@ -150,6 +160,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         with:
           url: "${{ env.TH_GCP_MSSQL_2019_URL }}"
           username: "${{env.MSSQL_ADMIN}}"
@@ -162,6 +173,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         with:
           url: "${{ env.TH_GCP_MSSQL_2022_URL }}"
           username: "${{env.MSSQL_ADMIN}}"
@@ -174,6 +186,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/gcp"
@@ -186,6 +199,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         with:
           operation: "update"
           classpath: "src/test/resources/init-changelogs/gcp"
@@ -206,18 +220,21 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}' test
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MYSQL_8_0_URL }}' test
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
           LIQUIBASE_LIQUIBASE_SCHEMA_NAME: lbuser
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=gcp -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MSSQL_2019_URL }}' test
 
@@ -225,6 +242,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
           LIQUIBASE_LIQUIBASE_SCHEMA_NAME: lbuser
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=gcp -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MSSQL_2022_URL }}' test
 
