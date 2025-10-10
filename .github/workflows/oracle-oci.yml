@@ -20,6 +20,14 @@ on:
           - GenerateChangelogTest
           - FoundationalTest
           - AdvancedHarnessSuiteTest
+      testMode:
+        description: >-
+          Select test mode:
+          'secure' – run Secure tests only.
+          'community' – run Community tests only.
+          'all' – run all tests (Community + Secure).
+        required: true
+        default: 'secure'
 
 permissions:
   contents: write
@@ -71,6 +79,7 @@ jobs:
       - name: Oracle OCI Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
 
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_OCI_ORACLE_19c_URL }}' test
 

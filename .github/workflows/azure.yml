@@ -19,6 +19,14 @@ on:
           - SnapshotObjectTests
           - GenerateChangelogTest
           - FoundationalTest
+      testMode:
+        description: >-
+          Select test mode:
+          'secure' – run Secure tests only.
+          'community' – run Community tests only.
+          'all' – run all tests (Community + Secure).
+        required: true
+        default: 'secure'
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
@@ -45,6 +53,7 @@ jobs:
       image: liquibase/liquibase:latest
       env:
         LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        TEST_MODE: ${{ github.event.inputs.testMode }}
     strategy:
       fail-fast: false
       matrix:
@@ -177,18 +186,21 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MYSQL_URL}}' test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_URL}}' test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=mi -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MSSQL_MI_URL}}' test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
@@ -247,6 +259,7 @@ jobs:
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         run: mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=flexible_${{ matrix.version }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}' test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results

@@ -5,6 +5,15 @@ on:
   schedule:
     - cron: '0 7 * * 6' # Execute on saturdays at 7AM UTC
   workflow_dispatch:
+    inputs:
+      testMode:
+        description: >-
+          Select test mode:
+          'secure' – run Secure tests only.
+          'community' – run Community tests only.
+          'all' – run all tests (Community + Secure).
+        required: true
+        default: 'secure'
 
 permissions:
   contents: write
@@ -91,12 +100,14 @@ jobs:
       - name: Run Liquibase Update
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         run: |
           liquibase --defaults-file=liquibase.properties update
 
       - name: Snowflake Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_MODE: ${{ github.event.inputs.testMode }}
         run: |
           JDK_JAVA_OPTIONS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
           mvn -Dtest=LiquibaseHarnessSuiteTest \

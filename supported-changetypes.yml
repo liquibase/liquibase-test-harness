@@ -1,0 +1,114 @@
+---
+# Liquibase Test Harness - Supported Change Types
+# This file categorizes all supported change types by Community (free) vs Secure (paid) versions
+
+community_changetypes:
+  # Basic table operations
+  - createTable
+  - createTableDataTypeText
+  - createTableTimestamp
+  - dropTable
+  - renameTable
+
+  # Column operations
+  - addColumn
+  - dropColumn
+  - renameColumn
+
+  # Index operations
+  - createIndex
+  - dropIndex
+
+  # View operations
+  - createView
+  - dropView
+
+  # Constraints
+  - addCheckConstraint
+  - addDefaultValue
+  - addDefaultValueBoolean
+  - addDefaultValueNumeric
+  - addDefaultValueDate
+  - addNotNullConstraint
+  - addPrimaryKey
+  - addUniqueConstraint
+  - dropCheckConstraint
+  - dropDefaultValue
+  - dropNotNullConstraint
+  - dropPrimaryKey
+  - dropUniqueConstraint
+
+  # Basic data operations
+  - insert
+  - delete
+  - loadData
+
+  # Basic SQL
+  - sql
+  - sqlFile
+
+secure_changetypes:
+  # Advanced table operations
+  - setTableRemarks
+  - setColumnRemarks
+
+  # Auto increment
+  - addAutoIncrement
+
+  # Sequences
+  - createSequence
+  - dropSequence
+  - alterSequence
+  - renameSequence
+  - addDefaultValueSequenceNext
+
+  # Functions and procedures
+  - createFunction
+  - dropFunction
+  - createProcedure
+  - dropProcedure
+  - createProcedureFromFile
+
+  # Packages (Oracle)
+  - createPackage
+  - createPackageBody
+
+  # Triggers
+  - createTrigger
+  - dropTrigger
+  - disableTrigger
+  - enableTrigger
+  - renameTrigger
+
+  # Foreign keys
+  - addForeignKey
+  - dropForeignKey
+  - dropAllForeignKeyConstraints
+
+  # Advanced constraints
+  - disableCheckConstraint
+  - enableCheckConstraint
+
+  # Advanced data operations
+  - addLookupTable
+  - loadUpdateData
+  - mergeColumns
+  - modifyDataType
+
+  # Computed values
+  - addDefaultValueComputed
+
+  # Advanced SQL
+  - modifySql
+  - executeCommand
+
+  # View operations
+  - renameView
+
+# Total counts
+total_community: 27
+total_secure: 34
+total_changetypes: 61
+
+# Test harness currently supports all these changetypes
+# This list should be maintained when new changetypes are added

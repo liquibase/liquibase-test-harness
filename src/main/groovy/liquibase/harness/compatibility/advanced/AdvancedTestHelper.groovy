@@ -9,6 +9,7 @@ import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
 import liquibase.ui.UIService
+import org.yaml.snakeyaml.Yaml
 
 import static liquibase.harness.util.FileUtils.getSqlFileContent
 import static liquibase.harness.util.TestUtils.parseQuery
@@ -18,8 +19,47 @@ class AdvancedTestHelper {
     final static UIService uiService = Scope.getCurrentScope().getUI()
     final static String secondaryDbName = "secondarydb"
 
+    private static List<String> communityChangetypes
+    private static List<String> secureChangetypes
+
+    static {
+        // Load changetypes from the YAML file
+        def yamlFile = new File("supported-changetypes.yml")
+        if (yamlFile.exists()) {
+            Yaml yaml = new Yaml()
+            def config = yaml.load(yamlFile.text)
+            communityChangetypes = config.community_changetypes
+            secureChangetypes = config.secure_changetypes
+        } else {
+            // Fallback to hardcoded lists if file doesn't exist
+            communityChangetypes = [
+                'createTable', 'createTableDataTypeText', 'createTableTimestamp', 'dropTable', 'renameTable',
+                'addColumn', 'dropColumn', 'renameColumn',
+                'createIndex', 'dropIndex',
+                'createView', 'dropView',
+                'addCheckConstraint', 'addDefaultValue', 'addDefaultValueBoolean', 'addDefaultValueNumeric',
+                'addDefaultValueDate', 'addNotNullConstraint', 'addPrimaryKey', 'addUniqueConstraint',
+                'dropCheckConstraint', 'dropDefaultValue', 'dropNotNullConstraint', 'dropPrimaryKey', 'dropUniqueConstraint',
+                'sql', 'sqlFile'
+            ]
+            secureChangetypes = [
+                'setTableRemarks', 'setColumnRemarks', 'addAutoIncrement',
+                'createSequence', 'dropSequence', 'alterSequence', 'renameSequence', 'addDefaultValueSequenceNext',
+                'createFunction', 'dropFunction', 'createProcedure', 'dropProcedure', 'createProcedureFromFile',
+                'createPackage', 'createPackageBody',
+                'createTrigger', 'dropTrigger', 'disableTrigger', 'enableTrigger', 'renameTrigger',
+                'addForeignKey', 'dropForeignKey', 'dropAllForeignKeyConstraints',
+                'disableCheckConstraint', 'enableCheckConstraint',
+                'addLookupTable', 'mergeColumns', 'modifyDataType',
+                'addDefaultValueComputed', 'modifySql', 'executeCommand', 'renameView'
+            ]
+        }
+    }
+
     static List<TestInput> buildTestInput() {
         String commandLineChanges = System.getProperty("change")
+        String testMode = System.getProperty("testMode") // 'secure', 'community', or null (all tests)
+
         List commandLineChangesList = Collections.emptyList()
         if (commandLineChanges) {
             commandLineChangesList = Arrays.asList(commandLineChanges.contains(",")
@@ -27,13 +67,41 @@ class AdvancedTestHelper {
                     : commandLineChanges)
         }
 
+        // Determine which changetypes to test based on testMode
+        List<String> allowedChangetypes = []
+        String modeMessage = ""
+
+        if (testMode == "secure") {
+            allowedChangetypes = secureChangetypes
+            modeMessage = "Running Secure advanced tests"
+        } else if (testMode == "community") {
+            allowedChangetypes = communityChangetypes
+            modeMessage = "Running Community advanced tests"
+        } else {
+            // Run all tests (both community and secure) - testMode is null, empty, or "all"
+            allowedChangetypes = communityChangetypes + secureChangetypes
+            modeMessage = "Running all advanced tests (Community + Secure)"
+        }
+
+        uiService.sendMessage(modeMessage)
+
         List<TestInput> inputList = new ArrayList<>()
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
             for (def changeUnderTest : FileUtils.resolveInputFilePaths(databaseUnderTest, baseResourcePath +
                     "initSql/primary", "sql").entrySet()) {
-                if (!commandLineChangesList || commandLineChangesList.contains(changeUnderTest.key)) {
+                // Filter based on testMode and commandLine filters
+                // Handle special cases for test names that map to changetypes
+                def changeType = changeUnderTest.key
+                if (changeType == "column") {
+                    changeType = "addColumn"
+                } else if (changeType == "addForeignKeyConstraint") {
+                    changeType = "addForeignKey"
+                }
+
+                if (allowedChangetypes.contains(changeType) &&
+                    (!commandLineChangesList || commandLineChangesList.contains(changeUnderTest.key))) {
                     inputList.add(TestInput.builder()
                             .database(databaseUnderTest.database)
                             .databaseName(databaseUnderTest.name)
