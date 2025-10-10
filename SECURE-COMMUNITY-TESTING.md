@@ -57,13 +57,13 @@ Tests individual object-based changetypes (tables, columns, indexes, constraints
 
 ```bash
 # Run only Community changetype tests
-./gradlew test --tests "ChangeObjectTests" -DtestMode=community
+mvn test -Dtest=ChangeObjectTests -DtestMode=community
 
 # Run only Secure changetype tests
-./gradlew test --tests "ChangeObjectTests" -DtestMode=secure
+mvn test -Dtest=ChangeObjectTests -DtestMode=secure
 
 # Run all changetype tests
-./gradlew test --tests "ChangeObjectTests" -DtestMode=all
+mvn test -Dtest=ChangeObjectTests -DtestMode=all
 ```
 
 **Why supported**: This helper iterates through changelog files per changetype, making it straightforward to filter based on the YAML configuration.
@@ -77,13 +77,13 @@ Tests data manipulation changetypes (insert, delete, loadData, loadUpdateData)
 
 ```bash
 # Run only Community data changetype tests
-./gradlew test --tests "ChangeDataTests" -DtestMode=community
+mvn test -Dtest=ChangeDataTests -DtestMode=community
 
 # Run only Secure data changetype tests
-./gradlew test --tests "ChangeDataTests" -DtestMode=secure
+mvn test -Dtest=ChangeDataTests -DtestMode=secure
 
 # Run all data changetype tests
-./gradlew test --tests "ChangeDataTests" -DtestMode=all
+mvn test -Dtest=ChangeDataTests -DtestMode=all
 ```
 
 **Why supported**: Data changetypes are clearly separated:
@@ -101,13 +101,13 @@ Tests snapshot functionality for database objects (tables, views, indexes, seque
 
 ```bash
 # Run only Community snapshot tests
-./gradlew test --tests "SnapshotObjectTests" -DtestMode=community
+mvn test -Dtest=SnapshotObjectTests -DtestMode=community
 
 # Run only Secure snapshot tests
-./gradlew test --tests "SnapshotObjectTests" -DtestMode=secure
+mvn test -Dtest=SnapshotObjectTests -DtestMode=secure
 
 # Run all snapshot tests
-./gradlew test --tests "SnapshotObjectTests" -DtestMode=all
+mvn test -Dtest=SnapshotObjectTests -DtestMode=all
 ```
 
 **Why supported**: Snapshot objects map to their corresponding changetypes:
@@ -123,13 +123,13 @@ Tests the `generate-changelog` command for various database objects
 
 ```bash
 # Run only Community generate-changelog tests
-./gradlew test --tests "GenerateChangelogTest" -DtestMode=community
+mvn test -Dtest=GenerateChangelogTest -DtestMode=community
 
 # Run only Secure generate-changelog tests
-./gradlew test --tests "GenerateChangelogTest" -DtestMode=secure
+mvn test -Dtest=GenerateChangelogTest -DtestMode=secure
 
 # Run all generate-changelog tests
-./gradlew test --tests "GenerateChangelogTest" -DtestMode=all
+mvn test -Dtest=GenerateChangelogTest -DtestMode=all
 ```
 
 **Why supported**: Generate-changelog tests map to specific object types:
@@ -145,13 +145,13 @@ Tests advanced scenarios combining snapshot, diff, and generate-changelog operat
 
 ```bash
 # Run only Community advanced tests
-./gradlew test --tests "AdvancedTest" -DtestMode=community
+mvn test -Dtest=AdvancedTest -DtestMode=community
 
 # Run only Secure advanced tests
-./gradlew test --tests "AdvancedTest" -DtestMode=secure
+mvn test -Dtest=AdvancedTest -DtestMode=secure
 
 # Run all advanced tests
-./gradlew test --tests "AdvancedTest" -DtestMode=all
+mvn test -Dtest=AdvancedTest -DtestMode=all
 ```
 
 **Why supported**: Advanced tests iterate through SQL initialization files for different changetypes. The helper maps test names to changetypes:
@@ -221,56 +221,14 @@ Example of a diff changelog (mixed changetypes):
 
 ### YAML Loading Pattern
 
-All supported test helpers follow this pattern:
-
-```groovy
-private static List<String> communityChangetypes
-private static List<String> secureChangetypes
-
-static {
-    // Load changetypes from the YAML file
-    def yamlFile = new File("supported-changetypes.yml")
-    if (yamlFile.exists()) {
-        Yaml yaml = new Yaml()
-        def config = yaml.load(yamlFile.text)
-        communityChangetypes = config.community_changetypes
-        secureChangetypes = config.secure_changetypes
-    } else {
-        // Fallback to hardcoded lists if file doesn't exist
-        communityChangetypes = [
-            'createTable', 'addColumn', // ... etc
-        ]
-        secureChangetypes = [
-            'addForeignKey', 'createSequence', // ... etc
-        ]
-    }
-}
-```
+All supported test helpers load changetypes from the YAML file with a fallback to hardcoded lists if the file doesn't exist.
 
 ### Test Filtering Pattern
 
-```groovy
-static List<TestInput> buildTestInput() {
-    String testMode = System.getProperty("testMode") // 'secure', 'community', 'all', or null
-
-    List<String> allowedChangetypes = []
-    if (testMode == "secure") {
-        allowedChangetypes = secureChangetypes
-    } else if (testMode == "community") {
-        allowedChangetypes = communityChangetypes
-    } else {
-        // Run all tests - testMode is null, empty, or "all"
-        allowedChangetypes = communityChangetypes + secureChangetypes
-    }
-
-    // Filter test inputs based on allowedChangetypes
-    for (def changeLogEntry : resolvedChangelogs.entrySet()) {
-        if (allowedChangetypes.contains(changeLogEntry.key)) {
-            inputList.add(TestInput.builder()...build())
-        }
-    }
-}
-```
+Tests are filtered based on the `testMode` system property:
+- If `testMode=secure`: only secure changetypes are tested
+- If `testMode=community`: only community changetypes are tested
+- Otherwise (null, empty, or "all"): all changetypes are tested
 
 ### Fallback Strategy
 
@@ -289,36 +247,36 @@ This provides resilience and backward compatibility.
 ```yaml
 - name: Test Community Features
   run: |
-    ./gradlew test --tests "ChangeObjectTests" -DtestMode=community
-    ./gradlew test --tests "ChangeDataTests" -DtestMode=community
-    ./gradlew test --tests "SnapshotObjectTests" -DtestMode=community
-    ./gradlew test --tests "GenerateChangelogTest" -DtestMode=community
-    ./gradlew test --tests "AdvancedTest" -DtestMode=community
+    mvn test -Dtest=ChangeObjectTests -DtestMode=community
+    mvn test -Dtest=ChangeDataTests -DtestMode=community
+    mvn test -Dtest=SnapshotObjectTests -DtestMode=community
+    mvn test -Dtest=GenerateChangelogTest -DtestMode=community
+    mvn test -Dtest=AdvancedTest -DtestMode=community
 ```
 
 ### Secure Edition Validation
 ```yaml
 - name: Test Secure Features
   run: |
-    ./gradlew test --tests "ChangeObjectTests" -DtestMode=secure
-    ./gradlew test --tests "ChangeDataTests" -DtestMode=secure
-    ./gradlew test --tests "SnapshotObjectTests" -DtestMode=secure
-    ./gradlew test --tests "GenerateChangelogTest" -DtestMode=secure
-    ./gradlew test --tests "AdvancedTest" -DtestMode=secure
+    mvn test -Dtest=ChangeObjectTests -DtestMode=secure
+    mvn test -Dtest=ChangeDataTests -DtestMode=secure
+    mvn test -Dtest=SnapshotObjectTests -DtestMode=secure
+    mvn test -Dtest=GenerateChangelogTest -DtestMode=secure
+    mvn test -Dtest=AdvancedTest -DtestMode=secure
 ```
 
 ### Full Validation
 ```yaml
 - name: Test All Features
   run: |
-    ./gradlew test --tests "ChangeObjectTests" -DtestMode=all
-    ./gradlew test --tests "ChangeDataTests" -DtestMode=all
-    ./gradlew test --tests "SnapshotObjectTests" -DtestMode=all
-    ./gradlew test --tests "GenerateChangelogTest" -DtestMode=all
-    ./gradlew test --tests "AdvancedTest" -DtestMode=all
-    ./gradlew test --tests "DiffTest"
-    ./gradlew test --tests "FoundationalTest"
-    ./gradlew test --tests "StressTest"
+    mvn test -Dtest=ChangeObjectTests -DtestMode=all
+    mvn test -Dtest=ChangeDataTests -DtestMode=all
+    mvn test -Dtest=SnapshotObjectTests -DtestMode=all
+    mvn test -Dtest=GenerateChangelogTest -DtestMode=all
+    mvn test -Dtest=AdvancedTest -DtestMode=all
+    mvn test -Dtest=DiffTest
+    mvn test -Dtest=FoundationalTest
+    mvn test -Dtest=StressTest
 ```
 
 ---
