@@ -230,9 +230,10 @@ whether they make the expected changes.
 
 #### Types of input files
 * The tests work with 4 types of input files that are supported by Liquibase itself - xml, yaml, json, sql.
-Thus files with extensions 'xml', 'sql', 'json', 'yml', 'yaml' are taken into account, but not all formats together in the same run.
+Thus files with extensions 'xml', 'sql', 'json', 'yml', 'yaml' are taken into account.
 * The default format is xml, so by default only changelogs with xml file extension are executed.
 To change it to another format, like 'sql' for instance, specify `-DinputFormat=sql` as the command line argument for Maven or as VM option to your JUnit test run config.
+* **Multiple format support**: Use `-DinputFormat=all` to run all supported formats (xml, sql, json, yml, yaml) in a single test run, or use `-DinputFormat=all-structured` to run only structured formats (xml, json, yml, yaml) that should produce identical SQL output.
 
 
 ### Adding a change object test
@@ -280,7 +281,7 @@ Wait until the databases start up.
 Build the project first by running `mvn clean install -DskipTests` 
 
 Execute `mvn test` with the (optional) flags outlined below:
-* `-DinputFormat=xml` or select from the other inputFormats listed in [Types of input files](#types-of-input-files)
+* `-DinputFormat=xml` or select from the other inputFormats listed in [Types of input files](#types-of-input-files). Supported values: `xml`, `sql`, `json`, `yml`, `yaml`, `all` (runs all formats), `all-structured` (runs xml, json, yml, yaml only)
 * `-DchangeObjects=createTable,dropTable` flag allows you to run specific changeObjects rather than all. Use comma
  separated lists.
 * `-DchangeData=insert,delete` flag that allows to run specific changeData through ChangeDataTests. Use comma separated list

@@ -11,7 +11,7 @@ import liquibase.harness.util.FileUtils
 
 class ChangeObjectTestHelper {
 
-    final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
+    final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml', 'all', 'all-structured'].asImmutable()
     final static String baseChangelogPath = "liquibase/harness/change/changelogs"
 
     static List<TestInput> buildTestInput() {
@@ -30,8 +30,21 @@ class ChangeObjectTestHelper {
             TestConfig.instance.inputFormat = commandLineInputFormat
         }
 
-        Scope.getCurrentScope().getUI().sendMessage("Only " + TestConfig.instance.inputFormat
-                + " input files are taken into account for this test run")
+        // Determine which formats to run
+        List<String> formatsToRun = []
+        if (TestConfig.instance.inputFormat == 'all') {
+            formatsToRun = ['xml', 'sql', 'json', 'yml', 'yaml']
+            Scope.getCurrentScope().getUI().sendMessage(
+                    "All input formats (xml, sql, json, yml, yaml) are taken into account for this test run")
+        } else if (TestConfig.instance.inputFormat == 'all-structured') {
+            formatsToRun = ['xml', 'json', 'yml', 'yaml']
+            Scope.getCurrentScope().getUI().sendMessage(
+                    "All structured input formats (xml, json, yml, yaml) are taken into account for this test run")
+        } else {
+            formatsToRun = [TestConfig.instance.inputFormat]
+            Scope.getCurrentScope().getUI().sendMessage("Only " + TestConfig.instance.inputFormat
+                    + " input files are taken into account for this test run")
+        }
 
         List<TestInput> inputList = new ArrayList<>()
         DatabaseConnectionUtil databaseConnectionUtil = new DatabaseConnectionUtil()
@@ -39,21 +52,25 @@ class ChangeObjectTestHelper {
         for (DatabaseUnderTest databaseUnderTest : databaseConnectionUtil
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {
             def database = databaseUnderTest.database
-            for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,
-                    TestConfig.instance.inputFormat).entrySet()) {
-                if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
-                    inputList.add(TestInput.builder()
-                            .databaseName(databaseUnderTest.name)
-                            .url(databaseUnderTest.url)
-                            .dbSchema(databaseUnderTest.dbSchema)
-                            .username(databaseUnderTest.username)
-                            .password(databaseUnderTest.password)
-                            .version(databaseUnderTest.version)
-                            .context(TestConfig.instance.context)
-                            .changeObject(changeLogEntry.key)
-                            .pathToChangeLogFile(changeLogEntry.value)
-                            .database(database)
-                            .build())
+
+            // Loop through each format to run
+            for (String format : formatsToRun) {
+                for (def changeLogEntry : FileUtils.resolveInputFilePaths(databaseUnderTest, baseChangelogPath,
+                        format).entrySet()) {
+                    if (!commandLineChangeObjectList || commandLineChangeObjectList.contains(changeLogEntry.key)) {
+                        inputList.add(TestInput.builder()
+                                .databaseName(databaseUnderTest.name)
+                                .url(databaseUnderTest.url)
+                                .dbSchema(databaseUnderTest.dbSchema)
+                                .username(databaseUnderTest.username)
+                                .password(databaseUnderTest.password)
+                                .version(databaseUnderTest.version)
+                                .context(TestConfig.instance.context)
+                                .changeObject(changeLogEntry.key)
+                                .pathToChangeLogFile(changeLogEntry.value)
+                                .database(database)
+                                .build())
+                    }
                 }
             }
         }
