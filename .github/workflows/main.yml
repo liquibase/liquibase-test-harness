@@ -117,6 +117,14 @@ jobs:
     steps:
       - run: true
 
+  discover-artifacts:
+    name: Discover Artifacts
+    needs: [setup]
+    uses: ./.github/workflows/discover-artifacts.yml
+    secrets: inherit
+    with:
+      target_branch: ${{ needs.setup.outputs.liquibaseBranch || 'master' }}
+
   setup:
     name: Setup
     needs: authorize
@@ -266,40 +274,39 @@ jobs:
           distribution: "temurin"
           cache: "maven"
 
-      - name: Install Snapshot Liquibase
-        env:
-          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
-        run: |
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
-          mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
-            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro" \
-            "-Dliquibase.sdk.proWorkflowId=build.yml"\
-            "-Dliquibase.sdk.workflowId=run-tests.yml"
-
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
-          mvn liquibase-sdk:install-snapshot-cli \
-          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
-          "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro" \
-          "-Dliquibase.sdk.proWorkflowId=build.yml" \
-          "-Dliquibase.sdk.workflowId=run-tests.yml"
-
-
-          chmod -R 777 bin
-          ls -l ./bin
-          bin/liquibase --version
-
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
-          echo "::notice :: Installed Snapshot Liquibase $buildOverview"
-
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase-pro')"
-          echo "::notice :: Installed Snapshot Liquibase-pro $buildOverview"
-
-      - name: Cache installed Liquibase
-        uses: actions/cache@v4
+      - name: Download artifacts from Pro Distribution release
+        if: ${{ (steps.config.outputs.artifact_name_cli != '' && steps.config.outputs.artifact_run_id_cli != '') || (needs.discover-artifacts.outputs.artifact_name_cli != '' && needs.discover-artifacts.outputs.artifact_run_id_cli != '') }}
+        uses: dawidd6/action-download-artifact@v11
         with:
-          path: ~/.m2/repository/org/liquibase/
-          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+          repo: liquibase/liquibase-pro
+          run_id: ${{ steps.config.outputs.artifact_run_id_cli || needs.discover-artifacts.outputs.artifact_run_id_cli }}
+          name: ${{ steps.config.outputs.artifact_name_cli || needs.discover-artifacts.outputs.artifact_name_cli }}
+          github_token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
+          path: ./src/main/resources/distribution
+
+      - name: Extract and deploy PRO distribution build
+        if: ${{ (steps.config.outputs.artifact_name_cli != '' && steps.config.outputs.artifact_name_maven_pro != '' && steps.config.outputs.artifact_name_maven_plugin != '') || (needs.discover-artifacts.outputs.artifact_name_cli != '' && needs.discover-artifacts.outputs.artifact_name_maven_pro != '' && needs.discover-artifacts.outputs.artifact_name_maven_plugin != '') }}
+        run: |
+          ls -lah ./src/main/resources/distribution
+          ZIP_FILE=$(ls ./src/main/resources/distribution/liquibase-secure-*.zip 2>/dev/null | head -n 1)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "❌ ERROR: No liquibase-secure-*.zip file found in ./src/main/resources/distribution/"
+            exit 1
+          fi
+          unzip "$ZIP_FILE" -d ./src/main/resources/distribution/liquibase-pro-workflow-test
+          ls -lah ./src/main/resources/distribution/liquibase-pro-workflow-test
+          rm -rf ./bin/*
+          rsync -a ./src/main/resources/distribution/liquibase-pro-workflow-test/ ./bin/
+          bin/liquibase --version
+          MVN_PRO=$(find src/main/resources/distribution -maxdepth 1 -type f -name "liquibase-commercial-*.jar" ! -name "*sources*" ! -name "*javadoc*" | head -n1)
+
+          VERSION_PRO=$(basename "$MVN_PRO" .jar | sed 's/^liquibase-commercial-//')
+
+          mvn install:install-file -Dfile="$MVN_PRO" -DgroupId=com.liquibase -DartifactId=liquibase-commercial -Dversion="$VERSION_PRO" -Dpackaging=jar
+
+          echo "PLUGIN_GROUP_ID=com.liquibase" >> $GITHUB_ENV
+          echo "PLUGIN_ARTIFACT_ID=liquibase-maven-plugin" >> $GITHUB_ENV
+          echo "PLUGIN_VERSION=$VERSION_PLUGIN" >> $GITHUB_ENV
 
   test:
     runs-on: ubuntu-latest
