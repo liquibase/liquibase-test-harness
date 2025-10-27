@@ -109,6 +109,7 @@ permissions:
   id-token: write
   statuses: write
   packages: read
+  actions: read
 
 jobs:
   authorize:
