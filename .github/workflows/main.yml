@@ -331,7 +331,6 @@ jobs:
           REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
 
       - name: Download artifacts from Pro Distribution release
-        if: ${{ (steps.config.outputs.artifact_name_cli != '' && steps.config.outputs.artifact_run_id_cli != '') || (needs.discover-artifacts.outputs.artifact_name_cli != '' && needs.discover-artifacts.outputs.artifact_run_id_cli != '') }}
         uses: dawidd6/action-download-artifact@v11
         with:
           repo: liquibase/liquibase-pro
@@ -341,7 +340,6 @@ jobs:
           path: ./src/main/resources/distribution
 
       - name: Extract and deploy PRO distribution build
-        if: ${{ (steps.config.outputs.artifact_name_cli != '' && steps.config.outputs.artifact_name_maven_pro != '' && steps.config.outputs.artifact_name_maven_plugin != '') || (needs.discover-artifacts.outputs.artifact_name_cli != '' && needs.discover-artifacts.outputs.artifact_name_maven_pro != '' && needs.discover-artifacts.outputs.artifact_name_maven_plugin != '') }}
         run: |
           ls -lah ./src/main/resources/distribution
           ZIP_FILE=$(ls ./src/main/resources/distribution/liquibase-secure-*.zip 2>/dev/null | head -n 1)
