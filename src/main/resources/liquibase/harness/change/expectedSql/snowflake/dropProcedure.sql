@@ -1,4 +1,4 @@
-CREATE or replace PROCEDURE test_procedure()
+CREATE or replace PROCEDURE LTHDB.PUBLIC.test_procedure()
 RETURNS VARCHAR
 LANGUAGE javascript
 AS
