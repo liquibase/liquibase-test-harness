@@ -1,0 +1,231 @@
+name: Search Liquibase Artifacts
+
+on:
+  workflow_call:
+    inputs:
+      target_branch:
+        description: 'Target branch to search for artifacts'
+        required: true
+        type: string
+    outputs:
+      artifact_name_cli:
+        description: 'CLI artifact name'
+        value: ${{ jobs.discover.outputs.artifact_name_cli }}
+      artifact_run_id_cli:
+        description: 'CLI run ID'
+        value: ${{ jobs.discover.outputs.artifact_run_id_cli }}
+      artifact_name_maven_pro:
+        description: 'Maven PRO artifact name'
+        value: ${{ jobs.discover.outputs.artifact_name_maven_pro }}
+      artifact_name_maven_plugin:
+        description: 'Maven Plugin artifact name'
+        value: ${{ jobs.discover.outputs.artifact_name_maven_plugin }}
+      artifact_run_id_maven:
+        description: 'Maven run ID'
+        value: ${{ jobs.discover.outputs.artifact_run_id_maven }}
+
+jobs:
+  discover:
+    name: Auto-discover distribution artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+    outputs:
+      artifact_name_cli: ${{ steps.auto-discover.outputs.artifact_name_cli }}
+      artifact_run_id_cli: ${{ steps.auto-discover.outputs.artifact_run_id_cli }}
+      artifact_name_maven_pro: ${{ steps.auto-discover.outputs.artifact_name_maven_pro }}
+      artifact_name_maven_plugin: ${{ steps.auto-discover.outputs.artifact_name_maven_plugin }}
+      artifact_run_id_maven: ${{ steps.auto-discover.outputs.artifact_run_id_maven }}
+
+    steps:
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
+      - name: Auto-discover distribution artifacts
+        id: auto-discover
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
+          script: |
+            console.log('Attempting auto-discovery of artifacts...');
+
+            // Auto-discover artifacts from latest successful workflow runs
+            const owner = 'liquibase';
+            const repo = 'liquibase-pro';
+            const targetBranch = "${{ inputs.target_branch }}" || 'master';
+            const fallbackBranch = 'master';
+
+            console.log(`Searching for workflow runs in ${owner}/${repo} on branch: ${targetBranch}`);
+
+            // Helper function to find successful run with fallback to master
+            async function findSuccessfulRun(workflow_id, workflowName) {
+              console.log(`Looking for successful run of ${workflowName} on branch: ${targetBranch}`);
+
+              // Try target branch first
+              let runs = await github.rest.actions.listWorkflowRuns({
+                owner: owner,
+                repo: repo,
+                workflow_id: workflow_id,
+                branch: targetBranch,
+                status: 'success',
+                per_page: 10
+              });
+
+              if (runs.data.workflow_runs.length > 0) {
+                console.log(`Found successful run on ${targetBranch}`);
+                return runs.data.workflow_runs[0];
+              }
+
+              // Fallback to master if targetBranch is different
+              if (targetBranch !== fallbackBranch) {
+                console.log(`No successful runs on ${targetBranch}, trying ${fallbackBranch}...`);
+                runs = await github.rest.actions.listWorkflowRuns({
+                  owner: owner,
+                  repo: repo,
+                  workflow_id: workflow_id,
+                  branch: fallbackBranch,
+                  status: 'success',
+                  per_page: 5
+                });
+
+                if (runs.data.workflow_runs.length > 0) {
+                  console.log(`Found successful run on ${fallbackBranch}`);
+                  return runs.data.workflow_runs[0];
+                }
+              }
+
+              console.log(`No successful runs found for ${workflowName}`);
+              return null;
+            }
+
+            try {
+              // Get all workflows once
+              console.log('Fetching repository workflows...');
+              const allSecureWorkflows = await github.rest.actions.listRepoWorkflows({
+                owner: owner,
+                repo: repo
+              });
+
+              // Find build-secure-distribution.yml workflow
+              console.log('Looking for build-secure-distribution workflow...');
+              const secureWorkflow = allSecureWorkflows.data.workflows.find(
+                wf => wf.path === '.github/workflows/build-secure-distribution.yml' || wf.name === 'Build Distribution'
+              );
+
+              let secureRunId = null;
+              let secureArtifactName = null;
+
+              if (secureWorkflow) {
+                console.log(`Found secure distribution workflow: ${secureWorkflow.name} (ID: ${secureWorkflow.id})`);
+
+                const secureRun = await findSuccessfulRun(secureWorkflow.id, secureWorkflow.name);
+
+                if (secureRun) {
+                  secureRunId = secureRun.id;
+                  console.log(`Using secure distribution run: ${secureRunId}`);
+
+                  // List artifacts from this run to get the actual artifact name
+                  const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+                    owner: owner,
+                    repo: repo,
+                    run_id: secureRunId
+                  });
+
+                  // Find distribution artifact (liquibase-secure-*)
+                  const distArtifact = artifacts.data.artifacts.find(
+                    a => a.name.startsWith('liquibase-secure-') && !a.name.includes('windows-installer')
+                  );
+
+                  if (distArtifact) {
+                    secureArtifactName = distArtifact.name;
+                    console.log(`Found distribution artifact: ${secureArtifactName}`);
+                  } else {
+                    console.log('No distribution artifact found in run');
+                  }
+                }
+              } else {
+                console.log('build-secure-distribution workflow not found');
+              }
+
+              // Find build-commercial-jars.yml workflow
+              console.log('Looking for build-commercial-jars workflow...');
+              const commercialWorkflow = allSecureWorkflows.data.workflows.find(
+                wf => wf.path === '.github/workflows/build-commercial-jars.yml' || wf.name === 'Build com.liquibase jars'
+              );
+
+              let commercialRunId = null;
+              let mavenProArtifactName = null;
+              let mavenPluginArtifactName = null;
+
+              if (commercialWorkflow) {
+                console.log(`Found commercial jars workflow: ${commercialWorkflow.name} (ID: ${commercialWorkflow.id})`);
+
+                const commercialRun = await findSuccessfulRun(commercialWorkflow.id, commercialWorkflow.name);
+
+                if (commercialRun) {
+                  commercialRunId = commercialRun.id;
+                  console.log(`Using commercial jars run: ${commercialRunId}`);
+
+                  // List artifacts from this run
+                  const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+                    owner: owner,
+                    repo: repo,
+                    run_id: commercialRunId
+                  });
+
+                  // Find maven artifacts
+                  const mavenProArtifact = artifacts.data.artifacts.find(
+                    a => a.name.startsWith('liquibase-commercial-') && a.name.endsWith('-jars')
+                  );
+                  const mavenPluginArtifact = artifacts.data.artifacts.find(
+                    a => a.name.startsWith('liquibase-maven-plugin-') && a.name.endsWith('-jars')
+                  );
+
+                  if (mavenProArtifact) {
+                    mavenProArtifactName = mavenProArtifact.name;
+                    console.log(`Found maven pro artifact: ${mavenProArtifactName}`);
+                  }
+                  if (mavenPluginArtifact) {
+                    mavenPluginArtifactName = mavenPluginArtifact.name;
+                    console.log(`Found maven plugin artifact: ${mavenPluginArtifactName}`);
+                  }
+                }
+              } else {
+                console.log('build-commercial-jars workflow not found');
+              }
+
+              // Set outputs with discovered values or empty strings
+              core.setOutput('artifact_name_cli', secureArtifactName || '');
+              core.setOutput('artifact_run_id_cli', secureRunId ? secureRunId.toString() : '');
+              core.setOutput('artifact_name_maven_pro', mavenProArtifactName || '');
+              core.setOutput('artifact_name_maven_plugin', mavenPluginArtifactName || '');
+              core.setOutput('artifact_run_id_maven', commercialRunId ? commercialRunId.toString() : '');
+
+              if (secureArtifactName && secureRunId && mavenProArtifactName && mavenPluginArtifactName && commercialRunId) {
+                console.log('Auto-discovery successful! All artifacts found.');
+              } else {
+                console.log('Auto-discovery incomplete. Some artifacts may be missing.');
+              }
+
+            } catch (error) {
+              console.error('Error during auto-discovery:', error.message);
+              // Set empty outputs on error
+              core.setOutput('artifact_name_cli', '');
+              core.setOutput('artifact_run_id_cli', '');
+              core.setOutput('artifact_name_maven_pro', '');
+              core.setOutput('artifact_name_maven_plugin', '');
+              core.setOutput('artifact_run_id_maven', '');
+            }
