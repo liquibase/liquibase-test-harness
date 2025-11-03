@@ -4,6 +4,8 @@ name: Advanced Test Execution
 on:
   schedule:
     - cron: '0 6 * * *' # Execute every day at 6AM UTC
+  repository_dispatch:
+    types: [test-harness]
   workflow_dispatch:
     inputs:
       runDescription:
@@ -19,9 +21,9 @@ on:
         type: boolean
         description: Don't autoconfigure Liquibase Snapshot
       liquibaseRepo:
-        description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibase/liquibase-pro
-        required: true
-        default: "liquibase/liquibase"
+        description: 'Repo pull artifacts from. NOTE: This workflow always uses liquibase/liquibase-pro (Pro artifacts). This input is ignored.'
+        required: false
+        default: "liquibase/liquibase-pro"
       databases:
         description: Databases to start up. Comma separated list of "name"
         required: true
@@ -54,6 +56,8 @@ jobs:
       useLiquibaseSnapshot: ${{ steps.configure-build.outputs.useLiquibaseSnapshot }}
       liquibaseBranch: ${{ steps.configure-build.outputs.liquibaseBranch }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
+      triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
+      useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
       databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4",
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
         "mariadb-10.7","mariadb-11.4","mssql-2017","mssql-2019","mssql-2022","crdb-23.1","crdb-23.2","crdb-24.1","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0",
@@ -89,6 +93,21 @@ jobs:
             console.log("Running in liquibase-test-harness branch " + testBranchName);
             core.notice("Running in liquibase-test-harness branch " + testBranchName);
 
+            // Detect which repository triggered this workflow (for logging)
+            const triggeredRepo = helper.getTriggeredRepository();
+            console.log("Workflow triggered by repository: " + triggeredRepo);
+            core.notice("Workflow triggered by repository: " + (triggeredRepo || "liquibase-test-harness (current repo)"));
+
+            // Always use pro artifacts for advanced workflows
+            const liquibaseRepo = "liquibase/liquibase-pro";
+            const useProArtifacts = true;
+            console.log("Using pro artifacts repository: " + liquibaseRepo);
+            console.log("Pro artifacts enabled: " + useProArtifacts);
+
+            core.setOutput("liquibaseRepo", liquibaseRepo);
+            core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
+            core.setOutput("useProArtifacts", useProArtifacts);
+
             let useLiquibaseSnapshot = testBranchName !== "main"
             if ("${{ github.event.pull_request.base.ref }}" !== "") {
               useLiquibaseSnapshot = "${{ github.event.pull_request.base.ref }}" !== "main"
@@ -100,11 +119,9 @@ jobs:
             console.log("useLiquibaseSnapshot == " + useLiquibaseSnapshot);
             core.setOutput("useLiquibaseSnapshot", useLiquibaseSnapshot);
 
-            console.log("liquibaseBranch == " + "${{ github.event.inputs.liquibaseBranch }}");
-            core.setOutput("liquibaseBranch", "${{ github.event.inputs.liquibaseBranch }}" || testBranchName+", master");
-
-            console.log("liquibaseRepo == " + "${{ github.event.inputs.liquibaseRepo }}");
-            core.setOutput("liquibaseRepo", "${{ github.event.inputs.liquibaseRepo }}" || "liquibase/liquibase");
+            let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}" || testBranchName + ", master";
+            console.log("liquibaseBranch == " + liquibaseBranchName);
+            core.setOutput("liquibaseBranch", liquibaseBranchName);
 
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
@@ -119,7 +136,7 @@ jobs:
             if (!runDetails) {
               runDetails = {};
 
-            }            
+            }
             if (runDetails.notices) {
                 for (let notice of runDetails.notices) {
                     core.notice(notice);
@@ -173,16 +190,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
+          echo "::group::Install Snapshot Liquibase"
+          echo "Artifact repository: ${{ steps.configure-build.outputs.liquibaseRepo }}"
+          echo "Branch search: ${{ steps.configure-build.outputs.liquibaseBranch }}"
+          echo "Triggered from: ${{ steps.configure-build.outputs.triggeredRepo }}"
+          echo "Using pro artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
+          echo "::endgroup::"
+
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
           mvn -B liquibase-sdk:install-snapshot \
             "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
-            "-Dliquibase.sdk.repo=liquibase/liquibase,liquibase/liquibase-pro"
+            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}"
 
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase')"
-          echo "::notice :: Installed Snapshot Liquibase $buildOverview"
-          
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=liquibase/liquibase-pro')"
-          echo "::notice :: Installed Snapshot Liquibase-pro $buildOverview"
+          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}')"
+          echo "::notice :: Installed Snapshot Liquibase from ${{ steps.configure-build.outputs.liquibaseRepo }}: $buildOverview"
 
           mvn -B liquibase-sdk:set-commit-status \
             "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \

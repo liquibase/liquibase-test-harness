@@ -54,6 +54,54 @@ module.exports = ({github, context}) => {
 
         },
 
+        getTriggeredRepository: function () {
+            // Extract repository information from GitHub context
+            // Priority: repository_dispatch payload > github.repository context
+
+            if (context.payload?.client_payload?.repository) {
+                // repository_dispatch trigger
+                return context.payload.client_payload.repository;
+            }
+
+            if (context.payload?.repository) {
+                // push, pull_request events
+                const org = context.payload.repository.organization || context.payload.repository.owner?.login;
+                const name = context.payload.repository.name;
+                if (org && name) {
+                    return `${org}/${name}`;
+                }
+            }
+
+            // Fallback to github context
+            if (github?.context?.repo?.owner && github?.context?.repo?.repo) {
+                return `${github.context.repo.owner}/${github.context.repo.repo}`;
+            }
+
+            console.warn("Could not determine triggered repository");
+            return null;
+        },
+
+        shouldUseProArtifacts: function (repository) {
+            // Determine if we should prioritize pro artifacts
+            if (!repository) {
+                return false;
+            }
+            return repository.toLowerCase() === 'liquibase/liquibase-pro';
+        },
+
+        getDefaultRepoForContext: function (repository) {
+            // Return the default repo to search based on triggered repository
+            if (!repository) {
+                return 'liquibase/liquibase';
+            }
+
+            if (this.shouldUseProArtifacts(repository)) {
+                return 'liquibase/liquibase-pro';
+            }
+
+            return 'liquibase/liquibase';
+        },
+
         findMatchingBranch: async function (owner, repo, branchesToCheck) {
             if (!branchesToCheck) {
                 if (context.payload.pull_request) {

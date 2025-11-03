@@ -6,8 +6,17 @@ on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
     - cron: '0 6 * * *' # Execute every day at 6AM UTC
+  repository_dispatch:
+    types: [test-harness]
   workflow_dispatch:
     inputs:
+      liquibaseBranch:
+        description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. Can support a comma separated list of branches to search for
+        required: false
+      liquibaseRepo:
+        description: 'Repo pull artifacts from. NOTE: This workflow always uses liquibase/liquibase-pro (Pro artifacts). This input is ignored.'
+        required: false
+        default: "liquibase/liquibase-pro"
       testClasses:
         type: choice
         description: Test Suite or test class to run
@@ -37,9 +46,34 @@ jobs:
       databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","postgresql:16","postgresql:17","oracle:aws_19",
         "mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora_16","postgresql:aurora_17"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
+      triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
+      useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
+      liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Configure Build
+        id: configure-build
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const helper = require('./.github/util/workflow-helper.js')({github, context});
+
+            // Detect which repository triggered this workflow (for logging)
+            const triggeredRepo = helper.getTriggeredRepository();
+            console.log("Workflow triggered by repository: " + triggeredRepo);
+            core.notice("Workflow triggered by repository: " + (triggeredRepo || "liquibase-test-harness (current repo)"));
+
+            // Always use pro artifacts for AWS cloud tests
+            const liquibaseRepo = "liquibase/liquibase-pro";
+            const useProArtifacts = true;
+            console.log("Using pro artifacts repository: " + liquibaseRepo);
+            console.log("Pro artifacts enabled: " + useProArtifacts);
+
+            core.setOutput("liquibaseRepo", liquibaseRepo);
+            core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
+            core.setOutput("useProArtifacts", useProArtifacts);
 
   test:
     needs: [setup]

@@ -84,13 +84,92 @@ Extensions that add support for additional databases and/or define additional fu
 - More easily verify their new functionality works
 - And that it also doesn't break existing logic
 
-## Configuring Execution   
+## Configuring Execution
+
+### GitHub Actions Workflows
+
+The test harness is configured to run via GitHub Actions workflows with smart artifact selection based on the triggering repository.
+
+#### Repository-Aware Artifact Selection
+
+Starting with the Liquibase Secure release, the **main.yml** workflow automatically detects which repository triggered it and selects appropriate artifacts:
+
+**Main Workflow (main.yml) - Smart Artifact Selection:**
+- **When triggered from `liquibase/liquibase` (Community)**:
+  - Downloads community core artifacts from the `liquibase/liquibase` repository
+  - Runs against community builds
+
+- **When triggered from `liquibase/liquibase-pro`**:
+  - Downloads Liquibase Secure (Pro) artifacts from the `liquibase/liquibase-pro` repository
+  - Runs against pro builds with all available features
+
+- **Manual workflow dispatch**:
+  - Use the `liquibaseRepo` input to manually override the repository (defaults to detected repository)
+  - Use the `liquibaseBranch` input to specify which branch to pull artifacts from
+  - If the specified branch doesn't exist, workflows automatically fall back to `master` or `main`
+
+**Advanced & Cloud Workflows (advanced.yml, aws.yml, azure.yml, gcp.yml, oracle-oci.yml, snowflake.yml):**
+- **Always download and use Liquibase Secure (Pro) artifacts**
+- **Always execute all jobs against pro builds**
+- **Maintain consistent behavior regardless of trigger source**
+- Repository detection still logs which repository triggered the workflow for audit purposes
+
+#### Available Workflows
+
+| Workflow | File | Trigger Type | Artifact Selection |
+|----------|------|--------------|-------------------|
+| Default Test Execution | `main.yml` | Push, PR, Schedule, Dispatch | Repository-aware (Community or Pro) |
+| Advanced Test Execution | `advanced.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| AWS Cloud Database Tests | `aws.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| Azure Cloud Database Tests | `azure.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| GCP Cloud Database Tests | `gcp.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| Oracle OCI Tests | `oracle-oci.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| Snowflake Tests | `snowflake.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+
+#### Manual Workflow Dispatch
+
+All workflows support manual triggering via `workflow_dispatch` with the following inputs:
+
+**main.yml Inputs:**
+- **liquibaseRepo** (optional): Repository to pull artifacts from
+  - Options: `liquibase/liquibase` (Community) or `liquibase/liquibase-pro` (Pro)
+  - Default: Auto-detected based on triggering repository
+  - Used to override the automatic detection logic
+
+- **liquibaseBranch** (optional): Branch to pull artifacts from
+  - Can be a single branch name or comma-separated list for fallback search
+  - Supports format: `branch1, branch2, branch3`
+  - Default: Current branch name with fallback to `master` then `main`
+  - Falls back to next branch in list if previous one doesn't exist
+
+- **liquibaseCommit** (optional): Specific commit SHA to pull artifacts from
+  - If provided, overrides branch selection
+
+**Advanced & Cloud Workflows Inputs (advanced.yml, aws.yml, azure.yml, gcp.yml, oracle-oci.yml, snowflake.yml):**
+- **liquibaseBranch** (optional): Branch to pull artifacts from
+  - Can be a single branch name or comma-separated list for fallback search
+  - Supports format: `branch1, branch2, branch3`
+  - Default: Current branch name with fallback to `master` then `main`
+
+- **liquibaseRepo** (optional): Repository selection input
+  - NOTE: This input is ignored for these workflows
+  - These workflows always use `liquibase/liquibase-pro` (Pro artifacts)
+  - Listed for consistency and future flexibility
+
+#### Workflow Execution Summary
+
+Each workflow run generates an execution summary showing:
+- Which repository triggered the workflow
+- Which repository artifacts were downloaded from
+- Which branch and commit were used
+- Whether Pro (Liquibase Secure) or Community artifacts were used
+- Overall test results
 
 #### Configuration File
 
 The test harness will look for a file called `harness-config.yml` in the root of your classpath.
 
-That file contains a list of the database connections to test against, as well as an ability to control which subsets of tests to run.   
+That file contains a list of the database connections to test against, as well as an ability to control which subsets of tests to run.
 
 See `src/test/resources/harness-config.yml` to see what this repository is configured to use.
 
