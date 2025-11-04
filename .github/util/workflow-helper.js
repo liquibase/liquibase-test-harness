@@ -240,11 +240,16 @@ module.exports = ({github, context}) => {
                     console.log(returnData);
 
                     return returnData
-                } catch
-                    (error) {
+                } catch (error) {
                     if (error.status === 404) {
-                        //try next branch
+                        // Branch not found - try next branch
                         console.log(`No branch ${branchName}`);
+                    } else if (error.status === 403 || error.status === 401) {
+                        // Permission denied - likely private repository with insufficient token scopes
+                        // Log warning and try next branch instead of throwing
+                        console.warn(`Permission denied (${error.status}) accessing ${owner}/${repo} branch ${branchName}`);
+                        console.warn("This may indicate the GitHub token lacks access to this private repository");
+                        continue;
                     } else {
                         console.log(error)
                         throw (`Checking branch ${branchName} returned ${error.status}`);

@@ -160,9 +160,11 @@ jobs:
         with:
           app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
           private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          permission-contents: write
-          permission-actions: write
+          owner: liquibase
+          repositories: liquibase,liquibase-pro,liquibase-test-harness
+          permission-contents: read
+          permission-actions: read
+          permission-statuses: write
 
         #https://github.com/Codex-/return-dispatch
       - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
