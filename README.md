@@ -201,14 +201,16 @@ The workflows use Maven for resolving and downloading all Liquibase dependencies
   - Tests continue with community artifacts instead of failing
 - This ensures workflows don't break when token scopes are insufficient for manual pro selection
 
-**Important: Liquibase-Pro GroupId Difference**
+**Important: Commercial Artifacts Are Pro-Only**
+
+The key distinction between repositories:
 - **Community artifacts** (`liquibase/liquibase`):
-  - `org.liquibase:liquibase-core`
-  - `org.liquibase:liquibase-commercial`
+  - `org.liquibase:liquibase-core` - available
+  - `liquibase-commercial` - NOT available in this repository
 
 - **Pro artifacts** (`liquibase/liquibase-pro`):
-  - `org.liquibase:liquibase-core` (same groupId as community)
-  - `com.liquibase:liquibase-commercial` (different groupId!)
+  - `org.liquibase:liquibase-core` - available (same as community)
+  - `com.liquibase:liquibase-commercial` - available ONLY in this repository (different groupId!)
 
 ##### Maven Dependency Resolution
 
@@ -229,9 +231,13 @@ The Maven workflows automatically detect which repository is being used and reso
 4. **Artifact Resolution Flow**:
    - **Pro artifacts** (`liquibase-pro` selected):
      - Profile activates `-Puseproartifacts`
-     - Maven resolves `com.liquibase:liquibase-commercial:LATEST` from `liquibase-pro` repository
+     - Maven resolves:
+       - `org.liquibase:liquibase-core:LATEST` from `liquibase-pro` repository
+       - `com.liquibase:liquibase-commercial:LATEST` from `liquibase-pro` repository
    - **Community artifacts** (default):
-     - Maven resolves `org.liquibase:liquibase-commercial:LATEST` from `liquibase` repository
+     - Maven resolves only:
+       - `org.liquibase:liquibase-core:LATEST` from `liquibase` repository
+     - Note: `liquibase-commercial` is NOT resolved for community builds (not available in community repo)
 
 To manually use the pro artifacts profile locally, use:
 ```bash
