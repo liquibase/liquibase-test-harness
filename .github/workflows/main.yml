@@ -322,10 +322,9 @@ jobs:
           echo "::endgroup::"
 
           # Resolve Liquibase dependencies with correct profile
-          # Note: liquibase-commercial uses different groupIds depending on the repository:
-          # - Community: org.liquibase:liquibase-commercial (from liquibase/liquibase repo)
-          # - Pro: com.liquibase:liquibase-commercial (from liquibase/liquibase-pro repo)
-          # The Maven profile 'useproartifacts' handles the correct groupId selection
+          # Note: liquibase-commercial is only available in the liquibase-pro repository
+          # - Community repo (liquibase/liquibase): only has org.liquibase:liquibase-core
+          # - Pro repo (liquibase/liquibase-pro): has both org.liquibase:liquibase-core and com.liquibase:liquibase-commercial
           if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
             echo "Resolving PRO artifacts from liquibase-pro repository..."
             # For pro builds, activate useproartifacts profile which declares com.liquibase:liquibase-commercial
@@ -334,9 +333,9 @@ jobs:
               2>&1 | tee resolve.log
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
-            # For community builds, default dependencies use org.liquibase:liquibase-commercial
+            # For community builds, only resolve liquibase-core (no commercial artifacts in community repo)
             mvn -B dependency:resolve \
-              -Dartifacts="org.liquibase:liquibase-core:LATEST,org.liquibase:liquibase-commercial:LATEST" \
+              -Dartifacts="org.liquibase:liquibase-core:LATEST" \
               2>&1 | tee resolve.log
           fi
 
