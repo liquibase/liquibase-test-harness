@@ -131,7 +131,7 @@ jobs:
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
       useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
       communityVersion: ${{ steps.discover-version.outputs.community-version }}
-      proVersion: ${{ steps.discover-version.outputs.pro-version }}
+      proVersion: ${{ steps.discover-version.outputs.secure-version }}
       databases:
         ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","percona-xtradb-cluster-8.4",
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
@@ -193,7 +193,7 @@ jobs:
             const defaultRepo = helper.getDefaultRepoForContext(triggeredRepo);
             const useProArtifacts = helper.shouldUseProArtifacts(triggeredRepo);
             console.log("Default repo for artifacts: " + defaultRepo);
-            console.log("Using pro artifacts: " + useProArtifacts);
+            console.log("Using SECURE artifacts: " + useProArtifacts);
 
             // Use manual input if provided, otherwise use detected default
             let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo }}" || defaultRepo;
@@ -202,11 +202,11 @@ jobs:
             // Track the user's intended repository for artifact selection
             let userSelectedRepo = "${{ github.event.inputs.liquibaseRepo }}" || null;
             let intentProArtifacts = userSelectedRepo ? helper.shouldUseProArtifacts(userSelectedRepo) : useProArtifacts;
-            console.log("User intended pro artifacts: " + intentProArtifacts);
+            console.log("User intended SECURE artifacts: " + intentProArtifacts);
 
             // Determine if user explicitly selected liquibase-pro (no fallback allowed)
             let isExplicitProSelection = userSelectedRepo && helper.shouldUseProArtifacts(userSelectedRepo);
-            console.log("Explicit pro selection (no fallback allowed): " + isExplicitProSelection);
+            console.log("Explicit SECURE selection (no fallback allowed): " + isExplicitProSelection);
 
             core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
 
@@ -264,7 +264,7 @@ jobs:
             }
             core.setOutput("liquibaseSha", liquibaseSha);
             core.setOutput("liquibaseRepo", liquibaseRepo);
-            // Use the user's intended pro artifacts setting
+            // Use the user's intended SECURE artifacts setting
             core.setOutput("useProArtifacts", intentProArtifacts);
             core.setOutput("liquibaseOwner", repoOwnerName);
 
@@ -356,8 +356,8 @@ jobs:
 
           # Pro version is always 'master' for com.liquibase:liquibase-commercial
           SECURE_VERSION="master"
-          echo "Pro version: $SECURE_VERSION"
-          echo "pro-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
+          echo "SECURE version: $SECURE_VERSION"
+          echo "secure-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
 
           echo "::endgroup::"
 
@@ -368,8 +368,8 @@ jobs:
           echo "::group::Resolve Snapshot Liquibase Dependencies"
           echo "Artifact repository: ${{ steps.configure-build.outputs.liquibaseRepo }}"
           echo "Community version: ${{ steps.discover-version.outputs.community-version }}"
-          echo "Pro version: ${{ steps.discover-version.outputs.pro-version }}"
-          echo "Using pro artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
+          echo "SECURE version: ${{ steps.discover-version.outputs.secure-version }}"
+          echo "Using SECURE artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
           echo "::endgroup::"
 
           # Verify Maven settings are configured
@@ -382,11 +382,11 @@ jobs:
           MAVEN_AUTH_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=debug"
 
           if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
-            echo "Resolving PRO artifacts from liquibase-pro repository..."
-            # For pro: use community version for org.liquibase:liquibase-core and pro version for com.liquibase:liquibase-commercial
+            echo "Resolving SECURE artifacts from liquibase-pro repository..."
+            # For SECURE: use community version for org.liquibase:liquibase-core and SECURE version for com.liquibase:liquibase-commercial
             mvn -B -Puseproartifacts \
               -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
-              -Dliquibase-commercial.version=${{ steps.discover-version.outputs.pro-version }} \
+              -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
               $MAVEN_AUTH_OPTS \
               dependency:resolve -X 2>&1 | tee resolve.log
           else
@@ -618,7 +618,7 @@ jobs:
           echo "**Artifacts Downloaded From:** ${{ needs.setup.outputs.liquibaseRepo }}" >> $GITHUB_STEP_SUMMARY
           echo "**Liquibase Branch:** ${{ needs.setup.outputs.liquibaseBranch }}" >> $GITHUB_STEP_SUMMARY
           echo "**Liquibase Commit:** ${{ needs.setup.outputs.liquibaseSha }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Build Type:** ${{ needs.setup.outputs.useProArtifacts == 'true' && 'Pro (Liquibase Secure)' || 'Community' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Type:** ${{ needs.setup.outputs.useProArtifacts == 'true' && 'SECURE (Liquibase Secure)' || 'Community' }}" >> $GITHUB_STEP_SUMMARY
           echo "**Test Result:** ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Coordinate Liquibase-Test-Harness
