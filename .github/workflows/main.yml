@@ -370,6 +370,10 @@ jobs:
           echo "Using pro artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
           echo "::endgroup::"
 
+          # Verify Maven settings are configured
+          echo "Maven settings.xml location:"
+          ls -la ~/.m2/settings.xml || echo "No settings.xml found"
+
           # Use LATEST version specifier - Maven will resolve the actual latest available
           MAVEN_VERSION_SPEC="${{ steps.discover-version.outputs.version }}"
 
@@ -377,13 +381,11 @@ jobs:
           # Note: liquibase-commercial is only available in the liquibase-pro repository
           if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
             echo "Resolving PRO artifacts from liquibase-pro repository..."
-            mvn -B -Puseproartifacts \
-              versions:set-property -Dproperty=liquibase-core.version -DnewVersion=$MAVEN_VERSION_SPEC \
-              dependency:resolve 2>&1 | tee resolve.log
+            mvn -B -Puseproartifacts -Dliquibase-core.version=$MAVEN_VERSION_SPEC \
+              dependency:resolve -X 2>&1 | tee resolve.log
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
-            mvn -B \
-              versions:set-property -Dproperty=liquibase-core.version -DnewVersion=$MAVEN_VERSION_SPEC \
+            mvn -B -Dliquibase-core.version=$MAVEN_VERSION_SPEC \
               dependency:resolve 2>&1 | tee resolve.log
           fi
 
@@ -392,7 +394,9 @@ jobs:
       - name: Cache installed Liquibase
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository/org/liquibase/
+          path: |
+            ~/.m2/repository/org/liquibase/
+            ~/.m2/repository/com/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
   test:
