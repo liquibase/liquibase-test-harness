@@ -20,10 +20,6 @@ on:
       ignoreLiquibaseSnapshot:
         type: boolean
         description: Don't autoconfigure Liquibase Snapshot
-      liquibaseRepo:
-        description: 'Repo pull artifacts from. NOTE: This workflow always uses liquibase/liquibase-pro (Pro artifacts). This input is ignored.'
-        required: false
-        default: "liquibase/liquibase-pro"
       databases:
         description: Databases to start up. Comma separated list of "name"
         required: true

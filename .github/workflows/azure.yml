@@ -9,13 +9,6 @@ on:
     types: [test-harness]
   workflow_dispatch:
     inputs:
-      liquibaseBranch:
-        description: Liquibase branch to pull artifacts from. Leave empty to use latest commit on current branch. Can support a comma separated list of branches to search for
-        required: false
-      liquibaseRepo:
-        description: 'Repo pull artifacts from. NOTE: This workflow always uses liquibase/liquibase-pro (Pro artifacts). This input is ignored.'
-        required: false
-        default: "liquibase/liquibase-pro"
       testClasses:
         type: choice
         description: Test Suite or test class to run
