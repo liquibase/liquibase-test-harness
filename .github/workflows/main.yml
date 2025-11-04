@@ -547,30 +547,35 @@ jobs:
           echo ""
           echo "::endgroup::"
 
-          echo "::group::Liquibase Executable Version"
-          # Build the same Maven command that will be used for tests to get version
+          echo "::group::Liquibase Version Summary"
           USE_PRO_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
           COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
           PRO_VERSION="${{ needs.setup.outputs.proVersion }}"
 
           if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
-            echo "Retrieving Liquibase version with PRO artifacts..."
-            mvn -B -Puseproartifacts -DuseProArtifacts=true \
-              -Dliquibase-core.version=$COMMUNITY_VERSION \
-              -Dliquibase-commercial.version=$PRO_VERSION \
-              exec:java -Dexec.mainClass="liquibase.cli.Main" -Dexec.args="--version" 2>/dev/null || \
-            mvn -B -Puseproartifacts -DuseProArtifacts=true \
-              -Dliquibase-core.version=$COMMUNITY_VERSION \
-              -Dliquibase-commercial.version=$PRO_VERSION \
-              exec:java -Dexec.mainClass="liquibase.Liquibase" -Dexec.args="version" 2>/dev/null || \
-            echo "Could not retrieve version via liquibase --version command"
+            echo "Build Type: PRO (with Liquibase Secure features)"
+            echo "Community artifacts version: $COMMUNITY_VERSION"
+            echo "Pro artifacts version: $PRO_VERSION"
+            # Extract version info from JAR manifest if available
+            if [ -f "$HOME/.m2/repository/org/liquibase/liquibase-core/$COMMUNITY_VERSION/liquibase-core-$COMMUNITY_VERSION.jar" ]; then
+              echo ""
+              echo "Liquibase Core manifest info:"
+              unzip -p "$HOME/.m2/repository/org/liquibase/liquibase-core/$COMMUNITY_VERSION/liquibase-core-$COMMUNITY_VERSION.jar" META-INF/MANIFEST.MF 2>/dev/null | grep -i "Implementation-Version\|Bundle-Version" || echo "  (version info available at runtime)"
+            fi
+            if [ -f "$HOME/.m2/repository/com/liquibase/liquibase-commercial/$PRO_VERSION/liquibase-commercial-$PRO_VERSION.jar" ]; then
+              echo ""
+              echo "Liquibase Commercial manifest info:"
+              unzip -p "$HOME/.m2/repository/com/liquibase/liquibase-commercial/$PRO_VERSION/liquibase-commercial-$PRO_VERSION.jar" META-INF/MANIFEST.MF 2>/dev/null | grep -i "Implementation-Version\|Bundle-Version" || echo "  (version info available at runtime)"
+            fi
           else
-            echo "Retrieving Liquibase version with COMMUNITY artifacts..."
-            mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION \
-              exec:java -Dexec.mainClass="liquibase.cli.Main" -Dexec.args="--version" 2>/dev/null || \
-            mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION \
-              exec:java -Dexec.mainClass="liquibase.Liquibase" -Dexec.args="version" 2>/dev/null || \
-            echo "Could not retrieve version via liquibase --version command"
+            echo "Build Type: COMMUNITY"
+            echo "Community artifacts version: $COMMUNITY_VERSION"
+            # Extract version info from JAR manifest if available
+            if [ -f "$HOME/.m2/repository/org/liquibase/liquibase-core/$COMMUNITY_VERSION/liquibase-core-$COMMUNITY_VERSION.jar" ]; then
+              echo ""
+              echo "Liquibase Core manifest info:"
+              unzip -p "$HOME/.m2/repository/org/liquibase/liquibase-core/$COMMUNITY_VERSION/liquibase-core-$COMMUNITY_VERSION.jar" META-INF/MANIFEST.MF 2>/dev/null | grep -i "Implementation-Version\|Bundle-Version" || echo "  (version info available at runtime)"
+            fi
           fi
           echo "::endgroup::"
 
