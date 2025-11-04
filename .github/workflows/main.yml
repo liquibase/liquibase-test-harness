@@ -360,10 +360,10 @@ jobs:
           echo "SECURE version: $SECURE_VERSION"
           echo "secure-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
 
-          # For pro builds, also fetch Maven plugin version (com.liquibase:liquibase-maven-plugin)
+          # For secure builds, also fetch Maven plugin version (com.liquibase:liquibase-maven-plugin)
           # It uses the same version as com.liquibase:liquibase-commercial
-          USE_PRO_ARTIFACTS="${{ steps.configure-build.outputs.useProArtifacts }}"
-          if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
+          USE_SECURE_ARTIFACTS="${{ steps.configure-build.outputs.useProArtifacts }}"
+          if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
             echo "Checking for Maven plugin version (com.liquibase:liquibase-maven-plugin)"
             PLUGIN_URL="https://maven.pkg.github.com/liquibase/liquibase-pro/com/liquibase/liquibase-maven-plugin/maven-metadata.xml"
             PLUGIN_METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PLUGIN_URL")
