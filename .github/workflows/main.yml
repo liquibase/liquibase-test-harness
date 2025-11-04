@@ -130,6 +130,7 @@ jobs:
       liquibaseSha: ${{ steps.configure-build.outputs.liquibaseSha }}
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
       useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
+      resolvedVersion: ${{ steps.discover-version.outputs.version }}
       databases:
         ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","percona-xtradb-cluster-8.4",
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
@@ -292,18 +293,7 @@ jobs:
           repositories: |
             [
               {
-                "id": "liquibase-pro",
-                "url": "https://maven.pkg.github.com/liquibase/liquibase-pro",
-                "releases": {
-                  "enabled": "true"
-                },
-                "snapshots": {
-                  "enabled": "true",
-                  "updatePolicy": "always"
-                }
-              },
-              {
-                "id": "liquibase",
+                "id": "github",
                 "url": "https://maven.pkg.github.com/liquibase/liquibase",
                 "releases": {
                   "enabled": "true"
@@ -317,12 +307,7 @@ jobs:
           servers: |
             [
               {
-                "id": "liquibase-pro",
-                "username": "liquibot",
-                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
-              },
-              {
-                "id": "liquibase",
+                "id": "github",
                 "username": "liquibot",
                 "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
               }
@@ -480,31 +465,20 @@ jobs:
           REPO_USER: ${{ env.REPO_USER }}
           REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
 
-      - name: Configure Liquibase Version
-        id: configure-version
-        env:
-          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
-        run: |
-          echo "::group::Configure Liquibase Version"
-
-          # Use LATEST version specifier - Maven will resolve actual latest from configured repos
-          echo "Setting liquibase-core.version to: LATEST"
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=LATEST
-          echo "version=LATEST" >> $GITHUB_OUTPUT
-          echo "::endgroup::"
-
       - name: ${{ matrix.database }} Test Run
         run: |
           USE_PRO_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
+          RESOLVED_VERSION="${{ needs.setup.outputs.resolvedVersion }}"
+
           if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
             echo "Running tests with PRO artifacts"
-            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true"
+            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$RESOLVED_VERSION"
           else
             echo "Running tests with COMMUNITY artifacts"
-            MAVEN_OPTS=""
+            MAVEN_OPTS="-Dliquibase-core.version=$RESOLVED_VERSION"
           fi
 
-          # Run tests with appropriate profile/properties
+          # Run tests with appropriate profile/properties and resolved version
           ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "$MAVEN_OPTS"
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
