@@ -85,6 +85,7 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-commercial</artifactId>
             <version>${liquibase-core.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.apache.groovy</groupId>
@@ -462,6 +463,23 @@
         </snapshotRepository>
     </distributionManagement>
     <profiles>
+        <profile>
+            <!-- Pro artifacts profile: Uses com.liquibase:liquibase-commercial from liquibase-pro repository -->
+            <id>useproartifacts</id>
+            <activation>
+                <property>
+                    <name>useProArtifacts</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.liquibase</groupId>
+                    <artifactId>liquibase-commercial</artifactId>
+                    <version>${liquibase-core.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
         <profile>
             <!-- Required for deployment to Sonatype -->
             <id>release</id>

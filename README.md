@@ -201,6 +201,17 @@ The workflows use Maven for resolving and downloading all Liquibase dependencies
   - Tests continue with community artifacts instead of failing
 - This ensures workflows don't break when token scopes are insufficient for manual pro selection
 
+**Important: Liquibase-Pro GroupId Difference**
+- **Community artifacts** (`liquibase/liquibase`):
+  - `org.liquibase:liquibase-core`
+  - `org.liquibase:liquibase-commercial`
+
+- **Pro artifacts** (`liquibase/liquibase-pro`):
+  - `org.liquibase:liquibase-core` (same groupId as community)
+  - `com.liquibase:liquibase-commercial` (different groupId!)
+
+The Maven workflows automatically detect which repository is being used and resolve the correct artifact with the appropriate groupId. When using Maven profiles, you can also manually activate the `useproartifacts` profile with `-Puseproartifacts` to ensure the correct `com.liquibase:liquibase-commercial` dependency is resolved from the liquibase-pro repository.
+
 #### Configuration File
 
 The test harness will look for a file called `harness-config.yml` in the root of your classpath.

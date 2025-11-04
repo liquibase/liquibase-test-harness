@@ -325,9 +325,16 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
           # Resolve Liquibase dependencies from configured repository via Maven
-          # This downloads liquibase-core and liquibase-commercial (if using pro artifacts)
-          # Both community and pro dependencies are available in their respective repositories
-          mvn -B dependency:resolve -DincludeArtifactIds=liquibase-core,liquibase-commercial -Dartifacts=org.liquibase:liquibase-core:0-SNAPSHOT:jar,org.liquibase:liquibase-commercial:0-SNAPSHOT:jar
+          # Note: liquibase-commercial uses different groupIds depending on the repository:
+          # - Community: org.liquibase:liquibase-commercial (from liquibase/liquibase repo)
+          # - Pro: com.liquibase:liquibase-commercial (from liquibase/liquibase-pro repo)
+          if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
+            echo "Resolving PRO artifacts from liquibase-pro repository..."
+            mvn -B dependency:resolve -Puseproartifacts -DincludeArtifactIds=liquibase-core,liquibase-commercial -Dartifacts=org.liquibase:liquibase-core:0-SNAPSHOT:jar,com.liquibase:liquibase-commercial:0-SNAPSHOT:jar
+          else
+            echo "Resolving COMMUNITY artifacts from liquibase repository..."
+            mvn -B dependency:resolve -DincludeArtifactIds=liquibase-core,liquibase-commercial -Dartifacts=org.liquibase:liquibase-core:0-SNAPSHOT:jar,org.liquibase:liquibase-commercial:0-SNAPSHOT:jar
+          fi
 
           echo "::notice :: Resolved Snapshot Liquibase dependencies from ${{ steps.configure-build.outputs.liquibaseRepo }}"
 
