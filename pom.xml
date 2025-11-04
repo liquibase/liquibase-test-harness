@@ -450,6 +450,33 @@
 
         </plugins>
     </build>
+
+    <repositories>
+        <!-- GitHub Packages repositories for Liquibase artifacts -->
+        <repository>
+            <id>liquibase</id>
+            <url>https://maven.pkg.github.com/liquibase/liquibase</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>liquibase-pro</id>
+            <url>https://maven.pkg.github.com/liquibase/liquibase-pro</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>github</id>
