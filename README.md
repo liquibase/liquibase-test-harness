@@ -200,6 +200,7 @@ The workflows use Maven for resolving and downloading all Liquibase dependencies
   - Notifies user that fallback occurred
   - Tests continue with community artifacts instead of failing
 - This ensures workflows don't break when token scopes are insufficient for manual pro selection
+- **Important**: The workflow respects the user's artifact selection even if branch lookup falls back to a different repository. If you select `liquibase-pro`, the workflow will use `com.liquibase:liquibase-commercial` artifacts regardless of which repository the branch is found in.
 
 **Important: Commercial Artifacts Are Pro-Only**
 
