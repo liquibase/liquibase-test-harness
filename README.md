@@ -165,6 +165,32 @@ Each workflow run generates an execution summary showing:
 - Whether Pro (Liquibase Secure) or Community artifacts were used
 - Overall test results
 
+#### Artifact Download Mechanism
+
+The workflows use a direct artifact download approach to retrieve Liquibase distributions:
+
+**For CLI Distribution (liquibase-cli):**
+- Downloads the pre-built CLI distribution from the appropriate GitHub Package Repository
+- Uses `curl` with GitHub authentication token for direct download
+- Supports both community (`liquibase/liquibase`) and pro (`liquibase/liquibase-pro`) repositories
+- Falls back to Maven dependency resolution if direct download fails
+
+**For Java Libraries:**
+- Maven automatically resolves dependencies from configured repositories
+- `liquibase-core` for core functionality
+- `liquibase-commercial` for pro/secure features
+- Repositories configured with GitHub Package Manager authentication in Maven settings
+
+**Authentication:**
+- Uses `LIQUIBOT_PAT_GPM_ACCESS` environment variable (GitHub PAT with `read:packages` scope)
+- Configured via Maven settings XML action during workflow setup
+- Ensures secure download of pro artifacts from private repositories
+
+**Note on liquibase-sdk-plugin:**
+- Prior versions used `liquibase-sdk-maven-plugin` for artifact installation
+- Since v0.11.0 (October 2025), the SDK plugin disabled pro repository downloads (DAT-20810)
+- Current implementation uses direct downloads to work around this limitation
+
 #### Configuration File
 
 The test harness will look for a file called `harness-config.yml` in the root of your classpath.
