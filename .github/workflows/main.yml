@@ -558,19 +558,19 @@ jobs:
             mvn -B -Puseproartifacts -DuseProArtifacts=true \
               -Dliquibase-core.version=$COMMUNITY_VERSION \
               -Dliquibase-commercial.version=$PRO_VERSION \
-              exec:java -Dexec.mainClass="liquibase.command.core.VersionCommandStep" \
-              -q 2>/dev/null || mvn -B -Puseproartifacts -DuseProArtifacts=true \
+              exec:java -Dexec.mainClass="liquibase.cli.Main" -Dexec.args="--version" 2>/dev/null || \
+            mvn -B -Puseproartifacts -DuseProArtifacts=true \
               -Dliquibase-core.version=$COMMUNITY_VERSION \
               -Dliquibase-commercial.version=$PRO_VERSION \
-              exec:java -Dexec.mainClass="liquibase.Liquibase" \
-              -q 2>/dev/null || echo "Could not retrieve version via exec:java, will be available at test runtime"
+              exec:java -Dexec.mainClass="liquibase.Liquibase" -Dexec.args="version" 2>/dev/null || \
+            echo "Could not retrieve version via liquibase --version command"
           else
             echo "Retrieving Liquibase version with COMMUNITY artifacts..."
             mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION \
-              exec:java -Dexec.mainClass="liquibase.command.core.VersionCommandStep" \
-              -q 2>/dev/null || mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION \
-              exec:java -Dexec.mainClass="liquibase.Liquibase" \
-              -q 2>/dev/null || echo "Could not retrieve version via exec:java, will be available at test runtime"
+              exec:java -Dexec.mainClass="liquibase.cli.Main" -Dexec.args="--version" 2>/dev/null || \
+            mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION \
+              exec:java -Dexec.mainClass="liquibase.Liquibase" -Dexec.args="version" 2>/dev/null || \
+            echo "Could not retrieve version via liquibase --version command"
           fi
           echo "::endgroup::"
 
