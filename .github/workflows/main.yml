@@ -515,6 +515,37 @@ jobs:
           restore-keys: |
             mvn-liquibase-${{ github.run_id }}-
 
+      - name: Display installed Liquibase versions
+        run: |
+          echo "::group::Installed Liquibase Versions"
+          echo "Community version: ${{ needs.setup.outputs.communityVersion }}"
+          echo "Pro version: ${{ needs.setup.outputs.proVersion }}"
+          echo "Using Pro artifacts: ${{ needs.setup.outputs.useProArtifacts }}"
+          echo ""
+          echo "Available artifacts in cache:"
+
+          # Show org.liquibase artifacts
+          if [ -d "$HOME/.m2/repository/org/liquibase" ]; then
+            echo "Community artifacts (org.liquibase):"
+            find "$HOME/.m2/repository/org/liquibase" -name "*.jar" -type f | sort | while read jar; do
+              echo "  - $(basename $(dirname $jar))/$(basename $jar)"
+            done
+          else
+            echo "No community artifacts found in cache"
+          fi
+
+          # Show com.liquibase artifacts
+          if [ -d "$HOME/.m2/repository/com/liquibase" ]; then
+            echo "Pro artifacts (com.liquibase):"
+            find "$HOME/.m2/repository/com/liquibase" -name "*.jar" -type f | sort | while read jar; do
+              echo "  - $(basename $(dirname $jar))/$(basename $jar)"
+            done
+          else
+            echo "No pro artifacts found in cache"
+          fi
+
+          echo "::endgroup::"
+
       - name: Build ${{ matrix.database }} test infra
         working-directory: src/test/resources/docker
         run: ./create-infra.sh ${{ matrix.database }}
