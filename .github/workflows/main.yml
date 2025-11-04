@@ -518,15 +518,23 @@ jobs:
       - name: Display installed Liquibase versions
         run: |
           echo "::group::Liquibase Versions"
-          echo "Build Type: ${{ needs.setup.outputs.useProArtifacts == 'true' && 'PRO (Liquibase Secure)' || 'COMMUNITY' }}"
-          echo "Community version: ${{ needs.setup.outputs.communityVersion }}"
-          echo "Pro version: ${{ needs.setup.outputs.proVersion }}"
+          USE_PRO="${{ needs.setup.outputs.useProArtifacts }}"
 
-          # Show cached artifacts
-          echo ""
-          echo "Cached artifacts:"
-          find "$HOME/.m2/repository/org/liquibase" -name "liquibase-core*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  org.liquibase: (loading...)"
-          find "$HOME/.m2/repository/com/liquibase" -name "liquibase-commercial*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  com.liquibase: (none)"
+          if [ "$USE_PRO" = "true" ]; then
+            echo "Build Type: PRO (Liquibase Secure)"
+            echo "Community version: ${{ needs.setup.outputs.communityVersion }}"
+            echo "Commercial version: ${{ needs.setup.outputs.proVersion }}"
+            echo ""
+            echo "Cached artifacts:"
+            find "$HOME/.m2/repository/org/liquibase" -name "liquibase-core*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  org.liquibase: (loading...)"
+            find "$HOME/.m2/repository/com/liquibase" -name "liquibase-commercial*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  com.liquibase: (loading...)"
+          else
+            echo "Build Type: COMMUNITY"
+            echo "Version: ${{ needs.setup.outputs.communityVersion }}"
+            echo ""
+            echo "Cached artifacts:"
+            find "$HOME/.m2/repository/org/liquibase" -name "liquibase-core*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  org.liquibase: (loading...)"
+          fi
 
           echo "::endgroup::"
 
