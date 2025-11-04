@@ -191,6 +191,13 @@ The workflows use a direct artifact download approach to retrieve Liquibase dist
 - Since v0.11.0 (October 2025), the SDK plugin disabled pro repository downloads (DAT-20810)
 - Current implementation uses direct downloads to work around this limitation
 
+**GitHub App Token Scope:**
+- Main workflow uses GitHub App token scoped to `liquibase` organization
+- Token has access to multiple repositories: `liquibase`, `liquibase-pro`, `liquibase-test-harness`
+- Token permissions are minimized: `contents:read`, `actions:read`, `statuses:write`
+- This allows safe branch queries against private `liquibase-pro` repository
+- If workflow fails with "Resource not accessible by integration" error, verify GitHub App is installed on liquibase organization with proper permissions
+
 #### Configuration File
 
 The test harness will look for a file called `harness-config.yml` in the root of your classpath.
