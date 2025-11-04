@@ -341,22 +341,32 @@ jobs:
         run: |
           echo "::group::Discover Liquibase Snapshot Version"
 
-          # Simply use LATEST - Maven will resolve to the actual latest available version
-          # from the configured repositories in settings.xml
-          echo "Using LATEST version specifier - Maven will resolve from configured repositories"
-
-          # For pro builds, verify we have access to pro artifacts
           if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
-            echo "Will attempt to resolve pro artifacts (com.liquibase:liquibase-commercial)"
-            echo "From repository: https://maven.pkg.github.com/liquibase/liquibase-pro"
-            RESOLVED_VERSION="LATEST"
+            echo "Resolving PRO artifacts version from liquibase-pro/master"
+            # Pro artifacts use 'master' version from liquibase-pro
+            RESOLVED_VERSION="master"
+            echo "Pro version: $RESOLVED_VERSION"
           else
-            echo "Will attempt to resolve community artifacts (org.liquibase:liquibase-core only)"
-            echo "From repository: https://maven.pkg.github.com/liquibase/liquibase"
-            RESOLVED_VERSION="LATEST"
+            echo "Resolving COMMUNITY artifacts version from liquibase/master"
+            # Community artifacts use {commit-sha}-SNAPSHOT format
+            # Query the latest commit SHA from liquibase master branch
+            LATEST_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              https://api.github.com/repos/liquibase/liquibase/commits/master \
+              | grep -o '"sha":"[^"]*' | cut -d'"' -f4)
+
+            if [ -z "$LATEST_SHA" ]; then
+              echo "ERROR: Could not determine latest commit SHA from liquibase/master"
+              echo "GitHub API response:"
+              curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                https://api.github.com/repos/liquibase/liquibase/commits/master
+              exit 1
+            fi
+
+            RESOLVED_VERSION="${LATEST_SHA}-SNAPSHOT"
+            echo "Community version: $RESOLVED_VERSION (commit: $LATEST_SHA)"
           fi
 
-          echo "Resolved version specifier: $RESOLVED_VERSION"
+          echo "Final resolved version: $RESOLVED_VERSION"
           echo "version=$RESOLVED_VERSION" >> $GITHUB_OUTPUT
           echo "::endgroup::"
 
