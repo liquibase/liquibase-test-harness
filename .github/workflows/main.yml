@@ -462,7 +462,18 @@ jobs:
           echo "::endgroup::"
 
       - name: ${{ matrix.database }} Test Run
-        run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
+        run: |
+          USE_PRO_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
+          if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
+            echo "Running tests with PRO artifacts"
+            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true"
+          else
+            echo "Running tests with COMMUNITY artifacts"
+            MAVEN_OPTS=""
+          fi
+
+          # Run tests with appropriate profile/properties
+          ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "$MAVEN_OPTS"
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
