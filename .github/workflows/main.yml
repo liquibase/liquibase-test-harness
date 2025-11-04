@@ -132,6 +132,7 @@ jobs:
       useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
       communityVersion: ${{ steps.discover-version.outputs.community-version }}
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
+      mavenPluginVersion: ${{ steps.discover-version.outputs.maven-plugin-version }}
       databases:
         ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","percona-xtradb-cluster-8.4",
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
@@ -359,6 +360,26 @@ jobs:
           echo "SECURE version: $SECURE_VERSION"
           echo "secure-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
 
+          # For pro builds, also fetch Maven plugin version (com.liquibase:liquibase-maven-plugin)
+          # It uses the same version as com.liquibase:liquibase-commercial
+          USE_PRO_ARTIFACTS="${{ steps.configure-build.outputs.useProArtifacts }}"
+          if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
+            echo "Checking for Maven plugin version (com.liquibase:liquibase-maven-plugin)"
+            PLUGIN_URL="https://maven.pkg.github.com/liquibase/liquibase-pro/com/liquibase/liquibase-maven-plugin/maven-metadata.xml"
+            PLUGIN_METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PLUGIN_URL")
+
+            # Extract 'master' version from plugin metadata
+            PLUGIN_VERSION=$(echo "$PLUGIN_METADATA" | grep -o '<version>master</version>' | head -1 | sed 's/<[^>]*>//g')
+
+            if [ -z "$PLUGIN_VERSION" ]; then
+              echo "WARNING: Could not find master version for liquibase-maven-plugin, will use: master"
+              PLUGIN_VERSION="master"
+            else
+              echo "Maven plugin version found: $PLUGIN_VERSION"
+            fi
+            echo "maven-plugin-version=$PLUGIN_VERSION" >> $GITHUB_OUTPUT
+          fi
+
           echo "::endgroup::"
 
       - name: Resolve Snapshot Liquibase Dependencies
@@ -522,10 +543,12 @@ jobs:
             echo "Build Type: SECURE (Liquibase Secure)"
             echo "Community version: ${{ needs.setup.outputs.communityVersion }}"
             echo "Commercial version: ${{ needs.setup.outputs.proVersion }}"
+            echo "Maven plugin version: ${{ needs.setup.outputs.mavenPluginVersion }}"
             echo ""
             echo "Cached artifacts:"
             find "$HOME/.m2/repository/org/liquibase" -name "liquibase-core*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  org.liquibase: (loading...)"
             find "$HOME/.m2/repository/com/liquibase" -name "liquibase-commercial*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  com.liquibase: (loading...)"
+            find "$HOME/.m2/repository/com/liquibase" -name "liquibase-maven-plugin*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  com.liquibase (plugin): (loading...)"
           else
             echo "Build Type: COMMUNITY"
             echo "Version: ${{ needs.setup.outputs.communityVersion }}"
@@ -549,10 +572,11 @@ jobs:
           USE_SECURE_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
           COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
           SECURE_VERSION="${{ needs.setup.outputs.proVersion }}"
+          MAVEN_PLUGIN_VERSION="${{ needs.setup.outputs.mavenPluginVersion }}"
 
           if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
             echo "Running tests with SECURE artifacts"
-            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$COMMUNITY_VERSION -Dliquibase-commercial.version=$SECURE_VERSION"
+            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$COMMUNITY_VERSION -Dliquibase-commercial.version=$SECURE_VERSION -Dliquibase-maven-plugin.version=$MAVEN_PLUGIN_VERSION"
           else
             echo "Running tests with COMMUNITY artifacts"
             MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
