@@ -453,20 +453,10 @@
 
     <repositories>
         <!-- GitHub Packages repositories for Liquibase artifacts -->
+        <!-- Using 'github' as id to match settings.xml server configuration -->
         <repository>
-            <id>liquibase</id>
+            <id>github</id>
             <url>https://maven.pkg.github.com/liquibase/liquibase</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>liquibase-pro</id>
-            <url>https://maven.pkg.github.com/liquibase/liquibase-pro</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -501,20 +491,10 @@
             </activation>
             <repositories>
                 <!-- Prioritize liquibase-pro repository for pro artifacts -->
+                <!-- Using 'github' as id to match settings.xml server configuration -->
                 <repository>
-                    <id>liquibase-pro</id>
+                    <id>github</id>
                     <url>https://maven.pkg.github.com/liquibase/liquibase-pro</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                        <updatePolicy>always</updatePolicy>
-                    </snapshots>
-                </repository>
-                <repository>
-                    <id>liquibase</id>
-                    <url>https://maven.pkg.github.com/liquibase/liquibase</url>
                     <releases>
                         <enabled>true</enabled>
                     </releases>
