@@ -505,13 +505,15 @@ jobs:
               }
             ]
 
-      - name: Cache installed Liquibase
+      - name: Restore cached Liquibase artifacts
         uses: actions/cache@v4
         with:
           path: |
             ~/.m2/repository/org/liquibase/
             ~/.m2/repository/com/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            mvn-liquibase-${{ github.run_id }}-
 
       - name: Build ${{ matrix.database }} test infra
         working-directory: src/test/resources/docker
