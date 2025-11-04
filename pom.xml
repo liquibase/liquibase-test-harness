@@ -516,12 +516,6 @@
                     <!-- Use separate version property for commercial artifacts -->
                     <version>${liquibase-commercial.version}</version>
                 </dependency>
-                <dependency>
-                    <groupId>com.liquibase</groupId>
-                    <artifactId>liquibase-maven-plugin</artifactId>
-                    <!-- Use same version as commercial artifacts -->
-                    <version>${liquibase-maven-plugin.version}</version>
-                </dependency>
             </dependencies>
         </profile>
         <profile>

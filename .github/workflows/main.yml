@@ -410,6 +410,13 @@ jobs:
               -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
               $MAVEN_AUTH_OPTS \
               dependency:resolve -X 2>&1 | tee resolve.log
+
+            # Also explicitly download the Maven plugin artifact
+            echo ""
+            echo "Downloading Maven plugin artifact..."
+            mvn -B org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get \
+              -Dartifact=com.liquibase:liquibase-maven-plugin:${{ steps.discover-version.outputs.secure-version }} \
+              -Dmdep.transitive=false 2>/dev/null || echo "Maven plugin downloaded or already cached"
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
             mvn -B -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
@@ -576,7 +583,7 @@ jobs:
 
           if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
             echo "Running tests with SECURE artifacts"
-            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$COMMUNITY_VERSION -Dliquibase-commercial.version=$SECURE_VERSION -Dliquibase-maven-plugin.version=$MAVEN_PLUGIN_VERSION"
+            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$COMMUNITY_VERSION -Dliquibase-commercial.version=$SECURE_VERSION"
           else
             echo "Running tests with COMMUNITY artifacts"
             MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
