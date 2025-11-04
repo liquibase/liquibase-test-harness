@@ -174,7 +174,7 @@ jobs:
         id: configure-build
         uses: actions/github-script@v8
         with:
-          github-token: ${{ steps.get-token.outputs.token }}
+          github-token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           script: |
             const helper = require('./.github/util/workflow-helper.js')({github, context});
 
