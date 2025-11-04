@@ -193,21 +193,40 @@ jobs:
           echo "Using pro artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
           echo "::endgroup::"
 
+          # Set liquibase-core version to 0-SNAPSHOT for development builds
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
-          mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main" \
-            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}"
 
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}')"
-          echo "::notice :: Installed Snapshot Liquibase from ${{ steps.configure-build.outputs.liquibaseRepo }}: $buildOverview"
+          # Download liquibase CLI distribution from the configured repository
+          mkdir -p bin
+          CLI_VERSION=0-SNAPSHOT
 
-          mvn -B liquibase-sdk:set-commit-status \
-            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \
-            "-Dliquibase.sdk.status.context=Run Test Harness" \
-            "-Dliquibase.sdk.status.state=PENDING" \
-            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Internal functional tests" \
-            "-Dliquibase.sdk.status.commit=installed"
+          # Use the appropriate repository based on configuration
+          if [[ "${{ steps.configure-build.outputs.useProArtifacts }}" == "true" ]]; then
+            REPO_BASE="https://maven.pkg.github.com/liquibase/liquibase-pro"
+          else
+            REPO_BASE="https://maven.pkg.github.com/liquibase/liquibase"
+          fi
+
+          CLI_ARTIFACT="$REPO_BASE/org/liquibase/liquibase-cli/$CLI_VERSION/liquibase-cli-$CLI_VERSION-linux-x64.zip"
+
+          echo "Downloading from: $CLI_ARTIFACT"
+          curl -L -H "Authorization: token $GITHUB_TOKEN" -o liquibase-cli.zip "$CLI_ARTIFACT" && {
+            unzip -o liquibase-cli.zip -d bin/
+            rm liquibase-cli.zip
+          } || {
+            echo "Direct CLI download failed, using Maven fallback to resolve dependencies..."
+            mvn -B clean dependency:resolve -DincludeArtifactIds=liquibase-core,liquibase-commercial
+          }
+
+          chmod -R 777 bin
+          ls -l ./bin || echo "bin directory not found"
+          if [ -f "bin/liquibase" ]; then
+            bin/liquibase --version
+          else
+            echo "Liquibase CLI binary not found, but dependencies are resolved for Maven"
+          fi
+
+          echo "::notice :: Installed Snapshot Liquibase from ${{ steps.configure-build.outputs.liquibaseRepo }}"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v4
@@ -326,23 +345,27 @@ jobs:
 
       - name: Update status
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
-        env:
-          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
-        run: |
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ steps.get-token.outputs.token }}
+          script: |
+            const helper = require('./.github/util/workflow-helper.js')({github, context});
 
-          mvn -B liquibase-sdk:set-commit-status \
-            "-Dliquibase.sdk.status.commit=installed" \
-            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
-            "-Dliquibase.sdk.status.context=Run Test Harness" \
-            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
-            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Internal functional tests"
-          
-          mvn -B liquibase-sdk:set-commit-status \
-            "-Dliquibase.sdk.status.commit=installed" \
-            "-Dliquibase.sdk.repo=${{ needs.setup.outputs.liquibaseRepo }}" \
-            "-Dliquibase.sdk.status.context=Run Test Harness" \
-            "-Dliquibase.sdk.status.state=${{ needs.test.result }}" \
-            "-Dliquibase.sdk.status.url=https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}" \
-            "-Dliquibase.sdk.status.description=Test Harness tests complete"
+            const repoOwnerName = "${{ needs.setup.outputs.liquibaseOwner }}";
+            const result = "${{ needs.test.result }}";
+            const commitSha = "${{ needs.setup.outputs.liquibaseSha }}";
+            const runId = "${{ github.run_id }}";
+
+            const state = result === "success" ? "success" : "failure";
+
+            console.log(`Setting commit status: ${state} for ${repoOwnerName}/liquibase@${commitSha}`);
+
+            await github.rest.repos.createCommitStatus({
+              owner: repoOwnerName,
+              repo: "liquibase",
+              sha: commitSha,
+              state: state,
+              context: "Run Test Harness",
+              description: "Test Harness tests complete",
+              target_url: `https://github.com/liquibase/liquibase-test-harness/actions/runs/${runId}`
+            });

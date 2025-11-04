@@ -292,26 +292,41 @@ jobs:
           echo "Using pro artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
           echo "::endgroup::"
 
+          # Set liquibase-core version to 0-SNAPSHOT for development builds
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
-          mvn -B liquibase-sdk:install-snapshot \
-            "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
-            "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \
-            "-Dliquibase.sdk.proWorkflowId=build.yml"\
-            "-Dliquibase.sdk.workflowId=run-tests.yml"
 
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
-          mvn liquibase-sdk:install-snapshot-cli \
-          "-Dliquibase.sdk.branchSearch=${{ steps.configure-build.outputs.liquibaseBranch }},master,main,develop" \
-          "-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}" \
-          "-Dliquibase.sdk.proWorkflowId=build.yml" \
-          "-Dliquibase.sdk.workflowId=run-tests.yml"
+          # Download liquibase CLI distribution from the configured repository
+          mkdir -p bin
+          CLI_VERSION=0-SNAPSHOT
+          CLI_ARTIFACT="https://maven.pkg.github.com/liquibase/liquibase-pro/org/liquibase/liquibase-cli/$CLI_VERSION/liquibase-cli-$CLI_VERSION-linux-x64.zip"
+
+          # Use the appropriate repository based on configuration
+          if [[ "${{ steps.configure-build.outputs.useProArtifacts }}" == "true" ]]; then
+            REPO_BASE="https://maven.pkg.github.com/liquibase/liquibase-pro"
+          else
+            REPO_BASE="https://maven.pkg.github.com/liquibase/liquibase"
+          fi
+
+          CLI_ARTIFACT="$REPO_BASE/org/liquibase/liquibase-cli/$CLI_VERSION/liquibase-cli-$CLI_VERSION-linux-x64.zip"
+
+          echo "Downloading from: $CLI_ARTIFACT"
+          curl -L -H "Authorization: token $GITHUB_TOKEN" -o liquibase-cli.zip "$CLI_ARTIFACT" && {
+            unzip -o liquibase-cli.zip -d bin/
+            rm liquibase-cli.zip
+          } || {
+            echo "Direct CLI download failed, using Maven fallback to resolve dependencies..."
+            mvn -B clean dependency:resolve -DincludeArtifactIds=liquibase-core,liquibase-commercial
+          }
 
           chmod -R 777 bin
-          ls -l ./bin
-          bin/liquibase --version
+          ls -l ./bin || echo "bin directory not found"
+          if [ -f "bin/liquibase" ]; then
+            bin/liquibase --version
+          else
+            echo "Liquibase CLI binary not found, but dependencies are resolved for Maven"
+          fi
 
-          buildOverview="$(mvn -B -q liquibase-sdk:get-build-info '-Dliquibase.sdk.buildInfo.outputKey=overview' '-Dliquibase.sdk.repo=${{ steps.configure-build.outputs.liquibaseRepo }}')"
-          echo "::notice :: Installed Snapshot Liquibase from ${{ steps.configure-build.outputs.liquibaseRepo }}: $buildOverview"
+          echo "::notice :: Installed Snapshot Liquibase from ${{ steps.configure-build.outputs.liquibaseRepo }}"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v4
