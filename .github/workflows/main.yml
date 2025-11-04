@@ -318,10 +318,12 @@ jobs:
             [
               {
                 "id": "liquibase-pro",
+                "username": "liquibot",
                 "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
               },
               {
                 "id": "liquibase",
+                "username": "liquibot",
                 "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
               }
             ]
