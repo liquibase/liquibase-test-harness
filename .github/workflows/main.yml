@@ -391,20 +391,28 @@ jobs:
           # Verify Maven settings are configured
           echo "Maven settings.xml location:"
           ls -la ~/.m2/settings.xml || echo "No settings.xml found"
+          echo "Maven settings.xml content:"
+          cat ~/.m2/settings.xml || echo "Could not read settings.xml"
 
           # Use LATEST version specifier - Maven will resolve the actual latest available
           MAVEN_VERSION_SPEC="${{ steps.discover-version.outputs.version }}"
 
           # Resolve Liquibase dependencies with correct profile
           # Note: liquibase-commercial is only available in the liquibase-pro repository
+
+          # Pass authentication credentials as system properties to Maven
+          MAVEN_AUTH_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=debug"
+
           if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
             echo "Resolving PRO artifacts from liquibase-pro repository..."
             mvn -B -Puseproartifacts -Dliquibase-core.version=$MAVEN_VERSION_SPEC \
+              $MAVEN_AUTH_OPTS \
               dependency:resolve -X 2>&1 | tee resolve.log
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
             mvn -B -Dliquibase-core.version=$MAVEN_VERSION_SPEC \
-              dependency:resolve 2>&1 | tee resolve.log
+              $MAVEN_AUTH_OPTS \
+              dependency:resolve -X 2>&1 | tee resolve.log
           fi
 
           echo "::notice :: Resolved Snapshot Liquibase dependencies with version specifier $MAVEN_VERSION_SPEC"
