@@ -352,14 +352,24 @@ jobs:
             # Query the latest commit SHA from liquibase master branch
             LATEST_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
               https://api.github.com/repos/liquibase/liquibase/commits/master \
-              | grep -o '"sha":"[^"]*' | cut -d'"' -f4)
+              | grep -o '^  "sha": "[^"]*' | cut -d'"' -f4)
 
             if [ -z "$LATEST_SHA" ]; then
               echo "ERROR: Could not determine latest commit SHA from liquibase/master"
-              echo "GitHub API response:"
-              curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                https://api.github.com/repos/liquibase/liquibase/commits/master
-              exit 1
+              echo "Attempting to extract SHA using jq..."
+
+              # Try using jq if available
+              LATEST_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                https://api.github.com/repos/liquibase/liquibase/commits/master \
+                | jq -r '.sha // empty' 2>/dev/null)
+
+              if [ -z "$LATEST_SHA" ]; then
+                echo "ERROR: jq parsing also failed"
+                echo "GitHub API response:"
+                curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                  https://api.github.com/repos/liquibase/liquibase/commits/master
+                exit 1
+              fi
             fi
 
             RESOLVED_VERSION="${LATEST_SHA}-SNAPSHOT"
