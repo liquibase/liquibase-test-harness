@@ -231,13 +231,15 @@ The Maven workflows automatically detect which repository is being used and reso
 1. **GitHub Actions Workflow**: The main workflow detects the selected repository (community vs pro) and activates the appropriate Maven profile when resolving dependencies
 
 2. **Version Resolution Strategy**:
-   - **Uses Maven's LATEST Specifier**: Both setup and test jobs use `LATEST` version specifier
-   - **Maven Resolves Automatically**: Maven's `versions:set-property` and `dependency:resolve` find the actual latest available
-   - **Repository-Aware**: Maven consults configured repositories (from settings.xml) and selects appropriate versions
-   - **Works for Both Repos**:
-     - Community repo: Resolves latest from `liquibase/liquibase`
-     - Pro repo: Resolves latest from `liquibase/liquibase-pro` with correct groupId
-   - **No Manual Querying**: Eliminates complex version discovery logic - lets Maven handle it
+   - **GitHub Packages Snapshot Versioning**: Artifacts follow specific versioning patterns
+   - **Community artifacts** (`liquibase/liquibase`):
+     - Version format: `{commit-sha}-SNAPSHOT` (e.g., `e11e704013b5f419e0826807714d72c945dbffd2-SNAPSHOT`)
+     - Workflow queries GitHub API to get latest master branch commit SHA
+     - Each commit gets a unique snapshot version
+   - **Pro artifacts** (`liquibase/liquibase-pro`):
+     - Version: `master` (always points to latest master branch build)
+     - No SHA needed - single "master" version that's continuously updated
+   - **Automatic Discovery**: Workflow automatically detects which artifacts are needed and queries the appropriate version
 
 3. **Maven Profile**: The `useproartifacts` profile (when activated with `-Puseproartifacts`):
    - Declares dependency on `com.liquibase:liquibase-commercial` with the correct groupId for pro artifacts
@@ -246,13 +248,16 @@ The Maven workflows automatically detect which repository is being used and reso
 
 4. **Artifact Resolution Flow**:
    - **Pro artifacts** (`liquibase-pro` selected):
+     - Workflow sets version to `master`
      - Profile activates `-Puseproartifacts`
      - Maven resolves:
-       - `org.liquibase:liquibase-core:LATEST` from `liquibase-pro` repository
-       - `com.liquibase:liquibase-commercial:LATEST` from `liquibase-pro` repository
+       - `org.liquibase:liquibase-core:master` from `liquibase-pro` repository
+       - `com.liquibase:liquibase-commercial:master` from `liquibase-pro` repository
    - **Community artifacts** (default):
+     - Workflow queries GitHub API for latest master commit SHA
+     - Sets version to `{SHA}-SNAPSHOT` (e.g., `e11e704013b5f419e0826807714d72c945dbffd2-SNAPSHOT`)
      - Maven resolves only:
-       - `org.liquibase:liquibase-core:LATEST` from `liquibase` repository
+       - `org.liquibase:liquibase-core:{SHA}-SNAPSHOT` from `liquibase` repository
      - Note: `liquibase-commercial` is NOT resolved for community builds (not available in community repo)
 
 To manually use the pro artifacts profile locally, use:
