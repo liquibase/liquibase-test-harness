@@ -402,8 +402,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.m2/repository/org/liquibase/
-            ~/.m2/repository/com/liquibase/
+            ~/.m2/repository/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
   test:
@@ -509,8 +508,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.m2/repository/org/liquibase/
-            ~/.m2/repository/com/liquibase/
+            ~/.m2/repository/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             mvn-liquibase-${{ github.run_id }}-
