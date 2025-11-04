@@ -210,7 +210,23 @@ The workflows use Maven for resolving and downloading all Liquibase dependencies
   - `org.liquibase:liquibase-core` (same groupId as community)
   - `com.liquibase:liquibase-commercial` (different groupId!)
 
-The Maven workflows automatically detect which repository is being used and resolve the correct artifact with the appropriate groupId. When using Maven profiles, you can also manually activate the `useproartifacts` profile with `-Puseproartifacts` to ensure the correct `com.liquibase:liquibase-commercial` dependency is resolved from the liquibase-pro repository.
+##### Maven Dependency Resolution
+
+The Maven workflows automatically detect which repository is being used and resolve the correct artifacts:
+
+1. **GitHub Actions Workflow**: The main workflow detects the selected repository (community vs pro) and activates the appropriate Maven profile
+2. **Maven Profile**: The `useproartifacts` profile (when activated with `-Puseproartifacts`):
+   - Declares dependency on `com.liquibase:liquibase-commercial` with the correct groupId
+   - Configures repositories to prioritize `liquibase-pro` for artifact resolution
+3. **Dynamic Repository Selection**: Maven resolves dependencies from the configured repositories based on:
+   - Which profile is active
+   - Snapshot version availability in each repository
+   - Maven's standard resolution strategy (snapshot/release artifacts)
+
+To manually use the pro artifacts profile locally, use:
+```bash
+mvn clean install -Puseproartifacts -DuseProArtifacts=true
+```
 
 #### Configuration File
 
