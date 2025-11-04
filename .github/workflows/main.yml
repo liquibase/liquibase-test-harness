@@ -355,9 +355,9 @@ jobs:
           echo "community-version=$COMMUNITY_VERSION" >> $GITHUB_OUTPUT
 
           # Pro version is always 'master' for com.liquibase:liquibase-commercial
-          PRO_VERSION="master"
-          echo "Pro version: $PRO_VERSION"
-          echo "pro-version=$PRO_VERSION" >> $GITHUB_OUTPUT
+          SECURE_VERSION="master"
+          echo "Pro version: $SECURE_VERSION"
+          echo "pro-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
 
           echo "::endgroup::"
 
@@ -518,10 +518,10 @@ jobs:
       - name: Display installed Liquibase versions
         run: |
           echo "::group::Liquibase Versions"
-          USE_PRO="${{ needs.setup.outputs.useProArtifacts }}"
+          USE_SECURE="${{ needs.setup.outputs.useProArtifacts }}"
 
-          if [ "$USE_PRO" = "true" ]; then
-            echo "Build Type: PRO (Liquibase Secure)"
+          if [ "$USE_SECURE" = "true" ]; then
+            echo "Build Type: SECURE (Liquibase Secure)"
             echo "Community version: ${{ needs.setup.outputs.communityVersion }}"
             echo "Commercial version: ${{ needs.setup.outputs.proVersion }}"
             echo ""
@@ -548,13 +548,13 @@ jobs:
 
       - name: ${{ matrix.database }} Test Run
         run: |
-          USE_PRO_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
+          USE_SECURE_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
           COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
-          PRO_VERSION="${{ needs.setup.outputs.proVersion }}"
+          SECURE_VERSION="${{ needs.setup.outputs.proVersion }}"
 
-          if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
-            echo "Running tests with PRO artifacts"
-            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$COMMUNITY_VERSION -Dliquibase-commercial.version=$PRO_VERSION"
+          if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
+            echo "Running tests with SECURE artifacts"
+            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$COMMUNITY_VERSION -Dliquibase-commercial.version=$SECURE_VERSION"
           else
             echo "Running tests with COMMUNITY artifacts"
             MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
