@@ -326,30 +326,23 @@ jobs:
         run: |
           echo "::group::Discover Liquibase Snapshot Version"
 
-          # Query the appropriate repository for available versions
+          # Simply use LATEST - Maven will resolve to the actual latest available version
+          # from the configured repositories in settings.xml
+          echo "Using LATEST version specifier - Maven will resolve from configured repositories"
+
+          # For pro builds, verify we have access to pro artifacts
           if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
-            REPO_URL="https://maven.pkg.github.com/liquibase/liquibase-pro"
-            ARTIFACT="org.liquibase:liquibase-core"
+            echo "Will attempt to resolve pro artifacts (com.liquibase:liquibase-commercial)"
+            echo "From repository: https://maven.pkg.github.com/liquibase/liquibase-pro"
+            RESOLVED_VERSION="LATEST"
           else
-            REPO_URL="https://maven.pkg.github.com/liquibase/liquibase"
-            ARTIFACT="org.liquibase:liquibase-core"
+            echo "Will attempt to resolve community artifacts (org.liquibase:liquibase-core only)"
+            echo "From repository: https://maven.pkg.github.com/liquibase/liquibase"
+            RESOLVED_VERSION="LATEST"
           fi
 
-          echo "Querying repository: $REPO_URL for $ARTIFACT"
-
-          # Use mvn dependency:tree to find available versions
-          # First, try to resolve LATEST which will find the latest version available
-          LATEST_VERSION=$(mvn -B dependency:tree -Dartifact=$ARTIFACT:LATEST -DoutputFile=/dev/null 2>&1 | grep -oP '(?<=org.liquibase:liquibase-core:)\d+\.\d+\.\d+(-SNAPSHOT)?' | head -1)
-
-          if [ -z "$LATEST_VERSION" ]; then
-            echo "::warning::Could not discover version, using default"
-            DISCOVERED_VERSION="4.33.0"
-          else
-            DISCOVERED_VERSION="$LATEST_VERSION"
-          fi
-
-          echo "Discovered version: $DISCOVERED_VERSION"
-          echo "version=$DISCOVERED_VERSION" >> $GITHUB_OUTPUT
+          echo "Resolved version specifier: $RESOLVED_VERSION"
+          echo "version=$RESOLVED_VERSION" >> $GITHUB_OUTPUT
           echo "::endgroup::"
 
       - name: Resolve Snapshot Liquibase Dependencies
@@ -358,24 +351,28 @@ jobs:
         run: |
           echo "::group::Resolve Snapshot Liquibase Dependencies"
           echo "Artifact repository: ${{ steps.configure-build.outputs.liquibaseRepo }}"
-          echo "Discovered version: ${{ steps.discover-version.outputs.version }}"
+          echo "Using version specifier: ${{ steps.discover-version.outputs.version }}"
           echo "Using pro artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
           echo "::endgroup::"
 
-          # Set the discovered version in pom.xml
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=${{ steps.discover-version.outputs.version }}
+          # Use LATEST version specifier - Maven will resolve the actual latest available
+          MAVEN_VERSION_SPEC="${{ steps.discover-version.outputs.version }}"
 
           # Resolve Liquibase dependencies with correct profile
           # Note: liquibase-commercial is only available in the liquibase-pro repository
           if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
             echo "Resolving PRO artifacts from liquibase-pro repository..."
-            mvn -B -Puseproartifacts dependency:resolve 2>&1 | tee resolve.log
+            mvn -B -Puseproartifacts \
+              versions:set-property -Dproperty=liquibase-core.version -DnewVersion=$MAVEN_VERSION_SPEC \
+              dependency:resolve 2>&1 | tee resolve.log
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
-            mvn -B dependency:resolve 2>&1 | tee resolve.log
+            mvn -B \
+              versions:set-property -Dproperty=liquibase-core.version -DnewVersion=$MAVEN_VERSION_SPEC \
+              dependency:resolve 2>&1 | tee resolve.log
           fi
 
-          echo "::notice :: Resolved Snapshot Liquibase dependencies with version ${{ steps.discover-version.outputs.version }}"
+          echo "::notice :: Resolved Snapshot Liquibase dependencies with version specifier $MAVEN_VERSION_SPEC"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v4
@@ -445,20 +442,10 @@ jobs:
         run: |
           echo "::group::Configure Liquibase Version"
 
-          # Query repositories for latest version
-          # Try pro repo first if that's what was selected
-          LATEST_VERSION=$(mvn -B dependency:tree -Dartifact=org.liquibase:liquibase-core:LATEST -DoutputFile=/dev/null 2>&1 | grep -oP '(?<=org.liquibase:liquibase-core:)\d+\.\d+\.\d+(-SNAPSHOT)?' | head -1)
-
-          if [ -z "$LATEST_VERSION" ]; then
-            echo "::warning::Could not discover version, using default"
-            VERSION_TO_USE="4.33.0"
-          else
-            VERSION_TO_USE="$LATEST_VERSION"
-          fi
-
-          echo "Setting liquibase-core.version to: $VERSION_TO_USE"
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=$VERSION_TO_USE
-          echo "version=$VERSION_TO_USE" >> $GITHUB_OUTPUT
+          # Use LATEST version specifier - Maven will resolve actual latest from configured repos
+          echo "Setting liquibase-core.version to: LATEST"
+          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=LATEST
+          echo "version=LATEST" >> $GITHUB_OUTPUT
           echo "::endgroup::"
 
       - name: ${{ matrix.database }} Test Run
