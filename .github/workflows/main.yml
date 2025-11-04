@@ -196,6 +196,14 @@ jobs:
             // Use manual input if provided, otherwise use detected default
             let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo }}" || defaultRepo;
             console.log("liquibaseRepo == " + liquibaseRepo);
+
+            // Track the user's intended repository for artifact selection
+            // This is important: even if we fall back to a different repo for branch lookup,
+            // we should still use pro artifacts if the user explicitly selected liquibase-pro
+            let userSelectedRepo = "${{ github.event.inputs.liquibaseRepo }}" || null;
+            let intentProArtifacts = userSelectedRepo ? helper.shouldUseProArtifacts(userSelectedRepo) : useProArtifacts;
+            console.log("User intended pro artifacts: " + intentProArtifacts);
+
             core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
 
             let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}" || testBranchName + ", master";
@@ -228,7 +236,7 @@ jobs:
                     liquibaseRepo = defaultRepo;
                     repoOwnerName = fallbackOwner;
                     repoName = fallbackRepo;
-                    core.notice("Switched to fallback repository: " + defaultRepo);
+                    core.notice("Switched to fallback repository: " + defaultRepo + " for branch lookup, but will use " + (intentProArtifacts ? "pro" : "community") + " artifacts");
                     console.log("Successfully found branch in fallback repo");
                   } catch (fallbackError) {
                     core.error("Failed to find branch in both " + liquibaseRepo + " and fallback " + defaultRepo);
@@ -241,7 +249,8 @@ jobs:
             }
             core.setOutput("liquibaseSha", liquibaseSha);
             core.setOutput("liquibaseRepo", liquibaseRepo);
-            core.setOutput("useProArtifacts", helper.shouldUseProArtifacts(liquibaseRepo));
+            // Use the user's intended pro artifacts setting, not the fallback repo's setting
+            core.setOutput("useProArtifacts", intentProArtifacts);
             core.setOutput("liquibaseOwner", repoOwnerName);
 
             let runDescription = "${{ github.event.inputs.runDescription }}";
