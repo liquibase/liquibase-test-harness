@@ -297,38 +297,12 @@ jobs:
           # Set liquibase-core version to 0-SNAPSHOT for development builds
           mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
 
-          # Download liquibase CLI distribution from the configured repository
-          mkdir -p bin
-          CLI_VERSION=0-SNAPSHOT
-          CLI_ARTIFACT="https://maven.pkg.github.com/liquibase/liquibase-pro/org/liquibase/liquibase-cli/$CLI_VERSION/liquibase-cli-$CLI_VERSION-linux-x64.zip"
+          # Resolve Liquibase dependencies from configured repository via Maven
+          # This downloads liquibase-core and liquibase-commercial (if using pro artifacts)
+          # Both community and pro dependencies are available in their respective repositories
+          mvn -B dependency:resolve -DincludeArtifactIds=liquibase-core,liquibase-commercial -Dartifacts=org.liquibase:liquibase-core:0-SNAPSHOT:jar,org.liquibase:liquibase-commercial:0-SNAPSHOT:jar
 
-          # Use the appropriate repository based on configuration
-          if [[ "${{ steps.configure-build.outputs.useProArtifacts }}" == "true" ]]; then
-            REPO_BASE="https://maven.pkg.github.com/liquibase/liquibase-pro"
-          else
-            REPO_BASE="https://maven.pkg.github.com/liquibase/liquibase"
-          fi
-
-          CLI_ARTIFACT="$REPO_BASE/org/liquibase/liquibase-cli/$CLI_VERSION/liquibase-cli-$CLI_VERSION-linux-x64.zip"
-
-          echo "Downloading from: $CLI_ARTIFACT"
-          curl -L -H "Authorization: token $GITHUB_TOKEN" -o liquibase-cli.zip "$CLI_ARTIFACT" && {
-            unzip -o liquibase-cli.zip -d bin/
-            rm liquibase-cli.zip
-          } || {
-            echo "Direct CLI download failed, using Maven fallback to resolve dependencies..."
-            mvn -B clean dependency:resolve -DincludeArtifactIds=liquibase-core,liquibase-commercial
-          }
-
-          chmod -R 777 bin
-          ls -l ./bin || echo "bin directory not found"
-          if [ -f "bin/liquibase" ]; then
-            bin/liquibase --version
-          else
-            echo "Liquibase CLI binary not found, but dependencies are resolved for Maven"
-          fi
-
-          echo "::notice :: Installed Snapshot Liquibase from ${{ steps.configure-build.outputs.liquibaseRepo }}"
+          echo "::notice :: Resolved Snapshot Liquibase dependencies from ${{ steps.configure-build.outputs.liquibaseRepo }}"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v4

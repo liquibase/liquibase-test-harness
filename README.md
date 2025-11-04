@@ -167,19 +167,15 @@ Each workflow run generates an execution summary showing:
 
 #### Artifact Download Mechanism
 
-The workflows use a direct artifact download approach to retrieve Liquibase distributions:
+The workflows use Maven for resolving and downloading all Liquibase dependencies:
 
-**For CLI Distribution (liquibase-cli):**
-- Downloads the pre-built CLI distribution from the appropriate GitHub Package Repository
-- Uses `curl` with GitHub authentication token for direct download
-- Supports both community (`liquibase/liquibase`) and pro (`liquibase/liquibase-pro`) repositories
-- Falls back to Maven dependency resolution if direct download fails
-
-**For Java Libraries:**
-- Maven automatically resolves dependencies from configured repositories
-- `liquibase-core` for core functionality
-- `liquibase-commercial` for pro/secure features
+**Maven Dependency Resolution:**
+- Maven automatically resolves all Liquibase dependencies from configured repositories
+- `liquibase-core` for core functionality (available in both repositories)
+- `liquibase-commercial` for pro/secure features (only available in liquibase-pro repository)
+- Works seamlessly for both community and pro artifact selection
 - Repositories configured with GitHub Package Manager authentication in Maven settings
+- Supports snapshot builds with version `0-SNAPSHOT` for development testing
 
 **Authentication:**
 - Uses `LIQUIBOT_PAT_GPM_ACCESS` environment variable (GitHub PAT with `read:packages` scope)
