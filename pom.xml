@@ -497,12 +497,25 @@
                         <updatePolicy>always</updatePolicy>
                     </snapshots>
                 </repository>
+                <!-- Also include community repository for org.liquibase:liquibase-core -->
+                <repository>
+                    <id>github-community</id>
+                    <url>https://maven.pkg.github.com/liquibase/liquibase</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
             </repositories>
             <dependencies>
                 <dependency>
                     <groupId>com.liquibase</groupId>
                     <artifactId>liquibase-commercial</artifactId>
-                    <version>${liquibase-core.version}</version>
+                    <!-- Use separate version property for commercial artifacts -->
+                    <version>${liquibase-commercial.version}</version>
                 </dependency>
             </dependencies>
         </profile>

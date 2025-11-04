@@ -130,7 +130,8 @@ jobs:
       liquibaseSha: ${{ steps.configure-build.outputs.liquibaseSha }}
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
       useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
-      resolvedVersion: ${{ steps.discover-version.outputs.version }}
+      communityVersion: ${{ steps.discover-version.outputs.community-version }}
+      proVersion: ${{ steps.discover-version.outputs.pro-version }}
       databases:
         ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","percona-xtradb-cluster-8.4",
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
@@ -326,41 +327,38 @@ jobs:
         run: |
           echo "::group::Discover Liquibase Snapshot Version"
 
-          if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
-            echo "Resolving PRO artifacts version from liquibase-pro/master"
-            # Pro artifacts use 'master' version from liquibase-pro
-            RESOLVED_VERSION="master"
-            echo "Pro version: $RESOLVED_VERSION"
-          else
-            echo "Resolving COMMUNITY artifacts version from liquibase/master"
-            # Community artifacts use {commit-sha}-SNAPSHOT format
-            # Query GitHub Packages for the latest published artifact version
-            # The version format is the commit SHA from the built artifact
+          # Always discover community version (org.liquibase:liquibase-core)
+          echo "Resolving COMMUNITY artifacts version from liquibase/master"
+          # Community artifacts use {commit-sha}-SNAPSHOT format
+          # Query GitHub Packages for the latest published artifact version
+          # The version format is the commit SHA from the built artifact
 
-            PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase/org/liquibase/liquibase-core/maven-metadata.xml"
+          PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase/org/liquibase/liquibase-core/maven-metadata.xml"
 
-            echo "Fetching latest artifact version from: $PACKAGES_URL"
-            METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
+          echo "Fetching latest artifact version from: $PACKAGES_URL"
+          METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
 
-            # Extract versions in commit-SHA format (40 hex chars followed by -SNAPSHOT)
-            # Filter out release-prep and other non-SHA versions
-            LATEST_VERSION=$(echo "$METADATA" | grep -o '<version>[a-f0-9]\{40\}-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
+          # Extract versions in commit-SHA format (40 hex chars followed by -SNAPSHOT)
+          # Filter out release-prep and other non-SHA versions
+          COMMUNITY_VERSION=$(echo "$METADATA" | grep -o '<version>[a-f0-9]\{40\}-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
 
-            if [ -z "$LATEST_VERSION" ]; then
-              echo "ERROR: Could not determine latest commit-SHA version from GitHub Packages"
-              echo "Looking for pattern: 40-character hex SHA followed by -SNAPSHOT"
-              echo "GitHub Packages metadata response (first 500 chars):"
-              echo "$METADATA" | head -c 500
-              echo ""
-              exit 1
-            fi
-
-            RESOLVED_VERSION="$LATEST_VERSION"
-            echo "Community version: $RESOLVED_VERSION"
+          if [ -z "$COMMUNITY_VERSION" ]; then
+            echo "ERROR: Could not determine latest commit-SHA version from GitHub Packages"
+            echo "Looking for pattern: 40-character hex SHA followed by -SNAPSHOT"
+            echo "GitHub Packages metadata response (first 500 chars):"
+            echo "$METADATA" | head -c 500
+            echo ""
+            exit 1
           fi
 
-          echo "Final resolved version: $RESOLVED_VERSION"
-          echo "version=$RESOLVED_VERSION" >> $GITHUB_OUTPUT
+          echo "Community version: $COMMUNITY_VERSION"
+          echo "community-version=$COMMUNITY_VERSION" >> $GITHUB_OUTPUT
+
+          # Pro version is always 'master' for com.liquibase:liquibase-commercial
+          PRO_VERSION="master"
+          echo "Pro version: $PRO_VERSION"
+          echo "pro-version=$PRO_VERSION" >> $GITHUB_OUTPUT
+
           echo "::endgroup::"
 
       - name: Resolve Snapshot Liquibase Dependencies
@@ -369,7 +367,8 @@ jobs:
         run: |
           echo "::group::Resolve Snapshot Liquibase Dependencies"
           echo "Artifact repository: ${{ steps.configure-build.outputs.liquibaseRepo }}"
-          echo "Using version specifier: ${{ steps.discover-version.outputs.version }}"
+          echo "Community version: ${{ steps.discover-version.outputs.community-version }}"
+          echo "Pro version: ${{ steps.discover-version.outputs.pro-version }}"
           echo "Using pro artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
           echo "::endgroup::"
 
@@ -379,28 +378,25 @@ jobs:
           echo "Maven settings.xml content:"
           cat ~/.m2/settings.xml || echo "Could not read settings.xml"
 
-          # Use LATEST version specifier - Maven will resolve the actual latest available
-          MAVEN_VERSION_SPEC="${{ steps.discover-version.outputs.version }}"
-
-          # Resolve Liquibase dependencies with correct profile
-          # Note: liquibase-commercial is only available in the liquibase-pro repository
-
           # Pass authentication credentials as system properties to Maven
           MAVEN_AUTH_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=debug"
 
           if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
             echo "Resolving PRO artifacts from liquibase-pro repository..."
-            mvn -B -Puseproartifacts -Dliquibase-core.version=$MAVEN_VERSION_SPEC \
+            # For pro: use community version for org.liquibase:liquibase-core and pro version for com.liquibase:liquibase-commercial
+            mvn -B -Puseproartifacts \
+              -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
+              -Dliquibase-commercial.version=${{ steps.discover-version.outputs.pro-version }} \
               $MAVEN_AUTH_OPTS \
               dependency:resolve -X 2>&1 | tee resolve.log
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
-            mvn -B -Dliquibase-core.version=$MAVEN_VERSION_SPEC \
+            mvn -B -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
               $MAVEN_AUTH_OPTS \
               dependency:resolve -X 2>&1 | tee resolve.log
           fi
 
-          echo "::notice :: Resolved Snapshot Liquibase dependencies with version specifier $MAVEN_VERSION_SPEC"
+          echo "::notice :: Resolved Snapshot Liquibase dependencies"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v4
@@ -494,17 +490,18 @@ jobs:
       - name: ${{ matrix.database }} Test Run
         run: |
           USE_PRO_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
-          RESOLVED_VERSION="${{ needs.setup.outputs.resolvedVersion }}"
+          COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
+          PRO_VERSION="${{ needs.setup.outputs.proVersion }}"
 
           if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
             echo "Running tests with PRO artifacts"
-            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$RESOLVED_VERSION"
+            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$COMMUNITY_VERSION -Dliquibase-commercial.version=$PRO_VERSION"
           else
             echo "Running tests with COMMUNITY artifacts"
-            MAVEN_OPTS="-Dliquibase-core.version=$RESOLVED_VERSION"
+            MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
           fi
 
-          # Run tests with appropriate profile/properties and resolved version
+          # Run tests with appropriate profile/properties and resolved versions
           ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "$MAVEN_OPTS"
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
