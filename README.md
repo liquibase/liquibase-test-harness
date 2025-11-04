@@ -201,6 +201,11 @@ The workflows use Maven for resolving and downloading all Liquibase dependencies
   - Tests continue with community artifacts instead of failing
 - This ensures workflows don't break when token scopes are insufficient for manual pro selection
 - **Important**: The workflow respects the user's artifact selection even if branch lookup falls back to a different repository. If you select `liquibase-pro`, the workflow will use `com.liquibase:liquibase-commercial` artifacts regardless of which repository the branch is found in.
+- **Note on liquibase-pro (Private Repository)**:
+  - When manually selecting `liquibase-pro`, branch lookup may return 403 permission errors (expected for private repos)
+  - The workflow automatically falls back to `liquibase` for branch lookup
+  - Artifact resolution still uses pro artifacts via Maven (token has GPM access)
+  - This is the intended behavior - branch lookup fails gracefully, but pro artifacts are still used
 
 **Important: Commercial Artifacts Are Pro-Only**
 
