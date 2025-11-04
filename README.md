@@ -207,7 +207,9 @@ The workflows use Maven for resolving and downloading all Liquibase dependencies
 The key distinction between repositories:
 - **Community artifacts** (`liquibase/liquibase`):
   - `org.liquibase:liquibase-core` - available
-  - `liquibase-commercial` - NOT available in this repository
+  - `org.liquibase:liquibase-commercial` - NOT available in this repository
+    - Declared as **optional** in pom.xml (Maven won't fail if missing)
+    - Tests can work without it but may not have commercial features
 
 - **Pro artifacts** (`liquibase/liquibase-pro`):
   - `org.liquibase:liquibase-core` - available (same as community)
