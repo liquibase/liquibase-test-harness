@@ -517,66 +517,17 @@ jobs:
 
       - name: Display installed Liquibase versions
         run: |
-          echo "::group::Installed Liquibase Versions"
+          echo "::group::Liquibase Versions"
+          echo "Build Type: ${{ needs.setup.outputs.useProArtifacts == 'true' && 'PRO (Liquibase Secure)' || 'COMMUNITY' }}"
           echo "Community version: ${{ needs.setup.outputs.communityVersion }}"
           echo "Pro version: ${{ needs.setup.outputs.proVersion }}"
-          echo "Using Pro artifacts: ${{ needs.setup.outputs.useProArtifacts }}"
+
+          # Show cached artifacts
           echo ""
-          echo "Available artifacts in cache:"
+          echo "Cached artifacts:"
+          find "$HOME/.m2/repository/org/liquibase" -name "liquibase-core*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  org.liquibase: (loading...)"
+          find "$HOME/.m2/repository/com/liquibase" -name "liquibase-commercial*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  com.liquibase: (none)"
 
-          # Show org.liquibase artifacts
-          if [ -d "$HOME/.m2/repository/org/liquibase" ]; then
-            echo "Community artifacts (org.liquibase):"
-            find "$HOME/.m2/repository/org/liquibase" -name "*.jar" -type f | sort | while read jar; do
-              echo "  - $(basename $(dirname $jar))/$(basename $jar)"
-            done
-          else
-            echo "No community artifacts found in cache"
-          fi
-
-          # Show com.liquibase artifacts
-          if [ -d "$HOME/.m2/repository/com/liquibase" ]; then
-            echo "Pro artifacts (com.liquibase):"
-            find "$HOME/.m2/repository/com/liquibase" -name "*.jar" -type f | sort | while read jar; do
-              echo "  - $(basename $(dirname $jar))/$(basename $jar)"
-            done
-          else
-            echo "No pro artifacts found in cache"
-          fi
-
-          echo ""
-          echo "::endgroup::"
-
-          echo "::group::Liquibase Version Summary"
-          USE_PRO_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
-          COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
-          PRO_VERSION="${{ needs.setup.outputs.proVersion }}"
-
-          if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
-            echo "Build Type: PRO (with Liquibase Secure features)"
-            echo "Community artifacts version: $COMMUNITY_VERSION"
-            echo "Pro artifacts version: $PRO_VERSION"
-            # Extract version info from JAR manifest if available
-            if [ -f "$HOME/.m2/repository/org/liquibase/liquibase-core/$COMMUNITY_VERSION/liquibase-core-$COMMUNITY_VERSION.jar" ]; then
-              echo ""
-              echo "Liquibase Core manifest info:"
-              unzip -p "$HOME/.m2/repository/org/liquibase/liquibase-core/$COMMUNITY_VERSION/liquibase-core-$COMMUNITY_VERSION.jar" META-INF/MANIFEST.MF 2>/dev/null | grep -i "Implementation-Version\|Bundle-Version" || echo "  (version info available at runtime)"
-            fi
-            if [ -f "$HOME/.m2/repository/com/liquibase/liquibase-commercial/$PRO_VERSION/liquibase-commercial-$PRO_VERSION.jar" ]; then
-              echo ""
-              echo "Liquibase Commercial manifest info:"
-              unzip -p "$HOME/.m2/repository/com/liquibase/liquibase-commercial/$PRO_VERSION/liquibase-commercial-$PRO_VERSION.jar" META-INF/MANIFEST.MF 2>/dev/null | grep -i "Implementation-Version\|Bundle-Version" || echo "  (version info available at runtime)"
-            fi
-          else
-            echo "Build Type: COMMUNITY"
-            echo "Community artifacts version: $COMMUNITY_VERSION"
-            # Extract version info from JAR manifest if available
-            if [ -f "$HOME/.m2/repository/org/liquibase/liquibase-core/$COMMUNITY_VERSION/liquibase-core-$COMMUNITY_VERSION.jar" ]; then
-              echo ""
-              echo "Liquibase Core manifest info:"
-              unzip -p "$HOME/.m2/repository/org/liquibase/liquibase-core/$COMMUNITY_VERSION/liquibase-core-$COMMUNITY_VERSION.jar" META-INF/MANIFEST.MF 2>/dev/null | grep -i "Implementation-Version\|Bundle-Version" || echo "  (version info available at runtime)"
-            fi
-          fi
           echo "::endgroup::"
 
       - name: Build ${{ matrix.database }} test infra
