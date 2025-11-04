@@ -472,6 +472,31 @@
                     <value>true</value>
                 </property>
             </activation>
+            <repositories>
+                <!-- Prioritize liquibase-pro repository for pro artifacts -->
+                <repository>
+                    <id>liquibase-pro</id>
+                    <url>https://maven.pkg.github.com/liquibase/liquibase-pro</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>liquibase</id>
+                    <url>https://maven.pkg.github.com/liquibase/liquibase</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
             <dependencies>
                 <dependency>
                     <groupId>com.liquibase</groupId>

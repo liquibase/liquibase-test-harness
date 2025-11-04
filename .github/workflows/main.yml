@@ -310,30 +310,28 @@ jobs:
           distribution: "temurin"
           cache: "maven"
 
-      - name: Install Snapshot Liquibase
+      - name: Resolve Snapshot Liquibase Dependencies
         env:
           GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
         run: |
-          echo "::group::Install Snapshot Liquibase"
+          echo "::group::Resolve Snapshot Liquibase Dependencies"
           echo "Artifact repository: ${{ steps.configure-build.outputs.liquibaseRepo }}"
           echo "Branch search: ${{ steps.configure-build.outputs.liquibaseBranch }}"
           echo "Triggered from: ${{ steps.configure-build.outputs.triggeredRepo }}"
           echo "Using pro artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
           echo "::endgroup::"
 
-          # Set liquibase-core version to 0-SNAPSHOT for development builds
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
-
-          # Resolve Liquibase dependencies from configured repository via Maven
+          # Resolve Liquibase dependencies with correct profile
           # Note: liquibase-commercial uses different groupIds depending on the repository:
           # - Community: org.liquibase:liquibase-commercial (from liquibase/liquibase repo)
           # - Pro: com.liquibase:liquibase-commercial (from liquibase/liquibase-pro repo)
+          # The Maven profile 'useproartifacts' handles the correct groupId selection
           if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
             echo "Resolving PRO artifacts from liquibase-pro repository..."
-            mvn -B dependency:resolve -Puseproartifacts -DincludeArtifactIds=liquibase-core,liquibase-commercial -Dartifacts=org.liquibase:liquibase-core:0-SNAPSHOT:jar,com.liquibase:liquibase-commercial:0-SNAPSHOT:jar
+            mvn -B dependency:resolve -Puseproartifacts -DincludeArtifactIds=liquibase-core,liquibase-commercial 2>&1 | tee resolve.log
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
-            mvn -B dependency:resolve -DincludeArtifactIds=liquibase-core,liquibase-commercial -Dartifacts=org.liquibase:liquibase-core:0-SNAPSHOT:jar,org.liquibase:liquibase-commercial:0-SNAPSHOT:jar
+            mvn -B dependency:resolve -DincludeArtifactIds=liquibase-core,liquibase-commercial 2>&1 | tee resolve.log
           fi
 
           echo "::notice :: Resolved Snapshot Liquibase dependencies from ${{ steps.configure-build.outputs.liquibaseRepo }}"
