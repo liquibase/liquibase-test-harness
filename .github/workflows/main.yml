@@ -286,63 +286,47 @@ jobs:
                 }
             }
 
-      - name: Configure Maven settings with GPM authentication
-        env:
-          GPM_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
-        run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml << 'EOF'
-          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
-                                http://maven.apache.org/xsd/settings-1.0.0.xsd">
-            <activeProfiles>
-              <activeProfile>github</activeProfile>
-            </activeProfiles>
-            <profiles>
-              <profile>
-                <id>github</id>
-                <repositories>
-                  <repository>
-                    <id>liquibase-pro</id>
-                    <url>https://maven.pkg.github.com/liquibase/liquibase-pro</url>
-                    <releases>
-                      <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                      <enabled>true</enabled>
-                      <updatePolicy>always</updatePolicy>
-                    </snapshots>
-                  </repository>
-                  <repository>
-                    <id>liquibase</id>
-                    <url>https://maven.pkg.github.com/liquibase/liquibase</url>
-                    <releases>
-                      <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                      <enabled>true</enabled>
-                      <updatePolicy>always</updatePolicy>
-                    </snapshots>
-                  </repository>
-                </repositories>
-              </profile>
-            </profiles>
-            <servers>
-              <server>
-                <id>liquibase-pro</id>
-                <username>liquibot</username>
-                <password>$GPM_TOKEN</password>
-              </server>
-              <server>
-                <id>liquibase</id>
-                <username>liquibot</username>
-                <password>$GPM_TOKEN</password>
-              </server>
-            </servers>
-          </settings>
-          EOF
-          cat ~/.m2/settings.xml
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v22
+        with:
+          repositories: |
+            [
+              {
+                "id": "liquibase-pro",
+                "url": "https://maven.pkg.github.com/liquibase/liquibase-pro",
+                "releases": {
+                  "enabled": "true"
+                },
+                "snapshots": {
+                  "enabled": "true",
+                  "updatePolicy": "always"
+                }
+              },
+              {
+                "id": "liquibase",
+                "url": "https://maven.pkg.github.com/liquibase/liquibase",
+                "releases": {
+                  "enabled": "true"
+                },
+                "snapshots": {
+                  "enabled": "true",
+                  "updatePolicy": "always"
+                }
+              }
+            ]
+          servers: |
+            [
+              {
+                "id": "liquibase-pro",
+                "username": "liquibot",
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
+              },
+              {
+                "id": "liquibase",
+                "username": "liquibot",
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
+              }
+            ]
 
       - uses: actions/setup-java@v5
         with:
