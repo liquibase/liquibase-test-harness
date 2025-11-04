@@ -214,14 +214,24 @@ The workflows use Maven for resolving and downloading all Liquibase dependencies
 
 The Maven workflows automatically detect which repository is being used and resolve the correct artifacts:
 
-1. **GitHub Actions Workflow**: The main workflow detects the selected repository (community vs pro) and activates the appropriate Maven profile
-2. **Maven Profile**: The `useproartifacts` profile (when activated with `-Puseproartifacts`):
-   - Declares dependency on `com.liquibase:liquibase-commercial` with the correct groupId
+1. **GitHub Actions Workflow**: The main workflow detects the selected repository (community vs pro) and activates the appropriate Maven profile when resolving dependencies
+
+2. **Version Resolution Strategy**: Uses `LATEST` version specifier to:
+   - Resolve whatever latest version is available in the repositories (snapshot or release)
+   - Allow dynamic version discovery without hardcoding specific versions
+   - Ensure compatibility with ongoing development builds
+
+3. **Maven Profile**: The `useproartifacts` profile (when activated with `-Puseproartifacts`):
+   - Declares dependency on `com.liquibase:liquibase-commercial` with the correct groupId for pro artifacts
    - Configures repositories to prioritize `liquibase-pro` for artifact resolution
-3. **Dynamic Repository Selection**: Maven resolves dependencies from the configured repositories based on:
-   - Which profile is active
-   - Snapshot version availability in each repository
-   - Maven's standard resolution strategy (snapshot/release artifacts)
+   - Ensures Maven searches the correct repository first
+
+4. **Artifact Resolution Flow**:
+   - **Pro artifacts** (`liquibase-pro` selected):
+     - Profile activates `-Puseproartifacts`
+     - Maven resolves `com.liquibase:liquibase-commercial:LATEST` from `liquibase-pro` repository
+   - **Community artifacts** (default):
+     - Maven resolves `org.liquibase:liquibase-commercial:LATEST` from `liquibase` repository
 
 To manually use the pro artifacts profile locally, use:
 ```bash
