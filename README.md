@@ -221,12 +221,14 @@ The Maven workflows automatically detect which repository is being used and reso
 
 1. **GitHub Actions Workflow**: The main workflow detects the selected repository (community vs pro) and activates the appropriate Maven profile when resolving dependencies
 
-2. **Version Discovery Strategy**:
-   - **Setup Job**: Discovers the actual latest version available in the configured repository
-   - **Dynamic Version Setting**: Uses discovered version instead of hardcoding non-existent snapshots
-   - **Test Job**: Independently discovers version to ensure tests use available artifacts
-   - **Fallback**: Uses default version 4.33.0 if discovery fails
-   - **Result**: Ensures Maven resolves only versions that actually exist in repositories
+2. **Version Resolution Strategy**:
+   - **Uses Maven's LATEST Specifier**: Both setup and test jobs use `LATEST` version specifier
+   - **Maven Resolves Automatically**: Maven's `versions:set-property` and `dependency:resolve` find the actual latest available
+   - **Repository-Aware**: Maven consults configured repositories (from settings.xml) and selects appropriate versions
+   - **Works for Both Repos**:
+     - Community repo: Resolves latest from `liquibase/liquibase`
+     - Pro repo: Resolves latest from `liquibase/liquibase-pro` with correct groupId
+   - **No Manual Querying**: Eliminates complex version discovery logic - lets Maven handle it
 
 3. **Maven Profile**: The `useproartifacts` profile (when activated with `-Puseproartifacts`):
    - Declares dependency on `com.liquibase:liquibase-commercial` with the correct groupId for pro artifacts
