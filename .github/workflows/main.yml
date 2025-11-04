@@ -349,31 +349,27 @@ jobs:
           else
             echo "Resolving COMMUNITY artifacts version from liquibase/master"
             # Community artifacts use {commit-sha}-SNAPSHOT format
-            # Query the latest commit SHA from liquibase master branch
-            LATEST_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              https://api.github.com/repos/liquibase/liquibase/commits/master \
-              | grep -o '^  "sha": "[^"]*' | cut -d'"' -f4)
+            # Query GitHub Packages for the latest published artifact version
+            # The version format is the commit SHA from the built artifact
 
-            if [ -z "$LATEST_SHA" ]; then
-              echo "ERROR: Could not determine latest commit SHA from liquibase/master"
-              echo "Attempting to extract SHA using jq..."
+            PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase/org/liquibase/liquibase-core/maven-metadata.xml"
 
-              # Try using jq if available
-              LATEST_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                https://api.github.com/repos/liquibase/liquibase/commits/master \
-                | jq -r '.sha // empty' 2>/dev/null)
+            echo "Fetching latest artifact version from: $PACKAGES_URL"
+            METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
 
-              if [ -z "$LATEST_SHA" ]; then
-                echo "ERROR: jq parsing also failed"
-                echo "GitHub API response:"
-                curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                  https://api.github.com/repos/liquibase/liquibase/commits/master
-                exit 1
-              fi
+            # Extract the latest version from maven-metadata.xml
+            # Versions are in format: {commit-sha}-SNAPSHOT
+            LATEST_VERSION=$(echo "$METADATA" | grep -o '<version>[^<]*-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
+
+            if [ -z "$LATEST_VERSION" ]; then
+              echo "ERROR: Could not determine latest version from GitHub Packages"
+              echo "GitHub Packages metadata response:"
+              echo "$METADATA"
+              exit 1
             fi
 
-            RESOLVED_VERSION="${LATEST_SHA}-SNAPSHOT"
-            echo "Community version: $RESOLVED_VERSION (commit: $LATEST_SHA)"
+            RESOLVED_VERSION="$LATEST_VERSION"
+            echo "Community version: $RESOLVED_VERSION"
           fi
 
           echo "Final resolved version: $RESOLVED_VERSION"
