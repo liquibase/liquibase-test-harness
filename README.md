@@ -192,7 +192,14 @@ The workflows use Maven for resolving and downloading all Liquibase dependencies
 - Token has access to multiple repositories: `liquibase`, `liquibase-pro`, `liquibase-test-harness`
 - Token permissions are minimized: `contents:read`, `actions:read`, `statuses:write`
 - This allows safe branch queries against private `liquibase-pro` repository
-- If workflow fails with "Resource not accessible by integration" error, verify GitHub App is installed on liquibase organization with proper permissions
+
+**Manual Repository Selection & Fallback:**
+- When manually selecting `liquibase-pro` in workflow dispatch, if branch lookup fails (403 permission denied):
+  - Workflow automatically falls back to the default/detected repository
+  - Uses triggered repository or `liquibase/liquibase` (community) by default
+  - Notifies user that fallback occurred
+  - Tests continue with community artifacts instead of failing
+- This ensures workflows don't break when token scopes are insufficient for manual pro selection
 
 #### Configuration File
 
