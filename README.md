@@ -194,18 +194,22 @@ The workflows use Maven for resolving and downloading all Liquibase dependencies
 - This allows safe branch queries against private `liquibase-pro` repository
 
 **Manual Repository Selection & Fallback:**
-- When manually selecting `liquibase-pro` in workflow dispatch, if branch lookup fails (403 permission denied):
-  - Workflow automatically falls back to the default/detected repository
-  - Uses triggered repository or `liquibase/liquibase` (community) by default
-  - Notifies user that fallback occurred
-  - Tests continue with community artifacts instead of failing
-- This ensures workflows don't break when token scopes are insufficient for manual pro selection
-- **Important**: The workflow respects the user's artifact selection even if branch lookup falls back to a different repository. If you select `liquibase-pro`, the workflow will use `com.liquibase:liquibase-commercial` artifacts regardless of which repository the branch is found in.
-- **Note on liquibase-pro (Private Repository)**:
-  - When manually selecting `liquibase-pro`, branch lookup may return 403 permission errors (expected for private repos)
-  - The workflow automatically falls back to `liquibase` for branch lookup
-  - Artifact resolution still uses pro artifacts via Maven (token has GPM access)
-  - This is the intended behavior - branch lookup fails gracefully, but pro artifacts are still used
+
+When selecting `liquibase-pro` explicitly, the workflow requires that branch lookup succeeds in that repository (no fallback allowed):
+- If branch lookup fails for explicit `liquibase-pro` selection:
+  - Workflow fails with a clear error message
+  - Does NOT fall back to community repository
+  - User must ensure branch exists in `liquibase-pro` or provide a specific commit SHA
+- This ensures artifacts come ONLY from the selected repository
+
+When repo is auto-detected from triggers (not manually selected):
+- Workflow allows fallback to default repository if branch lookup fails
+- Automatic fallback only applies to triggered/default repo selection, not manual `liquibase-pro` selection
+
+**Token Requirements for liquibase-pro:**
+- The `LIQUIBOT_PAT_GPM_ACCESS` token must have access to `liquibase-pro` repository
+- Token is used for both GitHub API queries (branch lookup) and Maven GPM authentication
+- Explicit pro selection validates that proper token access exists before proceeding with artifact resolution
 
 **Important: Commercial Artifacts Are Pro-Only**
 

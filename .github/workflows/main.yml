@@ -198,11 +198,13 @@ jobs:
             console.log("liquibaseRepo == " + liquibaseRepo);
 
             // Track the user's intended repository for artifact selection
-            // This is important: even if we fall back to a different repo for branch lookup,
-            // we should still use pro artifacts if the user explicitly selected liquibase-pro
             let userSelectedRepo = "${{ github.event.inputs.liquibaseRepo }}" || null;
             let intentProArtifacts = userSelectedRepo ? helper.shouldUseProArtifacts(userSelectedRepo) : useProArtifacts;
             console.log("User intended pro artifacts: " + intentProArtifacts);
+
+            // Determine if user explicitly selected liquibase-pro (no fallback allowed)
+            let isExplicitProSelection = userSelectedRepo && helper.shouldUseProArtifacts(userSelectedRepo);
+            console.log("Explicit pro selection (no fallback allowed): " + isExplicitProSelection);
 
             core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
 
@@ -221,8 +223,19 @@ jobs:
                 let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
                 liquibaseSha = liquibaseBranchResponse.sha;
               } catch (error) {
-                // If branch lookup fails (e.g., permission denied for manual pro selection),
-                // try falling back to the default/triggered repository
+                // If branch lookup fails and user explicitly selected liquibase-pro, fail hard
+                // (don't fall back to community repo)
+                if (isExplicitProSelection) {
+                  core.error("Failed to find branch in explicitly selected liquibase-pro repository");
+                  core.error("Error: " + error.message);
+                  core.error("When you explicitly select liquibase-pro, artifacts must come from that repository only.");
+                  core.error("Please verify that:");
+                  core.error("  1. The branch exists in liquibase-pro");
+                  core.error("  2. The LIQUIBOT_PAT_GPM_ACCESS token has access to liquibase-pro");
+                  throw new Error("Cannot fall back from explicitly selected liquibase-pro repository");
+                }
+
+                // For triggered or default selections, allow fallback to default repository
                 console.warn("Failed to find branch in " + liquibaseRepo + ": " + error.message);
 
                 if (liquibaseRepo !== defaultRepo) {
@@ -249,7 +262,7 @@ jobs:
             }
             core.setOutput("liquibaseSha", liquibaseSha);
             core.setOutput("liquibaseRepo", liquibaseRepo);
-            // Use the user's intended pro artifacts setting, not the fallback repo's setting
+            // Use the user's intended pro artifacts setting
             core.setOutput("useProArtifacts", intentProArtifacts);
             core.setOutput("liquibaseOwner", repoOwnerName);
 
