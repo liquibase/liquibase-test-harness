@@ -196,9 +196,7 @@ jobs:
             // Use manual input if provided, otherwise use detected default
             let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo }}" || defaultRepo;
             console.log("liquibaseRepo == " + liquibaseRepo);
-            core.setOutput("liquibaseRepo", liquibaseRepo);
             core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
-            core.setOutput("useProArtifacts", useProArtifacts);
 
             let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}" || testBranchName + ", master";
             console.log("liquibaseBranch == " + liquibaseBranchName);
@@ -211,10 +209,39 @@ jobs:
             if (!liquibaseSha) {
               console.log("No liquibaseSha passed. Looking for branch "+ liquibaseBranchName);
 
-              let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
-              liquibaseSha = liquibaseBranchResponse.sha;
+              try {
+                let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
+                liquibaseSha = liquibaseBranchResponse.sha;
+              } catch (error) {
+                // If branch lookup fails (e.g., permission denied for manual pro selection),
+                // try falling back to the default/triggered repository
+                console.warn("Failed to find branch in " + liquibaseRepo + ": " + error.message);
+
+                if (liquibaseRepo !== defaultRepo) {
+                  console.log("Falling back to default repository: " + defaultRepo);
+                  const fallbackOwner = defaultRepo.split("/")[0];
+                  const fallbackRepo = defaultRepo.split("/")[1];
+
+                  try {
+                    let liquibaseBranchResponse = await helper.findMatchingBranch(fallbackOwner, fallbackRepo, [liquibaseBranchName, "master", "main"]);
+                    liquibaseSha = liquibaseBranchResponse.sha;
+                    liquibaseRepo = defaultRepo;
+                    repoOwnerName = fallbackOwner;
+                    repoName = fallbackRepo;
+                    core.notice("Switched to fallback repository: " + defaultRepo);
+                    console.log("Successfully found branch in fallback repo");
+                  } catch (fallbackError) {
+                    core.error("Failed to find branch in both " + liquibaseRepo + " and fallback " + defaultRepo);
+                    throw fallbackError;
+                  }
+                } else {
+                  throw error;
+                }
+              }
             }
             core.setOutput("liquibaseSha", liquibaseSha);
+            core.setOutput("liquibaseRepo", liquibaseRepo);
+            core.setOutput("useProArtifacts", helper.shouldUseProArtifacts(liquibaseRepo));
             core.setOutput("liquibaseOwner", repoOwnerName);
 
             let runDescription = "${{ github.event.inputs.runDescription }}";

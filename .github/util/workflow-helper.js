@@ -254,8 +254,10 @@ module.exports = ({github, context}) => {
                         console.log(error)
                         throw (`Checking branch ${branchName} returned ${error.status}`);
                     }
-}
+                }
             }
+            // If we get here, no matching branch was found
+            throw new Error(`Could not find any matching branch in ${owner}/${repo} from branches: ${branchesToCheck.join(", ")}. Check that the repository is accessible and branches exist.`);
         }
     }
 }
