@@ -357,14 +357,16 @@ jobs:
             echo "Fetching latest artifact version from: $PACKAGES_URL"
             METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
 
-            # Extract the latest version from maven-metadata.xml
-            # Versions are in format: {commit-sha}-SNAPSHOT
-            LATEST_VERSION=$(echo "$METADATA" | grep -o '<version>[^<]*-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
+            # Extract versions in commit-SHA format (40 hex chars followed by -SNAPSHOT)
+            # Filter out release-prep and other non-SHA versions
+            LATEST_VERSION=$(echo "$METADATA" | grep -o '<version>[a-f0-9]\{40\}-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
 
             if [ -z "$LATEST_VERSION" ]; then
-              echo "ERROR: Could not determine latest version from GitHub Packages"
-              echo "GitHub Packages metadata response:"
-              echo "$METADATA"
+              echo "ERROR: Could not determine latest commit-SHA version from GitHub Packages"
+              echo "Looking for pattern: 40-character hex SHA followed by -SNAPSHOT"
+              echo "GitHub Packages metadata response (first 500 chars):"
+              echo "$METADATA" | head -c 500
+              echo ""
               exit 1
             fi
 
