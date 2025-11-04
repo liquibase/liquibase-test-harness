@@ -579,7 +579,6 @@ jobs:
           USE_SECURE_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
           COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
           SECURE_VERSION="${{ needs.setup.outputs.proVersion }}"
-          MAVEN_PLUGIN_VERSION="${{ needs.setup.outputs.mavenPluginVersion }}"
 
           if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
             echo "Running tests with SECURE artifacts"
