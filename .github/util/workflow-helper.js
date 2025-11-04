@@ -246,9 +246,9 @@ module.exports = ({github, context}) => {
                         console.log(`No branch ${branchName}`);
                     } else if (error.status === 403 || error.status === 401) {
                         // Permission denied - likely private repository with insufficient token scopes
-                        // Log warning and try next branch instead of throwing
-                        console.warn(`Permission denied (${error.status}) accessing ${owner}/${repo} branch ${branchName}`);
-                        console.warn("This may indicate the GitHub token lacks access to this private repository");
+                        // This is expected when trying to access liquibase-pro repo, so log as info not warning
+                        console.log(`[INFO] Permission denied (${error.status}) accessing ${owner}/${repo} branch ${branchName} - this is expected for private repositories`);
+                        console.log("[INFO] Attempting to fall back to alternative repository...");
                         continue;
                     } else {
                         console.log(error)
