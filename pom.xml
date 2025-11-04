@@ -484,10 +484,9 @@
                 </property>
             </activation>
             <repositories>
-                <!-- Prioritize liquibase-pro repository for pro artifacts -->
-                <!-- Using 'github' as id to match settings.xml server configuration -->
+                <!-- Prioritize liquibase-pro repository for pro artifacts (com.liquibase:liquibase-commercial) -->
                 <repository>
-                    <id>github</id>
+                    <id>github-pro</id>
                     <url>https://maven.pkg.github.com/liquibase/liquibase-pro</url>
                     <releases>
                         <enabled>true</enabled>
@@ -497,7 +496,7 @@
                         <updatePolicy>always</updatePolicy>
                     </snapshots>
                 </repository>
-                <!-- Also include community repository for org.liquibase:liquibase-core -->
+                <!-- Include community repository for org.liquibase:liquibase-core -->
                 <repository>
                     <id>github-community</id>
                     <url>https://maven.pkg.github.com/liquibase/liquibase</url>

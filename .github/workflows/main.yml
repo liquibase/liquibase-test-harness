@@ -462,6 +462,28 @@ jobs:
                   "enabled": "true",
                   "updatePolicy": "always"
                 }
+              },
+              {
+                "id": "github-community",
+                "url": "https://maven.pkg.github.com/liquibase/liquibase",
+                "releases": {
+                  "enabled": "true"
+                },
+                "snapshots": {
+                  "enabled": "true",
+                  "updatePolicy": "always"
+                }
+              },
+              {
+                "id": "github-pro",
+                "url": "https://maven.pkg.github.com/liquibase/liquibase-pro",
+                "releases": {
+                  "enabled": "true"
+                },
+                "snapshots": {
+                  "enabled": "true",
+                  "updatePolicy": "always"
+                }
               }
             ]
           servers: |
@@ -470,13 +492,25 @@ jobs:
                 "id": "github",
                 "username": "liquibot",
                 "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
+              },
+              {
+                "id": "github-community",
+                "username": "liquibot",
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
+              },
+              {
+                "id": "github-pro",
+                "username": "liquibot",
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
               }
             ]
 
       - name: Cache installed Liquibase
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository/org/liquibase/
+          path: |
+            ~/.m2/repository/org/liquibase/
+            ~/.m2/repository/com/liquibase/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Build ${{ matrix.database }} test infra
