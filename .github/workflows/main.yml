@@ -360,25 +360,9 @@ jobs:
           echo "SECURE version: $SECURE_VERSION"
           echo "secure-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
 
-          # For secure builds, also fetch Maven plugin version (com.liquibase:liquibase-maven-plugin)
-          # It uses the same version as com.liquibase:liquibase-commercial
-          USE_SECURE_ARTIFACTS="${{ steps.configure-build.outputs.useProArtifacts }}"
-          if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
-            echo "Checking for Maven plugin version (com.liquibase:liquibase-maven-plugin)"
-            PLUGIN_URL="https://maven.pkg.github.com/liquibase/liquibase-pro/com/liquibase/liquibase-maven-plugin/maven-metadata.xml"
-            PLUGIN_METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PLUGIN_URL")
-
-            # Extract 'master' version from plugin metadata
-            PLUGIN_VERSION=$(echo "$PLUGIN_METADATA" | grep -o '<version>master</version>' | head -1 | sed 's/<[^>]*>//g')
-
-            if [ -z "$PLUGIN_VERSION" ]; then
-              echo "WARNING: Could not find master version for liquibase-maven-plugin, will use: master"
-              PLUGIN_VERSION="master"
-            else
-              echo "Maven plugin version found: $PLUGIN_VERSION"
-            fi
-            echo "maven-plugin-version=$PLUGIN_VERSION" >> $GITHUB_OUTPUT
-          fi
+          # liquibase-maven-plugin is no longer required for these runs
+          echo "Skipping liquibase-maven-plugin discovery; plugin download not required."
+          echo "maven-plugin-version=" >> $GITHUB_OUTPUT
 
           echo "::endgroup::"
 
@@ -402,21 +386,18 @@ jobs:
           # Pass authentication credentials as system properties to Maven
           MAVEN_AUTH_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=debug"
 
-          if [ "${{ steps.configure-build.outputs.useProArtifacts }}" = "true" ]; then
+          USE_SECURE="${{ steps.configure-build.outputs.useProArtifacts }}"
+          if [ "$USE_SECURE" = "true" ]; then
             echo "Resolving SECURE artifacts from liquibase-pro repository..."
-            # For SECURE: use community version for org.liquibase:liquibase-core and SECURE version for com.liquibase:liquibase-commercial
-            mvn -B -Puseproartifacts \
-              -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
+            echo "Skipping liquibase-core resolution; liquibase-commercial already bundles liquibase-core."
+            mvn -B \
+              -Puseproartifacts \
+              -DuseProArtifacts=true \
               -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
               $MAVEN_AUTH_OPTS \
-              dependency:resolve -X 2>&1 | tee resolve.log
-
-            # Also explicitly download the Maven plugin artifact
-            echo ""
-            echo "Downloading Maven plugin artifact..."
-            mvn -B org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get \
-              -Dartifact=com.liquibase:liquibase-maven-plugin:${{ steps.discover-version.outputs.secure-version }} \
-              -Dmdep.transitive=false 2>/dev/null || echo "Maven plugin downloaded or already cached"
+              org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get \
+              -Dartifact=com.liquibase:liquibase-commercial:${{ steps.discover-version.outputs.secure-version }} \
+              -Dmdep.transitive=false 2>&1 | tee resolve.log
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
             mvn -B -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
@@ -548,14 +529,12 @@ jobs:
 
           if [ "$USE_SECURE" = "true" ]; then
             echo "Build Type: SECURE (Liquibase Secure)"
-            echo "Community version: ${{ needs.setup.outputs.communityVersion }}"
+            echo "Community version (reference): ${{ needs.setup.outputs.communityVersion }}"
             echo "Commercial version: ${{ needs.setup.outputs.proVersion }}"
-            echo "Maven plugin version: ${{ needs.setup.outputs.mavenPluginVersion }}"
             echo ""
             echo "Cached artifacts:"
-            find "$HOME/.m2/repository/org/liquibase" -name "liquibase-core*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  org.liquibase: (loading...)"
+            echo "  org.liquibase: liquibase-core download skipped for SECURE builds"
             find "$HOME/.m2/repository/com/liquibase" -name "liquibase-commercial*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  com.liquibase: (loading...)"
-            find "$HOME/.m2/repository/com/liquibase" -name "liquibase-maven-plugin*.jar" -type f 2>/dev/null | head -1 | xargs -I {} basename {} || echo "  com.liquibase (plugin): (loading...)"
           else
             echo "Build Type: COMMUNITY"
             echo "Version: ${{ needs.setup.outputs.communityVersion }}"
@@ -582,7 +561,8 @@ jobs:
 
           if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
             echo "Running tests with SECURE artifacts"
-            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-core.version=$COMMUNITY_VERSION -Dliquibase-commercial.version=$SECURE_VERSION"
+            echo "Skipping liquibase-core override; liquibase-commercial already bundles liquibase-core."
+            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$SECURE_VERSION"
           else
             echo "Running tests with COMMUNITY artifacts"
             MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
