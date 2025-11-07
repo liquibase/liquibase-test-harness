@@ -406,7 +406,6 @@ jobs:
             echo "Resolving SECURE artifacts from liquibase-pro repository..."
             # For SECURE: use community version for org.liquibase:liquibase-core and SECURE version for com.liquibase:liquibase-commercial
             mvn -B -Puseproartifacts \
-              -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
               -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
               $MAVEN_AUTH_OPTS \
               dependency:resolve -X 2>&1 | tee resolve.log
