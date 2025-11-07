@@ -329,27 +329,33 @@ jobs:
           echo "::group::Discover Liquibase Snapshot Version"
 
           # Always discover community version (org.liquibase:liquibase-core)
-          echo "Resolving COMMUNITY artifacts version from liquibase/master"
-          # Community artifacts use {commit-sha}-SNAPSHOT format
-          # Query GitHub Packages for the latest published artifact version
-          # The version format is the commit SHA from the built artifact
+          USE_SECURE_ARTIFACTS="${{ steps.configure-build.outputs.useProArtifacts }}"
+          if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
+            echo "Skipping COMMUNITY artifact discovery for SECURE builds; liquibase-core is bundled with liquibase-commercial."
+            COMMUNITY_VERSION="bundled-with-liquibase-commercial"
+          else
+            echo "Resolving COMMUNITY artifacts version from liquibase/master"
+            # Community artifacts use {commit-sha}-SNAPSHOT format
+            # Query GitHub Packages for the latest published artifact version
+            # The version format is the commit SHA from the built artifact
 
-          PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase/org/liquibase/liquibase-core/maven-metadata.xml"
+            PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase/org/liquibase/liquibase-core/maven-metadata.xml"
 
-          echo "Fetching latest artifact version from: $PACKAGES_URL"
-          METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
+            echo "Fetching latest artifact version from: $PACKAGES_URL"
+            METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
 
-          # Extract versions in commit-SHA format (40 hex chars followed by -SNAPSHOT)
-          # Filter out release-prep and other non-SHA versions
-          COMMUNITY_VERSION=$(echo "$METADATA" | grep -o '<version>[a-f0-9]\{40\}-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
+            # Extract versions in commit-SHA format (40 hex chars followed by -SNAPSHOT)
+            # Filter out release-prep and other non-SHA versions
+            COMMUNITY_VERSION=$(echo "$METADATA" | grep -o '<version>[a-f0-9]\{40\}-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
 
-          if [ -z "$COMMUNITY_VERSION" ]; then
-            echo "ERROR: Could not determine latest commit-SHA version from GitHub Packages"
-            echo "Looking for pattern: 40-character hex SHA followed by -SNAPSHOT"
-            echo "GitHub Packages metadata response (first 500 chars):"
-            echo "$METADATA" | head -c 500
-            echo ""
-            exit 1
+            if [ -z "$COMMUNITY_VERSION" ]; then
+              echo "ERROR: Could not determine latest commit-SHA version from GitHub Packages"
+              echo "Looking for pattern: 40-character hex SHA followed by -SNAPSHOT"
+              echo "GitHub Packages metadata response (first 500 chars):"
+              echo "$METADATA" | head -c 500
+              echo ""
+              exit 1
+            fi
           fi
 
           echo "Community version: $COMMUNITY_VERSION"
