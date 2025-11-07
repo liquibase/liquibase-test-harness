@@ -76,11 +76,6 @@
         </developer>
     </developers>
     <dependencies>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>${liquibase-core.version}</version>
-        </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -474,6 +469,22 @@
         </snapshotRepository>
     </distributionManagement>
     <profiles>
+        <profile>
+            <!-- Community artifacts profile: include liquibase-core when pro artifacts are not requested -->
+            <id>communityartifacts</id>
+            <activation>
+                <property>
+                    <name>!useProArtifacts</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-core</artifactId>
+                    <version>${liquibase-core.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
         <profile>
             <!-- Pro artifacts profile: Uses com.liquibase:liquibase-commercial from liquibase-pro repository -->
             <id>useproartifacts</id>
