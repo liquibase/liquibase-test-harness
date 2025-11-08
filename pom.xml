@@ -464,8 +464,7 @@
             <id>communityartifacts</id>
             <activation>
                 <property>
-                    <name>useProArtifacts</name>
-                    <value>!true</value>
+                    <name>!useProArtifacts</name>
                 </property>
             </activation>
             <dependencies>
@@ -486,22 +485,10 @@
                 </property>
             </activation>
             <repositories>
-                <!-- Prioritize liquibase-pro repository for pro artifacts (com.liquibase:liquibase-commercial) -->
+                <!-- ONLY include liquibase-pro repository for pro artifacts (com.liquibase:liquibase-commercial) -->
                 <repository>
                     <id>github-pro</id>
                     <url>https://maven.pkg.github.com/liquibase/liquibase-pro</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                        <updatePolicy>always</updatePolicy>
-                    </snapshots>
-                </repository>
-                <!-- Include community repository for org.liquibase:liquibase-core -->
-                <repository>
-                    <id>github-community</id>
-                    <url>https://maven.pkg.github.com/liquibase/liquibase</url>
                     <releases>
                         <enabled>true</enabled>
                     </releases>
@@ -517,13 +504,6 @@
                     <artifactId>liquibase-commercial</artifactId>
                     <!-- Use separate version property for commercial artifacts -->
                     <version>${liquibase-commercial.version}</version>
-                    <exclusions>
-                        <!-- Exclude liquibase-core since it's already bundled in liquibase-commercial -->
-                        <exclusion>
-                            <groupId>org.liquibase</groupId>
-                            <artifactId>liquibase-core</artifactId>
-                        </exclusion>
-                    </exclusions>
                 </dependency>
             </dependencies>
         </profile>

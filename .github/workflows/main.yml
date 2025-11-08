@@ -396,19 +396,23 @@ jobs:
           if [ "$USE_SECURE" = "true" ]; then
             echo "Resolving SECURE artifacts from liquibase-pro repository..."
             echo "Skipping liquibase-core resolution; liquibase-commercial already bundles liquibase-core."
+            # ✅ Explicitly activate useProArtifacts profile and set commercial version
             mvn -B \
               -PuseProArtifacts \
               -DuseProArtifacts=true \
               -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
               $MAVEN_AUTH_OPTS \
-              org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get \
-              -Dartifact=com.liquibase:liquibase-commercial:${{ steps.discover-version.outputs.secure-version }} \
-              -Dmdep.transitive=false 2>&1 | tee resolve.log
+              dependency:resolve \
+              -DincludeArtifactIds=liquibase-commercial \
+              -DexcludeArtifactIds=liquibase-core 2>&1 | tee resolve.log
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
-            mvn -B -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
+            # ✅ Only resolve liquibase-core for community builds
+            mvn -B \
+              -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
               $MAVEN_AUTH_OPTS \
-              dependency:resolve -X 2>&1 | tee resolve.log
+              dependency:resolve \
+              -DincludeArtifactIds=liquibase-core 2>&1 | tee resolve.log
           fi
 
           echo "::notice :: Resolved Snapshot Liquibase dependencies"
