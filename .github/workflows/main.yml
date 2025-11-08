@@ -328,11 +328,11 @@ jobs:
         run: |
           echo "::group::Discover Liquibase Snapshot Version"
 
-          # Always discover community version (org.liquibase:liquibase-core)
+          # Only discover community version for community builds
           USE_SECURE_ARTIFACTS="${{ steps.configure-build.outputs.useProArtifacts }}"
           if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
             echo "Skipping COMMUNITY artifact discovery for SECURE builds; liquibase-core is bundled with liquibase-commercial."
-            COMMUNITY_VERSION="bundled-with-liquibase-commercial"
+            # Do NOT set community-version for Pro builds to prevent Maven from resolving liquibase-core
           else
             echo "Resolving COMMUNITY artifacts version from liquibase/master"
             # Community artifacts use {commit-sha}-SNAPSHOT format
@@ -356,10 +356,10 @@ jobs:
               echo ""
               exit 1
             fi
-          fi
 
-          echo "Community version: $COMMUNITY_VERSION"
-          echo "community-version=$COMMUNITY_VERSION" >> $GITHUB_OUTPUT
+            echo "Community version: $COMMUNITY_VERSION"
+            echo "community-version=$COMMUNITY_VERSION" >> $GITHUB_OUTPUT
+          fi
 
           # Pro version is always 'master' for com.liquibase:liquibase-commercial
           SECURE_VERSION="master"
@@ -397,7 +397,7 @@ jobs:
             echo "Resolving SECURE artifacts from liquibase-pro repository..."
             echo "Skipping liquibase-core resolution; liquibase-commercial already bundles liquibase-core."
             mvn -B \
-              -Puseproartifacts \
+              -PuseProArtifacts \
               -DuseProArtifacts=true \
               -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
               $MAVEN_AUTH_OPTS \
@@ -568,9 +568,12 @@ jobs:
           if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
             echo "Running tests with SECURE artifacts"
             echo "Skipping liquibase-core override; liquibase-commercial already bundles liquibase-core."
-            MAVEN_OPTS="-Puseproartifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$SECURE_VERSION"
+            # Explicitly activate useProArtifacts profile and set commercial version
+            # Profile exclusion will prevent liquibase-core from being resolved
+            MAVEN_OPTS="-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$SECURE_VERSION"
           else
             echo "Running tests with COMMUNITY artifacts"
+            # Only set liquibase-core version for community builds
             MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
           fi
 
