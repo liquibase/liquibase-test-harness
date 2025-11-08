@@ -405,6 +405,15 @@ jobs:
               dependency:resolve \
               -DincludeArtifactIds=liquibase-commercial \
               -DexcludeArtifactIds=liquibase-core 2>&1 | tee resolve.log
+
+            echo ""
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B \
+              -PuseProArtifacts \
+              -DuseProArtifacts=true \
+              -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
+              dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
           else
             echo "Resolving COMMUNITY artifacts from liquibase repository..."
             # ✅ Only resolve liquibase-core for community builds
@@ -413,6 +422,13 @@ jobs:
               $MAVEN_AUTH_OPTS \
               dependency:resolve \
               -DincludeArtifactIds=liquibase-core 2>&1 | tee resolve.log
+
+            echo ""
+            echo "::group::Dependency Tree (COMMUNITY - liquibase-core)"
+            mvn -B \
+              -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
+              dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
           fi
 
           echo "::notice :: Resolved Snapshot Liquibase dependencies"
@@ -575,10 +591,22 @@ jobs:
             # Explicitly activate useProArtifacts profile and set commercial version
             # Profile exclusion will prevent liquibase-core from being resolved
             MAVEN_OPTS="-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$SECURE_VERSION"
+
+            # Show dependency tree before running tests
+            echo ""
+            echo "::group::Dependency Tree Before Test Execution (PRO)"
+            mvn -B $MAVEN_OPTS dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
           else
             echo "Running tests with COMMUNITY artifacts"
             # Only set liquibase-core version for community builds
             MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
+
+            # Show dependency tree before running tests
+            echo ""
+            echo "::group::Dependency Tree Before Test Execution (COMMUNITY)"
+            mvn -B $MAVEN_OPTS dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
           fi
 
           # Run tests with appropriate profile/properties and resolved versions
