@@ -30,7 +30,7 @@ on:
 permissions:
   contents: write
   id-token: write
-  
+
 jobs:
   setup:
     name: Setup
@@ -66,6 +66,14 @@ jobs:
             core.setOutput("liquibaseRepo", liquibaseRepo);
             core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
             core.setOutput("useProArtifacts", useProArtifacts);
+
+      - name: Resolve Snapshot Liquibase Dependencies
+        env:
+          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
   init-mysql:
     runs-on: ubuntu-latest
@@ -139,7 +147,7 @@ jobs:
           secret-ids: |
             ,/vault/liquibase
           parse-json-secrets: true
-          
+
       - name: Configure Test
         id: setup
         uses: actions/github-script@v8
