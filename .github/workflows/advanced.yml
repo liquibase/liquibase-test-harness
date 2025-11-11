@@ -201,6 +201,10 @@ jobs:
           # Pro dependencies are available in liquibase-pro repository
           mvn -B dependency:resolve -DincludeArtifactIds=liquibase-commercial -Dartifacts=com.liquibase:liquibase-commercial:0-SNAPSHOT:jar
 
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
+
           echo "::notice :: Resolved Snapshot Liquibase dependencies from ${{ steps.configure-build.outputs.liquibaseRepo }}"
 
       - name: Cache installed Liquibase
@@ -262,7 +266,12 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-commercial.version -DnewVersion=0-SNAPSHOT
 
       - name: ${{ matrix.database }} Test Run
-        run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
+
+          ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
