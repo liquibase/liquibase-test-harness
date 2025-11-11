@@ -1,6 +1,5 @@
 package liquibase.harness.generateChangelog
 
-import com.datical.liquibase.ext.config.LiquibaseProConfiguration
 import liquibase.database.jvm.JdbcConnection
 import liquibase.exception.CommandExecutionException
 import liquibase.harness.config.DatabaseUnderTest
