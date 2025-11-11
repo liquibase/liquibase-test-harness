@@ -15,6 +15,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
         <liquibase-core.version>4.33.0</liquibase-core.version>
+        <liquibase-commercial.version>4.33.0</liquibase-commercial.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
@@ -76,16 +77,6 @@
         </developer>
     </developers>
     <dependencies>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>${liquibase-core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-commercial</artifactId>
-            <version>${liquibase-core.version}</version>
-        </dependency>
         <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -294,21 +285,16 @@
             <artifactId>liquibase-disable-analytics</artifactId>
             <version>1.0.0</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.liquibase.ext</groupId>
-                <artifactId>liquibase-sdk-maven-plugin</artifactId>
-                <version>0.10.25</version>
-                <configuration>
-                    <githubToken>${env.GITHUB_TOKEN}</githubToken>
-                    <liquibaseHome>bin</liquibaseHome>
-                    <allowInstall>true</allowInstall>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -449,6 +435,23 @@
 
         </plugins>
     </build>
+
+    <repositories>
+        <!-- GitHub Packages repositories for Liquibase artifacts -->
+        <!-- Using 'github' as id to match settings.xml server configuration -->
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/liquibase/liquibase</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>github</id>
@@ -462,6 +465,54 @@
         </snapshotRepository>
     </distributionManagement>
     <profiles>
+        <profile>
+            <!-- Community artifacts profile: include liquibase-core when pro artifacts are not requested -->
+            <id>communityartifacts</id>
+            <activation>
+                <property>
+                    <name>!useProArtifacts</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-core</artifactId>
+                    <version>${liquibase-core.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <!-- Pro artifacts profile: Uses com.liquibase:liquibase-commercial from liquibase-pro repository -->
+            <id>useProArtifacts</id>
+            <activation>
+                <property>
+                    <name>useProArtifacts</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <repositories>
+                <!-- ONLY include liquibase-pro repository for pro artifacts (com.liquibase:liquibase-commercial) -->
+                <repository>
+                    <id>github-pro</id>
+                    <url>https://maven.pkg.github.com/liquibase/liquibase-pro</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <dependencies>
+                <dependency>
+                    <groupId>com.liquibase</groupId>
+                    <artifactId>liquibase-commercial</artifactId>
+                    <!-- Use separate version property for commercial artifacts -->
+                    <version>${liquibase-commercial.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
         <profile>
             <!-- Required for deployment to Sonatype -->
             <id>release</id>

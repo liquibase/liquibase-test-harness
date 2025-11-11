@@ -1,6 +1,5 @@
 package liquibase.harness.diff
 
-import com.datical.liquibase.ext.config.LiquibaseProConfiguration
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig

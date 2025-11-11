@@ -1,6 +1,5 @@
 package liquibase.harness.diff
 
-import com.datical.liquibase.ext.config.LiquibaseProConfiguration
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
@@ -11,7 +10,6 @@ import spock.lang.Unroll
 
 import static liquibase.harness.diff.DiffCommandTestHelper.*
 import static liquibase.harness.util.FileUtils.deleteFile
-import static liquibase.harness.util.FileUtils.getResourceContent
 import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
 import static liquibase.harness.util.TestUtils.executeCommandScope
 
