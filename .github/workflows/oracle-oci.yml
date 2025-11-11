@@ -221,47 +221,14 @@ jobs:
         run: |
           echo "::group::Discover Liquibase Snapshot Version"
 
-          # Only discover community version for community builds
-          USE_SECURE_ARTIFACTS="${{ steps.configure-build.outputs.useProArtifacts }}"
-          if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
-            echo "Skipping COMMUNITY artifact discovery for SECURE builds; liquibase-core is bundled with liquibase-commercial."
-            # Do NOT set community-version for Pro builds to prevent Maven from resolving liquibase-core
-          else
-            echo "Resolving COMMUNITY artifacts version from liquibase/master"
-            # Community artifacts use {commit-sha}-SNAPSHOT format
-            # Query GitHub Packages for the latest published artifact version
-            # The version format is the commit SHA from the built artifact
-
-            PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase/org/liquibase/liquibase-core/maven-metadata.xml"
-
-            echo "Fetching latest artifact version from: $PACKAGES_URL"
-            METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
-
-            # Extract versions in commit-SHA format (40 hex chars followed by -SNAPSHOT)
-            # Filter out release-prep and other non-SHA versions
-            COMMUNITY_VERSION=$(echo "$METADATA" | grep -o '<version>[a-f0-9]\{40\}-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
-
-            if [ -z "$COMMUNITY_VERSION" ]; then
-              echo "ERROR: Could not determine latest commit-SHA version from GitHub Packages"
-              echo "Looking for pattern: 40-character hex SHA followed by -SNAPSHOT"
-              echo "GitHub Packages metadata response (first 500 chars):"
-              echo "$METADATA" | head -c 500
-              echo ""
-              exit 1
-            fi
-
-            echo "Community version: $COMMUNITY_VERSION"
-            echo "community-version=$COMMUNITY_VERSION" >> $GITHUB_OUTPUT
-          fi
+          # Oracle OCI cloud tests ALWAYS use Pro artifacts
+          echo "Oracle OCI cloud tests always use PRO artifacts (liquibase-commercial)"
+          echo "Skipping COMMUNITY artifact discovery; liquibase-core is bundled with liquibase-commercial."
 
           # Pro version is always 'master' for com.liquibase:liquibase-commercial
           SECURE_VERSION="master"
-          echo "SECURE version: $SECURE_VERSION"
+          echo "PRO version: $SECURE_VERSION"
           echo "secure-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
-
-          # liquibase-maven-plugin is no longer required for these runs
-          echo "Skipping liquibase-maven-plugin discovery; plugin download not required."
-          echo "maven-plugin-version=" >> $GITHUB_OUTPUT
 
           echo "::endgroup::"
 
@@ -271,9 +238,8 @@ jobs:
         run: |
           echo "::group::Resolve Snapshot Liquibase Dependencies"
           echo "Artifact repository: ${{ steps.configure-build.outputs.liquibaseRepo }}"
-          echo "Community version: ${{ steps.discover-version.outputs.community-version }}"
-          echo "SECURE version: ${{ steps.discover-version.outputs.secure-version }}"
-          echo "Using SECURE artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
+          echo "PRO version: ${{ steps.discover-version.outputs.secure-version }}"
+          echo "Oracle OCI cloud tests ALWAYS use PRO artifacts"
           echo "::endgroup::"
 
           # Verify Maven settings are configured
@@ -285,46 +251,29 @@ jobs:
           # Pass authentication credentials as system properties to Maven
           MAVEN_AUTH_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=debug"
 
-          USE_SECURE="${{ steps.configure-build.outputs.useProArtifacts }}"
-          if [ "$USE_SECURE" = "true" ]; then
-            echo "Resolving SECURE artifacts from liquibase-pro repository..."
-            echo "Skipping liquibase-core resolution; liquibase-commercial already bundles liquibase-core."
-            # ✅ Explicitly activate useProArtifacts profile and set commercial version
-            mvn -B \
-              -PuseProArtifacts \
-              -DuseProArtifacts=true \
-              -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
-              $MAVEN_AUTH_OPTS \
-              dependency:resolve \
-              -DincludeArtifactIds=liquibase-commercial \
-              -DexcludeArtifactIds=liquibase-core 2>&1 | tee resolve.log
+          echo "Resolving PRO artifacts from liquibase-pro repository..."
+          echo "Skipping liquibase-core resolution; liquibase-commercial already bundles liquibase-core."
 
-            echo ""
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B \
-              -PuseProArtifacts \
-              -DuseProArtifacts=true \
-              -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
-              dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-          else
-            echo "Resolving COMMUNITY artifacts from liquibase repository..."
-            # ✅ Only resolve liquibase-core for community builds
-            mvn -B \
-              -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
-              $MAVEN_AUTH_OPTS \
-              dependency:resolve \
-              -DincludeArtifactIds=liquibase-core 2>&1 | tee resolve.log
+          # ✅ Explicitly activate useProArtifacts profile and set commercial version
+          mvn -B \
+            -PuseProArtifacts \
+            -DuseProArtifacts=true \
+            -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
+            $MAVEN_AUTH_OPTS \
+            dependency:resolve \
+            -DincludeArtifactIds=liquibase-commercial \
+            -DexcludeArtifactIds=liquibase-core 2>&1 | tee resolve.log
 
-            echo ""
-            echo "::group::Dependency Tree (COMMUNITY - liquibase-core)"
-            mvn -B \
-              -Dliquibase-core.version=${{ steps.discover-version.outputs.community-version }} \
-              dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-          fi
+          echo ""
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B \
+            -PuseProArtifacts \
+            -DuseProArtifacts=true \
+            -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
+            dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-          echo "::notice :: Resolved Snapshot Liquibase dependencies"
+          echo "::notice :: Resolved Snapshot Liquibase PRO dependencies"
 
       - name: Cache installed Liquibase
         uses: actions/cache@v4
