@@ -138,6 +138,10 @@ jobs:
                     core.notice(notice);
                 }
             }
+
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
             
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v22

@@ -67,6 +67,10 @@ jobs:
             core.setOutput("liquibaseRepo", liquibaseRepo);
             core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
             core.setOutput("useProArtifacts", useProArtifacts);
+            
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
 
   test:
     needs: [setup]
