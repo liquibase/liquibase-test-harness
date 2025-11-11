@@ -193,13 +193,13 @@ jobs:
           echo "Using pro artifacts: ${{ steps.configure-build.outputs.useProArtifacts }}"
           echo "::endgroup::"
 
-          # Set liquibase-core version to 0-SNAPSHOT for development builds
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+          # Set liquibase-commercial version to 0-SNAPSHOT for development builds (Pro artifacts only)
+          mvn -B versions:set-property -Dproperty=liquibase-commercial.version -DnewVersion=0-SNAPSHOT
 
-          # Resolve Liquibase dependencies from configured repository via Maven
-          # This downloads liquibase-core and liquibase-commercial (pro artifacts)
+          # Resolve Liquibase Pro dependencies from configured repository via Maven
+          # This downloads liquibase-commercial (pro artifacts only)
           # Pro dependencies are available in liquibase-pro repository
-          mvn -B dependency:resolve -DincludeArtifactIds=liquibase-core,liquibase-commercial -Dartifacts=org.liquibase:liquibase-core:0-SNAPSHOT:jar,org.liquibase:liquibase-commercial:0-SNAPSHOT:jar
+          mvn -B dependency:resolve -DincludeArtifactIds=liquibase-commercial -Dartifacts=com.liquibase:liquibase-commercial:0-SNAPSHOT:jar
 
           echo "::notice :: Resolved Snapshot Liquibase dependencies from ${{ steps.configure-build.outputs.liquibaseRepo }}"
 
@@ -259,7 +259,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn -B versions:set-property -Dproperty=liquibase-core.version -DnewVersion=0-SNAPSHOT
+          mvn -B versions:set-property -Dproperty=liquibase-commercial.version -DnewVersion=0-SNAPSHOT
 
       - name: ${{ matrix.database }} Test Run
         run: ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
