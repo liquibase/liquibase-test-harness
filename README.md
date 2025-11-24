@@ -237,8 +237,9 @@ The Maven workflows automatically detect which repository is being used and reso
      - Workflow queries GitHub Packages maven-metadata.xml to discover latest master branch commit SHA
      - Each commit gets a unique snapshot version automatically published to GitHub Packages
    - **Pro artifacts** (`liquibase/liquibase-pro`):
-     - Version: `master` (always points to latest master branch build)
-     - No SHA needed - single "master" version that's continuously updated
+     - Version format: `master-{short-sha}` (e.g., `master-e461cb2`, `master-f01cce1`)
+     - Workflow queries GitHub Packages maven-metadata.xml to discover latest master branch version
+     - Each master build gets a unique version with 7-character commit SHA
    - **Automatic Discovery**: Workflow automatically detects which artifacts are needed and queries the appropriate repository's version metadata
 
 3. **Maven Profile**: The `useproartifacts` profile (when activated with `-Puseproartifacts`):
@@ -248,11 +249,11 @@ The Maven workflows automatically detect which repository is being used and reso
 
 4. **Artifact Resolution Flow**:
    - **Pro artifacts** (`liquibase-pro` selected):
-     - Workflow sets version to `master`
+     - Workflow queries and sets version to `master-{short-sha}` (e.g., `master-e461cb2`)
      - Profile activates `-Puseproartifacts`
      - Maven resolves:
-       - `org.liquibase:liquibase-core:master` from `liquibase-pro` repository
-       - `com.liquibase:liquibase-commercial:master` from `liquibase-pro` repository
+       - `org.liquibase:liquibase-core:master-{short-sha}` from `liquibase-pro` repository
+       - `com.liquibase:liquibase-commercial:master-{short-sha}` from `liquibase-pro` repository
    - **Community artifacts** (default):
      - Workflow queries GitHub Packages maven-metadata.xml for latest master branch commit SHA
      - Sets version to `{SHA}-SNAPSHOT` (e.g., `e11e704013b5f419e0826807714d72c945dbffd2-SNAPSHOT`)
