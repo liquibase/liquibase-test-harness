@@ -225,8 +225,24 @@ jobs:
           echo "Oracle OCI cloud tests always use PRO artifacts (liquibase-commercial)"
           echo "Skipping COMMUNITY artifact discovery; liquibase-core is bundled with liquibase-commercial."
 
-          # Pro version is always 'master' for com.liquibase:liquibase-commercial
-          SECURE_VERSION="master"
+          # Query GitHub Packages for the latest liquibase-commercial artifact version
+          PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase-pro/com/liquibase/liquibase-commercial/maven-metadata.xml"
+
+          echo "Fetching latest PRO artifact version from: $PACKAGES_URL"
+          METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
+
+          # Extract version in master-{7-char-hex-sha} format (e.g., master-e461cb2)
+          SECURE_VERSION=$(echo "$METADATA" | grep -o '<version>master-[a-f0-9]\{7\}</version>' | tail -1 | sed 's/<[^>]*>//g')
+
+          if [ -z "$SECURE_VERSION" ]; then
+            echo "ERROR: Could not determine PRO version from GitHub Packages"
+            echo "Looking for pattern: master-{7-char-hex-sha} (e.g., master-e461cb2)"
+            echo "GitHub Packages metadata response (first 500 chars):"
+            echo "$METADATA" | head -c 500
+            echo ""
+            exit 1
+          fi
+
           echo "PRO version: $SECURE_VERSION"
           echo "secure-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
 
