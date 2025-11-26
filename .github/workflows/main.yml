@@ -671,7 +671,7 @@ jobs:
           app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
           private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
           owner: liquibase
-          repositories: liquibase
+          repositories: liquibase,liquibase-pro
           permission-statuses: write
 
       - name: Generate workflow summary
@@ -701,9 +701,14 @@ jobs:
             }
 
             console.log("Mark tests as "+result);
+
+            // Extract repository name from liquibaseRepo (e.g., "liquibase/liquibase-pro" -> "liquibase-pro")
+            const repoName = "${{ needs.setup.outputs.liquibaseRepo }}".split("/")[1];
+            console.log("Creating commit status on repository: " + repoName);
+
             await github.rest.repos.createCommitStatus({
               "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
-              "repo": "liquibase",
+              "repo": repoName,
               "sha": "${{ needs.setup.outputs.liquibaseSha }}",
               "state": result,
               "context": "Run Test-Harness Tests",

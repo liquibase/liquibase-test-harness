@@ -86,7 +86,8 @@ module.exports = ({github, context}) => {
             if (!repository) {
                 return false;
             }
-            return repository.toLowerCase() === 'liquibase/liquibase-pro';
+            return repository.toLowerCase() === 'liquibase/liquibase-pro' ||
+                repository.toLowerCase() === 'liquibase/liquibase-test-harness';
         },
 
         getDefaultRepoForContext: function (repository) {
