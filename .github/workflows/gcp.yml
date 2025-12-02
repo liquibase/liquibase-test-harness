@@ -398,19 +398,28 @@ jobs:
           force: true
           requireForce: true
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Setup Liquibase
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'secure'
+
+      - name: Install PostgreSQL Driver
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
+        run: liquibase lpm add postgresql --global
+
+      - name: Init PostgreSQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          version: '5.0.0'
-          edition: 'secure'
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "postgresql.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/aws" \
+            --changelog-file="postgresql.sql" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
       - uses: liquibase-github-actions/drop-all@v4.33.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
@@ -436,33 +445,51 @@ jobs:
           force: true
           requireForce: true
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Setup Liquibase
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'secure'
+
+      - name: Install MSSQL Driver
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
+        run: liquibase lpm add mssql --global
+
+      - name: Init MSSQL 2019 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/gcp" \
+            --changelog-file="mssql.sql" \
+            --username="${{ env.MSSQL_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env.TH_GCP_MSSQL_2019_URL }}"
+
+      - name: Setup Liquibase
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
+        uses: liquibase/setup-liquibase@v2
         with:
           version: '5.0.0'
           edition: 'secure'
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/gcp"
-          changeLogFile: "mssql.sql"
-          username: "${{env.MSSQL_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_GCP_MSSQL_2019_URL }}"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Install MSSQL Driver
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
+        run: liquibase lpm add mssql --global
+
+      - name: Init MSSQL 2022 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          version: '5.0.0'
-          edition: 'secure'
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/gcp"
-          changeLogFile: "mssql.sql"
-          username: "${{env.MSSQL_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_GCP_MSSQL_2022_URL }}"
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/gcp" \
+            --changelog-file="mssql.sql" \
+            --username="${{ env.MSSQL_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env.TH_GCP_MSSQL_2022_URL }}"
 
       - name: Restore cached Liquibase artifacts
         uses: actions/cache@v4
