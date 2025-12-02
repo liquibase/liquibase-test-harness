@@ -431,15 +431,21 @@ jobs:
 
       - name: ${{ matrix.database }} Test Run
         run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
+          if [ "${{ needs.setup.outputs.useProArtifacts }}" = "true" ]; then
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
 
-          ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
+            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }}"
+          else
+            echo "::group::Dependency Tree (COMMUNITY - liquibase-core)"
+            mvn -B dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+
+            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
+          fi
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          USE_PRO_ARTIFACTS: "true"
-          PRO_VERSION: ${{ needs.setup.outputs.proVersion }}
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@v4
