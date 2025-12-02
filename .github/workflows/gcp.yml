@@ -405,10 +405,6 @@ jobs:
           version: '5.0.0'
           edition: 'secure'
 
-      - name: Install PostgreSQL Driver
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
-        run: liquibase lpm add postgresql --global
-
       - name: Init PostgreSQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         env:
@@ -452,10 +448,6 @@ jobs:
           version: '5.0.0'
           edition: 'secure'
 
-      - name: Install MSSQL Driver
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
-        run: liquibase lpm add mssql --global
-
       - name: Init MSSQL 2019 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         env:
@@ -474,10 +466,6 @@ jobs:
         with:
           version: '5.0.0'
           edition: 'secure'
-
-      - name: Install MSSQL Driver
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
-        run: liquibase lpm add mssql --global
 
       - name: Init MSSQL 2022 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
