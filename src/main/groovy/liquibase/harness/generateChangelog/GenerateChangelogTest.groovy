@@ -69,11 +69,11 @@ class GenerateChangelogTest extends Specification {
         for (Map.Entry<String, String> entry : formats.entrySet()) {
 
             Map<String, Object> scopeValues = new HashMap<>()
-//            if (entry.key.equalsIgnoreCase("SqlTestCase")) {
-//                scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), true)
-//            } else {
-//                scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), false)
-//            }
+            if (entry.key.equalsIgnoreCase("SqlTestCase")) {
+                scopeValues.put("liquibase.pro.sql.inline.generateInlineSql",  true)
+            } else {
+                scopeValues.put("liquibase.pro.sql.inline.generateInlineSql", false)
+            }
 
             clearFolder(generatedFolderPath)
 
