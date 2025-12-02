@@ -42,6 +42,7 @@ jobs:
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
       useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
+      proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -523,13 +524,14 @@ jobs:
           password: "${{env.TH_DB_PASSWD}}"
           url: "${{ env.TH_ORACLEURL_19 }}"
 
-      - name: Cache local Maven repository
+      - name: Restore cached Liquibase artifacts
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          path: |
+            ~/.m2/repository/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            mvn-liquibase-${{ github.run_id }}-
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '12' }}
