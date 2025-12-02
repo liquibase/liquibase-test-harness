@@ -337,7 +337,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean GCP MySQL Database
-        uses: liquibase-github-actions/drop-all@v4.33.0
+        uses: liquibase-github-actions/drop-all@v5.0.3
         if: ${{ matrix.database == 'mysql' }}
         with:
           url: "${{ env.TH_GCP_MYSQL_8_0_URL }}"
@@ -386,7 +386,7 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@v4.33.0
+      - uses: liquibase-github-actions/drop-all@v5.0.3
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
@@ -403,6 +403,8 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
+          version: '5.0.3'
+          edition: 'secure'
           operation: "update"
           classpath: "src/test/resources/init-changelogs/aws"
           changeLogFile: "postgresql.sql"
@@ -410,7 +412,7 @@ jobs:
           password: "${{env.TH_DB_PASSWD}}"
           url: "${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.33.0
+      - uses: liquibase-github-actions/drop-all@v5.0.3
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
@@ -422,7 +424,7 @@ jobs:
           force: true
           requireForce: true
 
-      - uses: liquibase-github-actions/drop-all@v4.33.0
+      - uses: liquibase-github-actions/drop-all@v5.0.3
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
@@ -439,6 +441,8 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
+          version: '5.0.3'
+          edition: 'secure'
           operation: "update"
           classpath: "src/test/resources/init-changelogs/gcp"
           changeLogFile: "mssql.sql"
@@ -451,6 +455,8 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
+          version: '5.0.3'
+          edition: 'secure'
           operation: "update"
           classpath: "src/test/resources/init-changelogs/gcp"
           changeLogFile: "mssql.sql"
