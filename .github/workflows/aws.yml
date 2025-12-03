@@ -333,7 +333,7 @@ jobs:
           sudo apt-get install liquibase
           curl -L -o lpm-${{ env.LPM_VERSION }}-linux.zip https://github.com/liquibase/liquibase-package-manager/releases/download/v${{ env.LPM_VERSION }}/lpm-${{ env.LPM_VERSION }}-linux.zip
           sudo unzip -o lpm-${{ env.LPM_VERSION }}-linux.zip -d /usr/bin
-          sudo lpm update && sudo lpm add mysql postgresql
+          sudo lpm update && sudo lpm add mysql postgresql mariadb mssql
     
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v5
