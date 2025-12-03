@@ -338,16 +338,24 @@ jobs:
           force: true
           requireForce: true
 
-      - name: Init Azure MySQL Database
-        uses: liquibase/liquibase-github-action@v7
+      - name: Setup Liquibase
         if: ${{ matrix.database == 'mysql' }}
+        uses: liquibase/setup-liquibase@v2
         with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/azure"
-          changeLogFile: "mysql.sql"
-          username: "${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{env.TH_AZURE_MYSQL_URL}}"
+          version: '5.0.0'
+          edition: 'secure'
+
+      - name: Init Azure MySQL Database
+        if: ${{ matrix.database == 'mysql' }}
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/azure" \
+            --changelog-file="mysql.sql" \
+            --username="${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env.TH_AZURE_MYSQL_URL }}"
   test:
     needs: [init-mysql, setup]
     runs-on: ubuntu-latest
@@ -409,16 +417,24 @@ jobs:
           force: true
           requireForce: true
 
-      - name: Azure MSSQL init changelogs update
-        uses: liquibase/liquibase-github-action@v7
+      - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
+        uses: liquibase/setup-liquibase@v2
         with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/azure"
-          changeLogFile: "sqlserver.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{env.TH_AZURE_URL}}"
+          version: '5.0.0'
+          edition: 'secure'
+
+      - name: Azure MSSQL init changelogs update
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/azure" \
+            --changelog-file="sqlserver.sql" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env.TH_AZURE_URL }}"
 
       - name: Azure MSSQL MI dropAll
         uses: liquibase-github-actions/drop-all@v4.33.0
@@ -431,16 +447,24 @@ jobs:
           force: true
           requireForce: true
 
-      - name: Azure MSSQL MI init changelogs update
-        uses: liquibase/liquibase-github-action@v7
+      - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
+        uses: liquibase/setup-liquibase@v2
         with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/azure"
-          changeLogFile: "sqlserver.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{env.TH_AZURE_MSSQL_MI_URL}}"
+          version: '5.0.0'
+          edition: 'secure'
+
+      - name: Azure MSSQL MI init changelogs update
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/azure" \
+            --changelog-file="sqlserver.sql" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env.TH_AZURE_MSSQL_MI_URL }}"
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
@@ -518,15 +542,22 @@ jobs:
           force: true
           requireForce: true
 
-      - name: Azure PostgreSQL Flexible Server init changelogs update
-        uses: liquibase/liquibase-github-action@v7
+      - name: Setup Liquibase
+        uses: liquibase/setup-liquibase@v2
         with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/azure"
-          changeLogFile: "postgresql.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: ${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}
+          version: '5.0.0'
+          edition: 'secure'
+
+      - name: Azure PostgreSQL Flexible Server init changelogs update
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/azure" \
+            --changelog-file="postgresql.sql" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}"
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         env:
