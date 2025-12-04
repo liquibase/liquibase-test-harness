@@ -10,7 +10,6 @@ import spock.lang.Unroll
 
 import static liquibase.harness.diff.DiffCommandTestHelper.*
 import static liquibase.harness.util.FileUtils.deleteFile
-import static liquibase.harness.util.FileUtils.getResourceContent
 import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
 import static liquibase.harness.util.TestUtils.executeCommandScope
 
@@ -72,7 +71,7 @@ class DiffChangelogTests extends Specification {
         argsMapRef.put("referencePassword", testInput.targetDatabase.password)
         argsMapRef.put("changelogFile", testInput.pathToGeneratedXmlDiffChangelogFile)
         Map<String, Object> scopeValues = new HashMap<>()
-        scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), false)
+        argsMapRef.put("generateInlineSql", false)
         executeCommandScope("diffChangelog", argsMapRef, scopeValues)
         File expectedDiffFolder = new File(testInput.pathToExpectedDiffFolder)
         File[] subDirs = expectedDiffFolder.listFiles(new FileFilter() {
