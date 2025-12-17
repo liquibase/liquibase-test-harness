@@ -525,7 +525,7 @@ jobs:
 
       - name: upload-artifacts to include url username and password
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: oracle-connection-details
           path: |
