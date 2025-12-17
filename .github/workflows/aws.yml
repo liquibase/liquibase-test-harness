@@ -349,16 +349,18 @@ jobs:
             ,/vault/liquibase
           parse-json-secrets: true
 
+      - name: Write Oracle Connection Details to a local text file
+        run: |
+          touch oracle-connection-details.txt
+          echo "TH_ORACLEURL_19=${TH_ORACLEURL_19}" >> oracle-connection-details.txt
+          echo "TH_DB_ADMIN=${TH_DB_ADMIN}" >> oracle-connection-details.txt
+          echo "TH_DB_PASSWD=${TH_DB_PASSWD}" >> oracle-connection-details.txt
+
       - name: upload-artifacts to include url username and password
         uses: actions/upload-artifact@v4
         with:
           name: oracle-connection-details
-          path: |
-            <<EOF
-            TH_ORACLEURL_19=${{ env.TH_ORACLEURL_19 }}
-            TH_DB_ADMIN=${{ env.TH_DB_ADMIN }}
-            TH_DB_PASSWD=${{ env.TH_DB_PASSWD }}
-            EOF
+          path: oracle-connection-details.txt
 
       - name: Start & Configure LocalStack
         env:
