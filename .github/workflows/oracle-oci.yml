@@ -36,6 +36,7 @@ jobs:
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
       useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
+      proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -309,13 +310,14 @@ jobs:
         uses: actions/checkout@v5
 
 
-      - name: Cache local Maven repository
+      - name: Restore cached Liquibase artifacts
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          path: |
+            ~/.m2/repository/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            mvn-liquibase-${{ github.run_id }}-
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v5
@@ -337,10 +339,10 @@ jobs:
 
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_OCI_ORACLE_19c_URL }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_OCI_ORACLE_19c_URL }}' test
 
       - name: Archive Oracle OCI Test Results
         uses: actions/upload-artifact@v4

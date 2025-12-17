@@ -54,6 +54,7 @@ jobs:
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
       useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
+      proVersion: ${{ steps.discover-version.outputs.secure-version }}
       databases: ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4",
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
         "mariadb-10.7","mariadb-11.4","mssql-2017","mssql-2019","mssql-2022","crdb-23.1","crdb-23.2","crdb-24.1","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0",
@@ -404,11 +405,14 @@ jobs:
             ,/vault/liquibase
           parse-json-secrets: true
 
-      - name: Cache installed Liquibase
+      - name: Restore cached Liquibase artifacts
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository/org/liquibase/
+          path: |
+            ~/.m2/repository/
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            mvn-liquibase-${{ github.run_id }}-
 
       - name: Build ${{ matrix.database }} test infra
         working-directory: src/test/resources/docker
@@ -427,11 +431,19 @@ jobs:
 
       - name: ${{ matrix.database }} Test Run
         run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
+          if [ "${{ needs.setup.outputs.useProArtifacts }}" = "true" ]; then
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
 
-          ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
+            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }}"
+          else
+            echo "::group::Dependency Tree (COMMUNITY - liquibase-core)"
+            mvn -B dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+
+            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }}
+          fi
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 

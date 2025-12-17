@@ -41,6 +41,7 @@ jobs:
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
       useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
       liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
+      proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -397,17 +398,24 @@ jobs:
           force: true
           requireForce: true
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Setup Liquibase
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'secure'
+
+      - name: Init PostgreSQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "postgresql.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/aws" \
+            --changelog-file="postgresql.sql" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
       - uses: liquibase-github-actions/drop-all@v4.33.0
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
@@ -433,37 +441,52 @@ jobs:
           force: true
           requireForce: true
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Setup Liquibase
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'secure'
+
+      - name: Init MSSQL 2019 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/gcp"
-          changeLogFile: "mssql.sql"
-          username: "${{env.MSSQL_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_GCP_MSSQL_2019_URL }}"
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/gcp" \
+            --changelog-file="mssql.sql" \
+            --username="${{ env.MSSQL_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env.TH_GCP_MSSQL_2019_URL }}"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Setup Liquibase
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'secure'
+
+      - name: Init MSSQL 2022 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/gcp"
-          changeLogFile: "mssql.sql"
-          username: "${{env.MSSQL_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_GCP_MSSQL_2022_URL }}"
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase update \
+            --classpath="src/test/resources/init-changelogs/gcp" \
+            --changelog-file="mssql.sql" \
+            --username="${{ env.MSSQL_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env.TH_GCP_MSSQL_2022_URL }}"
 
-      - name: Cache local Maven repository
+      - name: Restore cached Liquibase artifacts
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          path: |
+            ~/.m2/repository/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            mvn-liquibase-${{ github.run_id }}-
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
@@ -471,10 +494,10 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}' test
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
@@ -482,10 +505,10 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MYSQL_8_0_URL }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MYSQL_8_0_URL }}' test
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
@@ -494,10 +517,10 @@ jobs:
           LIQUIBASE_LIQUIBASE_SCHEMA_NAME: lbuser
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=gcp -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MSSQL_2019_URL }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=gcp -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MSSQL_2019_URL }}' test
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
@@ -506,10 +529,10 @@ jobs:
           LIQUIBASE_LIQUIBASE_SCHEMA_NAME: lbuser
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=gcp -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MSSQL_2022_URL }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=gcp -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MSSQL_2022_URL }}' test
 
       - name: Archive GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@v4

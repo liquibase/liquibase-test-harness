@@ -40,7 +40,7 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -Dtest=LiquibaseHarnessSuiteTest -DdbUsername=${{env.DB2_USER}} -DdbPassword=${{env.DB2_PASS}} -DdbName=db2-z -DrollbackStrategy=rollbackByTag test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=LiquibaseHarnessSuiteTest -DdbUsername=${{env.DB2_USER}} -DdbPassword=${{env.DB2_PASS}} -DdbName=db2-z -DrollbackStrategy=rollbackByTag test
 
       - name: Archive IBM DB2/Z Cloud Database Test Results
         uses: actions/upload-artifact@v4

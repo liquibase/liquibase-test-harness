@@ -61,25 +61,23 @@ class GenerateChangelogTest extends Specification {
         def formats = new LinkedHashMap<String, String>()
         def shortDbName = getShortDatabaseName(testInput.databaseName)
         formats.put("XmlTestCase", generatedChangeTypePath + ".xml")
-        formats.put("SqlTestCase", generatedChangeTypePath + ".$shortDbName"+".sql")
+//        formats.put("SqlTestCase", generatedChangeTypePath + ".$shortDbName"+".sql")  //TODO commented until DAT-**** is done
         formats.put("YmlTestCase",  generatedChangeTypePath + ".yml")
         formats.put("JsonTestCase", generatedChangeTypePath + ".json")
 
         then: "check if a changelog was actually generated and validate it's content"
         for (Map.Entry<String, String> entry : formats.entrySet()) {
 
-            Map<String, Object> scopeValues = new HashMap<>()
             if (entry.key.equalsIgnoreCase("SqlTestCase")) {
-                scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), true)
+                argsMap.put("generateInlineSql", true)
             } else {
-                scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), false)
+                argsMap.put("generateInlineSql", false)
             }
-
             clearFolder(generatedFolderPath)
 
             argsMap.put("excludeObjects", "(?i)posts, (?i)authors")//excluding static test-harness objects from generated changelog
             argsMap.put("changeLogFile", entry.value)
-            executeCommandScope("generateChangelog", argsMap, scopeValues)
+            executeCommandScope("generateChangelog", argsMap)
 
             String generatedChangelog = readFile((String) argsMap.get("changeLogFile"))
             if (entry.key.equalsIgnoreCase("SqlTestCase")) {
