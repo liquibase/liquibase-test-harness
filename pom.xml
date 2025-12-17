@@ -9,12 +9,10 @@
     <description>Test Harness For Liquibase</description>
     <url>https://github.com/liquibase/liquibase-test-harness</url>
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-
+        <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
+        <maven.enforcer.requireJavaVersion>${maven.compiler.release}</maven.enforcer.requireJavaVersion>
         <liquibase-core.version>5.0.1</liquibase-core.version>
         <liquibase-commercial.version>5.0.3</liquibase-commercial.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
@@ -334,7 +332,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <targetBytecode>1.8</targetBytecode>
+                    <targetBytecode>17</targetBytecode>
                 </configuration>
             </plugin>
             <plugin>
@@ -565,7 +563,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <targetBytecode>1.8</targetBytecode>
+                            <targetBytecode>17</targetBytecode>
                         </configuration>
                     </plugin>
                 </plugins>
