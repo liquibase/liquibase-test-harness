@@ -333,7 +333,7 @@ jobs:
           sudo apt-get install liquibase
           curl -L -o lpm-${{ env.LPM_VERSION }}-linux.zip https://github.com/liquibase/liquibase-package-manager/releases/download/v${{ env.LPM_VERSION }}/lpm-${{ env.LPM_VERSION }}-linux.zip
           sudo unzip -o lpm-${{ env.LPM_VERSION }}-linux.zip -d /usr/bin
-          sudo lpm update && sudo lpm add mysql postgresql mariadb mssql
+          sudo lpm update && sudo lpm add mysql postgresql mariadb mssql oracle
     
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v5
@@ -503,13 +503,6 @@ jobs:
           echo "TH_MYSQLURL_8_0=$mysql_url" >> $GITHUB_ENV
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
-
-      - name: Setup Liquibase
-        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: liquibase/setup-liquibase@v1
-        with:
-          version: "4.33.0"
-          edition: "pro"
 
       - name: Drop All Oracle Objects
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
