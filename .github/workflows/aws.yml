@@ -349,6 +349,17 @@ jobs:
             ,/vault/liquibase
           parse-json-secrets: true
 
+      - name: upload-artifacts to include url username and password
+        uses: actions/upload-artifact@v4
+        with:
+          name: oracle-connection-details
+          path: |
+            <<EOF
+            TH_ORACLEURL_19=${{ env.TH_ORACLEURL_19 }}
+            TH_DB_ADMIN=${{ env.TH_DB_ADMIN }}
+            TH_DB_PASSWD=${{ env.TH_DB_PASSWD }}
+            EOF
+
       - name: Start & Configure LocalStack
         env:
           LOCALSTACK_OAUTH_TOKEN: ${{ env.LOCALSTACK_OAUTH_TOKEN }}
@@ -522,18 +533,6 @@ jobs:
             --password="${{env.TH_DB_PASSWD}}" \
             drop-all \
             --force
-
-      - name: upload-artifacts to include url username and password
-        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: oracle-connection-details
-          path: |
-            <<EOF
-            TH_ORACLEURL_19=${{ env.TH_ORACLEURL_19 }}
-            TH_DB_ADMIN=${{ env.TH_DB_ADMIN }}
-            TH_DB_PASSWD=${{ env.TH_DB_PASSWD }}
-            EOF
       
       - name: Update Oracle Database with Init Changelog
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
