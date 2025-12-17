@@ -509,7 +509,7 @@ jobs:
         uses: liquibase/setup-liquibase@v1
         with:
           version: "4.33.0"
-          edition: "oss"
+          edition: "pro"
 
       - name: Debug Oracle Connection
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
