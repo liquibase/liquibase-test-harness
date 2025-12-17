@@ -504,25 +504,37 @@ jobs:
           sleep 30
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
 
-      - uses: liquibase-github-actions/drop-all@v4.33.0
+      - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        uses: liquibase/setup-liquibase@v1
         with:
-          url: "${{ env.TH_ORACLEURL_19 }}"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          licenseKey: "${{env.PRO_LICENSE_KEY}}"
-          force: true
-          requireForce: true
+          version: "4.33.0"
+          edition: "secure"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - name: Drop All Oracle Objects
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "oracle.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_ORACLEURL_19 }}"
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase \
+            --url="${{ env.TH_ORACLEURL_19 }}" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            drop-all \
+            --force
+
+      - name: Update Oracle Database with Init Changelog
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase \
+            --classpath="src/test/resources/init-changelogs/aws" \
+            --changeLogFile="oracle.sql" \
+            --url="${{ env.TH_ORACLEURL_19 }}" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            update
 
       - name: Restore cached Liquibase artifacts
         uses: actions/cache@v4
