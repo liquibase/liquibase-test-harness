@@ -511,12 +511,31 @@ jobs:
           version: "4.33.0"
           edition: "oss"
 
+      - name: Debug Oracle Connection
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        run: |
+          echo "Testing Oracle RDS connectivity..."
+          echo "Connection String: ${{ env.TH_ORACLEURL_19 }}"
+          echo "Username: ${{ env.TH_DB_ADMIN }}"
+          echo "Hostname: $(echo '${{ env.TH_ORACLEURL_19 }}' | grep -oP '(?<=@)[^:]+' || echo 'Could not parse')"
+
+          # Try to resolve hostname
+          HOST=$(echo '${{ env.TH_ORACLEURL_19 }}' | grep -oP '(?<=@)[^:]+' || echo '')
+          if [ -n "$HOST" ]; then
+            echo "Attempting to resolve $HOST..."
+            nslookup "$HOST" || echo "nslookup failed"
+            echo "Attempting to ping $HOST (may be blocked)..."
+            ping -c 1 "$HOST" || echo "Ping failed (expected if ICMP blocked)"
+            echo "Attempting to connect on port 1521..."
+            timeout 5 bash -c "</dev/tcp/$HOST/1521" && echo "Port 1521 is open" || echo "Port 1521 connection failed or timed out"
+          fi
+
       - name: Drop All Oracle Objects
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         run: |
-          liquibase \
+          liquibase --log-level=debug \
             --url="${{ env.TH_ORACLEURL_19 }}" \
             --username="${{ env.TH_DB_ADMIN }}" \
             --password="${{ env.TH_DB_PASSWD }}" \
