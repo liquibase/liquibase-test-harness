@@ -43,7 +43,7 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v5
@@ -307,7 +307,7 @@ jobs:
             version: azure
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       #      This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
@@ -366,7 +366,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v5
@@ -501,7 +501,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v5

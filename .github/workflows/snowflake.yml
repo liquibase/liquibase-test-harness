@@ -23,7 +23,7 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v5
@@ -297,7 +297,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - uses: actions/setup-java@v5
         with:
@@ -413,7 +413,7 @@ jobs:
       stack-id: ${{ steps.get-stack-id.outputs.stack-id }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Get Stack ID
         id: get-stack-id
         uses: ./.github/actions/get-stack-id
