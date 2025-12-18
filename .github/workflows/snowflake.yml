@@ -386,7 +386,6 @@ jobs:
           # PKI Authentication
           liquibase.snowflake.auth.type=PKI
           liquibase.snowflake.auth.privateKeyPath=/tmp/snowflake_private_key.p8
-          liquibase.snowflake.auth.privateKeyPassphrase=
 
           # Schema configuration
           liquibaseSchemaName=PUBLIC
