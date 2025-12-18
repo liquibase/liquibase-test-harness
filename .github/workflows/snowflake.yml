@@ -350,6 +350,21 @@ jobs:
           sudo apt-get update
           sudo apt-get install liquibase
 
+      - name: Setup Snowflake JDBC Driver for Liquibase CLI
+        run: |
+          # Download Snowflake JDBC driver to a temporary location
+          mkdir -p /tmp/liquibase-drivers
+          mvn dependency:copy-dependencies \
+            -DoutputDirectory=/tmp/liquibase-drivers \
+            -DincludeArtifactIds=snowflake-jdbc \
+            -DexcludeTransitive=true
+
+          # Also copy to system Liquibase lib directory if available
+          LIQUIBASE_LIB_DIR=$(liquibase --version | grep -o 'Liquibase [^)]*' || echo "/opt/liquibase/lib")
+          if [ -d "/opt/liquibase/lib" ]; then
+            sudo cp /tmp/liquibase-drivers/*.jar /opt/liquibase/lib/ 2>/dev/null || true
+          fi
+
       - name: Decode Private Key
         run: |
           echo "${{ env.TH_DB_LIQUIBASETH_PRIVATE_KEY }}" | awk '{gsub("\\\\n","\n")}1' > /tmp/snowflake_private_key.p8
@@ -366,11 +381,11 @@ jobs:
           # PKI Authentication
           liquibase.snowflake.auth.type=PKI
           liquibase.snowflake.auth.privateKeyPath=/tmp/snowflake_private_key.p8
-          
+
           # Schema configuration
           liquibaseSchemaName=PUBLIC
           defaultSchemaName=PUBLIC
-          
+
           # Changelog settings
           changeLogFile=snowflake.sql
           classpath=src/test/resources/init-changelogs/snowflake
@@ -379,6 +394,7 @@ jobs:
       - name: Run Liquibase Update
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          LIQUIBASE_CLASSPATH: /tmp/liquibase-drivers/*
         run: |
           liquibase --defaults-file=liquibase.properties update
 
