@@ -293,7 +293,7 @@ jobs:
           echo "::notice :: Resolved Snapshot Liquibase PRO dependencies"
 
       - name: Cache installed Liquibase
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.m2/repository/
@@ -311,7 +311,7 @@ jobs:
 
 
       - name: Restore cached Liquibase artifacts
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.m2/repository/
