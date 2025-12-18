@@ -285,6 +285,7 @@ jobs:
 
   # verify validity of this job `deploy-ephemeral-cloud-infra` in https://datical.atlassian.net/browse/DAT-20624?focusedCommentId=170423
   deploy-ephemeral-cloud-infra:
+    needs: setup
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
     secrets: inherit
     with:
