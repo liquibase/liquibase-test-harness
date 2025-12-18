@@ -352,18 +352,23 @@ jobs:
 
       - name: Setup Snowflake JDBC Driver for Liquibase CLI
         run: |
-          # Download Snowflake JDBC driver to a temporary location
+          # Download Snowflake JDBC driver to temporary location
           mkdir -p /tmp/liquibase-drivers
           mvn dependency:copy-dependencies \
             -DoutputDirectory=/tmp/liquibase-drivers \
             -DincludeArtifactIds=snowflake-jdbc \
             -DexcludeTransitive=true
 
-          # Also copy to system Liquibase lib directory if available
-          LIQUIBASE_LIB_DIR=$(liquibase --version | grep -o 'Liquibase [^)]*' || echo "/opt/liquibase/lib")
-          if [ -d "/opt/liquibase/lib" ]; then
-            sudo cp /tmp/liquibase-drivers/*.jar /opt/liquibase/lib/ 2>/dev/null || true
-          fi
+          # Copy driver to system Liquibase lib directory
+          echo "Installing Snowflake JDBC driver to Liquibase..."
+          sudo cp /tmp/liquibase-drivers/snowflake-jdbc-*.jar /opt/liquibase/lib/
+
+          # Verify driver installation
+          echo "Verifying Snowflake JDBC driver installation:"
+          ls -lh /opt/liquibase/lib/snowflake-jdbc-*.jar
+
+          # Cleanup temporary directory
+          rm -rf /tmp/liquibase-drivers
 
       - name: Decode Private Key
         run: |
@@ -394,7 +399,6 @@ jobs:
       - name: Run Liquibase Update
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          LIQUIBASE_CLASSPATH: /tmp/liquibase-drivers/*
         run: |
           liquibase --defaults-file=liquibase.properties update
 
