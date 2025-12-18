@@ -339,7 +339,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            TH_SNOW_URL_GH, liquibaseth_url
+            TH_SNOW_URL_GH, liquibaseth_url_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Install Liquibase
         run: |
@@ -386,6 +386,7 @@ jobs:
           # PKI Authentication
           liquibase.snowflake.auth.type=PKI
           liquibase.snowflake.auth.privateKeyPath=/tmp/snowflake_private_key.p8
+          liquibase.snowflake.auth.privateKeyPassphrase=${TH_DB_LIQUIBASETH_PRIVATE_KEY_PASSPHRASE}
 
           # Schema configuration
           liquibaseSchemaName=PUBLIC
