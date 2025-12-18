@@ -339,7 +339,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            TH_SNOW_URL_GH, liquibaseth_url_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            TH_SNOW_URL_GH, liquibaseth_url
 
       - name: Install Liquibase
         run: |
