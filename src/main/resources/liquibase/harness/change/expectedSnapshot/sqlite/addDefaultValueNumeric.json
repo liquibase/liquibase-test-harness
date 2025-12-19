@@ -4,7 +4,7 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "1000.0}",
+            "defaultValue": "1000.0",
             "name": "numericColumn",
             "nullable": true,
             "type": {
