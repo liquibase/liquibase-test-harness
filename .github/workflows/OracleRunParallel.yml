@@ -81,7 +81,7 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
       - name: Archive Oracle ${{ matrix.plan }} test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: oracle-${{ matrix.plan }}-test-results
           path: build/spock-reports
