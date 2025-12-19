@@ -375,42 +375,6 @@ jobs:
             ,/vault/liquibase
           parse-json-secrets: true
 
-      - uses: actions/setup-java@v5
-        with:
-          java-version: "17"
-          distribution: "temurin"
-          cache: "maven"
-
-      - name: maven-settings-xml-action
-        uses: whelk-io/maven-settings-xml-action@v22
-        with:
-          repositories: |
-            [
-              {
-                "id": "github",
-                "url": "https://maven.pkg.github.com/liquibase/liquibase",
-                "releases": { "enabled": "true" },
-                "snapshots": { "enabled": "true", "updatePolicy": "always" }
-              }
-            ]
-          servers: |
-            [
-              {
-                "id": "github",
-                "username": "liquibot",
-                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
-              }
-            ]
-
-      - name: Restore cached Liquibase artifacts
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.m2/repository/
-          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: |
-            mvn-liquibase-${{ github.run_id }}-
-
       - name: Configure Test
         id: setup
         uses: actions/github-script@v8
@@ -420,7 +384,9 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
+      # Setup Liquibase CLI for MSSQL init operations (before Java setup)
       - name: Setup Liquibase
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         uses: liquibase/setup-liquibase@v2
         with:
           version: '5.0.0'
@@ -471,6 +437,43 @@ jobs:
             --username="${{ env.TH_DB_ADMIN }}" \
             --password="${{ env.TH_DB_PASSWD }}" \
             --url="${{ env.TH_AZURE_MSSQL_MI_URL }}"
+
+      # Setup Java and Maven for test runs (after Liquibase CLI operations)
+      - uses: actions/setup-java@v5
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
+
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v22
+        with:
+          repositories: |
+            [
+              {
+                "id": "github",
+                "url": "https://maven.pkg.github.com/liquibase/liquibase",
+                "releases": { "enabled": "true" },
+                "snapshots": { "enabled": "true", "updatePolicy": "always" }
+              }
+            ]
+          servers: |
+            [
+              {
+                "id": "github",
+                "username": "liquibot",
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
+              }
+            ]
+
+      - name: Restore cached Liquibase artifacts
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.m2/repository/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            mvn-liquibase-${{ github.run_id }}-
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
