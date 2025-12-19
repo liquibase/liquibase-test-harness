@@ -395,13 +395,6 @@ jobs:
           force: true
           requireForce: true
 
-      - name: Setup Liquibase
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
-        uses: liquibase/setup-liquibase@v2
-        with:
-          version: '5.0.0'
-          edition: 'secure'
-
       - name: Azure MSSQL init changelogs update
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
         env:
@@ -425,13 +418,6 @@ jobs:
           force: true
           requireForce: true
 
-      - name: Setup Liquibase
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
-        uses: liquibase/setup-liquibase@v2
-        with:
-          version: '5.0.0'
-          edition: 'secure'
-
       - name: Azure MSSQL MI init changelogs update
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
         env:
@@ -443,13 +429,6 @@ jobs:
             --username="${{ env.TH_DB_ADMIN }}" \
             --password="${{ env.TH_DB_PASSWD }}" \
             --url="${{ env.TH_AZURE_MSSQL_MI_URL }}"
-
-      - name: Setup Liquibase
-        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
-        uses: liquibase/setup-liquibase@v2
-        with:
-          version: '5.0.0'
-          edition: 'secure'
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
