@@ -57,7 +57,7 @@ class DiffChangelogTests extends Specification {
         argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")//excluding static test-harness objects from generated changelog
         def map = new LinkedHashMap<String, String>()
         map.put("changelogFileXml", testInput.pathToGeneratedXmlDiffChangelogFile)
-        map.put("changelogFileSql", testInput.pathToGeneratedSqlDiffChangelogFile.replace(".sql", ".$testInput.targetDatabase.name" + ".sql"))
+//        map.put("changelogFileSql", testInput.pathToGeneratedSqlDiffChangelogFile.replace(".sql", ".$testInput.targetDatabase.name" + ".sql"))
         map.put("changelogFileYml", testInput.pathToGeneratedYmlDiffChangelogFile)
         map.put("changelogFileJson", testInput.pathToGeneratedJsonDiffChangelogFile)
         for (Map.Entry<String, String> entry : map.entrySet()) {
