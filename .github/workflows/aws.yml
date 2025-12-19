@@ -506,7 +506,7 @@ jobs:
 
       - name: Setup Liquibase for Oracle
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: liquibase/setup-liquibase@v1
+        uses: liquibase/setup-liquibase@v2
         with:
           version: "4.33.0"
           edition: "pro"
