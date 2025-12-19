@@ -341,34 +341,11 @@ jobs:
           secret-ids: |
             TH_SNOW_URL_GH, liquibaseth_url
 
-      - name: Install Liquibase
-        run: |
-          # Add Liquibase repository and install via apt
-          wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg && \
-          cat liquibase-keyring.gpg | sudo tee /usr/share/keyrings/liquibase-keyring.gpg > /dev/null && \
-          echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | sudo tee /etc/apt/sources.list.d/liquibase.list
-          sudo apt-get update
-          sudo apt-get install liquibase
-
-      - name: Setup Snowflake JDBC Driver for Liquibase CLI
-        run: |
-          # Download Snowflake JDBC driver to temporary location
-          mkdir -p /tmp/liquibase-drivers
-          mvn dependency:copy-dependencies \
-            -DoutputDirectory=/tmp/liquibase-drivers \
-            -DincludeArtifactIds=snowflake-jdbc \
-            -DexcludeTransitive=true
-
-          # Copy driver to system Liquibase lib directory
-          echo "Installing Snowflake JDBC driver to Liquibase..."
-          sudo cp /tmp/liquibase-drivers/snowflake-jdbc-*.jar /opt/liquibase/lib/
-
-          # Verify driver installation
-          echo "Verifying Snowflake JDBC driver installation:"
-          ls -lh /opt/liquibase/lib/snowflake-jdbc-*.jar
-
-          # Cleanup temporary directory
-          rm -rf /tmp/liquibase-drivers
+      - name: Install Liquibase Secure Edition
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'secure'
 
       - name: Decode Private Key
         run: |
