@@ -326,12 +326,6 @@ jobs:
           secret-ids: |
             ,/vault/liquibase
           parse-json-secrets: true
-
-      - name: Setup Liquibase
-        uses: liquibase/setup-liquibase@v2
-        with:
-          version: '5.0.0'
-          edition: 'secure'
           
       - name: Clean Azure MySQL Database
         uses: liquibase-github-actions/drop-all@v4.33.0
@@ -389,6 +383,12 @@ jobs:
             let splitValues = "${{ matrix.database }}".split(":")
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
+
+      - name: Setup Liquibase
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'secure'
 
       - name: Azure MSSQL dropAll
         uses: liquibase-github-actions/drop-all@v4.33.0
