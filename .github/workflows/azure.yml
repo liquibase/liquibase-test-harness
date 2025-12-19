@@ -338,13 +338,6 @@ jobs:
           force: true
           requireForce: true
 
-      - name: Setup Liquibase
-        if: ${{ matrix.database == 'mysql' }}
-        uses: liquibase/setup-liquibase@v2
-        with:
-          version: '5.0.0'
-          edition: 'secure'
-
       - name: Init Azure MySQL Database
         if: ${{ matrix.database == 'mysql' }}
         env:
@@ -450,6 +443,13 @@ jobs:
             --username="${{ env.TH_DB_ADMIN }}" \
             --password="${{ env.TH_DB_PASSWD }}" \
             --url="${{ env.TH_AZURE_MSSQL_MI_URL }}"
+
+      - name: Setup Liquibase
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'secure'
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
