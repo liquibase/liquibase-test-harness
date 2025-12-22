@@ -286,7 +286,7 @@ jobs:
   # verify validity of this job `deploy-ephemeral-cloud-infra` in https://datical.atlassian.net/browse/DAT-20624?focusedCommentId=170423
   deploy-ephemeral-cloud-infra:
     needs: setup
-    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
+    uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@fix/DAT-21167
     secrets: inherit
     with:
         deploy: true
@@ -340,7 +340,7 @@ jobs:
         with:
           secret-ids: |
             TH_SNOW_URL_GH, liquibaseth_jdbc_url
-            LIQUIBASETH_USERNAME, liquibaseth_user
+            LIQUIBASETH_USERNAME, ${{ needs.deploy-ephemeral-cloud-infra.outputs.liquibaseth_username }} 
 
       - name: Install Liquibase Secure Edition
         uses: liquibase/setup-liquibase@v2
