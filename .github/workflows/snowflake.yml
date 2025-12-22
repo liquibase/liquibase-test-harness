@@ -353,10 +353,12 @@ jobs:
           chmod 600 /tmp/snowflake_private_key.p8  # Secure the key file
 
       - name: Create Liquibase Properties File
+        id: properties-file
         run: |
           # Extract username from JDBC URL (format: ...?user=USERNAME&...)
           EXTRACTED_USERNAME=$(echo "${TH_SNOW_URL_GH}" | sed -n 's/.*[?&]user=\([^&]*\).*/\1/p')
-          echo "Debug: Extracted username is: ${EXTRACTED_USERNAME}"
+          echo "Debug: Extracted username is: ${EXTRACTED_USERNAME}" 
+          echo "EXTRACTED_USERNAME=${EXTRACTED_USERNAME}" >> GITHUB_OUTPUT
 
           cat > liquibase.properties << EOF
           # Snowflake connection settings with database in URL
@@ -396,6 +398,9 @@ jobs:
               -Dtest=LiquibaseHarnessSuiteTest \
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
+              -DdbUsername='${{steps.properties-file.outputs.EXTRACTED_USERNAME}}' \
+              -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
+              -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
               -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
