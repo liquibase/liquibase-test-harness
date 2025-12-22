@@ -393,7 +393,6 @@ jobs:
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
               -DdbUsername=LIQUIBASETH \
-              -DdbUsername=${{ needs.deploy-ephemeral-cloud-infra.outputs.liquibaseth_user }} \
               -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
               -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
               -DrollbackStrategy=rollbackByTag test
