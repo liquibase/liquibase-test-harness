@@ -354,10 +354,14 @@ jobs:
 
       - name: Create Liquibase Properties File
         run: |
+          # Extract username from JDBC URL (format: ...?user=USERNAME&...)
+          EXTRACTED_USERNAME=$(echo "${TH_SNOW_URL_GH}" | sed -n 's/.*[?&]user=\([^&]*\).*/\1/p')
+          echo "Debug: Extracted username is: ${EXTRACTED_USERNAME}"
+
           cat > liquibase.properties << EOF
           # Snowflake connection settings with database in URL
           url=${TH_SNOW_URL_GH}
-          username=LIQUIBASETH
+          username=${EXTRACTED_USERNAME}
           driver=net.snowflake.client.jdbc.SnowflakeDriver
 
           # PKI Authentication
@@ -392,7 +396,6 @@ jobs:
               -Dtest=LiquibaseHarnessSuiteTest \
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
-              -DdbUsername=LIQUIBASETH \
               -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
               -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
               -DrollbackStrategy=rollbackByTag test
