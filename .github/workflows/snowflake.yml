@@ -340,7 +340,7 @@ jobs:
         with:
           secret-ids: |
             TH_SNOW_URL_GH, liquibaseth_jdbc_url
-            LIQUIBASETH_USERNAME, ${{ needs.deploy-ephemeral-cloud-infra.outputs.liquibaseth_user }}
+            LIQUIBASETH_USERNAME, liquibaseth_user
 
       - name: Install Liquibase Secure Edition
         uses: liquibase/setup-liquibase@v2
