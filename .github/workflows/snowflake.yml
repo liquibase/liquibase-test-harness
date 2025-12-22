@@ -357,7 +357,7 @@ jobs:
           cat > liquibase.properties << EOF
           # Snowflake connection settings with database in URL
           url=${TH_SNOW_URL_GH}
-          username=${LIQUIBASETH_USERNAME}
+          username=LIQUIBASETH
           driver=net.snowflake.client.jdbc.SnowflakeDriver
 
           # PKI Authentication
