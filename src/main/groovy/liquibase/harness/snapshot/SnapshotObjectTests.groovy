@@ -45,8 +45,9 @@ class SnapshotObjectTests extends Specification {
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.databaseVersion} is offline!"
 
-        and: "ignore testcase if it's invalid for this combination of db type and/or version"
-        shouldRunChangeSet = !expectedSnapshot?.toLowerCase()?.contains("invalid test")
+        and: "ignore testcase if it's invalid or skipped for this combination of db type and/or version"
+        def lowerExpectedSnapshot = expectedSnapshot?.toLowerCase()
+        shouldRunChangeSet = !lowerExpectedSnapshot?.contains("invalid test") && !lowerExpectedSnapshot?.contains("skip test")
         Assumptions.assumeTrue(shouldRunChangeSet, expectedSnapshot)
 
         and: "check expected snapshot file is present"
