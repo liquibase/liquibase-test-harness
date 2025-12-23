@@ -12,7 +12,6 @@ class FileUtilsTest extends Specification {
 
     def "getInputFilesPaths"() {
         final String baseChangelogPath = "liquibase/harness/change/changelogs"
-        final String baseSnapshotPath = "liquibase/harness/snapshot"
 
         given:
 
@@ -52,27 +51,36 @@ class FileUtilsTest extends Specification {
 
         when:
         def changeLogPathsPostgreSql = FileUtils.resolveInputFilePaths(databaseUnderTestPostgre, baseChangelogPath, "xml")
-        def snapshotPathsPostgreSql = FileUtils.resolveInputFilePaths(databaseUnderTestPostgre, baseSnapshotPath, "groovy")
 
         then:
         changeLogPathsPostgreSql["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
         changeLogPathsPostgreSql["addPrimaryKey"] == "liquibase/harness/change/changelogs/addPrimaryKey.xml"
         changeLogPathsPostgreSql["datatypes.binary"] == "liquibase/harness/change/changelogs/postgresql/datatypes.binary.xml"
 
-        snapshotPathsPostgreSql["column"] == "liquibase/harness/snapshot/column.groovy"
-        snapshotPathsPostgreSql["table"] == "liquibase/harness/snapshot/table.groovy"
-
 
         when:
         def changeLogPathsOracle = FileUtils.resolveInputFilePaths(databaseUnderTestOracle, baseChangelogPath, "xml")
-        def snapshotPathsOracle = FileUtils.resolveInputFilePaths(databaseUnderTestOracle, baseSnapshotPath, "groovy")
 
         then:
         changeLogPathsOracle["addColumn"] == "liquibase/harness/change/changelogs/addColumn.xml"
         changeLogPathsOracle["addPrimaryKey"] == "liquibase/harness/change/changelogs/oracle/addPrimaryKey.xml"
-        changeLogPathsOracle["datatypes.character"] == "liquibase/harness/change/changelogs/oracle/18.4.0/datatypes.character.xml"
+        changeLogPathsOracle["datatypes.character"] == "liquibase/harness/change/changelogs/oracle/datatypes.character.xml"
 
-        snapshotPathsOracle["column"] == "liquibase/harness/snapshot/oracle/column.groovy"
-        snapshotPathsOracle["table"] == "liquibase/harness/snapshot/oracle/table.groovy"
+    }
+
+    def "substitutePlaceholders replaces catalog and schema placeholders"() {
+        expect:
+        FileUtils.substitutePlaceholders(input, catalogName, schemaName) == expected
+
+        where:
+        input                                                    | catalogName | schemaName | expected
+        'ALTER TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.authors'     | 'LTHDB'     | 'PUBLIC'   | 'ALTER TABLE LTHDB.PUBLIC.authors'
+        'ALTER TABLE ${SCHEMA_NAME}.authors'                     | null        | 'public'   | 'ALTER TABLE public.authors'
+        'ALTER TABLE "${SCHEMA_NAME}".authors'                   | null        | 'C##LIQ'   | 'ALTER TABLE "C##LIQ".authors'
+        'SELECT * FROM authors'                                  | 'LTHDB'     | 'PUBLIC'   | 'SELECT * FROM authors'
+        null                                                     | 'LTHDB'     | 'PUBLIC'   | null
+        ''                                                       | 'LTHDB'     | 'PUBLIC'   | ''
+        '${CATALOG_NAME}.${SCHEMA_NAME}'                         | null        | null       | '${CATALOG_NAME}.${SCHEMA_NAME}'
+        '${CATALOG_NAME}.${SCHEMA_NAME}'                         | 'CAT'       | null       | 'CAT.${SCHEMA_NAME}'
     }
 }

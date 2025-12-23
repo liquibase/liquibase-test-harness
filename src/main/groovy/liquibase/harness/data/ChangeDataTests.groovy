@@ -22,8 +22,7 @@ import java.sql.ResultSet
 import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
 import static liquibase.harness.data.ChangeDataTestHelper.shouldOpenNewConnection
 import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
-import static liquibase.harness.util.FileUtils.getJSONFileContent
-import static liquibase.harness.util.FileUtils.getSqlFileContent
+import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.compareJSONArrays
 import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
 import static liquibase.harness.util.TestUtils.*
@@ -43,10 +42,16 @@ class ChangeDataTests extends Specification {
     @Unroll
     def "apply #testInput.changeData against #testInput.databaseName #testInput.version"() {
         given: "read expected sql, checking sql and expected result set, create arguments map for executing command scope"
-        String expectedSql = parseQuery(getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version,
-                "liquibase/harness/data/expectedSql"))
-        String checkingSql = parseQuery(getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version,
-                "liquibase/harness/data/checkingSql"))
+        String rawExpectedSql = getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version,
+                "liquibase/harness/data/expectedSql")
+        String expectedSql = parseQuery(substitutePlaceholders(rawExpectedSql,
+                testInput.database.getDefaultCatalogName(),
+                testInput.database.getDefaultSchemaName()))
+        String rawCheckingSql = getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version,
+                "liquibase/harness/data/checkingSql")
+        String checkingSql = parseQuery(substitutePlaceholders(rawCheckingSql,
+                testInput.database.getDefaultCatalogName(),
+                testInput.database.getDefaultSchemaName()))
         String expectedResultSet = getJSONFileContent(testInput.changeData, testInput.databaseName, testInput.version,
                 "liquibase/harness/data/expectedResultSet")
         boolean shouldRunChangeSet

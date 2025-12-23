@@ -106,4 +106,29 @@ class FileUtils {
         }
         return null
     }
+
+    /**
+     * Substitutes placeholders in expectedSql content with actual database values.
+     * Supported placeholders:
+     * - ${CATALOG_NAME} - replaced with the database's default catalog name
+     * - ${SCHEMA_NAME} - replaced with the database's default schema name
+     *
+     * @param content The file content potentially containing placeholders
+     * @param catalogName The catalog name to substitute (may be null)
+     * @param schemaName The schema name to substitute (may be null)
+     * @return Content with placeholders replaced, or original content if no placeholders found
+     */
+    static String substitutePlaceholders(String content, String catalogName, String schemaName) {
+        if (content == null || !content.contains('${')) {
+            return content
+        }
+        String result = content
+        if (catalogName != null) {
+            result = result.replace('${CATALOG_NAME}', catalogName)
+        }
+        if (schemaName != null) {
+            result = result.replace('${SCHEMA_NAME}', schemaName)
+        }
+        return result
+    }
 }
