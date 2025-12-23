@@ -397,9 +397,7 @@ jobs:
               -Dtest=LiquibaseHarnessSuiteTest \
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
-              -DdbUsername='${{steps.properties-file.outputs.EXTRACTED_USERNAME}}' \
               -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
-              -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
               -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
