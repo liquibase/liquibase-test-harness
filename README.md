@@ -426,6 +426,7 @@ If not, you will need to provide the rollback by yourself. To learn more about r
  - NOTE: If your changeSet will generate multiple SQL statements, you should add each SQL statement as a separate line. (See `renameTable.sql` in the postgres folder for an example.)
  - If you would like to test another DB type, please add the requisite folder.
  - **Placeholders**: You can use `${CATALOG_NAME}` and `${SCHEMA_NAME}` placeholders in expectedSql files. These are replaced at runtime with actual values from `database.getDefaultCatalogName()` and `database.getDefaultSchemaName()`. This is useful for databases with dynamic catalog/schema names (e.g., Snowflake, cloud databases). Example: `ALTER TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.authors ADD column1 VARCHAR(25)`
+ - **Skipping tests**: To skip a test for a specific database, create an expectedSql file containing `SKIP TEST` (case-insensitive) with an explanation. Use this when a feature is intentionally not supported or not applicable. For truly invalid/broken scenarios, use `INVALID TEST` instead. Example: `SKIP TEST\nSnowflake doesn't support indexes`
 3) Go to `src/main/resources/liquibase/harness/change/expectedSnapshot` and add expected DB Snapshot results.
   - To verify the absence of an object in a snapshot (such as with drop* commands) add `"_noMatch": true,` to that tree level where the missing object should be verified.
   See [dropSequence.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/dropSequence.json) as an example. 

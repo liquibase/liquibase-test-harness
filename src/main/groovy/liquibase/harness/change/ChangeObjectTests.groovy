@@ -30,11 +30,8 @@ class ChangeObjectTests extends Specification {
     @Unroll
     def "apply #testInput.changeObject against #testInput.databaseName #testInput.version"() {
         given: "read expected sql and snapshot files, create arguments map for executing command scope"
-        String rawExpectedSql = getSqlFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
-                "liquibase/harness/change/expectedSql")
-        String expectedSql = parseQuery(substitutePlaceholders(rawExpectedSql,
-                testInput.database.getDefaultCatalogName(),
-                testInput.database.getDefaultSchemaName()))
+        String rawExpectedSql = getSqlFileContent(testInput.changeObject, testInput.databaseName, testInput.version, "liquibase/harness/change/expectedSql")
+        String expectedSql = parseQuery(substitutePlaceholders(rawExpectedSql, testInput.getDatabaseName(), testInput.getDbSchema()))
         String expectedSnapshot = getJSONFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
                 "liquibase/harness/change/expectedSnapshot")
         boolean shouldRunChangeSet
@@ -45,17 +42,18 @@ class ChangeObjectTests extends Specification {
         argsMap.put("password", testInput.password)
         argsMap.put("snapshotFormat", "JSON")
 
-        and: "ignore testcase if it's invalid for this combination of db type and/or version"
-        shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
+        and: "ignore testcase if it's invalid or skipped for this combination of db type and/or version"
+        def lowerExpectedSql = expectedSql?.toLowerCase()
+        shouldRunChangeSet = !lowerExpectedSql?.contains("invalid test") && !lowerExpectedSql?.contains("skip test")
         Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
         and: "fail test if snapshot is not provided"
         shouldRunChangeSet = expectedSnapshot != null
-        assert shouldRunChangeSet : "No expectedSnapshot for ${testInput.changeObject}!"
+        assert shouldRunChangeSet: "No expectedSnapshot for ${testInput.changeObject}!"
 
         and: "check database under test is online"
         shouldRunChangeSet = testInput.database.getConnection() instanceof JdbcConnection
-        assert shouldRunChangeSet : "Database ${testInput.databaseName} ${testInput.version} is offline!"
+        assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
         when: "get sql generated for the change set"
         def generatedSql = parseQuery(executeCommandScope("updateSql", argsMap).toString())
