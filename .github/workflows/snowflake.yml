@@ -357,7 +357,6 @@ jobs:
         run: |
           # Extract username from JDBC URL (format: ...?user=USERNAME&...)
           EXTRACTED_USERNAME=$(echo "${TH_SNOW_URL_GH}" | sed -n 's/.*[?&]user=\([^&]*\).*/\1/p')
-          echo "Debug: Extracted username is: ${EXTRACTED_USERNAME}" 
           echo "EXTRACTED_USERNAME=${EXTRACTED_USERNAME}" >> GITHUB_OUTPUT
 
           cat > liquibase.properties << EOF
