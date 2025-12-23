@@ -30,8 +30,11 @@ class ChangeObjectTests extends Specification {
     @Unroll
     def "apply #testInput.changeObject against #testInput.databaseName #testInput.version"() {
         given: "read expected sql and snapshot files, create arguments map for executing command scope"
-        String expectedSql = parseQuery(getSqlFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
-                "liquibase/harness/change/expectedSql"))
+        String rawExpectedSql = getSqlFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
+                "liquibase/harness/change/expectedSql")
+        String expectedSql = parseQuery(substitutePlaceholders(rawExpectedSql,
+                testInput.database.getDefaultCatalogName(),
+                testInput.database.getDefaultSchemaName()))
         String expectedSnapshot = getJSONFileContent(testInput.changeObject, testInput.databaseName, testInput.version,
                 "liquibase/harness/change/expectedSnapshot")
         boolean shouldRunChangeSet
