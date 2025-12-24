@@ -47,8 +47,9 @@ class GenerateChangelogTest extends Specification {
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
-        and: "ignore testcase if it's invalid for this combination of db type and/or version"
-        shouldRunChangeSet = !expectedSql.toLowerCase()?.contains("invalid test")
+        and: "ignore testcase if it's invalid or skipped for this combination of db type and/or version"
+        def lowerExpectedSql = expectedSql?.toLowerCase()
+        shouldRunChangeSet = !lowerExpectedSql?.contains("invalid test") && !lowerExpectedSql?.contains("skip test")
         Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
         when: "execute update command using xml changelog formats"
