@@ -1,1 +1,1 @@
-CREATE TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.lms_create_table_test (lms_test_id INT, lms_test_timestamp timestamp)
+CREATE TABLE ${CATALOG_NAME}.PUBLIC.lms_create_table_test (lms_test_id INT, lms_test_timestamp timestamp)

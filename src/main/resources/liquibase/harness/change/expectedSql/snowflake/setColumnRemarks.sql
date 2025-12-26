@@ -1,1 +1,1 @@
-COMMENT ON COLUMN ${CATALOG_NAME}.${SCHEMA_NAME}.authors.id IS 'A Test Column Remark'
+COMMENT ON COLUMN ${CATALOG_NAME}.PUBLIC.authors.id IS 'A Test Column Remark'

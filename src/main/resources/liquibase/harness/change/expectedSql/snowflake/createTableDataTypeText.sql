@@ -1,1 +1,1 @@
-CREATE TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.createTableDataTypeText (textCol TEXT)
+CREATE TABLE ${CATALOG_NAME}.PUBLIC.createTableDataTypeText (textCol TEXT)
