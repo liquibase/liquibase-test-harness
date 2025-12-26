@@ -1,1 +1,1 @@
-CREATE TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.createTableDataTypeDoubleIsFloat (floatCol FLOAT)
+CREATE TABLE ${CATALOG_NAME}.PUBLIC.createTableDataTypeDoubleIsFloat (floatCol FLOAT)

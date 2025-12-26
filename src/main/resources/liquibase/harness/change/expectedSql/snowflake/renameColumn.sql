@@ -1,1 +1,1 @@
-ALTER TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.authors RENAME COLUMN first_name TO first_name_renameColumn_test
+ALTER TABLE ${CATALOG_NAME}.PUBLIC.authors RENAME COLUMN first_name TO first_name_renameColumn_test

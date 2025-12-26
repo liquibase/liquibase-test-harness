@@ -5,7 +5,8 @@
         {
           "function": {
             "body": "CREATE OR REPLACE FUNCTION \"TEST_FUNCTION\"()\nRETURNS FLOAT\nLANGUAGE SQL\nAS '3.141592654::FLOAT';",
-            "name": "TEST_FUNCTION"
+            "functionName": "TEST_FUNCTION",
+            "name": "TEST_FUNCTION()"
           }
         }
       ]

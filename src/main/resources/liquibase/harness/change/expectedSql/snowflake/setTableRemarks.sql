@@ -1,1 +1,1 @@
-COMMENT ON TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.authors IS 'A Test Remark'
+COMMENT ON TABLE ${CATALOG_NAME}.PUBLIC.authors IS 'A Test Remark'
