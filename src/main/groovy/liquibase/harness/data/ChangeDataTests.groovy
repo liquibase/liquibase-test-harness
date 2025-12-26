@@ -44,10 +44,10 @@ class ChangeDataTests extends Specification {
     def "apply #testInput.changeData against #testInput.databaseName #testInput.version"() {
         given: "read expected sql, checking sql and expected result set, create arguments map for executing command scope"
         String rawExpectedSql = getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version, "liquibase/harness/data/expectedSql")
-        String expectedSql = parseQuery(substitutePlaceholders(rawExpectedSql, testInput.databaseName, testInput.dbSchema))
+        String expectedSql = parseQuery(substitutePlaceholders(rawExpectedSql, testInput.getDatabase().getDefaultCatalogName(), testInput.getDatabase().getDefaultSchemaName()))
 
         String rawCheckingSql = getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version, "liquibase/harness/data/checkingSql")
-        String checkingSql = parseQuery(substitutePlaceholders(rawCheckingSql, testInput.databaseName, testInput.dbSchema))
+        String checkingSql = parseQuery(substitutePlaceholders(rawCheckingSql, testInput.getDatabase().getDefaultCatalogName(), testInput.getDatabase().getDefaultSchemaName()))
 
         String expectedResultSet = getJSONFileContent(testInput.changeData, testInput.databaseName, testInput.version, "liquibase/harness/data/expectedResultSet")
 
