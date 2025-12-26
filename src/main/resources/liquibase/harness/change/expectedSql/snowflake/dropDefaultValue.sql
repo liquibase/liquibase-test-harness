@@ -1,2 +1,2 @@
-CREATE TABLE LTHDB.PUBLIC.dropDefaultTest (id INT, stringColumn STRING DEFAULT 'testDefault')
-ALTER TABLE LTHDB.PUBLIC.dropDefaultTest ALTER COLUMN stringColumn DROP DEFAULT
+CREATE TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.dropDefaultTest (id INT, stringColumn STRING DEFAULT 'testDefault')
+ALTER TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.dropDefaultTest ALTER COLUMN stringColumn DROP DEFAULT
