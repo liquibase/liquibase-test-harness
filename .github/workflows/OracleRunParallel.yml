@@ -20,7 +20,7 @@ jobs:
         plan: [18.4.0, 19.3.0, 23.2.0]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
@@ -81,7 +81,7 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
       - name: Archive Oracle ${{ matrix.plan }} test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: oracle-${{ matrix.plan }}-test-results
           path: build/spock-reports

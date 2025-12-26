@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v5
@@ -43,7 +43,7 @@ jobs:
           mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=LiquibaseHarnessSuiteTest -DdbUsername=${{env.DB2_USER}} -DdbPassword=${{env.DB2_PASS}} -DdbName=db2-z -DrollbackStrategy=rollbackByTag test
 
       - name: Archive IBM DB2/Z Cloud Database Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ibm-db2z-cloud-test-results
           path: build/spock-reports
