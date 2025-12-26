@@ -103,7 +103,7 @@ class ChangeDataTests extends Specification {
         JSONArray generatedResultSetArray
         try {
             //For embedded databases, let's create separate connection to run checking SQL
-            if (shouldOpenNewConnection(connection, "sqlite", "snowflake", "postgres", "oracle", "mysql")) {
+            if (shouldOpenNewConnection(connection, "sqlite", "snowflake", "postgres", "oracle", "mysql", "mssql")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
 
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
