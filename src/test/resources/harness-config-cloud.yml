@@ -34,8 +34,6 @@ databasesUnderTest:
     prefix: cloud
     version:
     url: DBENDPOINT
-    username: USERNAME
-    password: PASSWORD
 
   - name: mariadb
     prefix: aws

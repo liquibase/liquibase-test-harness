@@ -214,7 +214,6 @@
             <groupId>net.snowflake</groupId>
             <artifactId>snowflake-jdbc</artifactId>
             <version>3.28.0</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
