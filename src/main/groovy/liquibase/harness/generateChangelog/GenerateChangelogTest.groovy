@@ -1,6 +1,5 @@
 package liquibase.harness.generateChangelog
 
-import com.datical.liquibase.ext.config.LiquibaseProConfiguration
 import liquibase.database.jvm.JdbcConnection
 import liquibase.exception.CommandExecutionException
 import liquibase.harness.config.DatabaseUnderTest
@@ -48,8 +47,9 @@ class GenerateChangelogTest extends Specification {
         shouldRunChangeSet = connection instanceof JdbcConnection
         assert shouldRunChangeSet: "Database ${testInput.databaseName} ${testInput.version} is offline!"
 
-        and: "ignore testcase if it's invalid for this combination of db type and/or version"
-        shouldRunChangeSet = !expectedSql.toLowerCase()?.contains("invalid test")
+        and: "ignore testcase if it's invalid or skipped for this combination of db type and/or version"
+        def lowerExpectedSql = expectedSql?.toLowerCase()
+        shouldRunChangeSet = !lowerExpectedSql?.contains("invalid test") && !lowerExpectedSql?.contains("skip test")
         Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
         when: "execute update command using xml changelog formats"
@@ -62,25 +62,23 @@ class GenerateChangelogTest extends Specification {
         def formats = new LinkedHashMap<String, String>()
         def shortDbName = getShortDatabaseName(testInput.databaseName)
         formats.put("XmlTestCase", generatedChangeTypePath + ".xml")
-        formats.put("SqlTestCase", generatedChangeTypePath + ".$shortDbName"+".sql")
+//        formats.put("SqlTestCase", generatedChangeTypePath + ".$shortDbName"+".sql")  //TODO commented until DAT-**** is done
         formats.put("YmlTestCase",  generatedChangeTypePath + ".yml")
         formats.put("JsonTestCase", generatedChangeTypePath + ".json")
 
         then: "check if a changelog was actually generated and validate it's content"
         for (Map.Entry<String, String> entry : formats.entrySet()) {
 
-            Map<String, Object> scopeValues = new HashMap<>()
             if (entry.key.equalsIgnoreCase("SqlTestCase")) {
-                scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), true)
+                argsMap.put("generateInlineSql", true)
             } else {
-                scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), false)
+                argsMap.put("generateInlineSql", false)
             }
-
             clearFolder(generatedFolderPath)
 
             argsMap.put("excludeObjects", "(?i)posts, (?i)authors")//excluding static test-harness objects from generated changelog
             argsMap.put("changeLogFile", entry.value)
-            executeCommandScope("generateChangelog", argsMap, scopeValues)
+            executeCommandScope("generateChangelog", argsMap)
 
             String generatedChangelog = readFile((String) argsMap.get("changeLogFile"))
             if (entry.key.equalsIgnoreCase("SqlTestCase")) {

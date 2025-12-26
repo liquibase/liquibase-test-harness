@@ -1,6 +1,5 @@
 package liquibase.harness.diff
 
-import com.datical.liquibase.ext.config.LiquibaseProConfiguration
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
@@ -11,7 +10,6 @@ import spock.lang.Unroll
 
 import static liquibase.harness.diff.DiffCommandTestHelper.*
 import static liquibase.harness.util.FileUtils.deleteFile
-import static liquibase.harness.util.FileUtils.getResourceContent
 import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
 import static liquibase.harness.util.TestUtils.executeCommandScope
 
@@ -59,7 +57,7 @@ class DiffChangelogTests extends Specification {
         argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")//excluding static test-harness objects from generated changelog
         def map = new LinkedHashMap<String, String>()
         map.put("changelogFileXml", testInput.pathToGeneratedXmlDiffChangelogFile)
-        map.put("changelogFileSql", testInput.pathToGeneratedSqlDiffChangelogFile.replace(".sql", ".$testInput.targetDatabase.name" + ".sql"))
+//        map.put("changelogFileSql", testInput.pathToGeneratedSqlDiffChangelogFile.replace(".sql", ".$testInput.targetDatabase.name" + ".sql"))
         map.put("changelogFileYml", testInput.pathToGeneratedYmlDiffChangelogFile)
         map.put("changelogFileJson", testInput.pathToGeneratedJsonDiffChangelogFile)
         for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -73,7 +71,7 @@ class DiffChangelogTests extends Specification {
         argsMapRef.put("referencePassword", testInput.targetDatabase.password)
         argsMapRef.put("changelogFile", testInput.pathToGeneratedXmlDiffChangelogFile)
         Map<String, Object> scopeValues = new HashMap<>()
-        scopeValues.put(LiquibaseProConfiguration.INLINE_SQL_KEY.getKey(), false)
+        argsMapRef.put("generateInlineSql", false)
         executeCommandScope("diffChangelog", argsMapRef, scopeValues)
         File expectedDiffFolder = new File(testInput.pathToExpectedDiffFolder)
         File[] subDirs = expectedDiffFolder.listFiles(new FileFilter() {

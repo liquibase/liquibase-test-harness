@@ -84,13 +84,193 @@ Extensions that add support for additional databases and/or define additional fu
 - More easily verify their new functionality works
 - And that it also doesn't break existing logic
 
-## Configuring Execution   
+## Configuring Execution
+
+### GitHub Actions Workflows
+
+The test harness is configured to run via GitHub Actions workflows with smart artifact selection based on the triggering repository.
+
+#### Repository-Aware Artifact Selection
+
+Starting with the Liquibase Secure release, the **main.yml** workflow automatically detects which repository triggered it and selects appropriate artifacts:
+
+**Main Workflow (main.yml) - Smart Artifact Selection:**
+- **When triggered from `liquibase/liquibase` (Community)**:
+  - Downloads community core artifacts from the `liquibase/liquibase` repository
+  - Runs against community builds
+
+- **When triggered from `liquibase/liquibase-pro`**:
+  - Downloads Liquibase Secure (Pro) artifacts from the `liquibase/liquibase-pro` repository
+  - Runs against pro builds with all available features
+
+- **Manual workflow dispatch**:
+  - Use the `liquibaseRepo` input to manually override the repository (defaults to detected repository)
+  - Use the `liquibaseBranch` input to specify which branch to pull artifacts from
+  - If the specified branch doesn't exist, workflows automatically fall back to `master` or `main`
+
+**Advanced & Cloud Workflows (advanced.yml, aws.yml, azure.yml, gcp.yml, oracle-oci.yml, snowflake.yml):**
+- **Always download and use Liquibase Secure (Pro) artifacts**
+- **Always execute all jobs against pro builds**
+- **Maintain consistent behavior regardless of trigger source**
+- Repository detection still logs which repository triggered the workflow for audit purposes
+
+#### Available Workflows
+
+| Workflow | File | Trigger Type | Artifact Selection |
+|----------|------|--------------|-------------------|
+| Default Test Execution | `main.yml` | Push, PR, Schedule, Dispatch | Repository-aware (Community or Pro) |
+| Advanced Test Execution | `advanced.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| AWS Cloud Database Tests | `aws.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| Azure Cloud Database Tests | `azure.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| GCP Cloud Database Tests | `gcp.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| Oracle OCI Tests | `oracle-oci.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+| Snowflake Tests | `snowflake.yml` | Schedule, Dispatch | Always Pro (Liquibase Secure) |
+
+#### Manual Workflow Dispatch
+
+All workflows support manual triggering via `workflow_dispatch` with the following inputs:
+
+**main.yml Inputs:**
+- **liquibaseRepo** (optional): Repository to pull artifacts from
+  - Options: `liquibase/liquibase` (Community) or `liquibase/liquibase-pro` (Pro)
+  - Default: Auto-detected based on triggering repository
+  - Used to override the automatic detection logic
+
+- **liquibaseBranch** (optional): Branch to pull artifacts from
+  - Can be a single branch name or comma-separated list for fallback search
+  - Supports format: `branch1, branch2, branch3`
+  - Default: Current branch name with fallback to `master` then `main`
+  - Falls back to next branch in list if previous one doesn't exist
+
+- **liquibaseCommit** (optional): Specific commit SHA to pull artifacts from
+  - If provided, overrides branch selection
+
+**Advanced & Cloud Workflows Inputs (advanced.yml, aws.yml, azure.yml, gcp.yml, oracle-oci.yml, snowflake.yml):**
+- **liquibaseBranch** (optional): Branch to pull artifacts from
+  - Can be a single branch name or comma-separated list for fallback search
+  - Supports format: `branch1, branch2, branch3`
+  - Default: Current branch name with fallback to `master` then `main`
+
+- **liquibaseRepo** (optional): Repository selection input
+  - NOTE: This input is ignored for these workflows
+  - These workflows always use `liquibase/liquibase-pro` (Pro artifacts)
+  - Listed for consistency and future flexibility
+
+#### Workflow Execution Summary
+
+Each workflow run generates an execution summary showing:
+- Which repository triggered the workflow
+- Which repository artifacts were downloaded from
+- Which branch and commit were used
+- Whether Pro (Liquibase Secure) or Community artifacts were used
+- Overall test results
+
+#### Artifact Download Mechanism
+
+The workflows use Maven for resolving and downloading all Liquibase dependencies:
+
+**Maven Dependency Resolution:**
+- Maven automatically resolves all Liquibase dependencies from configured repositories
+- `liquibase-core` for core functionality (available in both repositories)
+- `liquibase-commercial` for pro/secure features (only available in liquibase-pro repository)
+- Works seamlessly for both community and pro artifact selection
+- Repositories configured with GitHub Package Manager authentication in Maven settings
+- Supports snapshot builds with version `0-SNAPSHOT` for development testing
+
+**Authentication:**
+- Uses `LIQUIBOT_PAT_GPM_ACCESS` environment variable (GitHub PAT with `read:packages` scope)
+- Configured via Maven settings XML action during workflow setup
+- Ensures secure download of pro artifacts from private repositories
+
+**Note on liquibase-sdk-plugin:**
+- Prior versions used `liquibase-sdk-maven-plugin` for artifact installation
+- Since v0.11.0 (October 2025), the SDK plugin disabled pro repository downloads (DAT-20810)
+- Current implementation uses direct downloads to work around this limitation
+
+**GitHub App Token Scope:**
+- Main workflow uses GitHub App token scoped to `liquibase` organization
+- Token has access to multiple repositories: `liquibase`, `liquibase-pro`, `liquibase-test-harness`
+- Token permissions are minimized: `contents:read`, `actions:read`, `statuses:write`
+- This allows safe branch queries against private `liquibase-pro` repository
+
+**Manual Repository Selection & Fallback:**
+
+When selecting `liquibase-pro` explicitly, the workflow requires that branch lookup succeeds in that repository (no fallback allowed):
+- If branch lookup fails for explicit `liquibase-pro` selection:
+  - Workflow fails with a clear error message
+  - Does NOT fall back to community repository
+  - User must ensure branch exists in `liquibase-pro` or provide a specific commit SHA
+- This ensures artifacts come ONLY from the selected repository
+
+When repo is auto-detected from triggers (not manually selected):
+- Workflow allows fallback to default repository if branch lookup fails
+- Automatic fallback only applies to triggered/default repo selection, not manual `liquibase-pro` selection
+
+**Token Requirements for liquibase-pro:**
+- The `LIQUIBOT_PAT_GPM_ACCESS` token must have access to `liquibase-pro` repository
+- Token is used for both GitHub API queries (branch lookup) and Maven GPM authentication
+- Explicit pro selection validates that proper token access exists before proceeding with artifact resolution
+
+**Important: Commercial Artifacts Are Pro-Only**
+
+The key distinction between repositories:
+- **Community artifacts** (`liquibase/liquibase`):
+  - `org.liquibase:liquibase-core` - available
+  - `org.liquibase:liquibase-commercial` - NOT available in this repository
+    - Declared as **optional** in pom.xml (Maven won't fail if missing)
+    - Tests can work without it but may not have commercial features
+
+- **Pro artifacts** (`liquibase/liquibase-pro`):
+  - `org.liquibase:liquibase-core` - available (same as community)
+  - `com.liquibase:liquibase-commercial` - available ONLY in this repository (different groupId!)
+
+##### Maven Dependency Resolution
+
+The Maven workflows automatically detect which repository is being used and resolve the correct artifacts:
+
+1. **GitHub Actions Workflow**: The main workflow detects the selected repository (community vs pro) and activates the appropriate Maven profile when resolving dependencies
+
+2. **Version Resolution Strategy**:
+   - **GitHub Packages Snapshot Versioning**: Artifacts follow specific versioning patterns
+   - **Community artifacts** (`liquibase/liquibase`):
+     - Version format: `{commit-sha}-SNAPSHOT` (e.g., `e11e704013b5f419e0826807714d72c945dbffd2-SNAPSHOT`)
+     - Workflow queries GitHub Packages maven-metadata.xml to discover latest master branch commit SHA
+     - Each commit gets a unique snapshot version automatically published to GitHub Packages
+   - **Pro artifacts** (`liquibase/liquibase-pro`):
+     - Version format: `master-{short-sha}` (e.g., `master-e461cb2`, `master-f01cce1`)
+     - Workflow queries GitHub Packages maven-metadata.xml to discover latest master branch version
+     - Each master build gets a unique version with 7-character commit SHA
+   - **Automatic Discovery**: Workflow automatically detects which artifacts are needed and queries the appropriate repository's version metadata
+
+3. **Maven Profile**: The `useproartifacts` profile (when activated with `-Puseproartifacts`):
+   - Declares dependency on `com.liquibase:liquibase-commercial` with the correct groupId for pro artifacts
+   - Configures repositories to prioritize `liquibase-pro` for artifact resolution
+   - Ensures Maven searches the correct repository first
+
+4. **Artifact Resolution Flow**:
+   - **Pro artifacts** (`liquibase-pro` selected):
+     - Workflow queries and sets version to `master-{short-sha}` (e.g., `master-e461cb2`)
+     - Profile activates `-Puseproartifacts`
+     - Maven resolves:
+       - `org.liquibase:liquibase-core:master-{short-sha}` from `liquibase-pro` repository
+       - `com.liquibase:liquibase-commercial:master-{short-sha}` from `liquibase-pro` repository
+   - **Community artifacts** (default):
+     - Workflow queries GitHub Packages maven-metadata.xml for latest master branch commit SHA
+     - Sets version to `{SHA}-SNAPSHOT` (e.g., `e11e704013b5f419e0826807714d72c945dbffd2-SNAPSHOT`)
+     - Maven resolves only:
+       - `org.liquibase:liquibase-core:{SHA}-SNAPSHOT` from `liquibase` repository
+     - Note: `liquibase-commercial` is NOT resolved for community builds (not available in community repo)
+
+To manually use the pro artifacts profile locally, use:
+```bash
+mvn clean install -Puseproartifacts -DuseProArtifacts=true
+```
 
 #### Configuration File
 
 The test harness will look for a file called `harness-config.yml` in the root of your classpath.
 
-That file contains a list of the database connections to test against, as well as an ability to control which subsets of tests to run.   
+That file contains a list of the database connections to test against, as well as an ability to control which subsets of tests to run.
 
 See `src/test/resources/harness-config.yml` to see what this repository is configured to use.
 
@@ -241,10 +421,12 @@ To change it to another format, like 'sql' for instance, specify `-DinputFormat=
  want to test.
   - The framework tries to rollback changes after deploying it to DB. If Liquibase knows how to do a rollback for that particular changeset, it will automatically do that.
 If not, you will need to provide the rollback by yourself. To learn more about rollbacks read [Rolling back changesets](https://docs.liquibase.com/workflows/liquibase-community/using-rollback.html) article.
-2) Go to `src/main/resources/liquibase/harness/change/expectedSql` and add expected query. 
+2) Go to `src/main/resources/liquibase/harness/change/expectedSql` and add expected query.
  - You will need to add this under the database specific folder.
  - NOTE: If your changeSet will generate multiple SQL statements, you should add each SQL statement as a separate line. (See `renameTable.sql` in the postgres folder for an example.)
  - If you would like to test another DB type, please add the requisite folder.
+ - **Placeholders**: You can use `${CATALOG_NAME}` and `${SCHEMA_NAME}` placeholders in expectedSql files. These are replaced at runtime with actual values from `database.getDefaultCatalogName()` and `database.getDefaultSchemaName()`. This is useful for databases with dynamic catalog/schema names (e.g., Snowflake, cloud databases). Example: `ALTER TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.authors ADD column1 VARCHAR(25)`
+ - **Skipping tests**: To skip a test for a specific database, create an expectedSql file containing `SKIP TEST` (case-insensitive) with an explanation. Use this when a feature is intentionally not supported or not applicable. For truly invalid/broken scenarios, use `INVALID TEST` instead. Example: `SKIP TEST\nSnowflake doesn't support indexes`
 3) Go to `src/main/resources/liquibase/harness/change/expectedSnapshot` and add expected DB Snapshot results.
   - To verify the absence of an object in a snapshot (such as with drop* commands) add `"_noMatch": true,` to that tree level where the missing object should be verified.
   See [dropSequence.json](src/main/resources/liquibase/harness/change/expectedSnapshot/postgresql/dropSequence.json) as an example. 
@@ -263,6 +445,7 @@ Generally it is similar to ChangeObjectTests except it doesn't use Liquibase sna
  - `src/main/resources/liquibase/harness/data/expectedResultSet` - add JSON formatted expected result set from required DB object;
     where left part of a JSON node is the name of a change type and right part is JSON Array with a result set;
  - `src/main/resources/liquibase/harness/data/expectedSql` - add query which is expected to be generated by Liquibase;
+ - **Placeholders**: Both `expectedSql` and `checkingSql` files support `${CATALOG_NAME}` and `${SCHEMA_NAME}` placeholders (see [Change Objects Test](#adding-a-change-object-test) for details);
  
 
 ## Minimum Requirements

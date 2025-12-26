@@ -4,6 +4,8 @@ on:
   # Triggers the workflow on a schedule for the main branch. Also allows for manual triggers
   schedule:
     - cron: '0 7 * * 6' # Execute on saturdays at 7AM UTC
+  repository_dispatch:
+    types: [test-harness]
   workflow_dispatch:
 
 permissions:
@@ -11,6 +13,276 @@ permissions:
   id-token: write
 
 jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
+      useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
+      liquibaseRepo: ${{ steps.configure-build.outputs.liquibaseRepo }}
+      proVersion: ${{ steps.discover-version.outputs.secure-version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure AWS credentials for vault access
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        id: vault-secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
+      - name: Get GitHub App token
+        id: get-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
+          private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
+          owner: liquibase
+          repositories: liquibase,liquibase-pro,liquibase-test-harness
+          permission-contents: read
+          permission-actions: read
+          permission-statuses: write
+
+      - name: Configure Build
+        id: configure-build
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
+          script: |
+            const helper = require('./.github/util/workflow-helper.js')({github, context});
+
+            let testBranchName = helper.getCurrentBranch();
+            console.log("Running in liquibase-test-harness branch " + testBranchName);
+            core.notice("Running in liquibase-test-harness branch " + testBranchName);
+
+            // Detect which repository triggered this workflow
+            const triggeredRepo = helper.getTriggeredRepository();
+            console.log("Workflow triggered by repository: " + triggeredRepo);
+            core.notice("Workflow triggered by repository: " + (triggeredRepo || "liquibase-test-harness (current repo)"));
+
+            // Determine default repo based on triggered repository
+            const defaultRepo = helper.getDefaultRepoForContext(triggeredRepo);
+            const useProArtifacts = helper.shouldUseProArtifacts(triggeredRepo);
+            console.log("Default repo for artifacts: " + defaultRepo);
+            console.log("Using SECURE artifacts: " + useProArtifacts);
+
+            // Use manual input if provided, otherwise use detected default
+            let liquibaseRepo = "${{ github.event.inputs.liquibaseRepo }}" || defaultRepo;
+            console.log("liquibaseRepo == " + liquibaseRepo);
+
+            // Track the user's intended repository for artifact selection
+            let userSelectedRepo = "${{ github.event.inputs.liquibaseRepo }}" || null;
+            let intentProArtifacts = userSelectedRepo ? helper.shouldUseProArtifacts(userSelectedRepo) : useProArtifacts;
+            console.log("User intended SECURE artifacts: " + intentProArtifacts);
+
+            // Determine if user explicitly selected liquibase-pro (no fallback allowed)
+            let isExplicitProSelection = userSelectedRepo && helper.shouldUseProArtifacts(userSelectedRepo);
+            console.log("Explicit SECURE selection (no fallback allowed): " + isExplicitProSelection);
+
+            core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
+
+            let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}" || testBranchName + ", master";
+            console.log("liquibaseBranch == " + liquibaseBranchName);
+            core.setOutput("liquibaseBranch", liquibaseBranchName);
+
+            let repoOwnerName = liquibaseRepo.split("/")[0]
+            let repoName = liquibaseRepo.split("/")[1]
+
+            let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
+            if (!liquibaseSha) {
+              console.log("No liquibaseSha passed. Looking for branch "+ liquibaseBranchName);
+
+              try {
+                let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
+                liquibaseSha = liquibaseBranchResponse.sha;
+              } catch (error) {
+                // If branch lookup fails and user explicitly selected liquibase-pro, fail hard
+                // (don't fall back to community repo)
+                if (isExplicitProSelection) {
+                  core.error("Failed to find branch in explicitly selected liquibase-pro repository");
+                  core.error("Error: " + error.message);
+                  core.error("When you explicitly select liquibase-pro, artifacts must come from that repository only.");
+                  core.error("Please verify that:");
+                  core.error("  1. The branch exists in liquibase-pro");
+                  core.error("  2. The LIQUIBOT_PAT_GPM_ACCESS token has access to liquibase-pro");
+                  throw new Error("Cannot fall back from explicitly selected liquibase-pro repository");
+                }
+
+                // For triggered or default selections, allow fallback to default repository
+                console.warn("Failed to find branch in " + liquibaseRepo + ": " + error.message);
+
+                if (liquibaseRepo !== defaultRepo) {
+                  console.log("Falling back to default repository: " + defaultRepo);
+                  const fallbackOwner = defaultRepo.split("/")[0];
+                  const fallbackRepo = defaultRepo.split("/")[1];
+
+                  try {
+                    let liquibaseBranchResponse = await helper.findMatchingBranch(fallbackOwner, fallbackRepo, [liquibaseBranchName, "master", "main"]);
+                    liquibaseSha = liquibaseBranchResponse.sha;
+                    liquibaseRepo = defaultRepo;
+                    repoOwnerName = fallbackOwner;
+                    repoName = fallbackRepo;
+                    core.notice("Switched to fallback repository: " + defaultRepo + " for branch lookup, but will use " + (intentProArtifacts ? "pro" : "community") + " artifacts");
+                    console.log("Successfully found branch in fallback repo");
+                  } catch (fallbackError) {
+                    core.error("Failed to find branch in both " + liquibaseRepo + " and fallback " + defaultRepo);
+                    throw fallbackError;
+                  }
+                } else {
+                  throw error;
+                }
+              }
+            }
+            core.setOutput("liquibaseSha", liquibaseSha);
+            core.setOutput("liquibaseRepo", liquibaseRepo);
+            // Use the user's intended SECURE artifacts setting
+            core.setOutput("useProArtifacts", intentProArtifacts);
+            core.setOutput("liquibaseOwner", repoOwnerName);
+
+            let runDescription = "${{ github.event.inputs.runDescription }}";
+            if (!runDescription) {
+                runDescription = "None given";
+            }
+            core.notice("Triggered by this OSS PR: " + runDescription);
+
+            let runDetails = null;
+            if (context.payload && context.payload.inputs && context.payload.inputs.runDetails) {
+                runDetails = JSON.parse(context.payload.inputs.runDetails);
+            }
+            if (!runDetails) {
+              runDetails = {};
+
+            }
+            if (runDetails.notices) {
+                for (let notice of runDetails.notices) {
+                    core.notice(notice);
+                }
+            }
+
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v22
+        with:
+          repositories: |
+            [
+              {
+                "id": "github",
+                "url": "https://maven.pkg.github.com/liquibase/liquibase",
+                "releases": {
+                  "enabled": "true"
+                },
+                "snapshots": {
+                  "enabled": "true",
+                  "updatePolicy": "always"
+                }
+              }
+            ]
+          servers: |
+            [
+              {
+                "id": "github",
+                "username": "liquibot",
+                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
+              }
+            ]
+
+      - uses: actions/setup-java@v5
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
+
+      - name: Discover Liquibase Version
+        id: discover-version
+        env:
+          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
+        run: |
+          echo "::group::Discover Liquibase Snapshot Version"
+
+          # Snowflake cloud tests ALWAYS use Pro artifacts
+          echo "Snowflake cloud tests always use PRO artifacts (liquibase-commercial)"
+          echo "Skipping COMMUNITY artifact discovery; liquibase-core is bundled with liquibase-commercial."
+
+          # Query GitHub Packages for the latest liquibase-commercial artifact version
+          PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase-pro/com/liquibase/liquibase-commercial/maven-metadata.xml"
+
+          echo "Fetching latest PRO artifact version from: $PACKAGES_URL"
+          METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
+
+          # Extract version in master-{7-char-hex-sha} format (e.g., master-e461cb2)
+          SECURE_VERSION=$(echo "$METADATA" | grep -o '<version>master-[a-f0-9]\{7\}</version>' | tail -1 | sed 's/<[^>]*>//g')
+
+          if [ -z "$SECURE_VERSION" ]; then
+            echo "ERROR: Could not determine PRO version from GitHub Packages"
+            echo "Looking for pattern: master-{7-char-hex-sha} (e.g., master-e461cb2)"
+            echo "GitHub Packages metadata response (first 500 chars):"
+            echo "$METADATA" | head -c 500
+            echo ""
+            exit 1
+          fi
+
+          echo "PRO version: $SECURE_VERSION"
+          echo "secure-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
+
+          echo "::endgroup::"
+
+      - name: Resolve Snapshot Liquibase Dependencies
+        env:
+          GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
+        run: |
+          echo "::group::Resolve Snapshot Liquibase Dependencies"
+          echo "Artifact repository: ${{ steps.configure-build.outputs.liquibaseRepo }}"
+          echo "PRO version: ${{ steps.discover-version.outputs.secure-version }}"
+          echo "Snowflake cloud tests ALWAYS use PRO artifacts"
+          echo "::endgroup::"
+
+          # Verify Maven settings are configured
+          echo "Maven settings.xml location:"
+          ls -la ~/.m2/settings.xml || echo "No settings.xml found"
+          echo "Maven settings.xml content:"
+          cat ~/.m2/settings.xml || echo "Could not read settings.xml"
+
+          # Pass authentication credentials as system properties to Maven
+          MAVEN_AUTH_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=debug"
+
+          echo "Resolving PRO artifacts from liquibase-pro repository..."
+          echo "Skipping liquibase-core resolution; liquibase-commercial already bundles liquibase-core."
+
+          # ✅ Explicitly activate useProArtifacts profile and set commercial version
+          mvn -B \
+            -PuseProArtifacts \
+            -DuseProArtifacts=true \
+            -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
+            $MAVEN_AUTH_OPTS \
+            dependency:resolve \
+            -DincludeArtifactIds=liquibase-commercial \
+            -DexcludeArtifactIds=liquibase-core 2>&1 | tee resolve.log
+
+          echo ""
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B \
+            -PuseProArtifacts \
+            -DuseProArtifacts=true \
+            -Dliquibase-commercial.version=${{ steps.discover-version.outputs.secure-version }} \
+            dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
+
+          echo "::notice :: Resolved Snapshot Liquibase PRO dependencies"
+
+      - name: Cache installed Liquibase
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.m2/repository/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+
   # verify validity of this job `deploy-ephemeral-cloud-infra` in https://datical.atlassian.net/browse/DAT-20624?focusedCommentId=170423
   deploy-ephemeral-cloud-infra:
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
@@ -21,11 +293,26 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: [deploy-ephemeral-cloud-infra]
+    needs: [deploy-ephemeral-cloud-infra, setup]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+
+      - uses: actions/setup-java@v5
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
+
+      - name: Restore cached Liquibase artifacts
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.m2/repository/
+          key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            mvn-liquibase-${{ github.run_id }}-
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@v5
@@ -98,8 +385,13 @@ jobs:
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
+
           JDK_JAVA_OPTIONS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
-          mvn -Dtest=LiquibaseHarnessSuiteTest \
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} \
+              -Dtest=LiquibaseHarnessSuiteTest \
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
               -DdbUsername=LIQUIBASETH \
@@ -108,7 +400,7 @@ jobs:
               -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: snowflake-test-results
           path: build/spock-reports
@@ -121,7 +413,7 @@ jobs:
       stack-id: ${{ steps.get-stack-id.outputs.stack-id }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Get Stack ID
         id: get-stack-id
         uses: ./.github/actions/get-stack-id

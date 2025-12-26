@@ -20,7 +20,7 @@ jobs:
         plan: [18.4.0, 19.3.0, 23.2.0]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
@@ -72,12 +72,16 @@ jobs:
       - name: Oracle ${{ matrix.plan }} Test Run
         run: |
           docker ps
-          mvn -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
+
+          mvn -PuseProArtifacts -DuseProArtifacts=true -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
       - name: Archive Oracle ${{ matrix.plan }} test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: oracle-${{ matrix.plan }}-test-results
           path: build/spock-reports

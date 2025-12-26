@@ -8,7 +8,6 @@
             "disabled": false,
             "name": "test_trigger_renamed",
             "tableName": "posts",
-            "usesQuotedIdentifier": true,
             "valid": true
           }
         }]

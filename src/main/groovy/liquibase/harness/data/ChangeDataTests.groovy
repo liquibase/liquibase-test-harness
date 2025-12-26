@@ -9,6 +9,7 @@ import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.resource.ClassLoaderResourceAccessor
 import org.json.JSONArray
 import org.json.JSONObject
+import org.junit.Assert
 import org.junit.jupiter.api.Assumptions
 import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
@@ -22,8 +23,7 @@ import java.sql.ResultSet
 import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
 import static liquibase.harness.data.ChangeDataTestHelper.shouldOpenNewConnection
 import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
-import static liquibase.harness.util.FileUtils.getJSONFileContent
-import static liquibase.harness.util.FileUtils.getSqlFileContent
+import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.compareJSONArrays
 import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
 import static liquibase.harness.util.TestUtils.*
@@ -43,12 +43,14 @@ class ChangeDataTests extends Specification {
     @Unroll
     def "apply #testInput.changeData against #testInput.databaseName #testInput.version"() {
         given: "read expected sql, checking sql and expected result set, create arguments map for executing command scope"
-        String expectedSql = parseQuery(getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version,
-                "liquibase/harness/data/expectedSql"))
-        String checkingSql = parseQuery(getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version,
-                "liquibase/harness/data/checkingSql"))
-        String expectedResultSet = getJSONFileContent(testInput.changeData, testInput.databaseName, testInput.version,
-                "liquibase/harness/data/expectedResultSet")
+        String rawExpectedSql = getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version, "liquibase/harness/data/expectedSql")
+        String expectedSql = parseQuery(substitutePlaceholders(rawExpectedSql, testInput.databaseName, testInput.dbSchema))
+
+        String rawCheckingSql = getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version, "liquibase/harness/data/checkingSql")
+        String checkingSql = parseQuery(substitutePlaceholders(rawCheckingSql, testInput.databaseName, testInput.dbSchema))
+
+        String expectedResultSet = getJSONFileContent(testInput.changeData, testInput.databaseName, testInput.version, "liquibase/harness/data/expectedResultSet")
+
         boolean shouldRunChangeSet
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
@@ -56,8 +58,9 @@ class ChangeDataTests extends Specification {
         argsMap.put("password", testInput.password)
         argsMap.put("changeLogFile", testInput.pathToChangeLogFile)
 
-        and: "ignore testcase if it's invalid for this combination of db type and/or version"
-        shouldRunChangeSet = !expectedSql?.toLowerCase()?.contains("invalid test")
+        and: "ignore testcase if it's invalid or skipped for this combination of db type and/or version"
+        def lowerExpectedSql = expectedSql?.toLowerCase()
+        shouldRunChangeSet = !lowerExpectedSql?.contains("invalid test") && !lowerExpectedSql?.contains("skip test")
         Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
         and: "fail test if expectedResultSet is not provided"
@@ -102,13 +105,13 @@ class ChangeDataTests extends Specification {
             //For embedded databases, let's create separate connection to run checking SQL
             if (shouldOpenNewConnection(connection, "sqlite", "snowflake", "postgres", "oracle", "mysql")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-                
+
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)
             } else {
                 connection.close()
                 connection = DatabaseFactory.getInstance().openConnection(testInput.url, testInput.username, testInput.password,
                         null, new ClassLoaderResourceAccessor()) as JdbcConnection
-                
+
                 resultSet = connection.createStatement().executeQuery(checkingSql)
                 connection.autoCommit ?: connection.commit()
             }
