@@ -21,6 +21,7 @@ import java.sql.DriverManager
 import java.sql.ResultSet
 
 import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
+import static liquibase.harness.data.ChangeDataTestHelper.reopenDatabaseConnectionIfClosed
 import static liquibase.harness.data.ChangeDataTestHelper.shouldOpenNewConnection
 import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
 import static liquibase.harness.util.FileUtils.*
@@ -43,11 +44,12 @@ class ChangeDataTests extends Specification {
     @Unroll
     def "apply #testInput.changeData against #testInput.databaseName #testInput.version"() {
         given: "read expected sql, checking sql and expected result set, create arguments map for executing command scope"
+        reopenDatabaseConnectionIfClosed(testInput)
         String rawExpectedSql = getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version, "liquibase/harness/data/expectedSql")
-        String expectedSql = parseQuery(substitutePlaceholders(rawExpectedSql, testInput.databaseName, testInput.dbSchema))
+        String expectedSql = parseQuery(substitutePlaceholders(rawExpectedSql, testInput.getDatabase().getDefaultCatalogName(), testInput.getDatabase().getDefaultSchemaName()))
 
         String rawCheckingSql = getSqlFileContent(testInput.changeData, testInput.databaseName, testInput.version, "liquibase/harness/data/checkingSql")
-        String checkingSql = parseQuery(substitutePlaceholders(rawCheckingSql, testInput.databaseName, testInput.dbSchema))
+        String checkingSql = parseQuery(substitutePlaceholders(rawCheckingSql, testInput.getDatabase().getDefaultCatalogName(), testInput.getDatabase().getDefaultSchemaName()))
 
         String expectedResultSet = getJSONFileContent(testInput.changeData, testInput.databaseName, testInput.version, "liquibase/harness/data/expectedResultSet")
 
@@ -103,7 +105,7 @@ class ChangeDataTests extends Specification {
         JSONArray generatedResultSetArray
         try {
             //For embedded databases, let's create separate connection to run checking SQL
-            if (shouldOpenNewConnection(connection, "sqlite", "snowflake", "postgres", "oracle", "mysql")) {
+            if (shouldOpenNewConnection(connection, "sqlite", "snowflake", "postgres", "oracle", "mysql", "informix")) {
                 newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
 
                 resultSet = newConnection.createStatement().executeQuery(checkingSql)

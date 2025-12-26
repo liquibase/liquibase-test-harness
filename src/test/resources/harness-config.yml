@@ -289,7 +289,7 @@ databasesUnderTest:
 
   - name: derby
     prefix: local
-    version: 10.14.2.0
+    version: 10.16.1.1
     url: jdbc:derby:./src/test/resources/derby/lbcat
 
   - name: db2-luw
