@@ -1,1 +1,1 @@
-CREATE TABLE LTHDB.PUBLIC.createTableDataTypeDoubleIsFloat (floatCol FLOAT)
+CREATE TABLE ${CATALOG_NAME}.${SCHEMA_NAME}.createTableDataTypeDoubleIsFloat (floatCol FLOAT)

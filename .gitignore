@@ -9,8 +9,7 @@ build/
 src/test/resources/liquibase/
 .project
 .DS_Store
-# Derby database files are tracked in git (needed for CI)
-# src/test/resources/derby/lbcat/*
+src/test/resources/derby/lbcat/*
 src/test/resources/sqlite/*
 src/test/resources/H2/
 derby.log
