@@ -285,6 +285,7 @@ jobs:
 
   # verify validity of this job `deploy-ephemeral-cloud-infra` in https://datical.atlassian.net/browse/DAT-20624?focusedCommentId=170423
   deploy-ephemeral-cloud-infra:
+    needs: setup
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
     secrets: inherit
     with:
@@ -338,16 +339,13 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            TH_SNOW_URL_GH, liquibaseth_url
+            TH_SNOW_URL_GH, liquibaseth_jdbc_url
 
-      - name: Install Liquibase
-        run: |
-          # Add Liquibase repository and install via apt
-          wget -O- https://repo.liquibase.com/liquibase.asc | gpg --dearmor > liquibase-keyring.gpg && \
-          cat liquibase-keyring.gpg | sudo tee /usr/share/keyrings/liquibase-keyring.gpg > /dev/null && \
-          echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/liquibase-keyring.gpg] https://repo.liquibase.com stable main' | sudo tee /etc/apt/sources.list.d/liquibase.list
-          sudo apt-get update
-          sudo apt-get install liquibase
+      - name: Install Liquibase Secure Edition
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'secure'
 
       - name: Decode Private Key
         run: |
@@ -355,21 +353,52 @@ jobs:
           chmod 600 /tmp/snowflake_private_key.p8  # Secure the key file
 
       - name: Create Liquibase Properties File
+        id: properties-file
         run: |
+          # Extract username from JDBC URL (format: ...?user=USERNAME&...)
+          EXTRACTED_USERNAME=$(echo "${TH_SNOW_URL_GH}" | sed -n 's/.*[?&]user=\([^&]*\).*/\1/p')
+
+          # Validate that username was successfully extracted
+          if [ -z "${EXTRACTED_USERNAME}" ]; then
+            echo "::error::Failed to extract username from Snowflake JDBC URL. Please ensure the URL contains 'user=USERNAME' parameter."
+            exit 1
+          fi
+
+          # Extract database name from JDBC URL (format: jdbc:snowflake://account.snowflakecomputing.com/?db=DATABASE&...)
+          EXTRACTED_DATABASE=$(echo "${TH_SNOW_URL_GH}" | sed -n 's/.*[?&]db=\([^&]*\).*/\1/p')
+
+          # Validate ephemeral database pattern (LTHDB_<id>)
+          if [ -z "${EXTRACTED_DATABASE}" ]; then
+            echo "::error::Failed to extract database name from Snowflake JDBC URL. Please ensure the URL contains 'db=DATABASE' parameter."
+            exit 1
+          fi
+
+          if ! echo "${EXTRACTED_DATABASE}" | grep -qE '^LTHDB_[0-9a-zA-Z_]+$'; then
+            echo "::error::Database name '${EXTRACTED_DATABASE}' does not match ephemeral pattern 'LTHDB_<id>'. Persistent LTHDB usage is not allowed."
+            exit 1
+          fi
+
+          # Log connection details for audit trail
+          echo "::notice::Targeting Snowflake ephemeral database: ${EXTRACTED_DATABASE}"
+          echo "::notice::Authenticating as user: ${EXTRACTED_USERNAME}"
+
+          echo "EXTRACTED_USERNAME=${EXTRACTED_USERNAME}" >> GITHUB_OUTPUT
+          echo "EXTRACTED_DATABASE=${EXTRACTED_DATABASE}" >> GITHUB_OUTPUT
+
           cat > liquibase.properties << EOF
           # Snowflake connection settings with database in URL
           url=${TH_SNOW_URL_GH}
-          username=LIQUIBASETH
+          username=${EXTRACTED_USERNAME}
           driver=net.snowflake.client.jdbc.SnowflakeDriver
 
           # PKI Authentication
           liquibase.snowflake.auth.type=PKI
           liquibase.snowflake.auth.privateKeyPath=/tmp/snowflake_private_key.p8
-          
+
           # Schema configuration
           liquibaseSchemaName=PUBLIC
           defaultSchemaName=PUBLIC
-          
+
           # Changelog settings
           changeLogFile=snowflake.sql
           classpath=src/test/resources/init-changelogs/snowflake
@@ -394,9 +423,7 @@ jobs:
               -Dtest=LiquibaseHarnessSuiteTest \
               -DconfigFile=/harness-config-cloud.yml \
               -DdbName=snowflake \
-              -DdbUsername=LIQUIBASETH \
               -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
-              -Ddriver=net.snowflake.client.jdbc.SnowflakeDriver \
               -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
