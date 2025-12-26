@@ -22,6 +22,7 @@
         <spock-core.version>2.4-groovy-5.0</spock-core.version>
         <spock-reports.version>2.5.1-groovy-4.0</spock-reports.version>
         <junit.version>6.0.1</junit.version>
+        <derby.version>10.16.1.1</derby.version>
     </properties>
     <organization>
         <name>Liquibase.org</name>
@@ -191,17 +192,17 @@
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <version>10.17.1.0</version>
+            <version>${derby.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
-            <version>10.17.1.0</version>
+            <version>${derby.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbytools</artifactId>
-            <version>10.17.1.0</version>
+            <version>${derby.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>

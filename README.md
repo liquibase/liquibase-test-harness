@@ -32,7 +32,7 @@
 | DB2 on Linux/Unix/Windows | `11.5.7`                              | Advanced                       |
 | H2                        | `2.2.220`                             | Advanced                       |
 | SQLite                    | `3.34.0`                              | Advanced                       |
-| Apache Derby              | `10.17.1.0`                           | Advanced                       |
+| Apache Derby              | `10.16.1.1`                           | Advanced                       |
 | Firebird                  | `3.0, 4.0`                            | Advanced                       |
 | HSQLDB                    | `2.5, 2.6, 2.7`                       | Advanced                       |
 | Snowflake                 | `latest`                              | BaseHarnessSuite               |

@@ -5,6 +5,7 @@ import groovy.transform.builder.Builder
 import liquibase.Scope
 import liquibase.database.Database
 import liquibase.database.DatabaseConnection
+import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
@@ -92,6 +93,31 @@ class ChangeDataTestHelper {
 
     static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
         return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
+    }
+
+    /**
+     * Reopens the database connection if it has been closed.
+     * This is needed because Liquibase commands may close connections after execution,
+     * but subsequent tests need a live connection to query catalog/schema names.
+     */
+    static void reopenDatabaseConnectionIfClosed(TestInput testInput) {
+        try {
+            def connection = testInput.database?.getConnection()
+            if (connection instanceof JdbcConnection) {
+                // Check if underlying JDBC connection is closed - some drivers throw on isClosed()
+                def jdbcConn = (connection as JdbcConnection).getUnderlyingConnection()
+                if (jdbcConn == null || jdbcConn.isClosed()) {
+                    testInput.database = DatabaseConnectionUtil.initializeDatabase(
+                            testInput.url, testInput.username, testInput.password)
+                }
+            }
+        } catch (Exception e) {
+            // Connection is in a bad state, reinitialize
+            Scope.getCurrentScope().getLog(ChangeDataTestHelper.class).info(
+                    "Reopening closed database connection for ${testInput.databaseName}")
+            testInput.database = DatabaseConnectionUtil.initializeDatabase(
+                    testInput.url, testInput.username, testInput.password)
+        }
     }
 
     @Builder
