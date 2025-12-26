@@ -357,7 +357,33 @@ jobs:
         run: |
           # Extract username from JDBC URL (format: ...?user=USERNAME&...)
           EXTRACTED_USERNAME=$(echo "${TH_SNOW_URL_GH}" | sed -n 's/.*[?&]user=\([^&]*\).*/\1/p')
+
+          # Validate that username was successfully extracted
+          if [ -z "${EXTRACTED_USERNAME}" ]; then
+            echo "::error::Failed to extract username from Snowflake JDBC URL. Please ensure the URL contains 'user=USERNAME' parameter."
+            exit 1
+          fi
+
+          # Extract database name from JDBC URL (format: jdbc:snowflake://account.snowflakecomputing.com/?db=DATABASE&...)
+          EXTRACTED_DATABASE=$(echo "${TH_SNOW_URL_GH}" | sed -n 's/.*[?&]db=\([^&]*\).*/\1/p')
+
+          # Validate ephemeral database pattern (LTHDB_<id>)
+          if [ -z "${EXTRACTED_DATABASE}" ]; then
+            echo "::error::Failed to extract database name from Snowflake JDBC URL. Please ensure the URL contains 'db=DATABASE' parameter."
+            exit 1
+          fi
+
+          if ! echo "${EXTRACTED_DATABASE}" | grep -qE '^LTHDB_[0-9a-zA-Z_]+$'; then
+            echo "::error::Database name '${EXTRACTED_DATABASE}' does not match ephemeral pattern 'LTHDB_<id>'. Persistent LTHDB usage is not allowed."
+            exit 1
+          fi
+
+          # Log connection details for audit trail
+          echo "::notice::Targeting Snowflake ephemeral database: ${EXTRACTED_DATABASE}"
+          echo "::notice::Authenticating as user: ${EXTRACTED_USERNAME}"
+
           echo "EXTRACTED_USERNAME=${EXTRACTED_USERNAME}" >> GITHUB_OUTPUT
+          echo "EXTRACTED_DATABASE=${EXTRACTED_DATABASE}" >> GITHUB_OUTPUT
 
           cat > liquibase.properties << EOF
           # Snowflake connection settings with database in URL
