@@ -95,13 +95,26 @@ class JSONUtils {
         return true
     }
 
-    static JSONObject getJsonFromResource(String resourceName) {
-        return new JSONObject(FileUtils.getResourceContent(resourceName))
-    }
-
     static void compareJSONObjects(JSONObject expected, JSONObject actual) {
         def mapExpected = new JsonSlurper().parseText(expected.toString())
         def mapActual = new JsonSlurper().parseText(actual.toString())
         assert mapExpected == mapActual
+    }
+
+    /**
+     * Checks if a JSON string represents an empty object {}.
+     * Used to signal that snapshot/resultset verification should be skipped
+     * for changetypes that don't produce verifiable state changes.
+     *
+     * @param jsonContent The JSON string to check
+     * @return true if the content is null, empty, or an empty JSON object {}
+     */
+    static boolean isEmptyJsonObject(String jsonContent) {
+        if (jsonContent == null) {
+            return true
+        }
+        // Remove all whitespace to handle variations like "{ }" or "  {}  "
+        String noWhitespace = jsonContent.replaceAll("\\s", "")
+        return noWhitespace.isEmpty() || noWhitespace == "{}"
     }
 }
