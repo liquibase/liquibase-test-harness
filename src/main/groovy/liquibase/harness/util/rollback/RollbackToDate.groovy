@@ -10,7 +10,7 @@ class RollbackToDate implements RollbackStrategy {
 
     @Override
     void prepareForRollback(List<DatabaseUnderTest> databases) {
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss")
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
         rollbackDateTime = sdf.format(new Date(System.currentTimeMillis() - 1000))
     }
