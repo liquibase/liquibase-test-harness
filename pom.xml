@@ -22,7 +22,10 @@
         <spock-core.version>2.4-groovy-5.0</spock-core.version>
         <spock-reports.version>2.5.1-groovy-4.0</spock-reports.version>
         <junit.version>6.0.1</junit.version>
+        <!-- DEPRECATED: Apache Derby entered read-only maintenance mode (2025-10-10). Driver requires Java 21 but project needs Java 17.
+             Keeping commented for reference. See INT-1718 for details.
         <derby.version>10.16.1.1</derby.version>
+        -->
     </properties>
     <organization>
         <name>Liquibase.org</name>
@@ -189,6 +192,8 @@
             <version>3.51.1.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- DEPRECATED: Apache Derby entered read-only maintenance mode (2025-10-10). Driver requires Java 21 but project needs Java 17.
+             Keeping commented for reference. See INT-1718 for details.
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
@@ -204,6 +209,7 @@
             <artifactId>derbytools</artifactId>
             <version>${derby.version}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>

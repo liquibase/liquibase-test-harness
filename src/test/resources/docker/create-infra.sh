@@ -60,7 +60,7 @@ case $db in
     ;;
 
   # in memory and cloud databases
-  "derby"|"sqlite"|"H2Database-2.2"|"snowflake")
+  "sqlite"|"H2Database-2.2"|"snowflake")
     exit 0
     ;;
 
