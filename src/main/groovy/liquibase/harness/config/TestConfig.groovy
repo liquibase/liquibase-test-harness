@@ -12,7 +12,7 @@ class TestConfig {
     private static TestConfig instance
     String outputResourcesBase = "src/test/resources"
     Boolean initDB = true
-    ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor()
+    ResourceAccessor resourceAccessor = new FirstMatchResourceAccessor(new ClassLoaderResourceAccessor())
     Boolean revalidateSql = true
     String inputFormat
     String context
