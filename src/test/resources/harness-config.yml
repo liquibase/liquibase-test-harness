@@ -287,10 +287,12 @@ databasesUnderTest:
     version: 3.34.0
     url: jdbc:sqlite:./src/test/resources/sqlite/sqlite.db
 
-  - name: derby
-    prefix: local
-    version: 10.16.1.1
-    url: jdbc:derby:./src/test/resources/derby/lbcat
+  # DEPRECATED: Apache Derby entered read-only maintenance mode (2025-10-10). Driver requires Java 21 but project needs Java 17.
+  # Keeping commented for reference. See INT-1718 for details.
+  # - name: derby
+  #   prefix: local
+  #   version: 10.16.1.1
+  #   url: jdbc:derby:./src/test/resources/derby/lbcat
 
   - name: db2-luw
     prefix: docker

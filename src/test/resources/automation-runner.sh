@@ -128,9 +128,6 @@ case $db in
   "edb-edb-16" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=edb-edb -DdbVersion=16 test
     ;;
-  "derby" )
-    test_command $(build_mvn_command) -Dtest=$tc -DdbName=derby test
-    ;;
   "sqlite" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=sqlite test
     ;;

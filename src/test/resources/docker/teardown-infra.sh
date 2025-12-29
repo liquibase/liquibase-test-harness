@@ -12,7 +12,7 @@ case $db in
     ;;
 
   # in memory databases
-  "derby"|"sqlite")
+  "sqlite")
     exit 0
     ;;
 
