@@ -11,6 +11,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static liquibase.harness.util.FileUtils.*
+import static liquibase.harness.util.JSONUtils.isEmptyJsonObject
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
 import static liquibase.harness.util.TestUtils.*
 import static liquibase.harness.change.ChangeObjectTestHelper.*
@@ -47,9 +48,10 @@ class ChangeObjectTests extends Specification {
         shouldRunChangeSet = !lowerExpectedSql?.contains("invalid test") && !lowerExpectedSql?.contains("skip test")
         Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
-        and: "fail test if snapshot is not provided"
+        and: "fail test if snapshot is not provided, allow empty {} to skip verification"
         shouldRunChangeSet = expectedSnapshot != null
         assert shouldRunChangeSet: "No expectedSnapshot for ${testInput.changeObject}!"
+        boolean shouldVerifyJson = !isEmptyJsonObject(expectedSnapshot)
 
         and: "check database under test is online"
         shouldRunChangeSet = testInput.database.getConnection() instanceof JdbcConnection
@@ -76,9 +78,11 @@ class ChangeObjectTests extends Specification {
         when: "apply changeSet to DB"
         executeCommandScope("update", argsMap)
 
-        then: "get DB snapshot, check if actual snapshot matches expected snapshot"
-        def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
-        snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
+        then: "get DB snapshot and verify it matches expected snapshot (skip if expected is empty {})"
+        if (shouldVerifyJson) {
+            def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
+            snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
+        }
 
         and: "if expected sql is not provided save generated sql as expected sql"
         if (expectedSql == null && generatedSql != null && !testInput.pathToChangeLogFile.endsWith(".sql") && !generatedSql.isEmpty()) {

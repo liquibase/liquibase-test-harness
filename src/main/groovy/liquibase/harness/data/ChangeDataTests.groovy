@@ -26,6 +26,7 @@ import static liquibase.harness.data.ChangeDataTestHelper.shouldOpenNewConnectio
 import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.compareJSONArrays
+import static liquibase.harness.util.JSONUtils.isEmptyJsonObject
 import static liquibase.harness.util.JSONUtils.mapResultSetToJSONArray
 import static liquibase.harness.util.TestUtils.*
 
@@ -65,9 +66,10 @@ class ChangeDataTests extends Specification {
         shouldRunChangeSet = !lowerExpectedSql?.contains("invalid test") && !lowerExpectedSql?.contains("skip test")
         Assumptions.assumeTrue(shouldRunChangeSet, expectedSql)
 
-        and: "fail test if expectedResultSet is not provided"
+        and: "fail test if expectedResultSet is not provided, allow empty {} to skip verification"
         shouldRunChangeSet = expectedResultSet != null
         assert shouldRunChangeSet: "No expectedResultSet for ${testInput.changeData}!"
+        boolean shouldVerifyJson = !isEmptyJsonObject(expectedResultSet)
 
         and: "fail test if checkingSql is not provided"
         shouldRunChangeSet = checkingSql != null
@@ -99,34 +101,36 @@ class ChangeDataTests extends Specification {
         when: "apply changeSet to DB,"
         executeCommandScope("update", argsMap)
 
-        then: "obtain resultSet form the statement, compare expected resultSet to generated resultSet"
-        Connection newConnection
-        ResultSet resultSet
-        JSONArray generatedResultSetArray
-        try {
-            //For embedded databases, let's create separate connection to run checking SQL
-            if (shouldOpenNewConnection(connection, "sqlite", "snowflake", "postgres", "oracle", "mysql", "informix")) {
-                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+        then: "obtain resultSet and compare to expected (skip if expected is empty {})"
+        if (shouldVerifyJson) {
+            Connection newConnection = null
+            ResultSet resultSet
+            JSONArray generatedResultSetArray
+            try {
+                //For embedded databases, let's create separate connection to run checking SQL
+                if (shouldOpenNewConnection(connection, "sqlite", "snowflake", "postgres", "oracle", "mysql", "informix")) {
+                    newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
 
-                resultSet = newConnection.createStatement().executeQuery(checkingSql)
-            } else {
-                connection.close()
-                connection = DatabaseFactory.getInstance().openConnection(testInput.url, testInput.username, testInput.password,
-                        null, new ClassLoaderResourceAccessor()) as JdbcConnection
+                    resultSet = newConnection.createStatement().executeQuery(checkingSql)
+                } else {
+                    connection.close()
+                    connection = DatabaseFactory.getInstance().openConnection(testInput.url, testInput.username, testInput.password,
+                            null, new ClassLoaderResourceAccessor()) as JdbcConnection
 
-                resultSet = connection.createStatement().executeQuery(checkingSql)
-                connection.autoCommit ?: connection.commit()
+                    resultSet = connection.createStatement().executeQuery(checkingSql)
+                    connection.autoCommit ?: connection.commit()
+                }
+                generatedResultSetArray = mapResultSetToJSONArray(resultSet)
+
+                def expectedResultSetJSON = new JSONObject(expectedResultSet)
+                def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
+                assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.NON_EXTENSIBLE)
+            } catch (Exception exception) {
+                Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
+                Assert.fail exception.message
+            } finally {
+                newConnection?.close()
             }
-            generatedResultSetArray = mapResultSetToJSONArray(resultSet)
-
-            def expectedResultSetJSON = new JSONObject(expectedResultSet)
-            def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
-            assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.NON_EXTENSIBLE)
-        } catch (Exception exception) {
-            Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
-            Assert.fail exception.message
-        } finally {
-            newConnection == null ?: newConnection.close()
         }
 
         and: "if expected sql is not provided save generated sql as expected sql"
