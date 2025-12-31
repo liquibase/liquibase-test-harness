@@ -33,6 +33,10 @@ crash.*.log
 *.tfvars
 *.tfvars.json
 
+# Ignore private keys and sensitive credentials
+*.p8
+snowflake_private_key.p8
+
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
 override.tf
