@@ -233,17 +233,18 @@
             <version>11.5.9.0</version>
         </dependency>
         <!-- Drivers from project-local repository (not available in Maven Central) -->
+        <!-- Using test scope to avoid redistribution in published artifact -->
         <dependency>
             <groupId>com.sybase.jdbc4.jdbc.sybdriver</groupId>
             <artifactId>sybase</artifactId>
             <version>1.0</version>
-            <optional>true</optional>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.edb</groupId>
             <artifactId>edb-jdbc18</artifactId>
             <version>42.3.2.1</version>
-            <optional>true</optional>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.athaydes</groupId>
