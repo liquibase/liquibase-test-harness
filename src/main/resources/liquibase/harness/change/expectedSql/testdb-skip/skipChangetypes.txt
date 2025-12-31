@@ -1,0 +1,6 @@
+# Test fixture for skipChangetypes.txt feature
+# Changetypes listed here will be skipped without needing individual skip files
+
+addAutoIncrement
+addForeignKey
+mergeColumns

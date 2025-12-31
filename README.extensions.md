@@ -86,11 +86,27 @@ class AdvancedExtensionHarnessSuite extends AdvancedHarnessSuite {
 ### New Database Extensions
 
 - If your extension is adding support for a new database type, you will be mainly focused on running and capturing the standard test permutations.
-- For each of the tests in the framework, we include base permutations that should run successfully. 
+- For each of the tests in the framework, we include base permutations that should run successfully.
   - If there are "validation" files that the test uses, it will write an initial version of the file if it does not exit.
   - If a particular permutation is failing because it does not apply to your database, there is a way to override that functionality.
-- Once the standard permutations are passing, you can add additional database-specific permutations as you need. 
-- For details on how to configure verifications and add permutations, see read the main readme. 
+- Once the standard permutations are passing, you can add additional database-specific permutations as you need.
+- For details on how to configure verifications and add permutations, read the main readme.
+
+#### Skipping Unsupported Changetypes
+
+If your database doesn't support many of the default changetypes, you have two options:
+
+1. **Skip specific changetypes** - Create `src/test/resources/liquibase/harness/change/expectedSql/{database}/skipChangetypes.txt`:
+   ```
+   # Changetypes not supported by this database
+   addAutoIncrement
+   addForeignKey
+   mergeColumns
+   ```
+
+2. **Exclude all defaults** - Create a marker file `src/test/resources/liquibase/harness/change/changelogs/{database}/excludeDefaultChangelogs` (any extension like `.txt` is supported) to use only your database-specific changelogs. This is ideal for NoSQL databases or databases with fundamentally different capabilities.
+
+See the main README for more details on these mechanisms. 
       
 ### New Functionality in existing Extensions
 

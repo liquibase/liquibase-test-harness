@@ -437,6 +437,43 @@ see [createTableWithNumericColumn.json](src/main/resources/liquibase/harness/cha
   - If you would like to test another DB type, please add the requisite folder.
 4) Go to your IDE and run the test class `ChangeObjectTests.groovy` (You can also choose to run `BaseTestHarnessSuite`, `AdvancedHarnessSuite`, or `FoundationalHarnessSuite`).
 
+### Skipping Tests in Bulk
+
+For databases that don't support many default changetypes, creating individual skip files can be tedious. The test harness provides two mechanisms for bulk skipping:
+
+#### Using `skipChangetypes.txt`
+
+Create a file `src/main/resources/liquibase/harness/change/expectedSql/{database}/skipChangetypes.txt` listing changetypes to skip (one per line):
+
+```
+# Changetypes to skip for this database
+# Lines starting with # are comments
+
+addAutoIncrement
+addForeignKey
+mergeColumns
+createTrigger
+```
+
+Any changetype listed in this file will be automatically skipped with "SKIP TEST" without needing individual expectedSql files.
+
+**Use case**: Databases that support most default changetypes but need to skip some.
+
+#### Using `excludeDefaultChangelogs`
+
+Create a marker file `src/main/resources/liquibase/harness/change/changelogs/{database}/excludeDefaultChangelogs` to completely exclude all default changelogs. Only changelogs in the database-specific folder will be used.
+
+The marker file can have any extension (e.g., `excludeDefaultChangelogs.txt`) or no extension. This allows you to add an explanation inside:
+
+```
+# excludeDefaultChangelogs.txt
+# This marker file tells the test harness to exclude default changelogs.
+# DynamoDB uses document-based operations that don't map to traditional SQL changetypes.
+# Only database-specific changelogs in this folder will be used.
+```
+
+**Use case**: Databases that are fundamentally different (NoSQL, etc.) and define their own changetypes entirely.
+
 ## Change Data Test
 
 The primary goal of these tests is to validate change types related to DML (Data Manipulation Language) aspect.

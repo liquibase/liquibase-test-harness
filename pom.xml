@@ -232,20 +232,17 @@
             <artifactId>jcc</artifactId>
             <version>11.5.9.0</version>
         </dependency>
+        <!-- Drivers from project-local repository (not available in Maven Central) -->
         <dependency>
             <groupId>com.sybase.jdbc4.jdbc.sybdriver</groupId>
             <artifactId>sybase</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/drivers/sybase/jconn4.jar</systemPath>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.edb</groupId>
             <artifactId>edb-jdbc18</artifactId>
             <version>42.3.2.1</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/drivers/edb/edb-jdbc18.jar</systemPath>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -446,6 +443,11 @@
     </build>
 
     <repositories>
+        <!-- Project-local repository for drivers not available in Maven Central -->
+        <repository>
+            <id>project-local</id>
+            <url>file://${project.basedir}/repo</url>
+        </repository>
         <!-- GitHub Packages repositories for Liquibase artifacts -->
         <!-- Using 'github' as id to match settings.xml server configuration -->
         <repository>

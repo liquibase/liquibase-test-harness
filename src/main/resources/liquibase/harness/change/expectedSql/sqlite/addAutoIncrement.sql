@@ -1,0 +1,1 @@
+CREATE TABLE autoincrement_test (intColumn INTEGER NOT NULL, dateColumn date, CONSTRAINT PK_AUTOINCREMENT_TEST PRIMARY KEY (intColumn))

@@ -1,0 +1,1 @@
+CREATE TABLE add_default_value_test (intColumn INTEGER NOT NULL, varcharColumn VARCHAR(255), CONSTRAINT PK_ADD_DEFAULT_VALUE_TEST PRIMARY KEY (intColumn))

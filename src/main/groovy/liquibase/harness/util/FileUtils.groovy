@@ -3,7 +3,10 @@ package liquibase.harness.util
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.util.StreamUtil
+
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.logging.Logger
 import java.util.stream.Collectors
 
@@ -12,11 +15,15 @@ class FileUtils {
     static SortedMap<String, String> resolveInputFilePaths(DatabaseUnderTest database, String basePath, String inputFormat) {
         inputFormat = inputFormat ?: ""
         def returnPaths = new TreeMap<String, String>()
-        for (String filePath : TestConfig.instance.resourceAccessor.list(null, basePath, true,
-                true, false)) {
+
+        // Check if this database excludes default changelogs
+        boolean excludeDefaults = shouldExcludeDefaultChangelogs(database.name, basePath)
+
+        for (def resource : TestConfig.instance.resourceAccessor.search(basePath, true)) {
+            String filePath = resource.getPath()
             def validFile = false
-            //is it a common changelog?
-            if (filePath =~ basePath+"/[\\w.]*\\."+inputFormat+"\$") {
+            //is it a common changelog? (skip if excludeDefaultChangelogs marker exists)
+            if (!excludeDefaults && filePath =~ basePath+"/[\\w.]*\\."+inputFormat+"\$") {
                 validFile = true
             } else if (filePath =~ basePath+"/${database.name}/[\\w.]*\\.${inputFormat}\$") {
                 //is it a database-specific changelog?
@@ -32,9 +39,79 @@ class FileUtils {
                 }
             }
         }
-        Logger.getLogger(this.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.name +
-                "/" + database.version + " in "+basePath)
+        Logger.getLogger(FileUtils.class.name).info("Found " + returnPaths.size() + " changeLogs for " + database.name +
+                "/" + database.version + " in " + basePath + (excludeDefaults ? " (excluding defaults)" : ""))
         return returnPaths
+    }
+
+    /**
+     * Checks if a database has an excludeDefaultChangelogs marker file.
+     * When this marker exists in the database-specific changelog folder,
+     * default changelogs from the base path are not inherited.
+     * The marker file can have any extension (e.g., excludeDefaultChangelogs.txt)
+     * or no extension at all.
+     *
+     * @param databaseName The database name (e.g., "snowflake", "dynamodb")
+     * @param basePath The base changelog path (e.g., "liquibase/harness/change/changelogs")
+     * @return true if the marker exists and defaults should be excluded
+     */
+    static boolean shouldExcludeDefaultChangelogs(String databaseName, String basePath) {
+        def resourceAccessor = TestConfig.instance.resourceAccessor
+        def dbFolder = basePath + "/" + databaseName
+
+        // Search for any file starting with "excludeDefaultChangelogs" (any extension or none)
+        for (def resource : resourceAccessor.search(dbFolder, false)) {
+            def fileName = resource.getPath().replaceFirst(".*/", "")
+            if (fileName.startsWith("excludeDefaultChangelogs")) {
+                Logger.getLogger(FileUtils.class.name).info("Found " + fileName + " marker for " + databaseName +
+                        " - default changelogs will not be inherited")
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Loads the skip changetypes list for a database from skipChangetypes.txt.
+     * The file should contain one changetype name per line. Lines starting with # are comments.
+     *
+     * @param databaseName The database name
+     * @param expectedFolder The expected folder path (e.g., "liquibase/harness/change/expectedSql")
+     * @return Set of changetype names to skip
+     */
+    static Set<String> loadSkipChangetypes(String databaseName, String expectedFolder) {
+        Set<String> skipSet = new HashSet<>()
+        def resourceAccessor = TestConfig.instance.resourceAccessor
+        def skipFilePath = expectedFolder + "/" + databaseName + "/skipChangetypes.txt"
+        def resource = resourceAccessor.get(skipFilePath)
+
+        if (resource.exists()) {
+            def text = StreamUtil.readStreamAsString(resource.openInputStream())
+            text.split("\n").each { String line ->
+                def trimmed = line.trim()
+                // Skip empty lines and comments
+                if (trimmed && !trimmed.startsWith("#")) {
+                    skipSet.add(trimmed)
+                }
+            }
+            if (!skipSet.isEmpty()) {
+                Logger.getLogger(FileUtils.class.name).info("Loaded " + skipSet.size() +
+                        " skip changetypes for " + databaseName + " from " + skipFilePath)
+            }
+        }
+        return skipSet
+    }
+
+    /**
+     * Checks if a changetype should be skipped for a database based on skipChangetypes.txt.
+     *
+     * @param change The changetype name (e.g., "addAutoIncrement")
+     * @param databaseName The database name
+     * @param expectedFolder The expected folder path
+     * @return true if the changetype is listed in skipChangetypes.txt
+     */
+    static boolean shouldSkipChangetype(String change, String databaseName, String expectedFolder) {
+        return loadSkipChangetypes(databaseName, expectedFolder).contains(change)
     }
 
     static String getSqlFileContent(String change, String databaseName,
@@ -48,61 +125,52 @@ class FileUtils {
     }
 
     static String getResourceContent(String resourceName) {
-        InputStream inputStream = FileUtils.class.getResourceAsStream(resourceName)
-        assert inputStream : "Can't find resource file " + resourceName + "!"
-        return new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)).lines()
-                .collect(Collectors.joining("\n"))
+        try (InputStream inputStream = FileUtils.class.getResourceAsStream(resourceName)) {
+            assert inputStream : "Can't find resource file " + resourceName + "!"
+            return new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)).lines()
+                    .collect(Collectors.joining("\n"))
+        }
     }
 
     static String readFile(String filePath) {
-        File file = new File(filePath)
-        FileInputStream fileInputStream = null
-        StringBuilder stringBuilder = new StringBuilder()
         try {
-            fileInputStream = new FileInputStream(file)
-            int content
-            while ((content = fileInputStream.read()) != -1) {
-                stringBuilder.append((char) content)
-            }
+            return Files.readString(Paths.get(filePath), StandardCharsets.UTF_8)
         } catch (IOException exception) {
-            Logger.getLogger(this.class.name).severe("ERROR: Failed to read a file: " + filePath + "!\n" + exception.message + " "
-                    + exception.printStackTrace())
-        } finally {
-            fileInputStream?.close()
+            Logger.getLogger(FileUtils.class.name).severe("Failed to read file: " + filePath + " - " + exception.message)
+            return ""
         }
-        return stringBuilder.toString()
     }
 
-    static Boolean deleteFile(String fileName) {
-        try {
-            new File(fileName).delete()
-        } catch (IOException exception) {
-            Logger.getLogger(this.class.name).severe("ERROR: Failed to delete a file: " + fileName + "!\n" + exception.message + " "
-                    + exception.printStackTrace())
-            return false
+    static boolean deleteFile(String fileName) {
+        boolean deleted = new File(fileName).delete()
+        if (!deleted) {
+            Logger.getLogger(FileUtils.class.name).warning("Failed to delete file: " + fileName)
         }
-        return true
+        return deleted
     }
 
-    static String getFileContent(String change, String databaseName, String version , String expectedFolder,
-                                         String fileExtension) {
+    static String getFileContent(String change, String databaseName, String version, String expectedFolder,
+                                  String fileExtension) {
+        // Check if this changetype should be skipped via skipChangetypes.txt
+        if (shouldSkipChangetype(change, databaseName, expectedFolder)) {
+            return "SKIP TEST\nSkipped via skipChangetypes.txt"
+        }
+
         def resourceAccessor = TestConfig.instance.resourceAccessor
+        def fileName = change + fileExtension
 
-        def content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName
-                + "/" + version + "/" + change + fileExtension)
-        if (content != null) {
-            return StreamUtil.readStreamAsString(content)
-        }
+        // Try paths in order of specificity: version-specific -> db-specific -> default
+        def pathsToTry = [
+                "${expectedFolder}/${databaseName}/${version}/${fileName}",
+                "${expectedFolder}/${databaseName}/${fileName}",
+                "${expectedFolder}/${fileName}"
+        ]
 
-        content = resourceAccessor.openStream(null, expectedFolder + "/" + databaseName
-                + "/" + change + fileExtension)
-        if (content != null) {
-            return StreamUtil.readStreamAsString(content)
-        }
-
-        content = resourceAccessor.openStream(null, expectedFolder + "/" + change + fileExtension)
-        if (content != null) {
-            return StreamUtil.readStreamAsString(content)
+        for (String path : pathsToTry) {
+            def resource = resourceAccessor.get(path)
+            if (resource.exists()) {
+                return StreamUtil.readStreamAsString(resource.openInputStream())
+            }
         }
         return null
     }

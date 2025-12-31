@@ -83,4 +83,93 @@ class FileUtilsTest extends Specification {
         '${CATALOG_NAME}.${SCHEMA_NAME}'                         | null        | null       | '${CATALOG_NAME}.${SCHEMA_NAME}'
         '${CATALOG_NAME}.${SCHEMA_NAME}'                         | 'CAT'       | null       | 'CAT.${SCHEMA_NAME}'
     }
+
+    def "shouldExcludeDefaultChangelogs returns true when marker file exists"() {
+        given:
+        final String baseChangelogPath = "liquibase/harness/change/changelogs"
+
+        expect:
+        FileUtils.shouldExcludeDefaultChangelogs("testdb-exclude", baseChangelogPath) == true
+        FileUtils.shouldExcludeDefaultChangelogs("mysql", baseChangelogPath) == false
+        FileUtils.shouldExcludeDefaultChangelogs("nonexistent-db", baseChangelogPath) == false
+    }
+
+    def "resolveInputFilePaths excludes defaults when marker exists"() {
+        given:
+        final String baseChangelogPath = "liquibase/harness/change/changelogs"
+
+        def mySqlDatabase = new MySQLDatabase()
+        mySqlDatabase.setConnection(new OfflineConnection("offline:mysql?version=8.1", new ClassLoaderResourceAccessor()))
+        DatabaseUnderTest databaseWithDefaults = new DatabaseUnderTest()
+        databaseWithDefaults.database = mySqlDatabase
+        databaseWithDefaults.name = "mysql"
+        databaseWithDefaults.version = "8"
+
+        DatabaseUnderTest databaseExcludingDefaults = new DatabaseUnderTest()
+        databaseExcludingDefaults.database = mySqlDatabase
+        databaseExcludingDefaults.name = "testdb-exclude"
+        databaseExcludingDefaults.version = "1.0"
+
+        when:
+        def pathsWithDefaults = FileUtils.resolveInputFilePaths(databaseWithDefaults, baseChangelogPath, "xml")
+        def pathsWithoutDefaults = FileUtils.resolveInputFilePaths(databaseExcludingDefaults, baseChangelogPath, "xml")
+
+        then:
+        // MySQL should include default changelogs like addColumn
+        pathsWithDefaults.containsKey("addColumn")
+        pathsWithDefaults.containsKey("createTable")
+
+        // testdb-exclude should NOT include default changelogs, only its own
+        !pathsWithoutDefaults.containsKey("addColumn")
+        !pathsWithoutDefaults.containsKey("createTable")
+        pathsWithoutDefaults.containsKey("customTestChange")
+        pathsWithoutDefaults["customTestChange"] == "liquibase/harness/change/changelogs/testdb-exclude/customTestChange.xml"
+    }
+
+    def "loadSkipChangetypes loads changetypes from skipChangetypes.txt"() {
+        given:
+        final String expectedSqlPath = "liquibase/harness/change/expectedSql"
+
+        when:
+        def skipSet = FileUtils.loadSkipChangetypes("testdb-skip", expectedSqlPath)
+        def emptySkipSet = FileUtils.loadSkipChangetypes("mysql", expectedSqlPath)
+
+        then:
+        skipSet.contains("addAutoIncrement")
+        skipSet.contains("addForeignKey")
+        skipSet.contains("mergeColumns")
+        skipSet.size() == 3
+
+        // MySQL has no skipChangetypes.txt, should return empty set
+        emptySkipSet.isEmpty()
+    }
+
+    def "shouldSkipChangetype returns true for changetypes in skip list"() {
+        given:
+        final String expectedSqlPath = "liquibase/harness/change/expectedSql"
+
+        expect:
+        FileUtils.shouldSkipChangetype("addAutoIncrement", "testdb-skip", expectedSqlPath) == true
+        FileUtils.shouldSkipChangetype("addForeignKey", "testdb-skip", expectedSqlPath) == true
+        FileUtils.shouldSkipChangetype("createTable", "testdb-skip", expectedSqlPath) == false
+        FileUtils.shouldSkipChangetype("addAutoIncrement", "mysql", expectedSqlPath) == false
+    }
+
+    def "getFileContent returns SKIP TEST for changetypes in skip list"() {
+        given:
+        final String expectedSqlPath = "liquibase/harness/change/expectedSql"
+
+        when:
+        def skippedContent = FileUtils.getSqlFileContent("addAutoIncrement", "testdb-skip", "1.0", expectedSqlPath)
+        def normalContent = FileUtils.getSqlFileContent("createTable", "testdb-skip", "1.0", expectedSqlPath)
+
+        then:
+        skippedContent != null
+        skippedContent.toLowerCase().contains("skip test")
+        skippedContent.contains("skipChangetypes.txt")
+
+        // createTable is not in skip list, so it should fall through to normal resolution
+        // (which returns null since there's no actual expectedSql file for testdb-skip)
+        normalContent == null
+    }
 }

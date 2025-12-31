@@ -1,0 +1,1 @@
+CREATE TABLE add_default_value_date_test (intColumn INTEGER NOT NULL, dateColumn date, CONSTRAINT PK_ADD_DEFAULT_VALUE_DATE_TEST PRIMARY KEY (intColumn))
