@@ -1,0 +1,1 @@
+CREATE TABLE add_default_value_computed (intColumn INTEGER NOT NULL, dateColumn date, CONSTRAINT PK_ADD_DEFAULT_VALUE_COMPUTED PRIMARY KEY (intColumn))

@@ -1,0 +1,1 @@
+CREATE TABLE add_default_value_boolean_test (intColumn INTEGER NOT NULL, booleanColumn BOOLEAN, CONSTRAINT PK_ADD_DEFAULT_VALUE_BOOLEAN_TEST PRIMARY KEY (intColumn))
