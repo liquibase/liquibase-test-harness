@@ -417,36 +417,23 @@ jobs:
             --password="${{ env.TH_DB_PASSWD }}" \
             --url="${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase-github-actions/drop-all@v4.33.0
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          url: "${{ env.TH_GCP_MSSQL_2019_URL }}"
-          username: "${{env.MSSQL_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          licenseKey: "${{env.PRO_LICENSE_KEY}}"
-          force: true
-          requireForce: true
-
-      - uses: liquibase-github-actions/drop-all@v4.33.0
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          url: "${{ env.TH_GCP_MSSQL_2022_URL }}"
-          username: "${{env.MSSQL_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          licenseKey: "${{env.PRO_LICENSE_KEY}}"
-          force: true
-          requireForce: true
-
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
         uses: liquibase/setup-liquibase@v2
         with:
           version: '5.0.0'
           edition: 'secure'
+
+      - name: Clean MSSQL 2019 Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase drop-all \
+            --force \
+            --username="${{ env.MSSQL_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env.TH_GCP_MSSQL_2019_URL }}"
 
       - name: Init MSSQL 2019 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
@@ -466,6 +453,17 @@ jobs:
         with:
           version: '5.0.0'
           edition: 'secure'
+
+      - name: Clean MSSQL 2022 Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase drop-all \
+            --force \
+            --username="${{ env.MSSQL_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="${{ env.TH_GCP_MSSQL_2022_URL }}"
 
       - name: Init MSSQL 2022 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
