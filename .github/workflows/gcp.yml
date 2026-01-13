@@ -189,7 +189,7 @@ jobs:
             }
 
       - name: maven-settings-xml-action
-        uses: whelk-io/maven-settings-xml-action@v22
+        uses: whelk-io/maven-settings-xml-action@9dc09b23833fa9aa7f27b63db287951856f3433d # v22
         with:
           repositories: |
             [
@@ -400,7 +400,7 @@ jobs:
 
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
-        uses: liquibase/setup-liquibase@v2
+        uses: liquibase/setup-liquibase@e9983e55d44df92762e09c15f3abb1f47feab181 # v2
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -443,7 +443,7 @@ jobs:
 
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
-        uses: liquibase/setup-liquibase@v2
+        uses: liquibase/setup-liquibase@e9983e55d44df92762e09c15f3abb1f47feab181 # v2
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -462,7 +462,7 @@ jobs:
 
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
-        uses: liquibase/setup-liquibase@v2
+        uses: liquibase/setup-liquibase@e9983e55d44df92762e09c15f3abb1f47feab181 # v2
         with:
           version: '5.0.0'
           edition: 'secure'
