@@ -5,6 +5,10 @@ on:
     branches:
       - main
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   extension-deploy-master-snapshot:
     uses: liquibase/build-logic/.github/workflows/build-extension-jar.yml@main

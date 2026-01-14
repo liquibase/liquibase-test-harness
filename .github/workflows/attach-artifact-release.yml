@@ -5,6 +5,9 @@ on:
     types:
       - closed
 
+permissions:
+  contents: read
+
 jobs:
   attach-artifact-to-release:
     uses: liquibase/build-logic/.github/workflows/extension-attach-artifact-release.yml@main

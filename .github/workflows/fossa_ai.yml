@@ -7,6 +7,9 @@ on:
       - reopened
       - synchronize
 
+permissions:
+  contents: read
+
 jobs:
   fossa:
     uses: liquibase/build-logic/.github/workflows/fossa_ai.yml@main
