@@ -5,7 +5,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
   release:
     uses: liquibase/build-logic/.github/workflows/extension-release-published.yml@main
-    secrets: inherit
+    secrets: inherit  

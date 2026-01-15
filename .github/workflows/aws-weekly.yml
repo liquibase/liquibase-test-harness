@@ -72,21 +72,21 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Configure AWS credentials for vault access
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
 
       - name: Get secrets from vault
         id: vault-secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             ,/vault/liquibase
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
@@ -102,13 +102,13 @@ jobs:
 
       - name: Get AWS secrets
         if: ${{ matrix.version == 'aws' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aws'))) }}
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
       - name: Get AWS secrets
         if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
@@ -150,49 +150,49 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Configure AWS credentials for vault access
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
 
       - name: Get secrets from vault
         id: vault-secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             ,/vault/liquibase
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             TH_MYSQLURL_8_0, /testautomation/db_details/aws_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             TH_ORACLEURL_19_TH, /testautomation/db_details/aws_oracle_19_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             TH_PGRESURL_12, /testautomation/db_details/aws_postgresql_12_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
@@ -201,14 +201,14 @@ jobs:
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             TH_MARIADBURL_10_6, /testautomation/db_details/aws_mariadb_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             TH_MSSQLURL, /testautomation/db_details/aws_mssql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
@@ -216,12 +216,12 @@ jobs:
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        uses: aws-actions/aws-secretsmanager-get-secrets@a9a7eb4e2f2871d30dc5b892576fde60a2ecc802 # v2
         with:
           secret-ids: |
             TH_AURORA_POSTGRESQLURL, /testautomation/db_details/aurora_postgresql16_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
 
-      - uses: liquibase/liquibase-github-action@v7
+      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
@@ -233,7 +233,7 @@ jobs:
           password: "${{env.TH_DB_PASSWD}}"
           url: "${{ env.TH_ORACLEURL_19_TH }}"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
@@ -245,7 +245,7 @@ jobs:
           password: "${{env.TH_DB_PASSWD}}"
           url: "${{ env[format('TH_PGRESURL_{0}', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
@@ -259,7 +259,7 @@ jobs:
 
       - name: Install a SQL Server suite of tools
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: potatoqualitee/mssqlsuite@v1.11
+        uses: potatoqualitee/mssqlsuite@7682f39841e862cde023c8bc97c55592c0af4eb0 # v1.11
         with:
           install: sqlengine, sqlclient, sqlpackage
 
@@ -267,7 +267,7 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         run: sqlcmd -S ${{ env.TH_MSSQLURL_HOST }} -U ${{env.TH_DB_ADMIN}} -P ${{env.TH_DB_PASSWD}} -C -Q "CREATE DATABASE lbcat"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
@@ -279,7 +279,7 @@ jobs:
           password: "${{env.TH_DB_PASSWD}}"
           url: "${{ env.TH_MSSQLURL }}"
 
-      - uses: liquibase/liquibase-github-action@v7
+      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
