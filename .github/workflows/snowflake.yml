@@ -342,7 +342,7 @@ jobs:
             TH_SNOW_URL_GH, liquibaseth_jdbc_url
 
       - name: Install Liquibase Secure Edition
-        uses: liquibase/setup-liquibase@e9983e55d44df92762e09c15f3abb1f47feab181 # v2
+        uses: liquibase/setup-liquibase@4c4338845f94675734bc4116f57701f7d761b5c0 # v2
         with:
           version: '5.0.0'
           edition: 'secure'
