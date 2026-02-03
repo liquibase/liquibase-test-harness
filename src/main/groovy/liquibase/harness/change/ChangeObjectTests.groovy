@@ -10,6 +10,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.util.logging.Logger
+
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.isEmptyJsonObject
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
