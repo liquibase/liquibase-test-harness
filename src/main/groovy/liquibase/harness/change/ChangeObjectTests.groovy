@@ -81,6 +81,10 @@ class ChangeObjectTests extends Specification {
         then: "get DB snapshot and verify it matches expected snapshot (skip if expected is empty {})"
         if (shouldVerifyJson) {
             def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
+            if (testInput.getDatabaseName().equals("cockroachdb") && testInput.getChangeObject().equals("addDefaultValueSequenceNext")) {
+                Logger.getLogger(this.class.name).info("generated snapshot -------------"+generatedSnapshot)
+
+            }
             snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
         }
 
