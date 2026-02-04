@@ -218,12 +218,15 @@ jobs:
             let repoName = liquibaseRepo.split("/")[1]
 
             let liquibaseSha = "${{ github.event.inputs.liquibaseCommit }}";
+            let matchedBranchName = null;
             if (!liquibaseSha) {
               console.log("No liquibaseSha passed. Looking for branch "+ liquibaseBranchName);
 
               try {
                 let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
                 liquibaseSha = liquibaseBranchResponse.sha;
+                matchedBranchName = liquibaseBranchResponse.name;
+                console.log("Matched branch: " + matchedBranchName + " with SHA: " + liquibaseSha);
               } catch (error) {
                 // If branch lookup fails and user explicitly selected liquibase-pro, fail hard
                 // (don't fall back to community repo)
@@ -248,11 +251,12 @@ jobs:
                   try {
                     let liquibaseBranchResponse = await helper.findMatchingBranch(fallbackOwner, fallbackRepo, [liquibaseBranchName, "master", "main"]);
                     liquibaseSha = liquibaseBranchResponse.sha;
+                    matchedBranchName = liquibaseBranchResponse.name;
                     liquibaseRepo = defaultRepo;
                     repoOwnerName = fallbackOwner;
                     repoName = fallbackRepo;
                     core.notice("Switched to fallback repository: " + defaultRepo + " for branch lookup, but will use " + (intentProArtifacts ? "pro" : "community") + " artifacts");
-                    console.log("Successfully found branch in fallback repo");
+                    console.log("Successfully found branch " + matchedBranchName + " in fallback repo");
                   } catch (fallbackError) {
                     core.error("Failed to find branch in both " + liquibaseRepo + " and fallback " + defaultRepo);
                     throw fallbackError;
@@ -267,6 +271,9 @@ jobs:
             // Use the user's intended SECURE artifacts setting
             core.setOutput("useProArtifacts", intentProArtifacts);
             core.setOutput("liquibaseOwner", repoOwnerName);
+            // Output matched branch name for artifact version discovery
+            core.setOutput("matchedBranch", matchedBranchName || "master");
+            console.log("Output matchedBranch: " + (matchedBranchName || "master"));
 
             let runDescription = "${{ github.event.inputs.runDescription }}";
             if (!runDescription) {
@@ -333,23 +340,38 @@ jobs:
             echo "Skipping COMMUNITY artifact discovery for SECURE builds; liquibase-core is bundled with liquibase-commercial."
             # Do NOT set community-version for Pro builds to prevent Maven from resolving liquibase-core
           else
-            echo "Resolving COMMUNITY artifacts version from liquibase/master"
+            echo "Resolving COMMUNITY artifacts version"
             # Community artifacts use {commit-sha}-SNAPSHOT format
-            # Query GitHub Packages for the latest published artifact version
-            # The version format is the commit SHA from the built artifact
+            # Query GitHub Packages for the published artifact version
 
             PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase/org/liquibase/liquibase-core/maven-metadata.xml"
 
-            echo "Fetching latest artifact version from: $PACKAGES_URL"
+            echo "Fetching artifact versions from: $PACKAGES_URL"
             METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
 
-            # Extract versions in commit-SHA format (40 hex chars followed by -SNAPSHOT)
-            # Filter out release-prep and other non-SHA versions
-            COMMUNITY_VERSION=$(echo "$METADATA" | grep -o '<version>[a-f0-9]\{40\}-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
+            # Get SHA from configure-build step
+            LIQUIBASE_SHA="${{ steps.configure-build.outputs.liquibaseSha }}"
+            echo "Looking for artifact with SHA: $LIQUIBASE_SHA"
+
+            # First, try to find exact match with the specified SHA
+            COMMUNITY_VERSION=$(echo "$METADATA" | grep -o "<version>${LIQUIBASE_SHA}-SNAPSHOT</version>" | head -1 | sed 's/<[^>]*>//g')
+
+            if [ -n "$COMMUNITY_VERSION" ]; then
+              echo "Found exact match for SHA '$LIQUIBASE_SHA'"
+            else
+              echo "No exact match found for SHA '$LIQUIBASE_SHA'"
+              echo "WARNING: Falling back to latest community artifact"
+
+              # Fallback to latest SHA-based version
+              COMMUNITY_VERSION=$(echo "$METADATA" | grep -o '<version>[a-f0-9]\{40\}-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
+            fi
 
             if [ -z "$COMMUNITY_VERSION" ]; then
-              echo "ERROR: Could not determine latest commit-SHA version from GitHub Packages"
-              echo "Looking for pattern: 40-character hex SHA followed by -SNAPSHOT"
+              echo "ERROR: Could not determine community version from GitHub Packages"
+              echo "Tried patterns:"
+              echo "  1. Exact: ${LIQUIBASE_SHA}-SNAPSHOT"
+              echo "  2. Fallback: latest *-SNAPSHOT"
+              echo ""
               echo "GitHub Packages metadata response (first 500 chars):"
               echo "$METADATA" | head -c 500
               echo ""
@@ -360,20 +382,63 @@ jobs:
             echo "community-version=$COMMUNITY_VERSION" >> $GITHUB_OUTPUT
           fi
 
-          # Query GitHub Packages for the latest liquibase-commercial artifact version
+          # Query GitHub Packages for the liquibase-commercial artifact version
           PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase-pro/com/liquibase/liquibase-commercial/maven-metadata.xml"
 
-          echo "Fetching latest PRO artifact version from: $PACKAGES_URL"
+          echo "Fetching PRO artifact versions from: $PACKAGES_URL"
           METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
 
-          # Extract version in master-{7-char-hex-sha} format (e.g., master-e461cb2)
-          SECURE_VERSION=$(echo "$METADATA" | grep -o '<version>master-[a-f0-9]\{7\}</version>' | tail -1 | sed 's/<[^>]*>//g')
+          # Get matched branch and SHA from configure-build step
+          MATCHED_BRANCH="${{ steps.configure-build.outputs.matchedBranch }}"
+          LIQUIBASE_SHA="${{ steps.configure-build.outputs.liquibaseSha }}"
+          SHORT_SHA=$(echo "$LIQUIBASE_SHA" | cut -c1-7)
+
+          echo "Looking for artifact from branch: $MATCHED_BRANCH"
+          echo "Expected SHA prefix: $SHORT_SHA"
+
+          # Artifact version format is {branch}-{7-char-sha} (e.g., master-e461cb2 or DAT-28140-2a50a77)
+          # First, try to find exact match with branch and short SHA
+          SECURE_VERSION=$(echo "$METADATA" | grep -o "<version>${MATCHED_BRANCH}-${SHORT_SHA}</version>" | head -1 | sed 's/<[^>]*>//g')
+
+          if [ -n "$SECURE_VERSION" ]; then
+            echo "Found exact match for branch '$MATCHED_BRANCH' with SHA '$SHORT_SHA'"
+          else
+            echo "No exact match found for ${MATCHED_BRANCH}-${SHORT_SHA}"
+
+            # Try to find any artifact matching the short SHA (in case branch name differs)
+            SECURE_VERSION=$(echo "$METADATA" | grep -o "<version>[^<]*-${SHORT_SHA}</version>" | head -1 | sed 's/<[^>]*>//g')
+
+            if [ -n "$SECURE_VERSION" ]; then
+              echo "Found artifact matching SHA '$SHORT_SHA': $SECURE_VERSION"
+            else
+              echo "No artifact found for SHA '$SHORT_SHA'"
+
+              # Try to find latest artifact for the matched branch
+              SECURE_VERSION=$(echo "$METADATA" | grep -o "<version>${MATCHED_BRANCH}-[a-f0-9]\{7\}</version>" | tail -1 | sed 's/<[^>]*>//g')
+
+              if [ -n "$SECURE_VERSION" ]; then
+                echo "WARNING: Using latest artifact from branch '$MATCHED_BRANCH' (SHA mismatch)"
+                echo "Expected SHA: $SHORT_SHA, but using: $SECURE_VERSION"
+              else
+                echo "No artifact found for branch '$MATCHED_BRANCH'"
+
+                # Final fallback to latest master artifact
+                echo "WARNING: Falling back to latest master artifact"
+                SECURE_VERSION=$(echo "$METADATA" | grep -o '<version>master-[a-f0-9]\{7\}</version>' | tail -1 | sed 's/<[^>]*>//g')
+              fi
+            fi
+          fi
 
           if [ -z "$SECURE_VERSION" ]; then
             echo "ERROR: Could not determine PRO version from GitHub Packages"
-            echo "Looking for pattern: master-{7-char-hex-sha} (e.g., master-e461cb2)"
-            echo "GitHub Packages metadata response (first 500 chars):"
-            echo "$METADATA" | head -c 500
+            echo "Tried patterns:"
+            echo "  1. Exact: ${MATCHED_BRANCH}-${SHORT_SHA}"
+            echo "  2. Any branch with SHA: *-${SHORT_SHA}"
+            echo "  3. Latest from branch: ${MATCHED_BRANCH}-*"
+            echo "  4. Fallback: master-*"
+            echo ""
+            echo "GitHub Packages metadata response (first 1000 chars):"
+            echo "$METADATA" | head -c 1000
             echo ""
             exit 1
           fi
