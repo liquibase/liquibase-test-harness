@@ -222,8 +222,22 @@ jobs:
             if (!liquibaseSha) {
               console.log("No liquibaseSha passed. Looking for branch "+ liquibaseBranchName);
 
+              // When user explicitly specifies a branch, don't fall back to master/main
+              // Only add master/main as fallbacks when using default/auto-detected branch
+              const userSpecifiedBranch = "${{ github.event.inputs.liquibaseBranch }}";
+              let branchesToSearch;
+              if (userSpecifiedBranch) {
+                // User explicitly specified a branch - only search for that branch (or comma-separated list they provided)
+                branchesToSearch = userSpecifiedBranch.split(",").map(b => b.trim());
+                console.log("User specified branch(es): " + branchesToSearch.join(", ") + " - will NOT fall back to master/main");
+              } else {
+                // No user input - use test harness branch with master/main as fallbacks
+                branchesToSearch = [liquibaseBranchName, "master", "main"];
+                console.log("Using auto-detected branch with fallbacks: " + branchesToSearch.join(", "));
+              }
+
               try {
-                let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
+                let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, branchesToSearch);
                 liquibaseSha = liquibaseBranchResponse.sha;
                 matchedBranchName = liquibaseBranchResponse.name;
                 console.log("Matched branch: " + matchedBranchName + " with SHA: " + liquibaseSha);
@@ -249,7 +263,8 @@ jobs:
                   const fallbackRepo = defaultRepo.split("/")[1];
 
                   try {
-                    let liquibaseBranchResponse = await helper.findMatchingBranch(fallbackOwner, fallbackRepo, [liquibaseBranchName, "master", "main"]);
+                    // Use same branch search list (respects user's explicit branch selection)
+                    let liquibaseBranchResponse = await helper.findMatchingBranch(fallbackOwner, fallbackRepo, branchesToSearch);
                     liquibaseSha = liquibaseBranchResponse.sha;
                     matchedBranchName = liquibaseBranchResponse.name;
                     liquibaseRepo = defaultRepo;
