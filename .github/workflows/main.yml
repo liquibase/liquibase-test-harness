@@ -632,9 +632,33 @@ jobs:
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@v6
         if: ${{ always() }}
+        id: artifact-upload-step
         with:
           name: ${{ matrix.database }}-test-results
           path: build/spock-reports
+
+      - name: Send report to Slack channel
+        if: ${{ failure() || (cancelled() && github.event_name == 'schedule') }}
+        id: slack
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          notify_when: "failure,cancelled"
+          webhook: ${{ env.FUNCTIONAL_TESTS_SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "GitHub Action test result",
+              "color": "f30b0b",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":flushed: Default Test Execution: ${{ job.status }} :rotating_light: :rotating_light: :rotating_light:\n :rocket: Liquibase branch: ${{ needs.setup.outputs.liquibaseBranch }}\n :pushpin: Test-Harness branch: ${{ github.ref_name }}\n :mag: Target url: https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}\n :computer: Triggered by: ${{ github.actor }}\n :point_right: ${{ matrix.database }}-test-results: https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}/artifacts/${{ steps.artifact-upload-step.outputs.artifact-id }} "
+                  }
+                }
+              ]
+            }
 
       # GitHub Actions has its own cleanup and this might be redundant
       - name: Tear down ${{ matrix.database }} test infra
