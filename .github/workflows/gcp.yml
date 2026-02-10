@@ -337,15 +337,15 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Clean GCP MySQL Database
-        uses: liquibase-github-actions/drop-all@663292ff5b70ff2097e9db9bc3a41d3ff8290647 # v4.33.0
         if: ${{ matrix.database == 'mysql' }}
-        with:
-          url: "${{ env.TH_GCP_MYSQL_8_0_URL }}"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          licenseKey: "${{env.PRO_LICENSE_KEY}}"
-          force: true
-          requireForce: true
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase drop-all \
+            --url="${{ env.TH_GCP_MYSQL_8_0_URL }}" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --force
 
       - name: Init Database
         if: ${{ matrix.database == 'mysql' }}
@@ -386,24 +386,23 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
-      - uses: liquibase-github-actions/drop-all@663292ff5b70ff2097e9db9bc3a41d3ff8290647 # v4.33.0
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          url: "${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          licenseKey: "${{env.PRO_LICENSE_KEY}}"
-          force: true
-          requireForce: true
-
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
         uses: liquibase/setup-liquibase@e9983e55d44df92762e09c15f3abb1f47feab181 # v2
         with:
           version: '5.0.0'
           edition: 'secure'
+
+      - name: Clean PostgreSQL Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase drop-all \
+            --url="${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --force
 
       - name: Init PostgreSQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
@@ -417,36 +416,34 @@ jobs:
             --password="${{ env.TH_DB_PASSWD }}" \
             --url="${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}"
 
-      - uses: liquibase-github-actions/drop-all@663292ff5b70ff2097e9db9bc3a41d3ff8290647 # v4.33.0
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          url: "${{ env.TH_GCP_MSSQL_2019_URL }}"
-          username: "${{env.MSSQL_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          licenseKey: "${{env.PRO_LICENSE_KEY}}"
-          force: true
-          requireForce: true
-
-      - uses: liquibase-github-actions/drop-all@663292ff5b70ff2097e9db9bc3a41d3ff8290647 # v4.33.0
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          url: "${{ env.TH_GCP_MSSQL_2022_URL }}"
-          username: "${{env.MSSQL_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          licenseKey: "${{env.PRO_LICENSE_KEY}}"
-          force: true
-          requireForce: true
-
-      - name: Setup Liquibase
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
+      - name: Setup Liquibase for MSSQL
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         uses: liquibase/setup-liquibase@e9983e55d44df92762e09c15f3abb1f47feab181 # v2
         with:
           version: '5.0.0'
           edition: 'secure'
+
+      - name: Clean MSSQL 2019 Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase drop-all \
+            --url="${{ env.TH_GCP_MSSQL_2019_URL }}" \
+            --username="${{ env.MSSQL_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --force
+
+      - name: Clean MSSQL 2022 Database
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
+        env:
+          LIQUIBASE_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase drop-all \
+            --url="${{ env.TH_GCP_MSSQL_2022_URL }}" \
+            --username="${{ env.MSSQL_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --force
 
       - name: Init MSSQL 2019 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
@@ -459,13 +456,6 @@ jobs:
             --username="${{ env.MSSQL_ADMIN }}" \
             --password="${{ env.TH_DB_PASSWD }}" \
             --url="${{ env.TH_GCP_MSSQL_2019_URL }}"
-
-      - name: Setup Liquibase
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
-        uses: liquibase/setup-liquibase@e9983e55d44df92762e09c15f3abb1f47feab181 # v2
-        with:
-          version: '5.0.0'
-          edition: 'secure'
 
       - name: Init MSSQL 2022 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
