@@ -105,6 +105,8 @@ class DiffCommandTestHelper {
     static validateGeneratedDiffChangelog(TestInput testInput) {
         String changelogContent = getResourceContent("$testInput.pathToChangelogFile")
         String xmlDiffChangelogContent = readFile(testInput.getPathToGeneratedXmlDiffChangelogFile())
+        // TODO: DAT-21201 - SQL diff changelog validation is skipped because --object-changelogs=all
+        // only supports views/tables, missing support for functions/triggers/procedures
         String sqlDiffChangelogContent = readFile(testInput.getPathToGeneratedSqlDiffChangelogFile().replace(".sql",
                 ".$testInput.targetDatabase.name" + ".sql"))
         String ymlDiffChangelogContent = readFile(testInput.getPathToGeneratedYmlDiffChangelogFile())
@@ -139,12 +141,14 @@ class DiffCommandTestHelper {
         //Schema and Catalog to add. Also this will probably change while adding new types
         for (Map.Entry<String, List> entry : map.entrySet()) {
             if (changelogContent.contains(entry.key)) {
+                // TODO: DAT-21201 - SQL validation skipped: --object-changelogs=all supports views/tables
+                // but missing functions/triggers/procedures support (works in XML/YML/JSON)
                 assert xmlDiffChangelogContent.contains(entry.value.get(0).toString()) &&
-                        sqlDiffChangelogContent.toLowerCase().contains(entry.value.get(1).toString())
+                        sqlDiffChangelogContent.toLowerCase().contains(entry.value.get(1).toString()) &&
                         ymlDiffChangelogContent.contains(entry.value.get(0).toString()) &&
-                        jsonDiffChangelogContent.contains(entry.value.get(0).toString()) &&
+                        jsonDiffChangelogContent.contains(entry.value.get(0).toString())
 
-                uiService.sendMessage("INFO: $entry.key change type was validated successfully for .XML, .YML, .JSON formats!")
+                uiService.sendMessage("INFO: $entry.key change type was validated successfully for .XML, .SQL, .YML, .JSON formats!")
             }
         }
         return true
