@@ -17,7 +17,7 @@
         <liquibase-commercial.version>5.0.3</liquibase-commercial.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
-        <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
+        <gmavenplus-plugin.version>4.3.0</gmavenplus-plugin.version>
         <groovy-all.version>5.0.3</groovy-all.version>
         <spock-core.version>2.4-groovy-5.0</spock-core.version>
         <spock-reports.version>2.5.1-groovy-4.0</spock-reports.version>
