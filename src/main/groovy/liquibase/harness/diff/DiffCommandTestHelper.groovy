@@ -72,15 +72,17 @@ class DiffCommandTestHelper {
             }
             databasesToConnect.add(referenceDatabase)
 
+            String baseChangelogName = "${referenceDatabase.name}${referenceDatabase.version}_to_" +
+                    "${targetDatabase.name}${targetDatabase.version}"
+            String changelogFile = selectChangelogFile(baseChangelogName)
+
             inputList.add(TestInput.builder()
                     .pathToExpectedDiffFile("${baseDiffPath}" + "expectedDiff/" +
                             "${referenceDatabase.name}${referenceDatabase.version}_to_" +
                             "${targetDatabase.name}${targetDatabase.version}.txt")
                     .pathToReferenceChangelogFile("${baseDiffPath}" + "changelogs/" +
                             "tablesForReferenceDb.xml")
-                    .pathToChangelogFile("${baseDiffPath}" + "changelogs/" +
-                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
-                            "${targetDatabase.name}${targetDatabase.version}.xml")
+                    .pathToChangelogFile(changelogFile)
                     .pathToGeneratedXmlDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
                             "${referenceDatabase.name}${referenceDatabase.version}_to_" +
                             "${targetDatabase.name}${targetDatabase.version}.xml")
@@ -100,6 +102,16 @@ class DiffCommandTestHelper {
         }
         new DatabaseConnectionUtil().initializeDatabasesConnection(databasesToConnect)
         return inputList
+    }
+
+    static String selectChangelogFile(String baseChangelogName) {
+        if ("true".equalsIgnoreCase(System.getProperty("useProArtifacts"))) {
+            String proPath = "${baseDiffPath}changelogs/${baseChangelogName}-pro.xml"
+            if (DiffCommandTestHelper.class.getResourceAsStream(proPath) != null) {
+                return proPath
+            }
+        }
+        return "${baseDiffPath}changelogs/${baseChangelogName}.xml"
     }
 
     static validateGeneratedDiffChangelog(TestInput testInput) {

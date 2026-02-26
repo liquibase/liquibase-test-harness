@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
@@ -108,77 +107,6 @@
         <rollback>
             <dropUniqueConstraint tableName="test_table_for_uc"
                                   constraintName="test_unique_constraint"/>
-        </rollback>
-    </changeSet>
-
-    <!-- FUNCTION -->
-    <changeSet id="13" author="as" labels="pro">
-        <pro:createFunction
-                encoding="UTF-8"
-                replaceIfExists="true"
-                functionName="test_function">CREATE FUNCTION test_function()
-            RETURNS VARCHAR(20)
-            BEGIN
-            RETURN 'Hello';
-            END
-        </pro:createFunction>
-        <rollback>
-            <pro:dropFunction functionName="test_function"/>
-        </rollback>
-    </changeSet>
-
-    <!-- PACKAGE -->
-    <changeSet id="14"  author="as" labels="pro">
-        <pro:createPackage encoding="UTF-8"
-                           packageName="Test package">CREATE FUNCTION test_function1()
-            RETURNS VARCHAR(20)
-            BEGIN
-            RETURN 'Hello';
-            END</pro:createPackage>
-        <rollback>
-            <pro:dropFunction functionName="test_function1"/>
-        </rollback>
-    </changeSet>
-
-    <!-- PACKAGE BODY -->
-    <changeSet id="15"  author="as" labels="pro">
-        <pro:createPackageBody encoding="UTF-8"
-                               packageBodyName="Test package">CREATE FUNCTION test_function2()
-            RETURNS VARCHAR(20)
-            BEGIN
-            RETURN 'Hello';
-            END</pro:createPackageBody>
-        <rollback>
-            <pro:dropFunction functionName="test_function2"/>
-        </rollback>
-    </changeSet>
-
-    <!-- TRIGGER -->
-    <changeSet id="16"  author="as" labels="pro">
-        <pro:createTrigger disabled="false"
-                           encoding="UTF-8"
-                           scope="test"
-                           tableName="posts"
-                           triggerName="test_trigger">CREATE TRIGGER test_trigger BEFORE UPDATE ON posts
-            FOR EACH ROW BEGIN END;
-        </pro:createTrigger>
-        <rollback>
-            <pro:dropTrigger triggerName="test_trigger"
-                             tableName="posts"/>
-        </rollback>
-    </changeSet>
-
-    <!-- PROCEDURE -->
-    <changeSet id="17" author="as" labels="pro">
-        <comment>test procedure</comment>
-        <createProcedure
-                encoding="UTF-8"
-                procedureName="test_procedure">CREATE PROCEDURE test_procedure()
-        BEGIN
-        END;
-        </createProcedure>
-        <rollback>
-            <dropProcedure procedureName="test_procedure"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

@@ -9,4 +9,5 @@ createFunction
 createPackage
 createPackageBody
 createProcedure
+createSynonym
 createTrigger

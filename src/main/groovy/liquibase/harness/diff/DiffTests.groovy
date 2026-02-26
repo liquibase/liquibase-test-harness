@@ -35,9 +35,6 @@ class DiffTests extends Specification {
         argsMap.put("referenceUsername", testInput.referenceDatabase.username)
         argsMap.put("referencePassword", testInput.referenceDatabase.password)
         argsMap.put("changelogFile", testInput.pathToChangelogFile)
-        if (!"true".equalsIgnoreCase(System.getProperty("useProArtifacts"))) {
-            argsMap.put("labelFilter", "!pro")
-        }
 
         and: "check databases are online"
         assert testInput.targetDatabase.database.getConnection() instanceof JdbcConnection: "Target database " +
