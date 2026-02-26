@@ -76,10 +76,10 @@ class DiffCommandTestHelper {
                     "${targetDatabase.name}${targetDatabase.version}"
             String changelogFile = selectChangelogFile(baseChangelogName)
 
+            String expectedDiffFile = selectExpectedDiffFile(baseChangelogName)
+
             inputList.add(TestInput.builder()
-                    .pathToExpectedDiffFile("${baseDiffPath}" + "expectedDiff/" +
-                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
-                            "${targetDatabase.name}${targetDatabase.version}.txt")
+                    .pathToExpectedDiffFile(expectedDiffFile)
                     .pathToReferenceChangelogFile("${baseDiffPath}" + "changelogs/" +
                             "tablesForReferenceDb.xml")
                     .pathToChangelogFile(changelogFile)
@@ -112,6 +112,16 @@ class DiffCommandTestHelper {
             }
         }
         return "${baseDiffPath}changelogs/${baseChangelogName}.xml"
+    }
+
+    static String selectExpectedDiffFile(String baseChangelogName) {
+        if ("true".equalsIgnoreCase(System.getProperty("useProArtifacts"))) {
+            String proPath = "${baseDiffPath}expectedDiff/${baseChangelogName}-pro.txt"
+            if (DiffCommandTestHelper.class.getResourceAsStream(proPath) != null) {
+                return proPath
+            }
+        }
+        return "${baseDiffPath}expectedDiff/${baseChangelogName}.txt"
     }
 
     static validateGeneratedDiffChangelog(TestInput testInput) {
