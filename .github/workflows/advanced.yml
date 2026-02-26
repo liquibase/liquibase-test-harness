@@ -20,6 +20,10 @@ on:
       ignoreLiquibaseSnapshot:
         type: boolean
         description: Don't autoconfigure Liquibase Snapshot
+      liquibaseRepo:
+        description: Repo to pull artifacts from. Defaults to liquibase/liquibase-pro (Pro). Use liquibase/liquibase for community builds.
+        required: false
+        default: 'liquibase/liquibase-pro'
       databases:
         description: Databases to start up. Comma separated list of "name"
         required: true
