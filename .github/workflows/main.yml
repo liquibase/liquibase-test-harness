@@ -48,9 +48,9 @@ on:
         type: boolean
         description: Don't autoconfigure Liquibase Snapshot
       liquibaseRepo:
-        description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibase/liquibase-pro
+        description: Repo pull artifacts from. Defaults to liquibase/liquibase-pro but also supports liquibase/liquibase
         required: true
-        default: "liquibase/liquibase"
+        default: "liquibase/liquibase-pro"
       databases:
         description: Databases to start up. Comma separated list of "name"
         required: true

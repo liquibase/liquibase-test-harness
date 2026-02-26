@@ -1,0 +1,5 @@
+# Pro-only changetypes — DB2 LUW-specific
+# These DB2 LUW-specific change types require Liquibase Pro/Commercial.
+
+createSynonym
+dropSynonym

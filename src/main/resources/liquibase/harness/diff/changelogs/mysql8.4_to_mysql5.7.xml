@@ -102,7 +102,7 @@
 
 
     <!-- FUNCTION -->
-    <changeSet id="13" author="as">
+    <changeSet id="13" author="as" labels="pro">
         <pro:createFunction
                 encoding="UTF-8"
                 replaceIfExists="true"
@@ -118,7 +118,7 @@
     </changeSet>
 
     <!-- PACKAGE -->
-    <changeSet id="14" author="as">
+    <changeSet id="14" author="as" labels="pro">
         <pro:createPackage encoding="UTF-8"
                            packageName="Test package">CREATE FUNCTION test_function1()
             RETURNS VARCHAR(20)
@@ -131,7 +131,7 @@
     </changeSet>
 
     <!-- PACKAGE BODY -->
-    <changeSet id="15" author="as">
+    <changeSet id="15" author="as" labels="pro">
         <pro:createPackage encoding="UTF-8"
                            packageName="Test package">CREATE FUNCTION test_function2()
             RETURNS VARCHAR(20)
@@ -144,7 +144,7 @@
     </changeSet>
 
     <!-- TRIGGER -->
-    <changeSet id="16" author="as">
+    <changeSet id="16" author="as" labels="pro">
         <pro:createTrigger disabled="false"
                            encoding="UTF-8"
                            scope="test"
@@ -159,7 +159,7 @@
     </changeSet>
 
     <!-- PROCEDURE -->
-    <changeSet id="17" author="as">
+    <changeSet id="17" author="as" labels="pro">
         <comment>test procedure</comment>
         <createProcedure
                 encoding="UTF-8"

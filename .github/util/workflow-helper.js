@@ -83,20 +83,21 @@ module.exports = ({github, context}) => {
 
         shouldUseProArtifacts: function (repository) {
             // Determine if we should prioritize pro artifacts
+            // Default to Pro when no repository context (e.g. scheduled runs)
             if (!repository) {
+                return true;
+            }
+            // Explicitly community only when triggered from the community repo
+            if (repository.toLowerCase() === 'liquibase/liquibase') {
                 return false;
             }
-            return repository.toLowerCase() === 'liquibase/liquibase-pro' ||
-                repository.toLowerCase() === 'liquibase/liquibase-test-harness';
+            return true;
         },
 
         getDefaultRepoForContext: function (repository) {
             // Return the default repo to search based on triggered repository
-            if (!repository) {
-                return 'liquibase/liquibase';
-            }
-
-            if (this.shouldUseProArtifacts(repository)) {
+            // Default to Pro unless explicitly triggered from the community repo
+            if (!repository || repository.toLowerCase() !== 'liquibase/liquibase') {
                 return 'liquibase/liquibase-pro';
             }
 
