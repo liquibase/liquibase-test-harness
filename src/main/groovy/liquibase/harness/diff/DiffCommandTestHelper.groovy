@@ -106,20 +106,14 @@ class DiffCommandTestHelper {
 
     static String selectChangelogFile(String baseChangelogName) {
         if ("true".equalsIgnoreCase(System.getProperty("useProArtifacts"))) {
-            String proPath = "${baseDiffPath}changelogs/${baseChangelogName}-pro.xml"
-            if (DiffCommandTestHelper.class.getResourceAsStream(proPath) != null) {
-                return proPath
-            }
+            return "${baseDiffPath}changelogs/${baseChangelogName}-pro.xml"
         }
         return "${baseDiffPath}changelogs/${baseChangelogName}.xml"
     }
 
     static String selectExpectedDiffFile(String baseChangelogName) {
         if ("true".equalsIgnoreCase(System.getProperty("useProArtifacts"))) {
-            String proPath = "${baseDiffPath}expectedDiff/${baseChangelogName}-pro.txt"
-            if (DiffCommandTestHelper.class.getResourceAsStream(proPath) != null) {
-                return proPath
-            }
+            return "${baseDiffPath}expectedDiff/${baseChangelogName}-pro.txt"
         }
         return "${baseDiffPath}expectedDiff/${baseChangelogName}.txt"
     }

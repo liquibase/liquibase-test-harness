@@ -1,0 +1,99 @@
+Reference Database: lbuser @ jdbc:postgresql://localhost:5438/lbcat (Default Schema: public)
+Comparison Database: lbuser @ jdbc:postgresql://localhost:5437/lbcat (Default Schema: public)
+Compared Schemas: public
+Product Name: EQUAL
+Product Version:
+     Reference:   '14.15 (Debian 14.15-1.pgdg120+1)'
+     Target: '13.18 (Debian 13.18-1.pgdg120+1)'
+Missing Catalog(s): NONE
+Unexpected Catalog(s): NONE
+Changed Catalog(s): NONE
+Missing Check Constraint(s): NONE
+Unexpected Check Constraint(s): NONE
+Changed Check Constraint(s): NONE
+Missing Column(s): NONE
+Unexpected Column(s):
+     public.test_table_for_column.dateColumn
+     public.test_view.email
+     public.test_view.first_name
+     public.test_table_base.id
+     public.test_table_for_column.id
+     public.test_table_for_index.id
+     public.test_table_for_uc.id
+     public.test_table_reference.id
+     public.test_view.id
+     public.test_table_for_column.intColumn
+     public.test_view.last_name
+     public.test_table_reference.test_column
+     public.test_table_for_column.varcharColumn
+Changed Column(s): NONE
+Missing Composite Type(s): NONE
+Unexpected Composite Type(s): NONE
+Changed Composite Type(s): NONE
+Missing Data Type Attribute(s): NONE
+Unexpected Data Type Attribute(s): NONE
+Changed Data Type Attribute(s): NONE
+Missing Database Package(s): NONE
+Unexpected Database Package(s): NONE
+Changed Database Package(s): NONE
+Missing Database Package Body(s): NONE
+Unexpected Database Package Body(s): NONE
+Changed Database Package Body(s): NONE
+Missing Foreign Key(s): NONE
+Unexpected Foreign Key(s):
+     test_fk(test_table_base[id] -> test_table_reference[test_column])
+Changed Foreign Key(s): NONE
+Missing Function(s): NONE
+Unexpected Function(s):
+     test_function()
+     test_function1()
+     test_function2()
+Changed Function(s): NONE
+Missing Index(s): NONE
+Unexpected Index(s):
+     idx_first_name ON public.test_table_for_index(id)
+     test_table_base_pkey UNIQUE  ON public.test_table_base(id)
+     test_table_reference_pkey UNIQUE  ON public.test_table_reference(id)
+     test_table_reference_test_column_key UNIQUE  ON public.test_table_reference(test_column)
+     test_unique_constraint UNIQUE  ON public.test_table_for_uc(id)
+Changed Index(s): NONE
+Missing Primary Key(s): NONE
+Unexpected Primary Key(s):
+     test_table_base_pkey on public.test_table_base(id)
+     test_table_reference_pkey on public.test_table_reference(id)
+Changed Primary Key(s): NONE
+Missing Schema(s): NONE
+Unexpected Schema(s): NONE
+Changed Schema(s): NONE
+Missing Sequence(s): NONE
+Unexpected Sequence(s):
+     test_sequence
+Changed Sequence(s): NONE
+Missing Stored Procedure(s): NONE
+Unexpected Stored Procedure(s):
+     test_procedure
+Changed Stored Procedure(s): NONE
+Missing Synonym(s): NONE
+Unexpected Synonym(s): NONE
+Changed Synonym(s): NONE
+Missing Table(s): NONE
+Unexpected Table(s):
+     test_table_base
+     test_table_for_column
+     test_table_for_index
+     test_table_for_uc
+     test_table_reference
+Changed Table(s): NONE
+Missing Trigger(s): NONE
+Unexpected Trigger(s):
+     posts::test_trigger
+Changed Trigger(s): NONE
+Missing Unique Constraint(s): NONE
+Unexpected Unique Constraint(s):
+     test_table_reference_test_column_key on test_table_reference(test_column)
+     test_unique_constraint on test_table_for_uc(id)
+Changed Unique Constraint(s): NONE
+Missing View(s): NONE
+Unexpected View(s):
+     test_view
+Changed View(s): NONE
