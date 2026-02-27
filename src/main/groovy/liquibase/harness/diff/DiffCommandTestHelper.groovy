@@ -72,15 +72,17 @@ class DiffCommandTestHelper {
             }
             databasesToConnect.add(referenceDatabase)
 
+            String baseChangelogName = "${referenceDatabase.name}${referenceDatabase.version}_to_" +
+                    "${targetDatabase.name}${targetDatabase.version}"
+            String changelogFile = selectChangelogFile(baseChangelogName)
+
+            String expectedDiffFile = selectExpectedDiffFile(baseChangelogName)
+
             inputList.add(TestInput.builder()
-                    .pathToExpectedDiffFile("${baseDiffPath}" + "expectedDiff/" +
-                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
-                            "${targetDatabase.name}${targetDatabase.version}.txt")
+                    .pathToExpectedDiffFile(expectedDiffFile)
                     .pathToReferenceChangelogFile("${baseDiffPath}" + "changelogs/" +
                             "tablesForReferenceDb.xml")
-                    .pathToChangelogFile("${baseDiffPath}" + "changelogs/" +
-                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
-                            "${targetDatabase.name}${targetDatabase.version}.xml")
+                    .pathToChangelogFile(changelogFile)
                     .pathToGeneratedXmlDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
                             "${referenceDatabase.name}${referenceDatabase.version}_to_" +
                             "${targetDatabase.name}${targetDatabase.version}.xml")
@@ -100,6 +102,20 @@ class DiffCommandTestHelper {
         }
         new DatabaseConnectionUtil().initializeDatabasesConnection(databasesToConnect)
         return inputList
+    }
+
+    static String selectChangelogFile(String baseChangelogName) {
+        if ("true".equalsIgnoreCase(System.getProperty("useProArtifacts"))) {
+            return "${baseDiffPath}changelogs/${baseChangelogName}-pro.xml"
+        }
+        return "${baseDiffPath}changelogs/${baseChangelogName}.xml"
+    }
+
+    static String selectExpectedDiffFile(String baseChangelogName) {
+        if ("true".equalsIgnoreCase(System.getProperty("useProArtifacts"))) {
+            return "${baseDiffPath}expectedDiff/${baseChangelogName}-pro.txt"
+        }
+        return "${baseDiffPath}expectedDiff/${baseChangelogName}.txt"
     }
 
     static validateGeneratedDiffChangelog(TestInput testInput) {

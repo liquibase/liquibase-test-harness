@@ -72,46 +72,60 @@ class FileUtils {
     }
 
     /**
-     * Loads the skip changetypes list for a database from skipChangetypes.txt.
-     * The file should contain one changetype name per line. Lines starting with # are comments.
+     * Loads Pro-only changetype names from proOnlyChangetypes.txt files.
+     * Merges a global file (applying to all databases) with a database-specific file.
+     * File format: one changetype name per line; lines starting with # are comments.
      *
      * @param databaseName The database name
      * @param expectedFolder The expected folder path (e.g., "liquibase/harness/change/expectedSql")
-     * @return Set of changetype names to skip
+     * @return Set of Pro-only changetype names relevant to this database
      */
-    static Set<String> loadSkipChangetypes(String databaseName, String expectedFolder) {
-        Set<String> skipSet = new HashSet<>()
+    static Set<String> loadProOnlyChangetypes(String databaseName, String expectedFolder) {
+        Set<String> proOnlySet = new HashSet<>()
         def resourceAccessor = TestConfig.instance.resourceAccessor
-        def skipFilePath = expectedFolder + "/" + databaseName + "/skipChangetypes.txt"
-        def resource = resourceAccessor.get(skipFilePath)
 
-        if (resource.exists()) {
-            def text = StreamUtil.readStreamAsString(resource.openInputStream())
-            text.split("\n").each { String line ->
+        // Global file — applies to every database
+        def globalPath = expectedFolder + "/proOnlyChangetypes.txt"
+        def globalResource = resourceAccessor.get(globalPath)
+        if (globalResource.exists()) {
+            StreamUtil.readStreamAsString(globalResource.openInputStream()).split("\n").each { String line ->
                 def trimmed = line.trim()
-                // Skip empty lines and comments
                 if (trimmed && !trimmed.startsWith("#")) {
-                    skipSet.add(trimmed)
+                    proOnlySet.add(trimmed)
                 }
             }
-            if (!skipSet.isEmpty()) {
-                Logger.getLogger(FileUtils.class.name).info("Loaded " + skipSet.size() +
-                        " skip changetypes for " + databaseName + " from " + skipFilePath)
-            }
         }
-        return skipSet
+
+        // Database-specific file — adds DB-specific Pro-only types
+        def dbPath = expectedFolder + "/" + databaseName + "/proOnlyChangetypes.txt"
+        def dbResource = resourceAccessor.get(dbPath)
+        if (dbResource.exists()) {
+            StreamUtil.readStreamAsString(dbResource.openInputStream()).split("\n").each { String line ->
+                def trimmed = line.trim()
+                if (trimmed && !trimmed.startsWith("#")) {
+                    proOnlySet.add(trimmed)
+                }
+            }
+            Logger.getLogger(FileUtils.class.name).info("Loaded DB-specific Pro-only changetypes for " + databaseName)
+        }
+
+        return proOnlySet
     }
 
     /**
-     * Checks if a changetype should be skipped for a database based on skipChangetypes.txt.
+     * Returns true when the changetype is Pro-only AND the test run is using community artifacts.
+     * Controlled by the system property "useProArtifacts" (set to "true" for Pro runs).
      *
-     * @param change The changetype name (e.g., "addAutoIncrement")
+     * @param change The changetype name
      * @param databaseName The database name
      * @param expectedFolder The expected folder path
-     * @return true if the changetype is listed in skipChangetypes.txt
+     * @return true if the changetype should be skipped in community mode
      */
-    static boolean shouldSkipChangetype(String change, String databaseName, String expectedFolder) {
-        return loadSkipChangetypes(databaseName, expectedFolder).contains(change)
+    static boolean shouldSkipProOnlyChangetype(String change, String databaseName, String expectedFolder) {
+        if ("true".equalsIgnoreCase(System.getProperty("useProArtifacts"))) {
+            return false
+        }
+        return loadProOnlyChangetypes(databaseName, expectedFolder).contains(change)
     }
 
     static String getSqlFileContent(String change, String databaseName,
@@ -151,9 +165,9 @@ class FileUtils {
 
     static String getFileContent(String change, String databaseName, String version, String expectedFolder,
                                   String fileExtension) {
-        // Check if this changetype should be skipped via skipChangetypes.txt
-        if (shouldSkipChangetype(change, databaseName, expectedFolder)) {
-            return "SKIP TEST\nSkipped via skipChangetypes.txt"
+        // Skip Pro-only changetypes when running against community Liquibase
+        if (shouldSkipProOnlyChangetype(change, databaseName, expectedFolder)) {
+            return "SKIP TEST\nPro-only changetype — skipped in community mode"
         }
 
         def resourceAccessor = TestConfig.instance.resourceAccessor

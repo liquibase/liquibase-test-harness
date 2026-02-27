@@ -1,0 +1,5 @@
+# Pro-only changetypes — DB2 z/OS-specific
+# These DB2 z/OS-specific change types require Liquibase Pro/Commercial.
+
+createSynonym
+dropSynonym

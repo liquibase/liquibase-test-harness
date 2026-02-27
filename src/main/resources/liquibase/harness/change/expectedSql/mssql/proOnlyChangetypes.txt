@@ -1,0 +1,7 @@
+# Pro-only changetypes — MSSQL-specific
+# These MSSQL-specific change types require Liquibase Pro/Commercial.
+
+createSynonym
+dropSynonym
+disableCheckConstraint
+enableCheckConstraint

@@ -1,0 +1,7 @@
+# Pro-only changetypes — EDB EDB-specific
+# These EDB (Oracle-compatible mode) change types require Liquibase Pro/Commercial.
+
+createSynonym
+dropPackage
+dropPackageBody
+dropSynonym

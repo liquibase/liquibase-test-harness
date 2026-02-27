@@ -1,13 +1,16 @@
-Reference Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33064/lbcat (Default Schema: lbcat)
-Comparison Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33061/lbcat (Default Schema: lbcat)
+Reference Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33062/lbcat (Default Schema: lbcat)
+Comparison Database: lbuser@172.18.0.1 @ jdbc:mysql://localhost:33065/lbcat (Default Schema: lbcat)
 Compared Schemas: lbcat
 Product Name: EQUAL
 Product Version:
-     Reference:   '5.6.51'
-     Target: '8.0.26'
+     Reference:   '5.7.44'
+     Target: '8.4.4'
 Missing Catalog(s): NONE
 Unexpected Catalog(s): NONE
 Changed Catalog(s): NONE
+Missing Check Constraint(s): NONE
+Unexpected Check Constraint(s): NONE
+Changed Check Constraint(s): NONE
 Missing Column(s): NONE
 Unexpected Column(s):
      lbcat.test_table_for_column.dateColumn
@@ -24,10 +27,28 @@ Unexpected Column(s):
      lbcat.test_table_reference.test_column
      lbcat.test_table_for_column.varcharColumn
 Changed Column(s): NONE
+Missing Composite Type(s): NONE
+Unexpected Composite Type(s): NONE
+Changed Composite Type(s): NONE
+Missing Data Type Attribute(s): NONE
+Unexpected Data Type Attribute(s): NONE
+Changed Data Type Attribute(s): NONE
+Missing Database Package(s): NONE
+Unexpected Database Package(s): NONE
+Changed Database Package(s): NONE
+Missing Database Package Body(s): NONE
+Unexpected Database Package Body(s): NONE
+Changed Database Package Body(s): NONE
 Missing Foreign Key(s): NONE
 Unexpected Foreign Key(s):
      test_fk(test_table_base[id] -> test_table_reference[test_column])
 Changed Foreign Key(s): NONE
+Missing Function(s): NONE
+Unexpected Function(s):
+     test_function
+     test_function1
+     test_function2
+Changed Function(s): NONE
 Missing Index(s): NONE
 Unexpected Index(s):
      PRIMARY UNIQUE  ON lbcat.test_table_base(id)
@@ -41,6 +62,13 @@ Unexpected Primary Key(s):
      PRIMARY on lbcat.test_table_base(id)
      PRIMARY on lbcat.test_table_reference(id)
 Changed Primary Key(s): NONE
+Missing Stored Procedure(s): NONE
+Unexpected Stored Procedure(s):
+     test_procedure
+Changed Stored Procedure(s): NONE
+Missing Synonym(s): NONE
+Unexpected Synonym(s): NONE
+Changed Synonym(s): NONE
 Missing Table(s): NONE
 Unexpected Table(s):
      test_table_base
@@ -49,6 +77,10 @@ Unexpected Table(s):
      test_table_for_uc
      test_table_reference
 Changed Table(s): NONE
+Missing Trigger(s): NONE
+Unexpected Trigger(s):
+     posts::test_trigger
+Changed Trigger(s): NONE
 Missing Unique Constraint(s): NONE
 Unexpected Unique Constraint(s):
      test_column on test_table_reference(test_column)
