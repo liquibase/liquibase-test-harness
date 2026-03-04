@@ -172,9 +172,20 @@ class FileUtils {
 
         def resourceAccessor = TestConfig.instance.resourceAccessor
         def fileName = change + fileExtension
+        boolean isCommunity = !"true".equalsIgnoreCase(System.getProperty("useProArtifacts"))
 
         // Try paths in order of specificity: version-specific -> db-specific -> default
-        def pathsToTry = [
+        // When running community artifacts, also check for community-specific variant files (suffix "-community")
+        def pathsToTry = []
+        if (isCommunity) {
+            def communityFileName = change + "-community" + fileExtension
+            pathsToTry += [
+                    "${expectedFolder}/${databaseName}/${version}/${communityFileName}",
+                    "${expectedFolder}/${databaseName}/${communityFileName}",
+                    "${expectedFolder}/${communityFileName}"
+            ]
+        }
+        pathsToTry += [
                 "${expectedFolder}/${databaseName}/${version}/${fileName}",
                 "${expectedFolder}/${databaseName}/${fileName}",
                 "${expectedFolder}/${fileName}"
