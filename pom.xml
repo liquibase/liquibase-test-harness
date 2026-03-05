@@ -17,11 +17,11 @@
         <liquibase-commercial.version>5.0.3</liquibase-commercial.version>
         <!-- `[X,)` syntax means open-ended version range, version X or higher -->
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
-        <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
-        <groovy-all.version>5.0.3</groovy-all.version>
+        <gmavenplus-plugin.version>4.3.1</gmavenplus-plugin.version>
+        <groovy-all.version>5.0.4</groovy-all.version>
         <spock-core.version>2.4-groovy-5.0</spock-core.version>
         <spock-reports.version>2.5.1-groovy-4.0</spock-reports.version>
-        <junit.version>6.0.1</junit.version>
+        <junit.version>6.0.3</junit.version>
         <!-- DEPRECATED: Apache Derby entered read-only maintenance mode (2025-10-10). Driver requires Java 21 but project needs Java 17.
              Keeping commented for reference. See INT-1718 for details.
         <derby.version>10.16.1.1</derby.version>
@@ -150,13 +150,13 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.8</version>
+            <version>42.7.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>9.5.0</version>
+            <version>9.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -219,12 +219,12 @@
         <dependency>
             <groupId>net.snowflake</groupId>
             <artifactId>snowflake-jdbc</artifactId>
-            <version>3.28.0</version>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
             <artifactId>jaybird</artifactId>
-            <version>6.0.3</version>
+            <version>6.0.4</version>
         </dependency>
 
         <dependency>
@@ -305,7 +305,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.20.1</version>
+                <version>2.21.0</version>
                 <configuration>
                     <generateBackupPoms>false</generateBackupPoms>
                 </configuration>
@@ -369,7 +369,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>3.5.5</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
