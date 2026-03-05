@@ -190,7 +190,7 @@
     <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
-      <version>3.51.1.0</version>
+      <version>3.51.2.0</version>
       <scope>test</scope>
     </dependency>
     <!-- DEPRECATED: Apache Derby entered read-only maintenance mode (2025-10-10). Driver requires Java 21 but project needs Java 17.
