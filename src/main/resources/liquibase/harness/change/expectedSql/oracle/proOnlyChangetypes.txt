@@ -1,0 +1,8 @@
+# Pro-only changetypes — Oracle-specific
+# These Oracle-specific change types require Liquibase Pro/Commercial.
+
+createSynonym
+dropPackage
+dropPackageBody
+dropSynonym
+markUnused

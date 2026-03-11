@@ -1,0 +1,18 @@
+# Pro-only changetypes — common (default changelogs)
+# Applied to ALL databases when running in community (non-Pro) mode.
+# These change types exist in the default changelogs and require Liquibase Pro/Commercial.
+
+addCheckConstraint
+createFunction
+createPackage
+createPackageBody
+createProcedure
+createProcedureFromFile
+createTrigger
+disableTrigger
+dropCheckConstraint
+dropFunction
+dropProcedure
+dropTrigger
+enableTrigger
+renameTrigger

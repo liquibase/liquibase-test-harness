@@ -48,9 +48,9 @@ on:
         type: boolean
         description: Don't autoconfigure Liquibase Snapshot
       liquibaseRepo:
-        description: Repo pull artifacts from. Defaults to liquibase/liquibase but also supports liquibase/liquibase-pro
+        description: Repo pull artifacts from. Defaults to liquibase/liquibase-pro but also supports liquibase/liquibase
         required: true
-        default: "liquibase/liquibase"
+        default: "liquibase/liquibase-pro"
       databases:
         description: Databases to start up. Comma separated list of "name"
         required: true
@@ -329,27 +329,46 @@ jobs:
 
           # Only discover community version for community builds
           USE_SECURE_ARTIFACTS="${{ steps.configure-build.outputs.useProArtifacts }}"
+
+          # Determine target branch for artifact discovery
+          INPUT_BRANCH="${{ github.event.inputs.liquibaseBranch }}"
+          if [ -z "$INPUT_BRANCH" ]; then
+            TARGET_BRANCH="master"
+            echo "No branch specified, defaulting to master for artifact discovery"
+          else
+            TARGET_BRANCH=$(echo "$INPUT_BRANCH" | cut -d',' -f1 | tr -d ' ')
+            echo "Using specified branch for artifact discovery: $TARGET_BRANCH"
+          fi
+
           if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
             echo "Skipping COMMUNITY artifact discovery for SECURE builds; liquibase-core is bundled with liquibase-commercial."
             # Do NOT set community-version for Pro builds to prevent Maven from resolving liquibase-core
           else
-            echo "Resolving COMMUNITY artifacts version from liquibase/master"
+            echo "Resolving COMMUNITY artifacts version from liquibase/${TARGET_BRANCH}"
             # Community artifacts use {commit-sha}-SNAPSHOT format
-            # Query GitHub Packages for the latest published artifact version
-            # The version format is the commit SHA from the built artifact
-
+            # Query GitHub Packages for available artifact versions
             PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase/org/liquibase/liquibase-core/maven-metadata.xml"
 
-            echo "Fetching latest artifact version from: $PACKAGES_URL"
+            echo "Fetching artifact metadata from: $PACKAGES_URL"
             METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
 
-            # Extract versions in commit-SHA format (40 hex chars followed by -SNAPSHOT)
-            # Filter out release-prep and other non-SHA versions
-            COMMUNITY_VERSION=$(echo "$METADATA" | grep -o '<version>[a-f0-9]\{40\}-SNAPSHOT</version>' | tail -1 | sed 's/<[^>]*>//g')
+            # Fetch recent commits from the target branch to find the latest published artifact
+            echo "Fetching recent commits from liquibase/${TARGET_BRANCH}..."
+            COMMITS_RESPONSE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/liquibase/liquibase/commits?sha=${TARGET_BRANCH}&per_page=30")
+
+            COMMUNITY_VERSION=""
+            while IFS= read -r sha; do
+              if echo "$METADATA" | grep -q "<version>${sha}-SNAPSHOT</version>"; then
+                COMMUNITY_VERSION="${sha}-SNAPSHOT"
+                echo "Found matching artifact for branch ${TARGET_BRANCH}: $COMMUNITY_VERSION"
+                break
+              fi
+            done < <(echo "$COMMITS_RESPONSE" | jq -r '.[].sha' 2>/dev/null)
 
             if [ -z "$COMMUNITY_VERSION" ]; then
-              echo "ERROR: Could not determine latest commit-SHA version from GitHub Packages"
-              echo "Looking for pattern: 40-character hex SHA followed by -SNAPSHOT"
+              echo "ERROR: Could not find a published artifact for branch ${TARGET_BRANCH} in GitHub Packages"
+              echo "Checked last 30 commits on branch ${TARGET_BRANCH}"
               echo "GitHub Packages metadata response (first 500 chars):"
               echo "$METADATA" | head -c 500
               echo ""
@@ -360,26 +379,36 @@ jobs:
             echo "community-version=$COMMUNITY_VERSION" >> $GITHUB_OUTPUT
           fi
 
-          # Query GitHub Packages for the latest liquibase-commercial artifact version
-          PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase-pro/com/liquibase/liquibase-commercial/maven-metadata.xml"
+          if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
+            # Query GitHub Packages for the latest liquibase-commercial artifact version
+            PACKAGES_URL="https://maven.pkg.github.com/liquibase/liquibase-pro/com/liquibase/liquibase-commercial/maven-metadata.xml"
 
-          echo "Fetching latest PRO artifact version from: $PACKAGES_URL"
-          METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
+            echo "Fetching latest PRO artifact version from: $PACKAGES_URL"
+            METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
 
-          # Extract version in master-{7-char-hex-sha} format (e.g., master-e461cb2)
-          SECURE_VERSION=$(echo "$METADATA" | grep -o '<version>master-[a-f0-9]\{7\}</version>' | tail -1 | sed 's/<[^>]*>//g')
+            # Extract version in {branch}-{7-char-hex-sha} format (e.g., master-e461cb2)
+            SECURE_VERSION=$(echo "$METADATA" | grep -o "<version>${TARGET_BRANCH}-[a-f0-9]\{7\}</version>" | tail -1 | sed 's/<[^>]*>//g')
 
-          if [ -z "$SECURE_VERSION" ]; then
-            echo "ERROR: Could not determine PRO version from GitHub Packages"
-            echo "Looking for pattern: master-{7-char-hex-sha} (e.g., master-e461cb2)"
-            echo "GitHub Packages metadata response (first 500 chars):"
-            echo "$METADATA" | head -c 500
-            echo ""
-            exit 1
+            if [ -z "$SECURE_VERSION" ] && [ "$TARGET_BRANCH" != "master" ]; then
+              echo "No artifact found for branch ${TARGET_BRANCH}, falling back to master"
+              SECURE_VERSION=$(echo "$METADATA" | grep -o '<version>master-[a-f0-9]\{7\}</version>' | tail -1 | sed 's/<[^>]*>//g')
+            fi
+
+            if [ -z "$SECURE_VERSION" ]; then
+              echo "ERROR: Could not determine PRO version from GitHub Packages"
+              echo "Looking for pattern: ${TARGET_BRANCH}-{7-char-hex-sha} (e.g., ${TARGET_BRANCH}-e461cb2)"
+              echo "GitHub Packages metadata response (first 500 chars):"
+              echo "$METADATA" | head -c 500
+              echo ""
+              exit 1
+            fi
+
+            echo "PRO version: $SECURE_VERSION"
+            echo "secure-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "Skipping PRO artifact discovery for COMMUNITY builds."
+            echo "secure-version=" >> $GITHUB_OUTPUT
           fi
-
-          echo "PRO version: $SECURE_VERSION"
-          echo "secure-version=$SECURE_VERSION" >> $GITHUB_OUTPUT
 
           # liquibase-maven-plugin is no longer required for these runs
           echo "Skipping liquibase-maven-plugin discovery; plugin download not required."
