@@ -13,7 +13,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.enforcer.requireJavaVersion>${maven.compiler.release}</maven.enforcer.requireJavaVersion>
     <liquibase-core.version>5.0.2</liquibase-core.version>
-    <liquibase-commercial.version>5.1.0</liquibase-commercial.version>
+    <liquibase-commercial.version>5.1.1</liquibase-commercial.version>
     <!-- `[X,)` syntax means open-ended version range, version X or higher -->
     <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
     <gmavenplus-plugin.version>4.3.1</gmavenplus-plugin.version>
