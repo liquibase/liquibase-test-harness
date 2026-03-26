@@ -1,0 +1,4 @@
+CREATE PROCEDURE test_procedure ( per_cent INT)
+UPDATE stock SET unit_price = unit_price + (unit_price * (per_cent/100) )
+END PROCEDURE
+DROP PROCEDURE testdb:informix.test_procedure

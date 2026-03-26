@@ -1,0 +1,1 @@
+/* prepend comment */ CREATE TABLE testdb:informix.test_table (test_id INT NOT NULL, test_column VARCHAR(50) NOT NULL, PRIMARY KEY (test_id) CONSTRAINT PK_cs_guaranteed_delivery) -- append comment

@@ -1,0 +1,1 @@
+CREATE TABLE testdb:informix.createTableDataTypeText (textCol TEXT)
