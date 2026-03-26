@@ -180,6 +180,7 @@
       <groupId>com.ibm.informix</groupId>
       <artifactId>jdbc</artifactId>
       <version>4.50.13.1</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
