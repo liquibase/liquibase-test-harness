@@ -1,0 +1,1 @@
+ALTER TABLE testdb:informix.posts ADD CONSTRAINT  FOREIGN KEY (author_id) REFERENCES testdb:informix.authors (id) ON DELETE CASCADE CONSTRAINT fk_posts_authors_test

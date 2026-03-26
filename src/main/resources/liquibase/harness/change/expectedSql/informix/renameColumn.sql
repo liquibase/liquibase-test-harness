@@ -1,0 +1,1 @@
+RENAME COLUMN testdb:informix.authors.first_name TO first_name_renameColumn_test

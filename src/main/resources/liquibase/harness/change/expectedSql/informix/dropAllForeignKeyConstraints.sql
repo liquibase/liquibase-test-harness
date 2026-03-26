@@ -1,0 +1,2 @@
+ALTER TABLE testdb:informix.posts ADD CONSTRAINT  FOREIGN KEY (author_id) REFERENCES testdb:informix.authors (id) CONSTRAINT fk_posts_authors_test_1
+ALTER TABLE testdb:informix.posts ADD CONSTRAINT  FOREIGN KEY (id) REFERENCES testdb:informix.authors (id) CONSTRAINT fk_posts_authors_test_2
