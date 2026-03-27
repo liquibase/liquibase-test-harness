@@ -1,0 +1,9 @@
+# Pro-only changetypes — PostgreSQL-specific
+# These PostgreSQL-specific change types require Liquibase Pro/Commercial.
+
+alterCompositeTypeAttributes
+changeCompositeTypeOwner
+createCompositeType
+dropCompositeType
+renameCompositeType
+renameCompositeTypeAttribute

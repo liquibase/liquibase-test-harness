@@ -1,0 +1,13 @@
+# Pro-only changetypes — generateChangelog tests
+# Applied to ALL databases when running in community (non-Pro) mode.
+# These change types require Liquibase Pro/Commercial to create the schema objects
+# that generateChangelog would then inspect. Without Pro, the update step fails,
+# so the generateChangelog comparison has nothing meaningful to test.
+
+addCheckConstraint
+createFunction
+createPackage
+createPackageBody
+createProcedure
+createSynonym
+createTrigger

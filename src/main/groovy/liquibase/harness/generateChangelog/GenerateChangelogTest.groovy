@@ -13,7 +13,7 @@ import spock.lang.Unroll
 import java.nio.file.Paths
 
 import static liquibase.harness.generateChangelog.GenerateChangelogTestHelper.*
-import static liquibase.harness.util.FileUtils.getResourceContent
+import static liquibase.harness.util.FileUtils.getSqlFileContent
 import static liquibase.harness.util.FileUtils.readFile
 import static liquibase.harness.util.TestUtils.chooseRollbackStrategy
 import static liquibase.harness.util.TestUtils.executeCommandScope
@@ -35,7 +35,8 @@ class GenerateChangelogTest extends Specification {
     @Unroll
     def "apply generateChangelog test for #testInput.change against #testInput.databaseName #testInput.version"() {
         given: "read input data for generateChangelog test"
-        String expectedSql = getResourceContent("/$testInput.expectedSqlPath")
+        String expectedSql = getSqlFileContent(testInput.change, testInput.databaseName, testInput.version,
+                "liquibase/harness/generateChangelog/expectedSql")
         Map<String, Object> argsMap = new HashMap()
         argsMap.put("url", testInput.url)
         argsMap.put("username", testInput.username)
