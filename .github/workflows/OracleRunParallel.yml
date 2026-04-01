@@ -65,7 +65,7 @@ jobs:
 
       # Adding sleep to avoid ORA-12514 error when database & listeners are still in the middle of startup
       - name: Sleep for 180 seconds
-        uses: whatnick/wait-action@71008d68ab3939de1475f4938583e4480b5d09a6 # master
+        uses: whatnick/wait-action@71008d68ab3939de1475f4938583e4480b5d09a6 # v0.1.2
         with:
           time: "180s"
 
