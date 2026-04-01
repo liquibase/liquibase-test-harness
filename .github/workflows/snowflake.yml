@@ -23,7 +23,7 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
@@ -41,7 +41,7 @@ jobs:
 
       - name: Get GitHub App token
         id: get-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
         with:
           app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
           private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
@@ -53,7 +53,7 @@ jobs:
 
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         with:
           github-token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           script: |
@@ -193,7 +193,7 @@ jobs:
               }
             ]
 
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           java-version: "17"
           distribution: "temurin"
@@ -277,7 +277,7 @@ jobs:
           echo "::notice :: Resolved Snapshot Liquibase PRO dependencies"
 
       - name: Cache installed Liquibase
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: |
             ~/.m2/repository/
@@ -298,16 +298,16 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Restore cached Liquibase artifacts
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: |
             ~/.m2/repository/
@@ -427,7 +427,7 @@ jobs:
               -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: snowflake-test-results
           path: build/spock-reports
@@ -440,7 +440,7 @@ jobs:
       stack-id: ${{ steps.get-stack-id.outputs.stack-id }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Get Stack ID
         id: get-stack-id
         uses: ./.github/actions/get-stack-id
