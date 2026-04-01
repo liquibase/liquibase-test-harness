@@ -38,7 +38,7 @@ jobs:
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
   deploy-ephemeral-cloud-infra:
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
@@ -69,7 +69,7 @@ jobs:
     if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (contains(needs.setup.outputs.databases, 'mysql:aws') || contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Configure AWS credentials for vault access
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
@@ -93,7 +93,7 @@ jobs:
 
       - name: Configure Test
         id: setup
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         with:
           script: |
             let splitValues = "${{ matrix.database }}".split(":")
@@ -138,11 +138,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Configure Test
         id: setup
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         with:
           script: |
             let splitValues = "${{ matrix.database }}".split(":")
@@ -291,7 +291,7 @@ jobs:
           password: "${{env.TH_DB_PASSWD}}"
           url: "${{ env.TH_AURORA_POSTGRESQLURL }}"
 
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           java-version: "17"
           distribution: "temurin"
@@ -375,7 +375,7 @@ jobs:
           mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=17 -Dprefix=aurora -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_POSTGRESQLURL }}' test
 
       - name: Archive AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: aws-rds-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-test-results
           path: build/spock-reports
@@ -388,7 +388,7 @@ jobs:
       stack-id: ${{ steps.get-stack-id.outputs.stack-id }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Get Stack ID
         id: get-stack-id
         uses: ./.github/actions/get-stack-id
