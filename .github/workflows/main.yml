@@ -174,7 +174,7 @@ jobs:
 
       - name: Configure Build
         id: configure-build
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           script: |
@@ -715,7 +715,7 @@ jobs:
           echo "**Test Result:** ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Coordinate Liquibase-Test-Harness
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ steps.get-token.outputs.token }}
           script: |
