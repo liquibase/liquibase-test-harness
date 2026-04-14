@@ -45,10 +45,10 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@main
+        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -215,7 +215,7 @@ jobs:
               }
             ]
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@main
+      - uses: liquibase/build-logic/.github/actions/setup-java@DAT-22660
         with:
           java-version: "17"
           distribution: "temurin"
@@ -317,7 +317,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@main
+        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
 
       - name: Setup Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
@@ -336,7 +336,7 @@ jobs:
           sudo lpm update && sudo lpm add mysql postgresql mariadb mssql
     
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main # v6.0.0
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660 # v6.0.0
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1

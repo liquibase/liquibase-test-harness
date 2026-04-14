@@ -20,7 +20,7 @@ jobs:
         plan: [18.4.0, 19.3.0, 23.2.0]
 
     steps:
-      - uses: liquibase/build-logic/.github/actions/checkout@main
+      - uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
       - run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
@@ -28,7 +28,7 @@ jobs:
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -41,7 +41,7 @@ jobs:
             ,/vault/liquibase
           parse-json-secrets: true
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@main
+      - uses: liquibase/build-logic/.github/actions/setup-java@DAT-22660
         with:
           java-version: "17"
           distribution: "temurin"
