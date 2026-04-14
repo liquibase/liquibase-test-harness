@@ -38,7 +38,7 @@ jobs:
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
   deploy-ephemeral-cloud-infra:
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
@@ -69,10 +69,10 @@ jobs:
     if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (contains(needs.setup.outputs.databases, 'mysql:aws') || contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -86,7 +86,7 @@ jobs:
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
@@ -138,7 +138,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure Test
         id: setup
@@ -150,7 +150,7 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -164,7 +164,7 @@ jobs:
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
@@ -291,7 +291,7 @@ jobs:
           password: "${{env.TH_DB_PASSWD}}"
           url: "${{ env.TH_AURORA_POSTGRESQLURL }}"
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
@@ -388,7 +388,7 @@ jobs:
       stack-id: ${{ steps.get-stack-id.outputs.stack-id }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
       - name: Get Stack ID
         id: get-stack-id
         uses: ./.github/actions/get-stack-id

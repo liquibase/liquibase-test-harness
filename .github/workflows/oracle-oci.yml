@@ -39,10 +39,10 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -209,7 +209,7 @@ jobs:
               }
             ]
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
@@ -307,7 +307,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
 
       - name: Restore cached Liquibase artifacts
@@ -320,7 +320,7 @@ jobs:
             mvn-liquibase-${{ github.run_id }}-
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1

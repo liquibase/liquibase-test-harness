@@ -140,10 +140,10 @@ jobs:
         "edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","sqlite","hsqldb-2.5","hsqldb-2.6","hsqldb-2.7","firebird-3","firebird-4","db2-luw","informix-12.10","informix-14.10","tidb"]' }}
       testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
     steps:
-      - uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -314,7 +314,7 @@ jobs:
               }
             ]
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
@@ -493,10 +493,10 @@ jobs:
         database: ${{ fromJson(needs.setup.outputs.databases) }}
 
     steps:
-      - uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -519,7 +519,7 @@ jobs:
           permission-contents: write
           permission-actions: write
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
@@ -676,10 +676,10 @@ jobs:
     needs: [setup, test, authorize]
     if: ${{ always() }}
     steps:
-      - uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1

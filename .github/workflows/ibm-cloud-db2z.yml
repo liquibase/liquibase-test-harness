@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1

@@ -43,10 +43,10 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -213,7 +213,7 @@ jobs:
               }
             ]
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
@@ -307,14 +307,14 @@ jobs:
             version: azure
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
       #      This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
         run: lpm update && lpm add mysql
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -359,10 +359,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -439,7 +439,7 @@ jobs:
             --url="${{ env.TH_AZURE_MSSQL_MI_URL }}"
 
       # Setup Java and Maven for test runs (after Liquibase CLI operations)
-      - uses: liquibase/build-logic/.github/actions/setup-java@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
@@ -525,10 +525,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@DAT-22660
+        uses: liquibase/build-logic/.github/actions/checkout@main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@DAT-22660
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -568,7 +568,7 @@ jobs:
             --password="${{ env.TH_DB_PASSWD }}" \
             --url="${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}"
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@DAT-22660
+      - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
