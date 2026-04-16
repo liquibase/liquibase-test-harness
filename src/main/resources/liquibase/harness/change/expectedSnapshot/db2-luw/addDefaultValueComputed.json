@@ -4,7 +4,7 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "CURRENT DATE",
+            "defaultValue": "CURRENT DATE\\!\\{liquibase.statement.DatabaseFunction\\}",
             "name": "INSERTED_DATE",
             "nullable": true,
             "type": {
