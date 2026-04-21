@@ -10,6 +10,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.util.logging.Logger
+
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.isEmptyJsonObject
 import static liquibase.harness.util.SnapshotHelpers.snapshotMatchesSpecifiedStructure
@@ -81,6 +83,10 @@ class ChangeObjectTests extends Specification {
         then: "get DB snapshot and verify it matches expected snapshot (skip if expected is empty {})"
         if (shouldVerifyJson) {
             def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
+            if (testInput.getDatabaseName().equals("cockroachdb") && testInput.getChangeObject().equals("addDefaultValueSequenceNext")) {
+                Logger.getLogger(this.class.name).info("generated snapshot -------------"+generatedSnapshot)
+
+            }
             snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
         }
 
