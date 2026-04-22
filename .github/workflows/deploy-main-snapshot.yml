@@ -1,4 +1,4 @@
-name: Deploy Master Snapshot
+name: Deploy Main Snapshot
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 jobs:
-  extension-deploy-master-snapshot:
+  extension-deploy-main-snapshot:
     uses: liquibase/build-logic/.github/workflows/build-extension-jar.yml@main
     secrets: inherit
     with:
