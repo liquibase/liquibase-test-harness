@@ -106,7 +106,7 @@ Starting with the Liquibase Secure release, the **main.yml** workflow automatica
 - **Manual workflow dispatch**:
   - Use the `liquibaseRepo` input to manually override the repository (defaults to detected repository)
   - Use the `liquibaseBranch` input to specify which branch to pull artifacts from
-  - If the specified branch doesn't exist, workflows automatically fall back to `master` or `main`
+  - If the specified branch doesn't exist, workflows automatically fall back to `main`
 
 **Advanced & Cloud Workflows (advanced.yml, aws.yml, azure.yml, gcp.yml, oracle-oci.yml, snowflake.yml):**
 - **Always download and use Liquibase Secure (Pro) artifacts**
@@ -139,7 +139,7 @@ All workflows support manual triggering via `workflow_dispatch` with the followi
 - **liquibaseBranch** (optional): Branch to pull artifacts from
   - Can be a single branch name or comma-separated list for fallback search
   - Supports format: `branch1, branch2, branch3`
-  - Default: Current branch name with fallback to `master` then `main`
+  - Default: Current branch name with fallback to `main`
   - Falls back to next branch in list if previous one doesn't exist
 
 - **liquibaseCommit** (optional): Specific commit SHA to pull artifacts from
@@ -149,7 +149,7 @@ All workflows support manual triggering via `workflow_dispatch` with the followi
 - **liquibaseBranch** (optional): Branch to pull artifacts from
   - Can be a single branch name or comma-separated list for fallback search
   - Supports format: `branch1, branch2, branch3`
-  - Default: Current branch name with fallback to `master` then `main`
+  - Default: Current branch name with fallback to `main`
 
 - **liquibaseRepo** (optional): Repository selection input
   - NOTE: This input is ignored for these workflows
@@ -234,12 +234,12 @@ The Maven workflows automatically detect which repository is being used and reso
    - **GitHub Packages Snapshot Versioning**: Artifacts follow specific versioning patterns
    - **Community artifacts** (`liquibase/liquibase`):
      - Version format: `{commit-sha}-SNAPSHOT` (e.g., `e11e704013b5f419e0826807714d72c945dbffd2-SNAPSHOT`)
-     - Workflow queries GitHub Packages maven-metadata.xml to discover latest master branch commit SHA
+     - Workflow queries GitHub Packages maven-metadata.xml to discover latest main branch commit SHA
      - Each commit gets a unique snapshot version automatically published to GitHub Packages
    - **Pro artifacts** (`liquibase/liquibase-pro`):
-     - Version format: `master-{short-sha}` (e.g., `master-e461cb2`, `master-f01cce1`)
-     - Workflow queries GitHub Packages maven-metadata.xml to discover latest master branch version
-     - Each master build gets a unique version with 7-character commit SHA
+     - Version format: `main-{short-sha}` (e.g., `main-e461cb2`, `main-f01cce1`)
+     - Workflow queries GitHub Packages maven-metadata.xml to discover latest main branch version
+     - Each main build gets a unique version with 7-character commit SHA
    - **Automatic Discovery**: Workflow automatically detects which artifacts are needed and queries the appropriate repository's version metadata
 
 3. **Maven Profile**: The `useproartifacts` profile (when activated with `-Puseproartifacts`):
@@ -249,13 +249,13 @@ The Maven workflows automatically detect which repository is being used and reso
 
 4. **Artifact Resolution Flow**:
    - **Pro artifacts** (`liquibase-pro` selected):
-     - Workflow queries and sets version to `master-{short-sha}` (e.g., `master-e461cb2`)
+     - Workflow queries and sets version to `main-{short-sha}` (e.g., `main-e461cb2`)
      - Profile activates `-Puseproartifacts`
      - Maven resolves:
-       - `org.liquibase:liquibase-core:master-{short-sha}` from `liquibase-pro` repository
-       - `com.liquibase:liquibase-commercial:master-{short-sha}` from `liquibase-pro` repository
+       - `org.liquibase:liquibase-core:main-{short-sha}` from `liquibase-pro` repository
+       - `com.liquibase:liquibase-commercial:main-{short-sha}` from `liquibase-pro` repository
    - **Community artifacts** (default):
-     - Workflow queries GitHub Packages maven-metadata.xml for latest master branch commit SHA
+     - Workflow queries GitHub Packages maven-metadata.xml for latest main branch commit SHA
      - Sets version to `{SHA}-SNAPSHOT` (e.g., `e11e704013b5f419e0826807714d72c945dbffd2-SNAPSHOT`)
      - Maven resolves only:
        - `org.liquibase:liquibase-core:{SHA}-SNAPSHOT` from `liquibase` repository
