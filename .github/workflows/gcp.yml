@@ -400,7 +400,7 @@ jobs:
 
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
-        uses: liquibase/setup-liquibase@4c4338845f94675734bc4116f57701f7d761b5c0 # v2
+        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -443,7 +443,7 @@ jobs:
 
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
-        uses: liquibase/setup-liquibase@4c4338845f94675734bc4116f57701f7d761b5c0 # v2
+        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -462,7 +462,7 @@ jobs:
 
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
-        uses: liquibase/setup-liquibase@4c4338845f94675734bc4116f57701f7d761b5c0 # v2
+        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
         with:
           version: '5.0.0'
           edition: 'secure'
