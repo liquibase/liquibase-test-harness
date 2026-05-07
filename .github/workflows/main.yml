@@ -210,7 +210,7 @@ jobs:
 
             core.setOutput("triggeredRepo", triggeredRepo || "liquibase-test-harness");
 
-            let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}" || testBranchName + ", master";
+            let liquibaseBranchName = "${{ github.event.inputs.liquibaseBranch }}" || testBranchName + ", main";
             console.log("liquibaseBranch == " + liquibaseBranchName);
             core.setOutput("liquibaseBranch", liquibaseBranchName);
 
@@ -222,7 +222,7 @@ jobs:
               console.log("No liquibaseSha passed. Looking for branch "+ liquibaseBranchName);
 
               try {
-                let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "master", "main"]);
+                let liquibaseBranchResponse = await helper.findMatchingBranch(repoOwnerName, repoName, [liquibaseBranchName, "main"]);
                 liquibaseSha = liquibaseBranchResponse.sha;
               } catch (error) {
                 // If branch lookup fails and user explicitly selected liquibase-pro, fail hard
@@ -246,7 +246,7 @@ jobs:
                   const fallbackRepo = defaultRepo.split("/")[1];
 
                   try {
-                    let liquibaseBranchResponse = await helper.findMatchingBranch(fallbackOwner, fallbackRepo, [liquibaseBranchName, "master", "main"]);
+                    let liquibaseBranchResponse = await helper.findMatchingBranch(fallbackOwner, fallbackRepo, [liquibaseBranchName, "main"]);
                     liquibaseSha = liquibaseBranchResponse.sha;
                     liquibaseRepo = defaultRepo;
                     repoOwnerName = fallbackOwner;
@@ -333,8 +333,8 @@ jobs:
           # Determine target branch for artifact discovery
           INPUT_BRANCH="${{ github.event.inputs.liquibaseBranch }}"
           if [ -z "$INPUT_BRANCH" ]; then
-            TARGET_BRANCH="master"
-            echo "No branch specified, defaulting to master for artifact discovery"
+            TARGET_BRANCH="main"
+            echo "No branch specified, defaulting to main for artifact discovery"
           else
             TARGET_BRANCH=$(echo "$INPUT_BRANCH" | cut -d',' -f1 | tr -d ' ')
             echo "Using specified branch for artifact discovery: $TARGET_BRANCH"
@@ -386,12 +386,12 @@ jobs:
             echo "Fetching latest PRO artifact version from: $PACKAGES_URL"
             METADATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PACKAGES_URL")
 
-            # Extract version in {branch}-{7-char-hex-sha} format (e.g., master-e461cb2)
+            # Extract version in {branch}-{7-char-hex-sha} format (e.g., main-e461cb2)
             SECURE_VERSION=$(echo "$METADATA" | grep -o "<version>${TARGET_BRANCH}-[a-f0-9]\{7\}</version>" | tail -1 | sed 's/<[^>]*>//g')
 
-            if [ -z "$SECURE_VERSION" ] && [ "$TARGET_BRANCH" != "master" ]; then
-              echo "No artifact found for branch ${TARGET_BRANCH}, falling back to master"
-              SECURE_VERSION=$(echo "$METADATA" | grep -o '<version>master-[a-f0-9]\{7\}</version>' | tail -1 | sed 's/<[^>]*>//g')
+            if [ -z "$SECURE_VERSION" ] && [ "$TARGET_BRANCH" != "main" ]; then
+              echo "No artifact found for branch ${TARGET_BRANCH}, falling back to main"
+              SECURE_VERSION=$(echo "$METADATA" | grep -o '<version>main-[a-f0-9]\{7\}</version>' | tail -1 | sed 's/<[^>]*>//g')
             fi
 
             if [ -z "$SECURE_VERSION" ]; then

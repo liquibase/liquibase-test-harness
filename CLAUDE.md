@@ -426,8 +426,8 @@ Located in `.github/workflows/`:
 - Uses Maven for dependency resolution
 - Queries GitHub Packages maven-metadata.xml for versions
 - Community: `{commit-sha}-SNAPSHOT` format
-- Pro: `master-{short-sha}` format
-- Automatic fallback to master if branch not found
+- Pro: `main-{short-sha}` format
+- Automatic fallback to main if branch not found
 
 ---
 
