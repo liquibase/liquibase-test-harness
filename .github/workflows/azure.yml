@@ -187,30 +187,16 @@ jobs:
                 }
             }
 
-      - name: maven-settings-xml-action
-        uses: whelk-io/maven-settings-xml-action@9dc09b23833fa9aa7f27b63db287951856f3433d # v22
+      - name: Set up Maven settings.xml
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
         with:
           repositories: |
             [
-              {
-                "id": "github",
-                "url": "https://maven.pkg.github.com/liquibase/liquibase",
-                "releases": {
-                  "enabled": "true"
-                },
-                "snapshots": {
-                  "enabled": "true",
-                  "updatePolicy": "always"
-                }
-              }
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
             ]
           servers: |
             [
-              {
-                "id": "github",
-                "username": "liquibot",
-                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
-              }
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
             ]
 
       - uses: liquibase/build-logic/.github/actions/setup-java@main
@@ -445,25 +431,16 @@ jobs:
           distribution: "temurin"
           cache: "maven"
 
-      - name: maven-settings-xml-action
-        uses: whelk-io/maven-settings-xml-action@9dc09b23833fa9aa7f27b63db287951856f3433d # v22
+      - name: Set up Maven settings.xml
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
         with:
           repositories: |
             [
-              {
-                "id": "github",
-                "url": "https://maven.pkg.github.com/liquibase/liquibase",
-                "releases": { "enabled": "true" },
-                "snapshots": { "enabled": "true", "updatePolicy": "always" }
-              }
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
             ]
           servers: |
             [
-              {
-                "id": "github",
-                "username": "liquibot",
-                "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"
-              }
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
             ]
 
       - name: Restore cached Liquibase artifacts
