@@ -183,23 +183,25 @@ jobs:
                 }
             }
 
-      - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
-        with:
-          repositories: |
-            [
-              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
-            ]
-          servers: |
-            [
-              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
-            ]
-
       - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
+
+      - name: Set up Maven settings.xml
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
+        with:
+          repositories: |
+            [
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}},
+              {"id": "github-pro", "url": "https://maven.pkg.github.com/liquibase/liquibase-pro", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
+            ]
+          servers: |
+            [
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"},
+              {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
+            ]
 
       - name: Discover Liquibase Version
         id: discover-version
@@ -318,7 +320,21 @@ jobs:
           secret-ids: |
             ,/vault/liquibase
           parse-json-secrets: true
-          
+
+      - name: Set up Maven settings.xml
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
+        with:
+          repositories: |
+            [
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}},
+              {"id": "github-pro", "url": "https://maven.pkg.github.com/liquibase/liquibase-pro", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
+            ]
+          servers: |
+            [
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"},
+              {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
+            ]
+
       - name: Oracle OCI Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}

@@ -189,23 +189,25 @@ jobs:
                 }
             }
 
-      - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
-        with:
-          repositories: |
-            [
-              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
-            ]
-          servers: |
-            [
-              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
-            ]
-
       - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
+
+      - name: Set up Maven settings.xml
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
+        with:
+          repositories: |
+            [
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}},
+              {"id": "github-pro", "url": "https://maven.pkg.github.com/liquibase/liquibase-pro", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
+            ]
+          servers: |
+            [
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"},
+              {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
+            ]
 
       - name: Discover Liquibase Version
         id: discover-version
@@ -530,6 +532,20 @@ jobs:
           key: mvn-liquibase-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             mvn-liquibase-${{ github.run_id }}-
+
+      - name: Set up Maven settings.xml
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
+        with:
+          repositories: |
+            [
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}},
+              {"id": "github-pro", "url": "https://maven.pkg.github.com/liquibase/liquibase-pro", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
+            ]
+          servers: |
+            [
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"},
+              {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
+            ]
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '12' }}
