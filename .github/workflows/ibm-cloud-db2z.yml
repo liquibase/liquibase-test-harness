@@ -32,6 +32,26 @@ jobs:
             ,/vault/liquibase
           parse-json-secrets: true
 
+      - uses: liquibase/build-logic/.github/actions/setup-java@main
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
+
+      - name: Set up Maven settings.xml
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
+        with:
+          repositories: |
+            [
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}},
+              {"id": "github-pro", "url": "https://maven.pkg.github.com/liquibase/liquibase-pro", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
+            ]
+          servers: |
+            [
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"},
+              {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
+            ]
+
       - name: IBM DB2/Z Cloud Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
