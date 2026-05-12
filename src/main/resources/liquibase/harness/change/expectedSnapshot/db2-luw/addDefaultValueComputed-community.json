@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "defaultValue": "CURRENT DATE",
+            "name": "INSERTED_DATE",
+            "nullable": true,
+            "type": {
+              "typeName": "DATE"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
