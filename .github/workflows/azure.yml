@@ -187,23 +187,25 @@ jobs:
                 }
             }
 
-      - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
-        with:
-          repositories: |
-            [
-              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
-            ]
-          servers: |
-            [
-              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
-            ]
-
       - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
+
+      - name: Set up Maven settings.xml
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
+        with:
+          repositories: |
+            [
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}},
+              {"id": "github-pro", "url": "https://maven.pkg.github.com/liquibase/liquibase-pro", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
+            ]
+          servers: |
+            [
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"},
+              {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
+            ]
 
       - name: Discover Liquibase Version
         id: discover-version
@@ -436,11 +438,13 @@ jobs:
         with:
           repositories: |
             [
-              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}},
+              {"id": "github-pro", "url": "https://maven.pkg.github.com/liquibase/liquibase-pro", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
             ]
           servers: |
             [
-              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"},
+              {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
             ]
 
       - name: Restore cached Liquibase artifacts
@@ -550,6 +554,20 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
+
+      - name: Set up Maven settings.xml
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
+        with:
+          repositories: |
+            [
+              {"id": "github", "url": "https://maven.pkg.github.com/liquibase/liquibase", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}},
+              {"id": "github-pro", "url": "https://maven.pkg.github.com/liquibase/liquibase-pro", "releases": {"enabled": "true"}, "snapshots": {"enabled": "true", "updatePolicy": "always"}}
+            ]
+          servers: |
+            [
+              {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"},
+              {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
+            ]
 
       - name: Restore cached Liquibase artifacts
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
