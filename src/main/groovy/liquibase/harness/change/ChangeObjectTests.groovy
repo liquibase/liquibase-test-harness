@@ -85,6 +85,10 @@ class ChangeObjectTests extends Specification {
             snapshotArgs.put("username", testInput.username)
             snapshotArgs.put("password", testInput.password)
             snapshotArgs.put("snapshotFormat", "JSON")
+            String defaultSchema = testInput.database.getDefaultSchemaName()
+            if (defaultSchema != null && !defaultSchema.isEmpty()) {
+                snapshotArgs.put("schemas", defaultSchema)
+            }
             def generatedSnapshot = executeCommandScope("snapshot", snapshotArgs).toString()
             snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
         }
