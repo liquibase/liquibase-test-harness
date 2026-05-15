@@ -63,7 +63,7 @@ wait_for_rds() {
         fi
         ;;
       mysql|mariadb)
-        if mysqladmin ping -h 127.0.0.1 -P "$port" --connect-timeout=3 --silent 2>/dev/null; then
+        if mysqladmin ping -h localhost -P "$port" --connect-timeout=3 --silent 2>/dev/null; then
           echo "  $protocol responded to mysqladmin ping on port $port after ${elapsed}s (post-API)"
           return 0
         fi

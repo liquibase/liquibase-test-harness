@@ -404,7 +404,7 @@ jobs:
           aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-postgresql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           aurora_postgresql_url="jdbc:postgresql://localhost:$aurora_postgresql_port/${{ env.TH_DB }}"
           echo "TH_AURORA_POSTGRESQL17URL=$aurora_postgresql_url" >> $GITHUB_ENV
-          echo $TH_AURORA_POSTGRESQL16URL
+          echo $TH_AURORA_POSTGRESQL17URL
           source .github/util/wait-for-rds.sh
           wait_for_rds cluster aurora-postgresql-primary-cluster postgres "$aurora_postgresql_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_url" update
