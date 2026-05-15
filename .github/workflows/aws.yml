@@ -25,7 +25,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:12\",\"postgresql:13\",\"postgresql:14\",\"postgresql:16\",\"postgresql:17\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:aws_2019\",\"postgresql:aurora_16\",\"postgresql:aurora_17\"]"
+        default: "[\"postgresql:13\",\"postgresql:14\",\"postgresql:16\",\"postgresql:17\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:aws_2019\",\"postgresql:aurora_16\",\"postgresql:aurora_17\"]"
 
 permissions:
   contents: write
@@ -36,7 +36,7 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","postgresql:16","postgresql:17","oracle:aws_19",
+      databases: ${{ github.event.inputs.databases || '["postgresql:13","postgresql:14","postgresql:16","postgresql:17","oracle:aws_19",
         "mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora_16","postgresql:aurora_17"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
@@ -379,7 +379,8 @@ jobs:
           aurora_mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-mysql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           aurora_mysql_url="jdbc:mysql://localhost:$aurora_mysql_port/${{ env.TH_DB }}"
           echo "TH_AURORA_MYSQLURL=$aurora_mysql_url" >> $GITHUB_ENV
-          sleep 30
+          source .github/util/wait-for-rds.sh
+          wait_for_rds cluster aurora-mysql-primary-cluster mysql "$aurora_mysql_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_mysql_url" update
 
       - name: Init Aurora Postgresql Database
@@ -391,7 +392,8 @@ jobs:
           aurora_postgresql_url="jdbc:postgresql://localhost:$aurora_postgresql_port/${{ env.TH_DB }}"
           echo "TH_AURORA_POSTGRESQL16URL=$aurora_postgresql_url" >> $GITHUB_ENV
           echo $TH_AURORA_POSTGRESQL16URL
-          sleep 30
+          source .github/util/wait-for-rds.sh
+          wait_for_rds cluster aurora-postgresql-primary-cluster postgres "$aurora_postgresql_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_url" update
 
       - name: Init Aurora Postgresql Database
@@ -402,9 +404,10 @@ jobs:
           aurora_postgresql_port=$(awslocal rds describe-db-instances --db-instance-identifier aurora-postgresql-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           aurora_postgresql_url="jdbc:postgresql://localhost:$aurora_postgresql_port/${{ env.TH_DB }}"
           echo "TH_AURORA_POSTGRESQL17URL=$aurora_postgresql_url" >> $GITHUB_ENV
-          echo $TH_AURORA_POSTGRESQL16URL
-          sleep 30
-          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_url" update          
+          echo $TH_AURORA_POSTGRESQL17URL
+          source .github/util/wait-for-rds.sh
+          wait_for_rds cluster aurora-postgresql-primary-cluster postgres "$aurora_postgresql_port"
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$aurora_postgresql_url" update
 
       - name: Init MariaDB Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
@@ -414,19 +417,9 @@ jobs:
           mariadb_port=$(awslocal rds describe-db-instances --db-instance-identifier mariadb-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           mariadb_url="jdbc:mariadb://localhost:$mariadb_port/${{ env.TH_DB }}"
           echo "TH_MARIADBURL_10_6=$mariadb_url" >> $GITHUB_ENV
-          sleep 30
+          source .github/util/wait-for-rds.sh
+          wait_for_rds cluster mariadb-primary-cluster mariadb "$mariadb_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mariadb_url" update
-
-      - name: Init PostgreSQL 12 Database
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '12' }}
-        run: |
-          awslocal rds create-db-cluster --db-cluster-identifier postgres12-primary-cluster --engine postgres --engine-version 12 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
-          awslocal rds create-db-instance --db-instance-identifier postgres12-primary-cluster-instance --db-cluster-identifier postgres12-primary-cluster --engine postgres --db-instance-class db.t3.medium
-          postgres12_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres12-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          postgres12_url="jdbc:postgresql://localhost:$postgres12_port/${{ env.TH_DB }}"
-          echo "TH_PGRESURL_12=$postgres12_url" >> $GITHUB_ENV
-          sleep 30
-          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres12_url" update
 
       - name: Init PostgreSQL 13 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '13' }}
@@ -436,7 +429,8 @@ jobs:
           postgres13_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres13-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           postgres13_url="jdbc:postgresql://localhost:$postgres13_port/${{ env.TH_DB }}"
           echo "TH_PGRESURL_13=$postgres13_url" >> $GITHUB_ENV
-          sleep 30
+          source .github/util/wait-for-rds.sh
+          wait_for_rds cluster postgres13-primary-cluster postgres "$postgres13_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres13_url" update
 
       - name: Init PostgreSQL 14 Database
@@ -447,7 +441,8 @@ jobs:
           postgres14_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres14-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           postgres14_url="jdbc:postgresql://localhost:$postgres14_port/${{ env.TH_DB }}"
           echo "TH_PGRESURL_14=$postgres14_url" >> $GITHUB_ENV
-          sleep 30
+          source .github/util/wait-for-rds.sh
+          wait_for_rds cluster postgres14-primary-cluster postgres "$postgres14_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres14_url" update
 
       - name: Init PostgreSQL 16 Database
@@ -458,7 +453,8 @@ jobs:
           postgres16_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres16-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           postgres16_url="jdbc:postgresql://localhost:$postgres16_port/${{ env.TH_DB }}"
           echo "TH_PGRESURL_16=$postgres16_url" >> $GITHUB_ENV
-          sleep 30
+          source .github/util/wait-for-rds.sh
+          wait_for_rds cluster postgres16-primary-cluster postgres "$postgres16_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres16_url" update
 
       - name: Init PostgreSQL 17 Database
@@ -469,8 +465,9 @@ jobs:
           postgres17_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres17-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           postgres17_url="jdbc:postgresql://localhost:$postgres17_port/${{ env.TH_DB }}"
           echo "TH_PGRESURL_17=$postgres17_url" >> $GITHUB_ENV
-          sleep 30
-          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres17_url" update          
+          source .github/util/wait-for-rds.sh
+          wait_for_rds cluster postgres17-primary-cluster postgres "$postgres17_port"
+          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres17_url" update
 
       - name: Init AWS RDS MSSQL 2019 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql'}}
@@ -479,7 +476,8 @@ jobs:
           mssql2019_port=$(awslocal rds describe-db-instances --db-instance-identifier mssql2019  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           mssql2019_url="jdbc:sqlserver://;serverName=localhost;port=$mssql2019_port;trustServerCertificate=true;databaseName=${{ env.TH_DB }}"
           echo "TH_MSSQLURL=$mssql2019_url" >> $GITHUB_ENV
-          sleep 30
+          source .github/util/wait-for-rds.sh
+          wait_for_rds instance mssql2019 mssql "$mssql2019_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD_MSSQL }}" --url="$mssql2019_url" update
 
       - name: Init AWS RDS MySQL Database
@@ -489,7 +487,8 @@ jobs:
           mysql_port=$(awslocal rds describe-db-instances --db-instance-identifier mysql  --query 'DBInstances[0].Endpoint.Port' | jq -r)
           mysql_url="jdbc:mysql://localhost:$mysql_port/${{ env.TH_DB }}"
           echo "TH_MYSQLURL_8_0=$mysql_url" >> $GITHUB_ENV
-          sleep 30
+          source .github/util/wait-for-rds.sh
+          wait_for_rds instance mysql mysql "$mysql_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
 
       - name: Setup Liquibase for Oracle
@@ -548,20 +547,14 @@ jobs:
             ]
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '12' }}
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '13' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
           mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_12 }}' test
-
-      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '13' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_13 }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_13 }}' test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '14' }}
