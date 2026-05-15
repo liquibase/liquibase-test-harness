@@ -80,7 +80,12 @@ class ChangeObjectTests extends Specification {
 
         then: "get DB snapshot and verify it matches expected snapshot (skip if expected is empty {})"
         if (shouldVerifyJson) {
-            def generatedSnapshot = executeCommandScope("snapshot", argsMap).toString()
+            Map<String, Object> snapshotArgs = new HashMap()
+            snapshotArgs.put("url", testInput.url)
+            snapshotArgs.put("username", testInput.username)
+            snapshotArgs.put("password", testInput.password)
+            snapshotArgs.put("snapshotFormat", "JSON")
+            def generatedSnapshot = executeCommandScope("snapshot", snapshotArgs).toString()
             snapshotMatchesSpecifiedStructure(expectedSnapshot, generatedSnapshot)
         }
 
