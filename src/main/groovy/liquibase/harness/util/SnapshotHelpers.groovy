@@ -19,7 +19,30 @@ class SnapshotHelpers {
 
     static void snapshotMatchesSpecifiedStructure(String expected, String actual) {
         Logger.getLogger(this.class.name).info("Verifying that actual snapshot matches specified structure.")
-        JSONAssert.assertEquals(expected, actual, new GeneralSnapshotComparator())
+        try {
+            JSONAssert.assertEquals(expected, actual, new GeneralSnapshotComparator())
+        } catch (AssertionError e) {
+            String enhanced = e.getMessage() +
+                    "\n\n----- EXPECTED snapshot -----\n" + prettyPrintJsonSafely(expected) +
+                    "\n\n----- ACTUAL snapshot -----\n" + prettyPrintJsonSafely(actual) +
+                    "\n-----------------------------"
+            throw new AssertionError(enhanced, e)
+        }
+    }
+
+    private static String prettyPrintJsonSafely(String json) {
+        if (json == null) {
+            return "<null>"
+        }
+        try {
+            return new JSONObject(json).toString(2)
+        } catch (Exception ignored) {
+            try {
+                return new JSONArray(json).toString(2)
+            } catch (Exception ignored2) {
+                return json
+            }
+        }
     }
 
     static class GeneralSnapshotComparator extends DefaultComparator {
