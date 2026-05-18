@@ -24,6 +24,17 @@ on:
       - "Oracle Parallel Test Execution"            # OracleRunParallel.yml
     types:
       - completed
+  # Manual dispatch for end-to-end testing. Pass a known failed-run id of any
+  # of the upstream workflows; the notifier will fetch its metadata + jobs
+  # and post the real-shape payload to Slack. Useful for confirming vault
+  # wiring, webhook URL, channel routing, and message rendering without
+  # waiting for the next real failure.
+  workflow_dispatch:
+    inputs:
+      test_run_id:
+        description: "Workflow run ID to use as the test target (must be a run of one of the upstream workflows above)"
+        required: true
+        type: string
 
 permissions:
   actions: read     # listJobsForWorkflowRun
@@ -34,8 +45,10 @@ jobs:
   notify:
     name: Post failure to Slack
     # workflow_run.conclusion is one of: success, failure, cancelled,
-    # timed_out, action_required, neutral, skipped, stale.
+    # timed_out, action_required, neutral, skipped, stale. Manual dispatch
+    # always runs (it is the test path).
     if: >-
+      github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'failure' ||
       github.event.workflow_run.conclusion == 'timed_out' ||
       github.event.workflow_run.conclusion == 'cancelled'
@@ -61,10 +74,32 @@ jobs:
         # a file and consuming via payload-file-path keeps the Slack action's
         # templating off, eliminating any expression-injection vector.
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          TEST_RUN_ID: ${{ github.event.inputs.test_run_id }}
         with:
           script: |
             const fs = require('fs');
-            const run = context.payload.workflow_run;
+
+            // Two entry paths:
+            //   - workflow_run event: real upstream failure, payload.workflow_run is set
+            //   - workflow_dispatch event: test mode, fetch the run by id via API
+            let run;
+            if (context.eventName === 'workflow_dispatch') {
+              const runId = process.env.TEST_RUN_ID;
+              if (!runId) {
+                core.setFailed('workflow_dispatch requires test_run_id input');
+                return;
+              }
+              core.info(`Test mode — fetching run ${runId}`);
+              const { data } = await github.rest.actions.getWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: parseInt(runId, 10),
+              });
+              run = data;
+            } else {
+              run = context.payload.workflow_run;
+            }
 
             const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
               owner: context.repo.owner,
