@@ -5,10 +5,6 @@ name: Notify Slack on Workflow Failure
 # upstream run ended in failure, timed_out, or cancelled. Success runs stay
 # silent to keep signal-to-noise high. See TECHOPS-454 for rationale.
 #
-# Visual style mirrors liquibase/liquibase dry-run-release.yml: a danger-colored
-# Slack attachment wrapping a Block Kit body, so the message has the red
-# left-bar plus modern structured content. Webhook is loaded from /vault/liquibase
-# via OIDC, same pattern as every other cloud workflow in this repo.
 
 on:
   workflow_run:
