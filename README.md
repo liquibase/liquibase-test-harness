@@ -90,6 +90,12 @@ Extensions that add support for additional databases and/or define additional fu
 
 The test harness is configured to run via GitHub Actions workflows with smart artifact selection based on the triggering repository.
 
+#### Failure Notifications
+
+Failures from the test-harness CI workflows (`main`, `advanced`, `aws`, `aws-weekly`, `azure`, `gcp`, `oracle-oci`, `OracleRunParallel`) post to the **#test-harness-alerts** Slack channel. The notifier is a separate `workflow_run`-triggered workflow ([`.github/workflows/notify-slack-on-failure.yml`](.github/workflows/notify-slack-on-failure.yml)) that listens to the eight workflows above and posts only on `failure`, `timed_out`, or `cancelled` conclusions — success runs stay silent. Each message includes the workflow name, branch/ref, triggering event, commit SHA + author, the list of failed jobs, and a direct link to the run.
+
+To mute or change routing, edit `notify-slack-on-failure.yml` or the channel-side Slack subscription. The webhook URL is stored in AWS Secrets Manager under `/vault/liquibase` (key `TEST_HARNESS_SLACK_WEBHOOK`) and loaded into the workflow via OIDC, the same pattern as every other cloud workflow in this repo.
+
 #### Repository-Aware Artifact Selection
 
 Starting with the Liquibase Secure release, the **main.yml** workflow automatically detects which repository triggered it and selects appropriate artifacts:
