@@ -274,7 +274,7 @@ jobs:
         with:
           secret-ids: |
             TH_AURORA_POSTGRESQLURL, /testautomation/db_details/aurora_postgresql16_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
-            ,/testautomation/ssm/bastion_instance_id
+            SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
 
       # TECHOPS-460 pilot: route the postgresql:aurora init+test through an SSM
       # port-forwarding tunnel so it works once the underlying Aurora PG cluster
