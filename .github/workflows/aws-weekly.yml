@@ -126,6 +126,7 @@ jobs:
         if: ${{ matrix.version == 'aws' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aws'))) }}
         env:
           JDBC_URL: ${{ env.TH_MYSQLURL_8_0 }}
+        shell: bash
         run: |
           set -euo pipefail
           # JDBC URL shape: jdbc:mysql://<host>:<port>/<dbname>[?...]
