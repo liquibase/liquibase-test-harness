@@ -1,0 +1,184 @@
+name: Notify Slack on Workflow Failure
+
+# Central failure-notifier for the test-harness CI workflows. Triggers on the
+# completion of the upstream workflows below and posts to Slack only when the
+# upstream run ended in failure, timed_out, or cancelled. Success runs stay
+# silent to keep signal-to-noise high. See TECHOPS-454 for rationale.
+#
+
+on:
+  workflow_run:
+    # Match by upstream workflow `name:` field, not filename.
+    workflows:
+      - "Default Test Execution"                    # main.yml
+      - "Advanced Test Execution"                   # advanced.yml
+      - "AWS Cloud Database Test Execution"         # aws.yml
+      - "AWS Weekly Cloud Database Test Execution"  # aws-weekly.yml
+      - "Azure Cloud Sql DB Test"                   # azure.yml
+      - "Google Cloud Database Test Execution"      # gcp.yml
+      - "Oracle OCI Test Execution"                 # oracle-oci.yml
+      - "Oracle Parallel Test Execution"            # OracleRunParallel.yml
+    types:
+      - completed
+  # Manual dispatch for end-to-end testing. Pass a known failed-run id of any
+  # of the upstream workflows; the notifier will fetch its metadata + jobs
+  # and post the real-shape payload to Slack. Useful for confirming vault
+  # wiring, webhook URL, channel routing, and message rendering without
+  # waiting for the next real failure.
+  workflow_dispatch:
+    inputs:
+      test_run_id:
+        description: "Workflow run ID to use as the test target (must be a run of one of the upstream workflows above)"
+        required: true
+        type: string
+
+permissions:
+  actions: read     # listJobsForWorkflowRun
+  contents: read
+  id-token: write   # OIDC for AWS vault access
+
+jobs:
+  notify:
+    name: Post failure to Slack
+    # workflow_run.conclusion is one of: success, failure, cancelled,
+    # timed_out, action_required, neutral, skipped, stale. Manual dispatch
+    # always runs (it is the test path).
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'failure' ||
+      github.event.workflow_run.conclusion == 'timed_out' ||
+      github.event.workflow_run.conclusion == 'cancelled'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials for vault access
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
+        with:
+          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get secrets from vault
+        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+        with:
+          secret-ids: |
+            ,/vault/liquibase
+          parse-json-secrets: true
+
+      - name: Build Slack payload
+        id: build-payload
+        # Build the payload in JS so user-controlled fields (commit author
+        # name, branch name, etc.) are JSON-escaped automatically. Writing to
+        # a file and consuming via payload-file-path keeps the Slack action's
+        # templating off, eliminating any expression-injection vector.
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          TEST_RUN_ID: ${{ github.event.inputs.test_run_id }}
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Two entry paths:
+            //   - workflow_run event: real upstream failure, payload.workflow_run is set
+            //   - workflow_dispatch event: test mode, fetch the run by id via API
+            let run;
+            if (context.eventName === 'workflow_dispatch') {
+              const runId = process.env.TEST_RUN_ID;
+              if (!runId) {
+                core.setFailed('workflow_dispatch requires test_run_id input');
+                return;
+              }
+              core.info(`Test mode — fetching run ${runId}`);
+              const { data } = await github.rest.actions.getWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: parseInt(runId, 10),
+              });
+              run = data;
+            } else {
+              run = context.payload.workflow_run;
+            }
+
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: run.id,
+              per_page: 100,
+            });
+            const failedJobs = jobs
+              .filter(j => ['failure', 'timed_out', 'cancelled'].includes(j.conclusion))
+              .map(j => `• <${j.html_url}|${j.name}>`);
+            const failedList = failedJobs.length
+              ? failedJobs.join('\n')
+              : '_no individual job marked failed — check the full run log_';
+
+            const author = (run.head_commit && run.head_commit.author && run.head_commit.author.name) || 'unknown';
+            const sha = (run.head_sha || '').slice(0, 7);
+            const fullSha = run.head_sha || '';
+            const repo = `${context.repo.owner}/${context.repo.repo}`;
+            const commitUrl = `${context.serverUrl}/${repo}/commit/${fullSha}`;
+            const branchUrl = `${context.serverUrl}/${repo}/tree/${encodeURIComponent(run.head_branch || '')}`;
+
+            // Outer attachment carries the danger color (red sidebar).
+            // Inner blocks carry the structured content.
+            const payload = {
+              username: 'test-harness-alerts',
+              icon_emoji: ':rotating_light:',
+              text: `:x: ${run.name} ${run.conclusion} on ${run.head_branch} — ${repo}`,
+              attachments: [
+                {
+                  color: 'danger',
+                  fallback: `${run.name} ${run.conclusion} on ${run.head_branch}`,
+                  blocks: [
+                    {
+                      type: 'header',
+                      text: { type: 'plain_text', text: `:x:  ${run.name}`, emoji: true },
+                    },
+                    {
+                      type: 'context',
+                      elements: [
+                        { type: 'mrkdwn', text: `:gear: \`${repo}\` • run #${run.run_number} • attempt ${run.run_attempt}` },
+                      ],
+                    },
+                    {
+                      type: 'section',
+                      fields: [
+                        { type: 'mrkdwn', text: `*Conclusion*\n\`${run.conclusion}\`` },
+                        { type: 'mrkdwn', text: `*Event*\n\`${run.event}\`` },
+                        { type: 'mrkdwn', text: `*Branch*\n<${branchUrl}|\`${run.head_branch}\`>` },
+                        { type: 'mrkdwn', text: `*Commit*\n<${commitUrl}|\`${sha}\`> by ${author}` },
+                      ],
+                    },
+                    { type: 'divider' },
+                    {
+                      type: 'section',
+                      text: { type: 'mrkdwn', text: `*Failed jobs*\n${failedList}` },
+                    },
+                    {
+                      type: 'actions',
+                      elements: [
+                        {
+                          type: 'button',
+                          text: { type: 'plain_text', text: ':mag: Open failed run', emoji: true },
+                          url: run.html_url,
+                          style: 'danger',
+                        },
+                        {
+                          type: 'button',
+                          text: { type: 'plain_text', text: ':octocat: View commit', emoji: true },
+                          url: commitUrl,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            };
+
+            fs.writeFileSync(`${process.env.RUNNER_TEMP}/slack-payload.json`, JSON.stringify(payload));
+            core.setOutput('path', `${process.env.RUNNER_TEMP}/slack-payload.json`);
+
+      - name: Post to Slack
+        uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
+        with:
+          webhook: ${{ env.TEST_HARNESS_SLACK_WEBHOOK }}
+          webhook-type: incoming-webhook
+          payload-file-path: ${{ steps.build-payload.outputs.path }}
