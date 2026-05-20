@@ -150,7 +150,7 @@ jobs:
         run: |
           set -euo pipefail
           apt-get update
-          apt-get install -y --no-install-recommends netcat-openbsd unzip ca-certificates
+          apt-get install -y --no-install-recommends netcat-openbsd unzip ca-certificates sudo
           if ! command -v aws >/dev/null 2>&1; then
             curl -fsSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscli.zip
             unzip -q /tmp/awscli.zip -d /tmp
