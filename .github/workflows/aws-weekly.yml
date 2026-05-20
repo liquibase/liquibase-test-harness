@@ -184,6 +184,12 @@ jobs:
 
   test:
     needs: [deploy-ephemeral-cloud-infra, init-mysql, setup]
+    # init-mysql only runs when mysql:aws or mysql:aurora is in the matrix.
+    # For targeted dispatches that exclude mysql, init-mysql is `skipped` and
+    # the default `needs` semantics would cascade-skip this job. Explicitly
+    # gate on deploy-ephemeral + setup success and tolerate any init-mysql
+    # outcome that isn't a hard failure so per-engine pilots can be smoke-tested.
+    if: ${{ !cancelled() && needs.deploy-ephemeral-cloud-infra.result == 'success' && needs.setup.result == 'success' && needs.init-mysql.result != 'failure' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
