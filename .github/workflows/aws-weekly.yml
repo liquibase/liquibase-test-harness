@@ -58,6 +58,7 @@ jobs:
     needs: [deploy-ephemeral-cloud-infra, setup]
     container:
       image: liquibase/liquibase:latest
+      options: --user root
     strategy:
       fail-fast: false
       matrix:
@@ -142,6 +143,22 @@ jobs:
           echo "host=$host"     >> "$GITHUB_OUTPUT"
           echo "port=$port"     >> "$GITHUB_OUTPUT"
           echo "dbname-qs=$dbname_qs" >> "$GITHUB_OUTPUT"
+
+      - name: Install AWS CLI and netcat
+        if: ${{ matrix.version == 'aws' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aws'))) }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          apt-get update
+          apt-get install -y --no-install-recommends netcat-openbsd unzip ca-certificates
+          if ! command -v aws >/dev/null 2>&1; then
+            curl -fsSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscli.zip
+            unzip -q /tmp/awscli.zip -d /tmp
+            /tmp/aws/install
+            rm -rf /tmp/awscli.zip /tmp/aws
+          fi
+          aws --version
+          command -v nc
 
       - name: Open SSM tunnel to MySQL
         if: ${{ matrix.version == 'aws' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aws'))) }}
