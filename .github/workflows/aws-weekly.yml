@@ -144,8 +144,7 @@ jobs:
 
       - name: Open SSM tunnel to MySQL
         if: ${{ matrix.version == 'aws' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aws'))) }}
-        # TODO TECHOPS-460: switch to @main after liquibase/build-logic#595 merges.
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@TECHOPS-460-ssm-db-tunnel
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-mysql.outputs.host }}
