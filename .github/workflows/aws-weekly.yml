@@ -283,6 +283,47 @@ jobs:
         with:
           secret-ids: |
             TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
+
+      # TECHOPS-509 (child of TECHOPS-460): route the mysql:aurora mvn test
+      # step through the SSM port-forwarding tunnel so the aws-aurora-mysql
+      # cluster can flip publicly_accessible=false. init-mysql container job
+      # already tunnels mysql:aurora via #1288.
+      - name: Parse aurora-mysql endpoint from JDBC URL
+        id: parse-aurora-mysql
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        env:
+          JDBC_URL: ${{ env.TH_AURORA_MYSQLURL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # JDBC URL shape: jdbc:mysql://<host>[:<port>]/<dbname>[?...]
+          tail="${JDBC_URL#jdbc:mysql://}"
+          host_port="${tail%%/*}"
+          dbname_qs="${tail#*/}"
+          if [[ "$host_port" == *:* ]]; then
+            host="${host_port%%:*}"
+            port="${host_port##*:}"
+          else
+            host="$host_port"
+            port="3306"
+          fi
+          if [[ ! "$host" =~ ^[A-Za-z0-9.-]+$ ]] || [[ ! "$port" =~ ^[0-9]{1,5}$ ]]; then
+            echo "::error::Could not parse host/port from JDBC URL" >&2
+            exit 1
+          fi
+          echo "host=$host"           >> "$GITHUB_OUTPUT"
+          echo "port=$port"           >> "$GITHUB_OUTPUT"
+          echo "dbname-qs=$dbname_qs" >> "$GITHUB_OUTPUT"
+
+      - name: Open SSM tunnel to aurora-mysql
+        if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@main
+        with:
+          bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
+          db-host: ${{ steps.parse-aurora-mysql.outputs.host }}
+          db-port: ${{ steps.parse-aurora-mysql.outputs.port }}
+          local-port: '13306'
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
@@ -661,12 +702,18 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
+          DB_PLATFORM: ${{ steps.setup.outputs.databasePlatform }}
+          DB_VERSION: ${{ steps.setup.outputs.databaseVersion }}
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          AURORA_MYSQL_JDBC_URL: jdbc:mysql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-aurora-mysql.outputs.dbname-qs }}
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_MYSQLURL }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$AURORA_MYSQL_JDBC_URL" test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
