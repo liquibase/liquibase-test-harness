@@ -1,1 +1,1 @@
-ALTER TABLE ADMIN.posts MODIFY title DEFAULT 'title_test'
+ALTER TABLE "ADMIN".posts MODIFY title DEFAULT 'title_test'

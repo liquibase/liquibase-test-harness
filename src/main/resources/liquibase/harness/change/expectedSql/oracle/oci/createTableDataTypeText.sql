@@ -1,1 +1,1 @@
-CREATE TABLE ADMIN.createTableDataTypeText (textCol CLOB)
+CREATE TABLE "ADMIN".createTableDataTypeText (textCol CLOB)

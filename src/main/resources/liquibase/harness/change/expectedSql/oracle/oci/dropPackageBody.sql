@@ -9,5 +9,5 @@ PROCEDURE test_procedure IS
 BEGIN END test_procedure
 END test_package
 /
-DROP PACKAGE BODY ADMIN.test_package
-DROP PACKAGE ADMIN.test_package
+DROP PACKAGE BODY "ADMIN".test_package
+DROP PACKAGE "ADMIN".test_package
