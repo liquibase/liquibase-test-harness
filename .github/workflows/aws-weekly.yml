@@ -371,6 +371,7 @@ jobs:
         with:
           secret-ids: |
             TH_ORACLEURL_19_TH, /testautomation/db_details/aws_oracle_19_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
@@ -443,6 +444,7 @@ jobs:
         with:
           secret-ids: |
             TH_MARIADBURL_10_6, /testautomation/db_details/aws_mariadb_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
@@ -451,6 +453,7 @@ jobs:
           secret-ids: |
             TH_MSSQLURL, /testautomation/db_details/aws_mssql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
             TH_MSSQLURL_HOST, /testautomation/db_details/aws_mssql_host_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
 
       - name: Get AWS secrets
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
@@ -529,17 +532,66 @@ jobs:
           echo "2cc69b821da842c5f5be8877444631cf9fa89561f1f6f5ad7bf1293eb669fc27  liquibase_libs/ojdbc11.jar" | sha256sum -c -
           ls -la liquibase_libs/
 
-      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
+      # Route oracle init+test through the SSM tunnel so the aws-oracle RDS
+      # instance can flip publicly_accessible=false. Oracle JDBC URL shape is
+      # jdbc:oracle:thin:@<host>:<port>:<sid> (SID form, used here).
+      - name: Parse Oracle endpoint from JDBC URL
+        id: parse-oracle
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        env:
+          JDBC_URL: ${{ env.TH_ORACLEURL_19_TH }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # JDBC URL shape: jdbc:oracle:thin:@<host>:<port>:<sid>
+          # (Could also be @//host:port/service; SID is what the secret uses.)
+          tail="${JDBC_URL#jdbc:oracle:thin:@}"
+          # Strip optional leading //
+          tail="${tail#//}"
+          # host:port:sid  OR  host:port/service
+          host="${tail%%:*}"
+          rest="${tail#*:}"
+          port="${rest%%[:/]*}"
+          tail_id="${rest#*[:/]}"
+          if [[ ! "$host" =~ ^[A-Za-z0-9.-]+$ ]] || [[ ! "$port" =~ ^[0-9]{1,5}$ ]]; then
+            echo "::error::Could not parse host/port from Oracle JDBC URL" >&2
+            exit 1
+          fi
+          # tail_id may still contain a separator if the URL has both : and /
+          echo "host=$host"     >> "$GITHUB_OUTPUT"
+          echo "port=$port"     >> "$GITHUB_OUTPUT"
+          echo "sid=$tail_id"   >> "$GITHUB_OUTPUT"
+
+      - name: Open SSM tunnel to oracle
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@main
+        with:
+          bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
+          db-host: ${{ steps.parse-oracle.outputs.host }}
+          db-port: ${{ steps.parse-oracle.outputs.port }}
+          local-port: '11521'
+
+      # Replace liquibase-github-action with docker run --network host so the
+      # liquibase container can reach the tunnel on the runner host loopback.
+      - name: Init Oracle via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws:liquibase_libs/ojdbc11.jar"
-          changeLogFile: "oracle.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_ORACLEURL_19_TH }}"
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          ORACLE_JDBC_URL: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
+        run: |
+          docker run --rm --network host \
+            -v "${PWD}:/workspace" \
+            -w /workspace \
+            -e LIQUIBASE_PRO_LICENSE_KEY \
+            liquibase/liquibase:latest \
+            --classpath="src/test/resources/init-changelogs/aws:liquibase_libs/ojdbc11.jar" \
+            --changeLogFile="oracle.sql" \
+            --username="$DB_USERNAME" \
+            --password="$DB_PASSWORD" \
+            --url="$ORACLE_JDBC_URL" \
+            update
 
       # TECHOPS-507: cannot use liquibase/liquibase-github-action here because
       # it spawns its own container with default bridge networking, so the SSM
@@ -579,17 +631,63 @@ jobs:
           echo "50a50c4a3c13c30dfbd40587f7ad9a496197d285ede0948641d9eee68fdf2106  liquibase_libs/mariadb-java-client.jar" | sha256sum -c -
           ls -la liquibase_libs/
 
-      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
+      # Route mariadb init+test through the SSM tunnel so the aws-mariadb RDS
+      # instance can flip publicly_accessible=false.
+      - name: Parse mariadb endpoint from JDBC URL
+        id: parse-mariadb
+        if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
+        env:
+          JDBC_URL: ${{ env.TH_MARIADBURL_10_6 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # JDBC URL shape: jdbc:mariadb://<host>[:<port>]/<dbname>[?...]
+          tail="${JDBC_URL#jdbc:mariadb://}"
+          host_port="${tail%%/*}"
+          dbname_qs="${tail#*/}"
+          if [[ "$host_port" == *:* ]]; then
+            host="${host_port%%:*}"
+            port="${host_port##*:}"
+          else
+            host="$host_port"
+            port="3306"
+          fi
+          if [[ ! "$host" =~ ^[A-Za-z0-9.-]+$ ]] || [[ ! "$port" =~ ^[0-9]{1,5}$ ]]; then
+            echo "::error::Could not parse host/port from JDBC URL" >&2
+            exit 1
+          fi
+          echo "host=$host"           >> "$GITHUB_OUTPUT"
+          echo "port=$port"           >> "$GITHUB_OUTPUT"
+          echo "dbname-qs=$dbname_qs" >> "$GITHUB_OUTPUT"
+
+      - name: Open SSM tunnel to mariadb
+        if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@main
+        with:
+          bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
+          db-host: ${{ steps.parse-mariadb.outputs.host }}
+          db-port: ${{ steps.parse-mariadb.outputs.port }}
+          local-port: '13306'
+
+      - name: Init mariadb via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws:liquibase_libs/mariadb-java-client.jar"
-          changeLogFile: "mariadb.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_MARIADBURL_10_6 }}"
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          MARIADB_JDBC_URL: jdbc:mariadb://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-mariadb.outputs.dbname-qs }}
+        run: |
+          docker run --rm --network host \
+            -v "${PWD}:/workspace" \
+            -w /workspace \
+            -e LIQUIBASE_PRO_LICENSE_KEY \
+            liquibase/liquibase:latest \
+            --classpath="src/test/resources/init-changelogs/aws:liquibase_libs/mariadb-java-client.jar" \
+            --changeLogFile="mariadb.sql" \
+            --username="$DB_USERNAME" \
+            --password="$DB_PASSWORD" \
+            --url="$MARIADB_JDBC_URL" \
+            update
 
       - name: Install a SQL Server suite of tools
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
@@ -597,9 +695,45 @@ jobs:
         with:
           install: sqlengine, sqlclient, sqlpackage
 
+      # Route mssql init+test through the SSM tunnel so the aws-mssql RDS
+      # instance can flip publicly_accessible=false. JDBC URL shape is
+      # jdbc:sqlserver://<host>:<port>;trustServerCertificate=true;databaseName=<db>
+      # (TH_MSSQLURL_HOST is "<host>,<port>" for sqlcmd's -S flag).
+      - name: Parse mssql endpoint from JDBC URL
+        id: parse-mssql
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        env:
+          JDBC_URL: ${{ env.TH_MSSQLURL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # jdbc:sqlserver://<host>:<port>;<key=val>;<key=val>...
+          tail="${JDBC_URL#jdbc:sqlserver://}"
+          host_port="${tail%%;*}"
+          host="${host_port%%:*}"
+          port="${host_port##*:}"
+          if [[ ! "$host" =~ ^[A-Za-z0-9.-]+$ ]] || [[ ! "$port" =~ ^[0-9]{1,5}$ ]]; then
+            echo "::error::Could not parse host/port from MSSQL JDBC URL" >&2
+            exit 1
+          fi
+          echo "host=$host" >> "$GITHUB_OUTPUT"
+          echo "port=$port" >> "$GITHUB_OUTPUT"
+
+      - name: Open SSM tunnel to mssql
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@main
+        with:
+          bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
+          db-host: ${{ steps.parse-mssql.outputs.host }}
+          db-port: ${{ steps.parse-mssql.outputs.port }}
+          local-port: '11433'
+
       - name: Run sqlcmd
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        run: sqlcmd -S ${{ env.TH_MSSQLURL_HOST }} -U ${{env.TH_DB_ADMIN}} -P ${{env.TH_DB_PASSWD}} -C -Q "CREATE DATABASE lbcat"
+        env:
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+        run: sqlcmd -S "${{ env.TUNNELED_DB_HOST }},${{ env.TUNNELED_DB_PORT }}" -U "$DB_USERNAME" -P "$DB_PASSWORD" -C -Q "CREATE DATABASE lbcat"
 
       # TECHOPS-513: stage MSSQL JDBC driver for Liquibase 5.0.3 image.
       # SHA-256 pinned (matches Maven Central published .jar.sha256).
@@ -614,17 +748,26 @@ jobs:
           echo "e6933c0711e598a224060e52ed31392f720a4a7664e85d8ae37c52a85b67ebb0  liquibase_libs/mssql-jdbc.jar" | sha256sum -c -
           ls -la liquibase_libs/
 
-      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
+      - name: Init mssql via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws:liquibase_libs/mssql-jdbc.jar"
-          changeLogFile: "mssql.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_MSSQLURL }}"
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          MSSQL_JDBC_URL: jdbc:sqlserver://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }};trustServerCertificate=true;databaseName=lbcat
+        run: |
+          docker run --rm --network host \
+            -v "${PWD}:/workspace" \
+            -w /workspace \
+            -e LIQUIBASE_PRO_LICENSE_KEY \
+            liquibase/liquibase:latest \
+            --classpath="src/test/resources/init-changelogs/aws:liquibase_libs/mssql-jdbc.jar" \
+            --changeLogFile="mssql.sql" \
+            --username="$DB_USERNAME" \
+            --password="$DB_PASSWORD" \
+            --url="$MSSQL_JDBC_URL" \
+            update
+
 
       # TECHOPS-460: cannot use liquibase/liquibase-github-action here because it
       # spawns its own container with default bridge networking, so the SSM
@@ -692,23 +835,35 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
+          DB_PLATFORM: ${{ steps.setup.outputs.databasePlatform }}
+          DB_VERSION: ${{ steps.setup.outputs.databaseVersion }}
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          ORACLE_JDBC_URL: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_ORACLEURL_19_TH }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$ORACLE_JDBC_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
+          DB_PLATFORM: ${{ steps.setup.outputs.databasePlatform }}
+          DB_VERSION: ${{ steps.setup.outputs.databaseVersion }}
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          MARIADB_JDBC_URL: jdbc:mariadb://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-mariadb.outputs.dbname-qs }}
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_MARIADBURL_10_6 }}'  test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MARIADB_JDBC_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
@@ -731,12 +886,18 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
+          DB_PLATFORM: ${{ steps.setup.outputs.databasePlatform }}
+          DB_VERSION: ${{ steps.setup.outputs.databaseVersion }}
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          MSSQL_JDBC_URL: jdbc:sqlserver://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }};trustServerCertificate=true;databaseName=lbcat
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_MSSQLURL }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MSSQL_JDBC_URL" test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
