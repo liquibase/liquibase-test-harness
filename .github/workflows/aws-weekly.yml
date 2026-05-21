@@ -184,6 +184,12 @@ jobs:
 
   test:
     needs: [deploy-ephemeral-cloud-infra, init-mysql, setup]
+    # init-mysql only runs when mysql:aws or mysql:aurora is in the matrix.
+    # For targeted dispatches that exclude mysql, init-mysql is `skipped` and
+    # the default `needs` semantics would cascade-skip this job. Explicitly
+    # gate on deploy-ephemeral + setup success and tolerate any init-mysql
+    # outcome that isn't a hard failure so per-engine pilots can be smoke-tested.
+    if: ${{ !cancelled() && needs.deploy-ephemeral-cloud-infra.result == 'success' && needs.setup.result == 'success' && needs.init-mysql.result != 'failure' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -274,6 +280,61 @@ jobs:
         with:
           secret-ids: |
             TH_AURORA_POSTGRESQLURL, /testautomation/db_details/aurora_postgresql16_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
+
+      # TECHOPS-460 pilot: route the postgresql:aurora init+test through an SSM
+      # port-forwarding tunnel so it works once the underlying Aurora PG cluster
+      # flips publicly_accessible=false. parse-aurora-pg extracts host/port from
+      # the JDBC URL; the composite action opens the tunnel and exports
+      # TUNNELED_DB_HOST/TUNNELED_DB_PORT for the liquibase + mvn steps below.
+      - name: Parse Aurora PG endpoint from JDBC URL
+        id: parse-aurora-pg
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        env:
+          JDBC_URL: ${{ env.TH_AURORA_POSTGRESQLURL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # JDBC URL shape: jdbc:postgresql://<host>[:<port>]/<dbname>[?...]
+          tail="${JDBC_URL#jdbc:postgresql://}"
+          host_port="${tail%%/*}"
+          dbname_qs="${tail#*/}"
+          if [[ "$host_port" == *:* ]]; then
+            host="${host_port%%:*}"
+            port="${host_port##*:}"
+          else
+            host="$host_port"
+            port="5432"
+          fi
+          if [[ ! "$host" =~ ^[A-Za-z0-9.-]+$ ]] || [[ ! "$port" =~ ^[0-9]{1,5}$ ]]; then
+            echo "::error::Could not parse host/port from JDBC URL" >&2
+            exit 1
+          fi
+          echo "host=$host"           >> "$GITHUB_OUTPUT"
+          echo "port=$port"           >> "$GITHUB_OUTPUT"
+          echo "dbname-qs=$dbname_qs" >> "$GITHUB_OUTPUT"
+
+      - name: Open SSM tunnel to Aurora PG
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@main
+        with:
+          bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
+          db-host: ${{ steps.parse-aurora-pg.outputs.host }}
+          db-port: ${{ steps.parse-aurora-pg.outputs.port }}
+          local-port: '15432'
+
+      # liquibase/liquibase:latest (used by liquibase-github-action) does not
+      # bundle the PostgreSQL JDBC driver since 5.0.3. Stage it into
+      # liquibase_libs/ so the action's container picks it up via classpath.
+      - name: Install PostgreSQL JDBC driver
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p liquibase_libs
+          curl -fsSL -o liquibase_libs/postgresql.jar \
+            https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
+          ls -la liquibase_libs/
 
       - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
@@ -333,17 +394,30 @@ jobs:
           password: "${{env.TH_DB_PASSWD}}"
           url: "${{ env.TH_MSSQLURL }}"
 
-      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
+      # TECHOPS-460: cannot use liquibase/liquibase-github-action here because it
+      # spawns its own container with default bridge networking, so the SSM
+      # tunnel on the runner host's 127.0.0.1:15432 is unreachable. Run the
+      # liquibase image directly with --network host so the container shares
+      # the runner's loopback. Same image, same args; just no isolation layer.
+      - name: Init Aurora PG via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
-          changeLogFile: "postgresql.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "${{ env.TH_AURORA_POSTGRESQLURL }}"
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          AURORA_PG_JDBC_URL: jdbc:postgresql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-aurora-pg.outputs.dbname-qs }}
+        run: |
+          docker run --rm --network host \
+            -v "${PWD}:/workspace" \
+            -w /workspace \
+            -e LIQUIBASE_PRO_LICENSE_KEY \
+            liquibase/liquibase:latest \
+            --classpath="src/test/resources/init-changelogs/aws:liquibase_libs/postgresql.jar" \
+            --changeLogFile="postgresql.sql" \
+            --username="$DB_USERNAME" \
+            --password="$DB_PASSWORD" \
+            --url="$AURORA_PG_JDBC_URL" \
+            update
 
       - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
@@ -435,12 +509,17 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
+          DB_PLATFORM: ${{ steps.setup.outputs.databasePlatform }}
+          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
+          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          AURORA_PG_JDBC_URL: jdbc:postgresql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-aurora-pg.outputs.dbname-qs }}
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=17 -Dprefix=aurora -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_POSTGRESQLURL }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion=16 -Dprefix=aurora -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$AURORA_PG_JDBC_URL" test
 
       - name: Archive AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
