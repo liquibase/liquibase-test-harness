@@ -4,7 +4,7 @@
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "defaultValue": "\"ADMIN\".test_sequence.nextval\\!\\{liquibase.statement.DatabaseFunction\\}",
+            "defaultValue": "test_sequence\\!\\{liquibase.statement.SequenceNextValueFunction\\}",
             "name": "SEQUENCE_REFERENCED_COLUMN",
             "nullable": true,
             "type": {
