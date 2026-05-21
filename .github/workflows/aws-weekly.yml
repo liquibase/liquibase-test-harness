@@ -114,6 +114,7 @@ jobs:
         with:
           secret-ids: |
             TH_AURORA_MYSQLURL, /testautomation/db_details/aurora_mysql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
+            SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
       #This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
         run: lpm update && lpm add mysql
@@ -145,7 +146,7 @@ jobs:
           echo "dbname-qs=$dbname_qs" >> "$GITHUB_OUTPUT"
 
       - name: Install AWS CLI and netcat
-        if: ${{ matrix.version == 'aws' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aws'))) }}
+        if: ${{ matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (contains(needs.setup.outputs.databases, 'mysql:aws') || contains(needs.setup.outputs.databases, 'mysql:aurora')))) }}
         shell: bash
         run: |
           set -euo pipefail
@@ -176,11 +177,50 @@ jobs:
           TUNNELED_MYSQL_URL: jdbc:mysql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-mysql.outputs.dbname-qs }}
         run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}_cloud.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TUNNELED_MYSQL_URL }}" update
 
+      # TECHOPS-509: mirror the mysql:aws tunneling pattern for mysql:aurora so
+      # init-mysql still works once aws-aurora-mysql flips publicly_accessible=false.
+      - name: Parse Aurora MySQL endpoint from JDBC URL
+        id: parse-aurora-mysql-init
+        if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
+        env:
+          JDBC_URL: ${{ env.TH_AURORA_MYSQLURL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # JDBC URL shape: jdbc:mysql://<host>[:<port>]/<dbname>[?...]
+          tail="${JDBC_URL#jdbc:mysql://}"
+          host_port="${tail%%/*}"
+          dbname_qs="${tail#*/}"
+          if [[ "$host_port" == *:* ]]; then
+            host="${host_port%%:*}"
+            port="${host_port##*:}"
+          else
+            host="$host_port"
+            port="3306"
+          fi
+          if [[ ! "$host" =~ ^[A-Za-z0-9.-]+$ ]] || [[ ! "$port" =~ ^[0-9]{1,5}$ ]]; then
+            echo "::error::Could not parse host/port from JDBC URL" >&2
+            exit 1
+          fi
+          echo "host=$host"           >> "$GITHUB_OUTPUT"
+          echo "port=$port"           >> "$GITHUB_OUTPUT"
+          echo "dbname-qs=$dbname_qs" >> "$GITHUB_OUTPUT"
+
+      - name: Open SSM tunnel to Aurora MySQL
+        if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@main
+        with:
+          bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
+          db-host: ${{ steps.parse-aurora-mysql-init.outputs.host }}
+          db-port: ${{ steps.parse-aurora-mysql-init.outputs.port }}
+          local-port: '13306'
+
       - name: Init Database
         if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}_cloud.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TH_AURORA_MYSQLURL }}" update
+          TUNNELED_AURORA_MYSQL_URL: jdbc:mysql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-aurora-mysql-init.outputs.dbname-qs }}
+        run: liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ matrix.database }}_cloud.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="${{ env.TUNNELED_AURORA_MYSQL_URL }}" update
 
   test:
     needs: [deploy-ephemeral-cloud-infra, init-mysql, setup]
