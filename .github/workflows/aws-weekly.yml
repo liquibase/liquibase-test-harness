@@ -728,16 +728,19 @@ jobs:
           db-port: ${{ steps.parse-mssql.outputs.port }}
           local-port: '11433'
 
-      # `-l 60` raises sqlcmd's login timeout from the default ~8s to 60s.
-      # The SSM port-forwarding session needs warmup time after `nc -z` reports
-      # the TCP listener up before TDS traffic flows reliably (smoke run
-      # 26255212442 timed out at 8s on the default).
+      # Tunnel-specific TLS quirk: ODBC Driver 18 (sqlcmd 1.5.0) defaults to
+      # Encrypt=Mandatory and validates the cert hostname matches the connect
+      # target. We connect to "localhost,11433" but the RDS server cert CN is
+      # the real RDS DNS name, so the TLS handshake hangs (smoke run
+      # 26257193170 timed out at 60s even with -l 60).
+      # `-N false` disables TLS for this admin step; the bytes still travel
+      # over the encrypted SSM port-forwarding session.
       - name: Run sqlcmd
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
-        run: sqlcmd -S "${{ env.TUNNELED_DB_HOST }},${{ env.TUNNELED_DB_PORT }}" -U "$DB_USERNAME" -P "$DB_PASSWORD" -C -l 60 -Q "CREATE DATABASE lbcat"
+        run: sqlcmd -S "${{ env.TUNNELED_DB_HOST }},${{ env.TUNNELED_DB_PORT }}" -U "$DB_USERNAME" -P "$DB_PASSWORD" -N false -l 60 -Q "CREATE DATABASE lbcat"
 
       # TECHOPS-513: stage MSSQL JDBC driver for Liquibase 5.0.3 image.
       # SHA-256 pinned (matches Maven Central published .jar.sha256).
