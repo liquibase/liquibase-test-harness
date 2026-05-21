@@ -1,1 +1,1 @@
-COMMENT ON TABLE ADMIN.authors IS 'A Test Remark'
+COMMENT ON TABLE "ADMIN".authors IS 'A Test Remark'

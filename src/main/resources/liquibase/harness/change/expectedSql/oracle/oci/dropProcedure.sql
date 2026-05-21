@@ -3,4 +3,4 @@ AS
 BEGIN
 END
 /
-DROP PROCEDURE ADMIN.test_procedure
+DROP PROCEDURE "ADMIN".test_procedure
