@@ -323,6 +323,19 @@ jobs:
           db-port: ${{ steps.parse-aurora-pg.outputs.port }}
           local-port: '15432'
 
+      # liquibase/liquibase:latest (used by liquibase-github-action) does not
+      # bundle the PostgreSQL JDBC driver since 5.0.3. Stage it into
+      # liquibase_libs/ so the action's container picks it up via classpath.
+      - name: Install PostgreSQL JDBC driver
+        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p liquibase_libs
+          curl -fsSL -o liquibase_libs/postgresql.jar \
+            https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
+          ls -la liquibase_libs/
+
       - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
@@ -387,7 +400,7 @@ jobs:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
           operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
+          classpath: "src/test/resources/init-changelogs/aws:liquibase_libs/postgresql.jar"
           changeLogFile: "postgresql.sql"
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
