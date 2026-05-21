@@ -728,12 +728,16 @@ jobs:
           db-port: ${{ steps.parse-mssql.outputs.port }}
           local-port: '11433'
 
+      # `-l 60` raises sqlcmd's login timeout from the default ~8s to 60s.
+      # The SSM port-forwarding session needs warmup time after `nc -z` reports
+      # the TCP listener up before TDS traffic flows reliably (smoke run
+      # 26255212442 timed out at 8s on the default).
       - name: Run sqlcmd
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
-        run: sqlcmd -S "${{ env.TUNNELED_DB_HOST }},${{ env.TUNNELED_DB_PORT }}" -U "$DB_USERNAME" -P "$DB_PASSWORD" -C -Q "CREATE DATABASE lbcat"
+        run: sqlcmd -S "${{ env.TUNNELED_DB_HOST }},${{ env.TUNNELED_DB_PORT }}" -U "$DB_USERNAME" -P "$DB_PASSWORD" -C -l 60 -Q "CREATE DATABASE lbcat"
 
       # TECHOPS-513: stage MSSQL JDBC driver for Liquibase 5.0.3 image.
       # SHA-256 pinned (matches Maven Central published .jar.sha256).
