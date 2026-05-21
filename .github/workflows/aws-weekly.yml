@@ -394,17 +394,27 @@ jobs:
           password: "${{env.TH_DB_PASSWD}}"
           url: "${{ env.TH_MSSQLURL }}"
 
-      - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
+      # TECHOPS-460: cannot use liquibase/liquibase-github-action here because it
+      # spawns its own container with default bridge networking, so the SSM
+      # tunnel on the runner host's 127.0.0.1:15432 is unreachable. Run the
+      # liquibase image directly with --network host so the container shares
+      # the runner's loopback. Same image, same args; just no isolation layer.
+      - name: Init Aurora PG via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws:liquibase_libs/postgresql.jar"
-          changeLogFile: "postgresql.sql"
-          username: "${{env.TH_DB_ADMIN}}"
-          password: "${{env.TH_DB_PASSWD}}"
-          url: "jdbc:postgresql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-aurora-pg.outputs.dbname-qs }}"
+        run: |
+          docker run --rm --network host \
+            -v "${PWD}:/workspace" \
+            -w /workspace \
+            -e LIQUIBASE_PRO_LICENSE_KEY \
+            liquibase/liquibase:latest \
+            --classpath="src/test/resources/init-changelogs/aws:liquibase_libs/postgresql.jar" \
+            --changeLogFile="postgresql.sql" \
+            --username="${{ env.TH_DB_ADMIN }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            --url="jdbc:postgresql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-aurora-pg.outputs.dbname-qs }}" \
+            update
 
       - uses: liquibase/build-logic/.github/actions/setup-java@main
         with:
