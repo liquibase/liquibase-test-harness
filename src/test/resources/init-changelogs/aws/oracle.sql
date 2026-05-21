@@ -1,4 +1,25 @@
 --liquibase formatted sql
+--changeset liquibase:0 splitStatements:false runAlways:true
+
+BEGIN
+   BEGIN
+      EXECUTE IMMEDIATE 'DROP SEQUENCE TEST_SEQUENCE';
+   EXCEPTION
+      WHEN OTHERS THEN
+         IF SQLCODE != -2289 THEN
+            RAISE;
+         END IF;
+   END;
+   BEGIN
+      EXECUTE IMMEDIATE 'DROP SEQUENCE TEST_SEQUENCE_RENAME_TEST';
+   EXCEPTION
+      WHEN OTHERS THEN
+         IF SQLCODE != -2289 THEN
+            RAISE;
+         END IF;
+   END;
+END;
+
 --changeset liquibase:1 splitStatements:false runAlways:true
 
 BEGIN
