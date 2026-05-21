@@ -335,6 +335,35 @@ jobs:
               {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
             ]
 
+      - name: Setup Liquibase for Oracle
+        uses: liquibase/setup-liquibase@4c4338845f94675734bc4116f57701f7d761b5c0 # v2
+        with:
+          version: "4.33.0"
+          edition: "pro"
+
+      - name: Drop All Oracle Objects
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase --log-level=debug \
+            --url="jdbc:oracle:thin:@${{ env.TH_OCI_ORACLE_19C_URL }}" \
+            --username="ADMIN" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            drop-all \
+            --force
+
+      - name: Update Oracle Database with Init Changelog
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        run: |
+          liquibase \
+            --classpath="src/test/resources/init-changelogs/aws" \
+            --changeLogFile="oracle.sql" \
+            --url="jdbc:oracle:thin:@${{ env.TH_OCI_ORACLE_19C_URL }}" \
+            --username="ADMIN" \
+            --password="${{ env.TH_DB_PASSWD }}" \
+            update
+
       - name: Oracle OCI Test Run
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
