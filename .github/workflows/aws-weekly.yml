@@ -392,13 +392,28 @@ jobs:
             https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
           ls -la liquibase_libs/
 
+      # TECHOPS-513: Liquibase 5.0.3 image no longer bundles non-H2 JDBC drivers.
+      # Stage Oracle ojdbc11 into liquibase_libs/ and include it in classpath.
+      # SHA-256 pinned (supply-chain integrity: fail if Maven Central artifact
+      # is tampered with mid-download).
+      - name: Install Oracle JDBC driver
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p liquibase_libs
+          curl -fsSL -o liquibase_libs/ojdbc11.jar \
+            https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/23.5.0.24.07/ojdbc11-23.5.0.24.07.jar
+          echo "2cc69b821da842c5f5be8877444631cf9fa89561f1f6f5ad7bf1293eb669fc27  liquibase_libs/ojdbc11.jar" | sha256sum -c -
+          ls -la liquibase_libs/
+
       - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
           operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
+          classpath: "src/test/resources/init-changelogs/aws:liquibase_libs/ojdbc11.jar"
           changeLogFile: "oracle.sql"
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
@@ -429,13 +444,26 @@ jobs:
             --url="$POSTGRES_JDBC_URL" \
             update
 
+      # TECHOPS-513: stage MariaDB JDBC driver for Liquibase 5.0.3 image.
+      # SHA-256 pinned (supply-chain integrity).
+      - name: Install MariaDB JDBC driver
+        if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p liquibase_libs
+          curl -fsSL -o liquibase_libs/mariadb-java-client.jar \
+            https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/3.5.1/mariadb-java-client-3.5.1.jar
+          echo "50a50c4a3c13c30dfbd40587f7ad9a496197d285ede0948641d9eee68fdf2106  liquibase_libs/mariadb-java-client.jar" | sha256sum -c -
+          ls -la liquibase_libs/
+
       - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
           operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
+          classpath: "src/test/resources/init-changelogs/aws:liquibase_libs/mariadb-java-client.jar"
           changeLogFile: "mariadb.sql"
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
@@ -451,13 +479,26 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         run: sqlcmd -S ${{ env.TH_MSSQLURL_HOST }} -U ${{env.TH_DB_ADMIN}} -P ${{env.TH_DB_PASSWD}} -C -Q "CREATE DATABASE lbcat"
 
+      # TECHOPS-513: stage MSSQL JDBC driver for Liquibase 5.0.3 image.
+      # SHA-256 pinned (matches Maven Central published .jar.sha256).
+      - name: Install MSSQL JDBC driver
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p liquibase_libs
+          curl -fsSL -o liquibase_libs/mssql-jdbc.jar \
+            https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.8.1.jre11/mssql-jdbc-12.8.1.jre11.jar
+          echo "e6933c0711e598a224060e52ed31392f720a4a7664e85d8ae37c52a85b67ebb0  liquibase_libs/mssql-jdbc.jar" | sha256sum -c -
+          ls -la liquibase_libs/
+
       - uses: liquibase/liquibase-github-action@384eaf0e3236058a40fa7c1e2064c6482fbbbf8e # v7
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
         with:
           operation: "update"
-          classpath: "src/test/resources/init-changelogs/aws"
+          classpath: "src/test/resources/init-changelogs/aws:liquibase_libs/mssql-jdbc.jar"
           changeLogFile: "mssql.sql"
           username: "${{env.TH_DB_ADMIN}}"
           password: "${{env.TH_DB_PASSWD}}"
