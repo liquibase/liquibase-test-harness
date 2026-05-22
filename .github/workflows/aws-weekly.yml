@@ -728,13 +728,7 @@ jobs:
           db-port: ${{ steps.parse-mssql.outputs.port }}
           local-port: '11433'
 
-      # Tunnel-specific TLS quirk: ODBC Driver 18 (sqlcmd 1.5.0) defaults to
-      # Encrypt=Mandatory and validates the cert hostname matches the connect
-      # target. We connect to "localhost,11433" but the RDS server cert CN is
-      # the real RDS DNS name, so the TLS handshake hangs (smoke run
-      # 26257193170 timed out at 60s even with -l 60).
-      # `-N false` disables TLS for this admin step; the bytes still travel
-      # over the encrypted SSM port-forwarding session.
+      # `-N false` disables TLS because we tunnel via "localhost" but SQL Server's certificate is signed for its real RDS hostname, so without this flag the TLS handshake hangs forever waiting for names that will never match (the SSM tunnel still encrypts the bytes underneath).
       - name: Run sqlcmd
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
