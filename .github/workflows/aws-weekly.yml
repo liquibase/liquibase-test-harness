@@ -58,6 +58,7 @@ jobs:
     needs: [deploy-ephemeral-cloud-infra, setup]
     container:
       image: liquibase/liquibase:latest
+      # --user root lets us apt-get install the AWS CLI and netcat inside the container so we can open the SSM tunnel; safe because the container is throwaway per CI run and only ever talks to our own AWS account via OIDC-issued credentials.
       options: --user root
     strategy:
       fail-fast: false
@@ -571,8 +572,7 @@ jobs:
           db-port: ${{ steps.parse-oracle.outputs.port }}
           local-port: '11521'
 
-      # Replace liquibase-github-action with docker run --network host so the
-      # liquibase container can reach the tunnel on the runner host loopback.
+      # --network host lets the liquibase container see the SSM tunnel on the runner's "localhost" port (the prebuilt liquibase-github-action runs in its own isolated container that can't); safe because the container is throwaway and only ever talks to our own RDS through the bastion.
       - name: Init Oracle via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
@@ -593,11 +593,7 @@ jobs:
             --url="$ORACLE_JDBC_URL" \
             update
 
-      # TECHOPS-507: cannot use liquibase/liquibase-github-action here because
-      # it spawns its own container with default bridge networking, so the SSM
-      # tunnel on the runner host's 127.0.0.1:15432 is unreachable. Run the
-      # liquibase image directly with --network host so the container shares
-      # the runner's loopback. Same pattern as the aurora-pg pilot (#1289).
+      # --network host lets the liquibase container see the SSM tunnel on the runner's "localhost" port (the prebuilt liquibase-github-action runs in its own isolated container that can't); safe because the container is throwaway and only ever talks to our own RDS through the bastion.
       - name: Init postgres via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
         env:
@@ -669,6 +665,7 @@ jobs:
           db-port: ${{ steps.parse-mariadb.outputs.port }}
           local-port: '13306'
 
+      # --network host lets the liquibase container see the SSM tunnel on the runner's "localhost" port (the prebuilt liquibase-github-action runs in its own isolated container that can't); safe because the container is throwaway and only ever talks to our own RDS through the bastion.
       - name: Init mariadb via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
         env:
@@ -749,12 +746,14 @@ jobs:
           echo "e6933c0711e598a224060e52ed31392f720a4a7664e85d8ae37c52a85b67ebb0  liquibase_libs/mssql-jdbc.jar" | sha256sum -c -
           ls -la liquibase_libs/
 
+      # --network host lets the liquibase container see the SSM tunnel on the runner's "localhost" port (the prebuilt liquibase-github-action runs in its own isolated container that can't); safe because the container is throwaway and only ever talks to our own RDS through the bastion.
       - name: Init mssql via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          # trustServerCertificate=true skips cert validation for the same reason "-N false" does on sqlcmd above: we connect via "localhost" but the cert names the real RDS hostname (the SSM tunnel still encrypts the bytes underneath).
           MSSQL_JDBC_URL: jdbc:sqlserver://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }};trustServerCertificate=true;databaseName=lbcat
         run: |
           docker run --rm --network host \
@@ -770,11 +769,7 @@ jobs:
             update
 
 
-      # TECHOPS-460: cannot use liquibase/liquibase-github-action here because it
-      # spawns its own container with default bridge networking, so the SSM
-      # tunnel on the runner host's 127.0.0.1:15432 is unreachable. Run the
-      # liquibase image directly with --network host so the container shares
-      # the runner's loopback. Same image, same args; just no isolation layer.
+      # --network host lets the liquibase container see the SSM tunnel on the runner's "localhost" port (the prebuilt liquibase-github-action runs in its own isolated container that can't); safe because the container is throwaway and only ever talks to our own RDS through the bastion.
       - name: Init Aurora PG via SSM tunnel
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         env:
@@ -892,6 +887,7 @@ jobs:
           DB_VERSION: ${{ steps.setup.outputs.databaseVersion }}
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
+          # trustServerCertificate=true skips cert validation because we connect via "localhost" but the cert names the real RDS hostname (the SSM tunnel still encrypts the bytes underneath).
           MSSQL_JDBC_URL: jdbc:sqlserver://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }};trustServerCertificate=true;databaseName=lbcat
         run: |
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
