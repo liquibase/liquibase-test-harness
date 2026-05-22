@@ -43,17 +43,11 @@ jobs:
     # workflow_run.conclusion is one of: success, failure, cancelled,
     # timed_out, action_required, neutral, skipped, stale. Manual dispatch
     # always runs (it is the test path).
-    #
-    # TEMPORARILY DISABLED: the `false &&` short-circuits all notifications
-    # while we work through the TECHOPS-460 audit sweep (mariadb/mssql/oracle
-    # PRs are intentionally producing failure noise during dev). Remove the
-    # `false &&` to re-enable.
     if: >-
-      false &&
-      (github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'failure' ||
       github.event.workflow_run.conclusion == 'timed_out' ||
-      github.event.workflow_run.conclusion == 'cancelled')
+      github.event.workflow_run.conclusion == 'cancelled'
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials for vault access
