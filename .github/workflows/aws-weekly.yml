@@ -686,16 +686,9 @@ jobs:
             --url="$MARIADB_JDBC_URL" \
             update
 
-      - name: Install a SQL Server suite of tools
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: potatoqualitee/mssqlsuite@2291d923e83859edd871679c05b379037376761f # v1.12
-        with:
-          install: sqlengine, sqlclient, sqlpackage
-
       # Route mssql init+test through the SSM tunnel so the aws-mssql RDS
       # instance can flip publicly_accessible=false. JDBC URL shape is
       # jdbc:sqlserver://<host>:<port>;trustServerCertificate=true;databaseName=<db>
-      # (TH_MSSQLURL_HOST is "<host>,<port>" for sqlcmd's -S flag).
       - name: Parse mssql endpoint from JDBC URL
         id: parse-mssql
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
@@ -725,13 +718,25 @@ jobs:
           db-port: ${{ steps.parse-mssql.outputs.port }}
           local-port: '11433'
 
-      # `-N false` disables TLS because we tunnel via "localhost" but SQL Server's certificate is signed for its real RDS hostname, so without this flag the TLS handshake hangs forever waiting for names that will never match (the SSM tunnel still encrypts the bytes underneath).
-      - name: Run sqlcmd
+      # Connect to the always-existing "master" DB and CREATE the lbcat database the test changelog will use. Done via docker liquibase (same image+pattern as the init step below) instead of host sqlcmd because the host sqlcmd's ODBC Driver 18 rejects our "localhost" connect against a cert signed for the real RDS hostname; the SQL Server JDBC driver's `trustServerCertificate=true` skips that check, ODBC 18 doesn't honor it the same way.
+      - name: Create lbcat database via liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
-        run: sqlcmd -S "${{ env.TUNNELED_DB_HOST }},${{ env.TUNNELED_DB_PORT }}" -U "$DB_USERNAME" -P "$DB_PASSWORD" -N false -l 60 -Q "CREATE DATABASE lbcat"
+          MASTER_URL: jdbc:sqlserver://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }};trustServerCertificate=true;databaseName=master
+        run: |
+          docker run --rm --network host \
+            -v "${PWD}:/workspace" \
+            -w /workspace \
+            -e LIQUIBASE_PRO_LICENSE_KEY \
+            liquibase/liquibase:latest \
+            --classpath="liquibase_libs/mssql-jdbc.jar" \
+            --url="$MASTER_URL" \
+            --username="$DB_USERNAME" \
+            --password="$DB_PASSWORD" \
+            execute-sql --sql="CREATE DATABASE lbcat"
 
       # TECHOPS-513: stage MSSQL JDBC driver for Liquibase 5.0.3 image.
       # SHA-256 pinned (matches Maven Central published .jar.sha256).
