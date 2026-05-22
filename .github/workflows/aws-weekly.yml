@@ -731,7 +731,7 @@ jobs:
           echo "e6933c0711e598a224060e52ed31392f720a4a7664e85d8ae37c52a85b67ebb0  liquibase_libs/mssql-jdbc.jar" | sha256sum -c -
           ls -la liquibase_libs/
 
-      # Connect to "tempdb" (a SQL Server system DB that's recreated on every server restart and allows the RDS admin user to create tables) so liquibase can write its bookkeeping tables there, then run CREATE DATABASE lbcat — a cross-database operation the master user has rights for. The previous attempt against `master` failed because no user can CREATE TABLE there. ODBC-based sqlcmd both 13 and 18 fail to complete the TLS handshake through the tunnel at all; JDBC with trustServerCertificate=true does, which is why we use docker liquibase here.
+      # Connect to "tempdb" (a SQL Server system DB that is recreated on every server restart and allows the RDS admin user to create tables) so liquibase can write its bookkeeping tables there, then run CREATE DATABASE lbcat: a cross-database operation the master user has rights for. The previous attempt against `master` failed because no user can CREATE TABLE there. ODBC-based sqlcmd (both Driver 13 and 18) fails to complete the TLS handshake through the tunnel at all; JDBC with trustServerCertificate=true does, which is why we use docker liquibase here.
       - name: Create lbcat database via liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
