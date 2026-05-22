@@ -453,7 +453,6 @@ jobs:
         with:
           secret-ids: |
             TH_MSSQLURL, /testautomation/db_details/aws_mssql_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
-            TH_MSSQLURL_HOST, /testautomation/db_details/aws_mssql_host_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
             SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
 
       - name: Get AWS secrets
