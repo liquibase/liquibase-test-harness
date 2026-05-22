@@ -498,13 +498,64 @@ jobs:
           version: "4.33.0"
           edition: "pro"
 
+      # Route Oracle init+test through the SSM port-forwarding tunnel so the
+      # aws-oracle RDS instance (ora-19) can stay publicly_accessible=false.
+      # Oracle JDBC URL shape: jdbc:oracle:thin:@<host>:<port>:<sid>.
+      - name: Configure AWS credentials for SSM
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
+        with:
+          role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
+          aws-region: us-east-1
+
+      - name: Get SSM bastion instance id
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+        with:
+          secret-ids: |
+            SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
+
+      - name: Parse Oracle endpoint from JDBC URL
+        id: parse-oracle
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        env:
+          JDBC_URL: ${{ env.TH_ORACLEURL_19 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # JDBC URL shape: jdbc:oracle:thin:@<host>:<port>:<sid>
+          # (Could also be @//host:port/service; SID is what the secret uses.)
+          tail="${JDBC_URL#jdbc:oracle:thin:@}"
+          tail="${tail#//}"
+          host="${tail%%:*}"
+          rest="${tail#*:}"
+          port="${rest%%[:/]*}"
+          tail_id="${rest#*[:/]}"
+          if [[ ! "$host" =~ ^[A-Za-z0-9.-]+$ ]] || [[ ! "$port" =~ ^[0-9]{1,5}$ ]]; then
+            echo "::error::Could not parse host/port from Oracle JDBC URL" >&2
+            exit 1
+          fi
+          echo "host=$host"     >> "$GITHUB_OUTPUT"
+          echo "port=$port"     >> "$GITHUB_OUTPUT"
+          echo "sid=$tail_id"   >> "$GITHUB_OUTPUT"
+
+      - name: Open SSM tunnel to oracle
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@main
+        with:
+          bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
+          db-host: ${{ steps.parse-oracle.outputs.host }}
+          db-port: ${{ steps.parse-oracle.outputs.port }}
+          local-port: '11521'
+
       - name: Drop All Oracle Objects
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          ORACLE_JDBC_URL: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
         run: |
           liquibase --log-level=debug \
-            --url="${{env.TH_ORACLEURL_19}}" \
+            --url="$ORACLE_JDBC_URL" \
             --username="${{env.TH_DB_ADMIN}}" \
             --password="${{env.TH_ORACLEURL_19_PASSWORD}}" \
             drop-all \
@@ -514,11 +565,12 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          ORACLE_JDBC_URL: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
         run: |
           liquibase \
             --classpath="src/test/resources/init-changelogs/aws" \
             --changeLogFile="oracle.sql" \
-            --url="${{ env.TH_ORACLEURL_19 }}" \
+            --url="$ORACLE_JDBC_URL" \
             --username="${{ env.TH_DB_ADMIN }}" \
             --password="${{ env.TH_ORACLEURL_19_PASSWORD }}" \
             update
@@ -578,7 +630,8 @@ jobs:
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_ORACLEURL_19_PASSWORD}} -DdbUrl='${{ env.TH_ORACLEURL_19 }}' test
+          ORACLE_JDBC_URL: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
+        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_ORACLEURL_19_PASSWORD}} -DdbUrl="$ORACLE_JDBC_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
