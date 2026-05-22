@@ -718,6 +718,20 @@ jobs:
           db-port: ${{ steps.parse-mssql.outputs.port }}
           local-port: '11433'
 
+      # TECHOPS-513: stage MSSQL JDBC driver for Liquibase 5.0.3 image.
+      # SHA-256 pinned (matches Maven Central published .jar.sha256).
+      # Staged BEFORE the Create-lbcat step below — that step uses this jar.
+      - name: Install MSSQL JDBC driver
+        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p liquibase_libs
+          curl -fsSL -o liquibase_libs/mssql-jdbc.jar \
+            https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.8.1.jre11/mssql-jdbc-12.8.1.jre11.jar
+          echo "e6933c0711e598a224060e52ed31392f720a4a7664e85d8ae37c52a85b67ebb0  liquibase_libs/mssql-jdbc.jar" | sha256sum -c -
+          ls -la liquibase_libs/
+
       # Connect to the always-existing "master" DB and CREATE the lbcat database the test changelog will use. Done via docker liquibase (same image+pattern as the init step below) instead of host sqlcmd because the host sqlcmd's ODBC Driver 18 rejects our "localhost" connect against a cert signed for the real RDS hostname; the SQL Server JDBC driver's `trustServerCertificate=true` skips that check, ODBC 18 doesn't honor it the same way.
       - name: Create lbcat database via liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
@@ -737,19 +751,6 @@ jobs:
             --username="$DB_USERNAME" \
             --password="$DB_PASSWORD" \
             execute-sql --sql="CREATE DATABASE lbcat"
-
-      # TECHOPS-513: stage MSSQL JDBC driver for Liquibase 5.0.3 image.
-      # SHA-256 pinned (matches Maven Central published .jar.sha256).
-      - name: Install MSSQL JDBC driver
-        if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p liquibase_libs
-          curl -fsSL -o liquibase_libs/mssql-jdbc.jar \
-            https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.8.1.jre11/mssql-jdbc-12.8.1.jre11.jar
-          echo "e6933c0711e598a224060e52ed31392f720a4a7664e85d8ae37c52a85b67ebb0  liquibase_libs/mssql-jdbc.jar" | sha256sum -c -
-          ls -la liquibase_libs/
 
       # --network host lets the liquibase container see the SSM tunnel on the runner's "localhost" port (the prebuilt liquibase-github-action runs in its own isolated container that can't); safe because the container is throwaway and only ever talks to our own RDS through the bastion.
       - name: Init mssql via SSM tunnel
