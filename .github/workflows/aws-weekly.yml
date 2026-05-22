@@ -731,25 +731,21 @@ jobs:
           echo "e6933c0711e598a224060e52ed31392f720a4a7664e85d8ae37c52a85b67ebb0  liquibase_libs/mssql-jdbc.jar" | sha256sum -c -
           ls -la liquibase_libs/
 
-      # Connect to the always-existing "master" DB and CREATE the lbcat database the test changelog will use. Done via docker liquibase (same image+pattern as the init step below) instead of host sqlcmd because the host sqlcmd's ODBC Driver 18 rejects our "localhost" connect against a cert signed for the real RDS hostname; the SQL Server JDBC driver's `trustServerCertificate=true` skips that check, ODBC 18 doesn't honor it the same way.
-      - name: Create lbcat database via liquibase
+      # Use Microsoft's official mssql-tools image (sqlcmd 13.1, ODBC Driver 13) to CREATE the lbcat database. Why not the host's installed sqlcmd or a liquibase docker: the host sqlcmd (ODBC 18) rejects our "localhost" connect against a cert signed for the real RDS hostname even with -C, and liquibase's execute-sql tries to write its own bookkeeping tables in `master` which RDS admin user is not allowed to do. The 2017-era ODBC Driver 13 in this image predates that hostname-verification behavior, so -C is enough.
+      - name: Create lbcat database via sqlcmd
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
         env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
-          MASTER_URL: jdbc:sqlserver://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }};trustServerCertificate=true;databaseName=master
         run: |
           docker run --rm --network host \
-            -v "${PWD}:/workspace" \
-            -w /workspace \
-            -e LIQUIBASE_PRO_LICENSE_KEY \
-            liquibase/liquibase:latest \
-            --classpath="liquibase_libs/mssql-jdbc.jar" \
-            --url="$MASTER_URL" \
-            --username="$DB_USERNAME" \
-            --password="$DB_PASSWORD" \
-            execute-sql --sql="CREATE DATABASE lbcat"
+            -e DB_USERNAME -e DB_PASSWORD \
+            mcr.microsoft.com/mssql-tools:latest \
+            /opt/mssql-tools/bin/sqlcmd \
+              -S "${{ env.TUNNELED_DB_HOST }},${{ env.TUNNELED_DB_PORT }}" \
+              -U "$DB_USERNAME" -P "$DB_PASSWORD" \
+              -C -l 60 \
+              -Q "CREATE DATABASE lbcat"
 
       # --network host lets the liquibase container see the SSM tunnel on the runner's "localhost" port (the prebuilt liquibase-github-action runs in its own isolated container that can't); safe because the container is throwaway and only ever talks to our own RDS through the bastion.
       - name: Init mssql via SSM tunnel
