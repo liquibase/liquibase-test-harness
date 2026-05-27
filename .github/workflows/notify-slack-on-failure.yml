@@ -12,8 +12,7 @@ on:
     workflows:
       - "Default Test Execution"                    # main.yml
       - "Advanced Test Execution"                   # advanced.yml
-      # TEMP [TECHOPS-543]: muted while testing aws.yml LocalStack fixes. Restore before merge.
-      # - "AWS Cloud Database Test Execution"         # aws.yml
+      - "AWS Cloud Database Test Execution"         # aws.yml
       - "AWS Weekly Cloud Database Test Execution"  # aws-weekly.yml
       - "Azure Cloud Sql DB Test"                   # azure.yml
       - "Google Cloud Database Test Execution"      # gcp.yml
