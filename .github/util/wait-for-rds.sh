@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
-# wait-for-rds.sh — wait for a LocalStack RDS resource to be ready.
+# wait-for-rds.sh - wait for a LocalStack RDS resource to be ready.
 #
 # Replaces `sleep 30` in aws.yml init steps. Polls the RDS API for resource
-# status (fails fast on error/failed — surfaces unsupported engine versions
+# status (fails fast on error/failed: surfaces unsupported engine versions
 # in ~10s instead of as a cryptic JDBC EOFException 35s later), then probes
 # the protocol port until the backend actually accepts a handshake.
 #
 # Usage:
 #   source .github/util/wait-for-rds.sh
-#   wait_for_rds <cluster|instance> <identifier> <postgres|mysql|mariadb|mssql> <port>
+#   wait_for_rds <cluster|instance> <identifier> <postgres|mysql|mariadb|mssql> <port> [proto_timeout]
+#
+# The optional 5th arg (or RDS_PROTO_TIMEOUT env var) overrides how long we wait
+# for the protocol port to accept a handshake. Docker-backed engines (mysql,
+# mssql) cold-start a fresh container: image pull + init can exceed the
+# default, so callers can raise it per engine.
 set -euo pipefail
 
 wait_for_rds() {
@@ -18,7 +23,7 @@ wait_for_rds() {
   local port="$4"
 
   local api_timeout=300
-  local proto_timeout=180
+  local proto_timeout="${5:-${RDS_PROTO_TIMEOUT:-300}}"
   local elapsed=0
   local status
 
@@ -38,7 +43,7 @@ wait_for_rds() {
         break
         ;;
       error|failed|incompatible-parameters|stopped|deleting)
-        echo "  FATAL: $resource_type '$identifier' RDS status=$status — LocalStack rejected the resource (e.g. unsupported engine version or apt-install failure)."
+        echo "  FATAL: $resource_type '$identifier' RDS status=$status : LocalStack rejected the resource (e.g. unsupported engine version or apt-install failure)."
         return 1
         ;;
       *)
@@ -63,7 +68,11 @@ wait_for_rds() {
         fi
         ;;
       mysql|mariadb)
-        if mysqladmin ping -h localhost -P "$port" --connect-timeout=3 --silent 2>/dev/null; then
+        # Must force TCP: the mysql client treats "-h localhost" as "use the
+        # local UNIX socket" and silently ignores -P, so it never reaches the
+        # LocalStack-proxied port. Use 127.0.0.1 + --protocol=TCP. ping returns
+        # success even on access-denied: the server responding is all we need.
+        if mysqladmin ping -h 127.0.0.1 -P "$port" --protocol=TCP --connect-timeout=3 --silent 2>/dev/null; then
           echo "  $protocol responded to mysqladmin ping on port $port after ${elapsed}s (post-API)"
           return 0
         fi
