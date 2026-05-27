@@ -345,10 +345,12 @@ jobs:
         run: |
           pip install localstack awscli-local
           docker pull localstack/localstack-pro
-          docker pull mcr.microsoft.com/mssql/server:2019-latest
-          DOCKER_FLAGS='-e MSSQL_ACCEPT_EULA=Y -e MSSQL_IMAGE=mcr.microsoft.com/mssql/server:2019-latest -e LOCALSTACK_OAUTH_TOKEN=${{ env.LOCALSTACK_OAUTH_TOKEN }}' 
           localstack auth set-token ${{ env.LOCALSTACK_OAUTH_TOKEN }}
-          MSSQL_ACCEPT_EULA=Y localstack start -d
+          # LocalStack starts its own MSSQL container from its default image; the
+          # EULA must be forwarded with the LOCALSTACK_ prefix (the bare
+          # MSSQL_ACCEPT_EULA triggers a "non-prefixed env var" warning and is
+          # not reliably forwarded into the runtime container).
+          LOCALSTACK_MSSQL_ACCEPT_EULA=Y localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
@@ -490,6 +492,17 @@ jobs:
           source .github/util/wait-for-rds.sh
           wait_for_rds instance mysql mysql "$mysql_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="root" --password="${{ env.TH_DB_PASSWD }}" --url="$mysql_url" update
+
+      # If any LocalStack-backed init step above failed (e.g. mssql RDS
+      # status=error), dump LocalStack's internal logs so the rejection reason
+      # (unsupported engine version, EULA, container OOM, image pull) is
+      # visible instead of a generic API status.
+      - name: Dump LocalStack logs on failure
+        if: ${{ failure() && steps.setup.outputs.databasePlatform != 'oracle' }}
+        run: |
+          echo "::group::LocalStack logs"
+          localstack logs || docker logs localstack-main 2>&1 || true
+          echo "::endgroup::"
 
       - name: Setup Liquibase for Oracle
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
