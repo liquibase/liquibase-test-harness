@@ -68,10 +68,10 @@ jobs:
       testClasses: ${{ 'AdvancedHarnessSuiteTest' }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@main
+        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -212,14 +212,14 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@main
+      - uses: liquibase/build-logic/.github/actions/setup-java@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
         with:
           repositories: |
             [
@@ -405,16 +405,16 @@ jobs:
         database: ${{ fromJson(needs.setup.outputs.databases) }}
 
     steps:
-      - uses: liquibase/build-logic/.github/actions/checkout@main
+      - uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@main
+      - uses: liquibase/build-logic/.github/actions/setup-java@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -428,7 +428,7 @@ jobs:
           parse-json-secrets: true
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
         with:
           repositories: |
             [
@@ -503,11 +503,11 @@ jobs:
     needs: [ setup, test ]
     if: ${{ always() }}
     steps:
-      - uses: liquibase/build-logic/.github/actions/checkout@main
+      - uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
