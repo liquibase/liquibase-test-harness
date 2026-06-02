@@ -375,7 +375,7 @@ jobs:
       # Setup Liquibase CLI for MSSQL init operations (before Java setup)
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
+        uses: liquibase/setup-liquibase@9bd28bc8b31bd5a1651b34c7856569d5392ee869 # v3.0.0
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -533,7 +533,7 @@ jobs:
           requireForce: true
 
       - name: Setup Liquibase
-        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
+        uses: liquibase/setup-liquibase@9bd28bc8b31bd5a1651b34c7856569d5392ee869 # v3.0.0
         with:
           version: '5.0.0'
           edition: 'secure'
