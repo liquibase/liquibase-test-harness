@@ -41,7 +41,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      uses: liquibase/build-logic/.github/actions/checkout@729d356b1221b8dcebb2dd4540b34d4f9774bbd3 # main
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
