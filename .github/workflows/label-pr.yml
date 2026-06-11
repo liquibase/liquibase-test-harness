@@ -9,7 +9,18 @@ jobs:
       issues: write
       pull-requests: write
     steps:
+      # Automated "Version bump after release" PRs are opened by liquibase-workflows[bot]
+      # with no label, which would block the required-label gate below. Auto-apply
+      # skipReleaseNotes so they merge without manual intervention.
+      - name: Auto-label automated version-bump PRs
+        id: auto-label
+        if: github.head_ref == 'version-bump-after-release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr edit "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --add-label "skipReleaseNotes"
+
       - name: Validate PR Labels
+        if: steps.auto-label.outcome == 'skipped'
         uses: mheap/github-action-required-labels@0ac283b4e65c1fb28ce6079dea5546ceca98ccbe # v5
         with:
           mode: minimum
