@@ -21,8 +21,7 @@ class SnapshotObjectTestHelper {
                     ? commandLineSnapshotObjects.split(",")
                     : commandLineSnapshotObjects)
         }
-        Logger.getLogger(this.class.name).warning("Only " + TestConfig.instance.inputFormat
-                + " input files are taken into account for this test run")
+        Logger.getLogger(this.class.name).info("Only xml input files are taken into account for the snapshot test run")
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : new DatabaseConnectionUtil()
                 .initializeDatabasesConnection(TestConfig.instance.getFilteredDatabasesUnderTest())) {

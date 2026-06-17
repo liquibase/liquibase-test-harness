@@ -1,6 +1,5 @@
 package liquibase.harness.util
 
-import groovy.json.JsonSlurper
 import liquibase.util.StringUtil
 import org.json.JSONArray
 import org.json.JSONException
@@ -48,10 +47,8 @@ class JSONUtils {
                     jsonObject.put(column, (Byte) value)
                 } else if (value instanceof byte[]) {
                     jsonObject.put(column, (byte[]) value)
-                } else if (value instanceof Object) {
-                    jsonObject.put(column, value)
                 } else {
-                    throw new IllegalArgumentException("Unmappable object type: " + value.getClass())
+                    jsonObject.put(column, value)
                 }
             }
             jArray.put(jsonObject)
@@ -93,12 +90,6 @@ class JSONUtils {
         }
 
         return true
-    }
-
-    static void compareJSONObjects(JSONObject expected, JSONObject actual) {
-        def mapExpected = new JsonSlurper().parseText(expected.toString())
-        def mapActual = new JsonSlurper().parseText(actual.toString())
-        assert mapExpected == mapActual
     }
 
     /**

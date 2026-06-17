@@ -4,12 +4,12 @@ import groovy.transform.ToString
 import groovy.transform.builder.Builder
 import liquibase.Scope
 import liquibase.database.Database
-import liquibase.database.DatabaseConnection
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
+import liquibase.harness.util.TestUtils
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
@@ -19,10 +19,6 @@ class FoundationalTestHelper {
 
     final static String baseChangelogPath = "liquibase/harness/compatibility/foundational/changelogs"
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
-
-    static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
-        return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
-    }
 
     static List<TestInput> buildTestInput() {
         String commandLineInputFormat = System.getProperty("inputFormat")
@@ -62,10 +58,11 @@ class FoundationalTestHelper {
     static ResultSet executeQuery(String pathToSql, TestInput testInput) throws SQLException {
         Connection newConnection
         ResultSet resultSet
-        if (shouldOpenNewConnection(testInput.database.getConnection(), "firebird")) {
+        if (TestUtils.shouldOpenNewConnection(testInput.database.getConnection(), "firebird")) {
             newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+            // Do not close the connection here: the returned ResultSet is consumed by the caller and
+            // would be invalid against a closed connection.
             resultSet = newConnection.createStatement().executeQuery(pathToSql)
-            newConnection.close()
         } else {
             JdbcConnection connection = (JdbcConnection) testInput.database.connection
             resultSet = connection.createStatement().executeQuery(pathToSql)

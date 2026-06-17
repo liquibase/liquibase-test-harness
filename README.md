@@ -494,8 +494,7 @@ Generally it is similar to ChangeObjectTests except it doesn't use Liquibase sna
  
 
 ## Minimum Requirements
- - Java 11. Java 8 should actually work for most of the platforms that don't have jdbc drivers that require Java 11, those that do are
-Firebird, HyperSQL(HSQLDB), Microsoft SQL Server. Downgrade java and jdbc driver versions in pom at your own risk.
+ - Java 17+. The build enforces Java 17 via the `maven-enforcer-plugin` and compiles with `maven.compiler.release=17`.
  - Maven >=3.5
 
 ## Running the Tests

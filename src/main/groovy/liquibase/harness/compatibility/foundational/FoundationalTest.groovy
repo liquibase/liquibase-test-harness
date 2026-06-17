@@ -117,7 +117,7 @@ class FoundationalTest extends Specification {
             def expectedResultSetArray = new JSONObject(expectedResultSet).getJSONArray(testInput.change)
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.LENIENT)
         } catch (Exception exception) {
-            Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.printStackTrace())
+            Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.toString())
             Assertions.fail exception.message
         } finally {
             newConnection == null ?: newConnection.close()
@@ -131,7 +131,7 @@ class FoundationalTest extends Specification {
             } catch (SQLException sqlException) {
                 // Assume test object was not created after 'update' command execution and test failed.
                 Scope.getCurrentScope().getUI().sendMessage("Error executing test table checking sql! " +
-                        sqlException.printStackTrace())
+                        sqlException.toString())
                 Assertions.fail sqlException.message
             }
         }
@@ -155,9 +155,10 @@ class FoundationalTest extends Specification {
                                 resultSet.getMetaData().getTableName(0))
                         Assertions.fail()
                     }
-                } catch (ignored) {
+                } catch (SQLException ignored) {
                     (connection.isClosed() || connection.autoCommit) ?: connection.commit()
-                    // Assume test object does not exist and 'rollback' was successful. Ignore exception.
+                    // A SQL error here means the checking query could not find the object, so the
+                    // 'rollback' removed it as expected. Non-SQL errors are not swallowed.
                     Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
                 }
             }

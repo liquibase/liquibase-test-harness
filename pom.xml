@@ -250,7 +250,7 @@
     <dependency>
       <groupId>com.athaydes</groupId>
       <artifactId>spock-reports</artifactId>
-      <version>2.5.1-groovy-4.0</version>
+      <version>${spock-reports.version}</version>
       <scope>test</scope>
       <!-- this avoids affecting your version of Groovy/Spock -->
       <exclusions>
