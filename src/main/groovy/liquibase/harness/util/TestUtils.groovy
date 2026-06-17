@@ -148,7 +148,7 @@ class TestUtils {
         // a changeset's DATEEXECUTED lands at/before the rollback date and is never rolled back, leaking rows
         // (e.g. the insert test's id=100 row) into later tests. Tag-based rollback is position-based and
         // immune to clock skew, so default Informix to it. Other databases keep the date-based default.
-        if (TestConfig.instance.getFilteredDatabasesUnderTest().any { it.name?.toLowerCase()?.contains("informix") }) {
+        if (TestConfig.getInstance().getFilteredDatabasesUnderTest().any { it.name?.toLowerCase()?.contains("informix") }) {
             return new RollbackByTag()
         }
         return new RollbackToDate()
