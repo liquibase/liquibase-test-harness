@@ -3,6 +3,7 @@ package liquibase.harness.util
 import liquibase.Scope
 import liquibase.command.CommandScope
 import liquibase.exception.CommandExecutionException
+import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackByTag
 import liquibase.harness.util.rollback.RollbackStrategy
 import liquibase.harness.util.rollback.RollbackToDate
@@ -138,6 +139,18 @@ class TestUtils {
     }
 
     static RollbackStrategy chooseRollbackStrategy() {
-        return "rollbackByTag".equalsIgnoreCase(System.getProperty("rollbackStrategy")) ? new RollbackByTag() : new RollbackToDate()
+        String requestedStrategy = System.getProperty("rollbackStrategy")
+        if (requestedStrategy != null) {
+            return "rollbackByTag".equalsIgnoreCase(requestedStrategy) ? new RollbackByTag() : new RollbackToDate()
+        }
+        // Informix records DATEEXECUTED on the DB server clock, which can drift against the harness JVM's
+        // UTC timestamp by more than RollbackToDate's 1-second, second-truncated buffer. When that happens
+        // a changeset's DATEEXECUTED lands at/before the rollback date and is never rolled back, leaking rows
+        // (e.g. the insert test's id=100 row) into later tests. Tag-based rollback is position-based and
+        // immune to clock skew, so default Informix to it. Other databases keep the date-based default.
+        if (TestConfig.getInstance().getFilteredDatabasesUnderTest().any { it.name?.toLowerCase()?.contains("informix") }) {
+            return new RollbackByTag()
+        }
+        return new RollbackToDate()
     }
 }
