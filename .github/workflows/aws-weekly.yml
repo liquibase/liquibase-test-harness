@@ -38,7 +38,7 @@ jobs:
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/checkout@4d26b956b2d24b504ca03667655211c078ee4d6c # main
 
   deploy-ephemeral-cloud-infra:
     uses: liquibase/build-logic/.github/workflows/ephemeral-cloud-infra.yml@main
@@ -71,10 +71,10 @@ jobs:
     if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (contains(needs.setup.outputs.databases, 'mysql:aws') || contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/checkout@4d26b956b2d24b504ca03667655211c078ee4d6c # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -88,7 +88,7 @@ jobs:
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
@@ -164,7 +164,7 @@ jobs:
 
       - name: Open SSM tunnel to MySQL
         if: ${{ matrix.version == 'aws' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aws'))) }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-mysql.outputs.host }}
@@ -209,7 +209,7 @@ jobs:
 
       - name: Open SSM tunnel to Aurora MySQL
         if: ${{ matrix.version == 'aurora' && matrix.database == 'mysql' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && contains(needs.setup.outputs.databases, 'mysql:aurora'))) }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-aurora-mysql-init.outputs.host }}
@@ -239,7 +239,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/checkout@4d26b956b2d24b504ca03667655211c078ee4d6c # main
 
       - name: Configure Test
         id: setup
@@ -251,7 +251,7 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -265,7 +265,7 @@ jobs:
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
@@ -311,7 +311,7 @@ jobs:
 
       - name: Open SSM tunnel to mysql
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-mysql-test.outputs.host }}
@@ -359,7 +359,7 @@ jobs:
 
       - name: Open SSM tunnel to aurora-mysql
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-aurora-mysql.outputs.host }}
@@ -419,7 +419,7 @@ jobs:
 
       - name: Open SSM tunnel to postgres
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-postgres.outputs.host }}
@@ -497,7 +497,7 @@ jobs:
 
       - name: Open SSM tunnel to Aurora PG
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-aurora-pg.outputs.host }}
@@ -564,7 +564,7 @@ jobs:
 
       - name: Open SSM tunnel to oracle
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-oracle.outputs.host }}
@@ -657,7 +657,7 @@ jobs:
 
       - name: Open SSM tunnel to mariadb
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-mariadb.outputs.host }}
@@ -710,7 +710,7 @@ jobs:
 
       - name: Open SSM tunnel to mssql
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-mssql.outputs.host }}
@@ -795,14 +795,14 @@ jobs:
             --url="$AURORA_PG_JDBC_URL" \
             update
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           repositories: |
             [
@@ -948,7 +948,7 @@ jobs:
       stack-id: ${{ steps.get-stack-id.outputs.stack-id }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/checkout@4d26b956b2d24b504ca03667655211c078ee4d6c # main
       - name: Get Stack ID
         id: get-stack-id
         uses: ./.github/actions/get-stack-id

@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@4d26b956b2d24b504ca03667655211c078ee4d6c # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
