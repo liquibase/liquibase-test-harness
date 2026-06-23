@@ -21,6 +21,8 @@ class SnapshotObjectTestHelper {
                     ? commandLineSnapshotObjects.split(",")
                     : commandLineSnapshotObjects)
         }
+        // Snapshot tests are xml-only by design: input changelogs are always resolved with the "xml" format below,
+        // so this message is intentionally hardcoded rather than driven by TestConfig.instance.inputFormat.
         Logger.getLogger(this.class.name).info("Only xml input files are taken into account for the snapshot test run")
         List<TestInput> inputList = new ArrayList<>()
         for (DatabaseUnderTest databaseUnderTest : new DatabaseConnectionUtil()
