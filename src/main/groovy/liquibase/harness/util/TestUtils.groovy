@@ -2,6 +2,7 @@ package liquibase.harness.util
 
 import liquibase.Scope
 import liquibase.command.CommandScope
+import liquibase.database.DatabaseConnection
 import liquibase.exception.CommandExecutionException
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackByTag
@@ -10,6 +11,7 @@ import liquibase.harness.util.rollback.RollbackToDate
 import liquibase.resource.SearchPathResourceAccessor
 import org.junit.jupiter.api.Assertions
 
+import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
@@ -51,91 +53,56 @@ class TestUtils {
     }
 
     static OutputStream executeCommandScope(String commandName, Map<String, Object> arguments) {
+        return executeCommandScope(commandName, arguments, Collections.<String, Object> emptyMap())
+    }
+
+    static OutputStream executeCommandScope(String commandName, Map<String, Object> arguments, Map<String, Object> scopeValues) {
         def commandScope = new CommandScope(commandName)
         def outputStream = new ByteArrayOutputStream()
         for (Map.Entry<String, Object> entry : arguments) {
             commandScope.addArgumentValue(entry.getKey(), entry.getValue())
         }
         commandScope.setOutput(outputStream)
-        try {
-            Logger.getLogger(this.class.name).info(String.format("Executing liquibase command: %s ", commandName))
-            commandScope.execute()
-        } catch (Exception exception) {
-            if (exception instanceof CommandExecutionException && exception.toString().contains("is not available in SQL output mode")) {
-                //Here we check whether updateSql command throws specific exception and skip it (updateSql doesn't work for SQLite for some change types)
-                return outputStream
-            }
-            Logger.getLogger(this.class.name).severe("Failed to execute command scope for command " +
-                    commandScope.getCommand().toString() + ". " + exception.printStackTrace())
-            Logger.getLogger(this.class.name).info("If this is expected to be invalid query for this database/version, " +
-                    "create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.")
-            Assertions.fail exception.message
-        }
+        runCommandScope(commandName, commandScope, scopeValues)
         return outputStream
     }
-
-    static OutputStream executeCommandScope(String commandName, Map<String, Object> arguments, Map<String,Object> scopeValues) {
-        def commandScope = new CommandScope(commandName)
-        def outputStream = new ByteArrayOutputStream()
-        for (Map.Entry<String, Object> entry : arguments) {
-            commandScope.addArgumentValue(entry.getKey(), entry.getValue())
-        }
-        commandScope.setOutput(outputStream)
-        try {
-            Logger.getLogger(this.class.name).info(String.format("Executing liquibase command: %s ", commandName))
-            Scope.child(scopeValues, new Scope.ScopedRunner() {
-                @Override
-                void run() throws Exception {
-                    commandScope.execute()
-                }
-            })
-
-        } catch (Exception exception) {
-            if (exception instanceof CommandExecutionException && exception.toString().contains("is not available in SQL output mode")) {
-                //Here we check whether updateSql command throws specific exception and skip it (updateSql doesn't work for SQLite for some change types)
-                return outputStream
-            }
-            Logger.getLogger(this.class.name).severe("Failed to execute command scope for command " +
-                    commandScope.getCommand().toString() + ". " + exception.printStackTrace())
-            Logger.getLogger(this.class.name).info("If this is expected to be invalid query for this database/version, " +
-                    "create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.")
-            Assertions.fail exception.message
-        }
-        return outputStream
-    }
-
 
     static OutputStream executeCommandScopeWithSearchPathResourceAccessor(String commandName, Map<String, Object> arguments) {
-        def commandScope = new CommandScope(commandName)
-        def outputStream = new ByteArrayOutputStream()
         def resourceAccessor = new SearchPathResourceAccessor(".", Scope.getCurrentScope().getResourceAccessor())
-        Map<String, Object> map = new HashMap<>();
-        map.put(Scope.Attr.resourceAccessor.name(),resourceAccessor)
+        Map<String, Object> scopeValues = new HashMap<>()
+        scopeValues.put(Scope.Attr.resourceAccessor.name(), resourceAccessor)
+        return executeCommandScope(commandName, arguments, scopeValues)
+    }
 
-        for (Map.Entry<String, Object> entry : arguments) {
-            commandScope.addArgumentValue(entry.getKey(), entry.getValue())
-        }
-        commandScope.setOutput(outputStream)
+    /**
+     * Executes the given command scope, optionally wrapped in a child scope, with shared error handling.
+     * The "is not available in SQL output mode" exception is only swallowed for the updateSql command
+     * (updateSql doesn't work for SQLite for some change types); any other failure fails the test.
+     */
+    private static void runCommandScope(String commandName, CommandScope commandScope, Map<String, Object> scopeValues) {
         try {
             Logger.getLogger(this.class.name).info(String.format("Executing liquibase command: %s ", commandName))
-            Scope.child(map, new Scope.ScopedRunner() {
-                @Override
-                void run() throws Exception {
-                    commandScope.execute()
-                }
-            })
-        } catch (Exception exception) {
-            if (exception instanceof CommandExecutionException && exception.toString().contains("is not available in SQL output mode")) {
-                //Here we check whether updateSql command throws specific exception and skip it (updateSql doesn't work for SQLite for some change types)
-                return outputStream
+            if (scopeValues) {
+                Scope.child(scopeValues, new Scope.ScopedRunner() {
+                    @Override
+                    void run() throws Exception {
+                        commandScope.execute()
+                    }
+                })
+            } else {
+                commandScope.execute()
             }
-            Logger.getLogger(this.class.name).severe("Failed to execute command scope for command " +
-                    commandScope.getCommand().toString() + ". " + exception.printStackTrace())
+        } catch (Exception exception) {
+            if ("updateSql".equalsIgnoreCase(commandName) && exception instanceof CommandExecutionException
+                    && exception.toString().contains("is not available in SQL output mode")) {
+                return
+            }
+            Logger.getLogger(this.class.name).log(Level.SEVERE, "Failed to execute command scope for command " +
+                    commandScope.getCommand().toString() + ".", exception)
             Logger.getLogger(this.class.name).info("If this is expected to be invalid query for this database/version, " +
                     "create an 'expectedSql.sql' file that starts with 'INVALID TEST' and an explanation of why.")
             Assertions.fail exception.message
         }
-        return outputStream
     }
 
     static RollbackStrategy chooseRollbackStrategy() {
@@ -152,5 +119,13 @@ class TestUtils {
             return new RollbackByTag()
         }
         return new RollbackToDate()
+    }
+
+    /**
+     * Returns true if a fresh JDBC connection should be opened for the given connection, either because it is
+     * already closed or because its product name matches one of the supplied database names.
+     */
+    static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
+        return connection.isClosed() || Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
     }
 }

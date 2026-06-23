@@ -4,7 +4,6 @@ import groovy.transform.ToString
 import groovy.transform.builder.Builder
 import liquibase.Scope
 import liquibase.database.Database
-import liquibase.database.DatabaseConnection
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
@@ -89,10 +88,6 @@ class ChangeDataTestHelper {
         } catch(IOException exception) {
             Scope.getCurrentScope().getUI().sendErrorMessage("Failed to save generated sql file! " + exception.message)
         }
-    }
-
-    static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
-        return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
     }
 
     /**

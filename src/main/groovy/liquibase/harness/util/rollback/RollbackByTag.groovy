@@ -32,9 +32,9 @@ class RollbackByTag implements RollbackStrategy{
             def connection = databaseUnderTest.database.getConnection()
             try {
                 ((JdbcConnection) connection).createStatement().executeUpdate("delete from DATABASECHANGELOG where TAG='${tag}'")
-            } catch (Exception Exception) {
+            } catch (Exception exception) {
                 Scope.getCurrentScope().getUI().sendMessage("Couldn't delete ${tag} tag from tracking table " +
-                        Exception.printStackTrace())
+                        exception.toString())
             } finally {
                 connection.commit()
             }

@@ -4,12 +4,12 @@ import groovy.transform.ToString
 import groovy.transform.builder.Builder
 import liquibase.Scope
 import liquibase.database.Database
-import liquibase.database.DatabaseConnection
 import liquibase.database.jvm.JdbcConnection
 import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.harness.util.FileUtils
+import liquibase.harness.util.TestUtils
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
@@ -19,10 +19,6 @@ class FoundationalTestHelper {
 
     final static String baseChangelogPath = "liquibase/harness/compatibility/foundational/changelogs"
     final static List supportedChangeLogFormats = ['xml', 'sql', 'json', 'yml', 'yaml'].asImmutable()
-
-    static boolean shouldOpenNewConnection(DatabaseConnection connection, String... dbNames) {
-        return connection.isClosed()||Arrays.stream(dbNames).anyMatch({ dbName -> connection.getDatabaseProductName().toLowerCase().contains(dbName) })
-    }
 
     static List<TestInput> buildTestInput() {
         String commandLineInputFormat = System.getProperty("inputFormat")
@@ -59,19 +55,60 @@ class FoundationalTestHelper {
         return inputList
     }
 
-    static ResultSet executeQuery(String pathToSql, TestInput testInput) throws SQLException {
-        Connection newConnection
-        ResultSet resultSet
-        if (shouldOpenNewConnection(testInput.database.getConnection(), "firebird")) {
-            newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
-            resultSet = newConnection.createStatement().executeQuery(pathToSql)
-            newConnection.close()
-        } else {
-            JdbcConnection connection = (JdbcConnection) testInput.database.connection
-            resultSet = connection.createStatement().executeQuery(pathToSql)
-            testInput.database.connection.autoCommit ?: testInput.database.connection.commit()
+    /**
+     * Runs a checking query and returns the {@link ResultSet} together with the {@link Connection} that the
+     * caller is responsible for closing. The second element is non-null only when this method opened a brand
+     * new connection (the firebird case) - it is {@code null} for the shared-connection branch, so the caller
+     * can simply close whatever it gets back without ever closing the shared database connection.
+     * The freshly opened connection cannot be closed here because the returned ResultSet would then be invalid;
+     * on failure it is closed before re-throwing so it is not leaked.
+     */
+    static Tuple2<ResultSet, Connection> executeQuery(String pathToSql, TestInput testInput) throws SQLException {
+        Connection newConnection = null
+        try {
+            ResultSet resultSet
+            if (TestUtils.shouldOpenNewConnection(testInput.database.getConnection(), "firebird")) {
+                newConnection = DriverManager.getConnection(testInput.url, testInput.username, testInput.password)
+                resultSet = newConnection.createStatement().executeQuery(pathToSql)
+            } else {
+                JdbcConnection connection = (JdbcConnection) testInput.database.connection
+                resultSet = connection.createStatement().executeQuery(pathToSql)
+                testInput.database.connection.autoCommit ?: testInput.database.connection.commit()
+            }
+            return new Tuple2<>(resultSet, newConnection)
+        } catch (SQLException sqlException) {
+            newConnection?.close()
+            throw sqlException
         }
-        return resultSet
+    }
+
+    /**
+     * Vendor-specific message fragments used to recognise an "object is absent" failure for the few drivers
+     * that do not report the standard SQLState class "42" (Syntax Error or Access Rule Violation), e.g.
+     * SQL Server (SQLState "S0002") and SQLite (null SQLState).
+     */
+    private final static List<String> OBJECT_NOT_FOUND_MESSAGES = [
+            "does not exist",       // PostgreSQL, CockroachDB, EDB, Oracle (ORA-00942)
+            "doesn't exist",        // MySQL, MariaDB, Percona, TiDB
+            "no such table",        // SQLite
+            "invalid object name",  // SQL Server
+            "not found",            // HSQLDB, H2, DB2
+            "unknown table",        // Informix
+    ].asImmutable()
+
+    /**
+     * Distinguishes an expected "the rollback removed the object, so the checking query can no longer find it"
+     * outcome from a genuine SQL failure (connection loss, permissions, malformed query, ...). Only the former
+     * should be swallowed by the rollback absence-check; everything else must fail the test.
+     */
+    static boolean isObjectNotFoundException(SQLException sqlException) {
+        String sqlState = sqlException.getSQLState()
+        // SQLState class "42" covers "undefined table/object" for the vast majority of supported databases.
+        if (sqlState?.startsWith("42")) {
+            return true
+        }
+        String message = sqlException.getMessage()?.toLowerCase()
+        return message != null && OBJECT_NOT_FOUND_MESSAGES.any { message.contains(it) }
     }
 
     @Builder
