@@ -4,6 +4,7 @@ import liquibase.Scope
 import liquibase.command.CommandScope
 import liquibase.database.DatabaseConnection
 import liquibase.exception.CommandExecutionException
+import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.rollback.RollbackByTag
 import liquibase.harness.util.rollback.RollbackStrategy
@@ -115,7 +116,11 @@ class TestUtils {
         // a changeset's DATEEXECUTED lands at/before the rollback date and is never rolled back, leaking rows
         // (e.g. the insert test's id=100 row) into later tests. Tag-based rollback is position-based and
         // immune to clock skew, so default Informix to it. Other databases keep the date-based default.
-        if (TestConfig.getInstance().getFilteredDatabasesUnderTest().any { it.name?.toLowerCase()?.contains("informix") }) {
+        // Only switch when every database under test is Informix (e.g. the informix job runs with -DdbName=informix);
+        // the diff/diffChangelog jobs run unfiltered and would otherwise tag every database in the config - including
+        // ones their create-infra step never starts, causing connection-refused failures in setupSpec.
+        List<DatabaseUnderTest> databasesUnderTest = TestConfig.getInstance().getFilteredDatabasesUnderTest()
+        if (!databasesUnderTest.isEmpty() && databasesUnderTest.every { it.name?.toLowerCase()?.contains("informix") }) {
             return new RollbackByTag()
         }
         return new RollbackToDate()
