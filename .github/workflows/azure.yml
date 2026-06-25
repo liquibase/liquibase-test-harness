@@ -194,7 +194,7 @@ jobs:
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@229fbce5c1014f2c9844868a60d59d49f1cba945 # main
         with:
           repositories: |
             [
@@ -434,7 +434,7 @@ jobs:
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@229fbce5c1014f2c9844868a60d59d49f1cba945 # main
         with:
           repositories: |
             [
@@ -556,7 +556,7 @@ jobs:
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@229fbce5c1014f2c9844868a60d59d49f1cba945 # main
         with:
           repositories: |
             [
