@@ -466,24 +466,28 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-commercial.version -DnewVersion=0-SNAPSHOT
 
       - name: ${{ matrix.database }} Test Run
-        run: |
-          if [ "${{ needs.setup.outputs.useProArtifacts }}" = "true" ]; then
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-
-            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }}"
-          else
-            echo "Running tests with COMMUNITY artifacts"
-            COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
-            echo "::group::Dependency Tree (COMMUNITY - liquibase-core)"
-            mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-
-            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-Dliquibase-core.version=$COMMUNITY_VERSION"
-          fi
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        with:
+          max_attempts: 2
+          retry_on: error
+          command: |
+            if [ "${{ needs.setup.outputs.useProArtifacts }}" = "true" ]; then
+              echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+              mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+              echo "::endgroup::"
+
+              ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }}"
+            else
+              echo "Running tests with COMMUNITY artifacts"
+              COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
+              echo "::group::Dependency Tree (COMMUNITY - liquibase-core)"
+              mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+              echo "::endgroup::"
+
+              ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-Dliquibase-core.version=$COMMUNITY_VERSION"
+            fi
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

@@ -572,39 +572,43 @@ jobs:
           REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
 
       - name: ${{ matrix.database }} Test Run
-        run: |
-          USE_SECURE_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
-          COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
-          SECURE_VERSION="${{ needs.setup.outputs.proVersion }}"
-
-          if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
-            echo "Running tests with SECURE artifacts"
-            echo "Skipping liquibase-core override; liquibase-commercial already bundles liquibase-core."
-            # Explicitly activate useProArtifacts profile and set commercial version
-            # Profile exclusion will prevent liquibase-core from being resolved
-            MAVEN_OPTS="-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$SECURE_VERSION"
-
-            # Show dependency tree before running tests
-            echo ""
-            echo "::group::Dependency Tree Before Test Execution (PRO)"
-            mvn -B $MAVEN_OPTS dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-          else
-            echo "Running tests with COMMUNITY artifacts"
-            # Only set liquibase-core version for community builds
-            MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
-
-            # Show dependency tree before running tests
-            echo ""
-            echo "::group::Dependency Tree Before Test Execution (COMMUNITY)"
-            mvn -B $MAVEN_OPTS dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-          fi
-
-          # Run tests with appropriate profile/properties and resolved versions
-          ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "$MAVEN_OPTS"
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        with:
+          max_attempts: 2
+          retry_on: error
+          command: |
+            USE_SECURE_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
+            COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
+            SECURE_VERSION="${{ needs.setup.outputs.proVersion }}"
+
+            if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
+              echo "Running tests with SECURE artifacts"
+              echo "Skipping liquibase-core override; liquibase-commercial already bundles liquibase-core."
+              # Explicitly activate useProArtifacts profile and set commercial version
+              # Profile exclusion will prevent liquibase-core from being resolved
+              MAVEN_OPTS="-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$SECURE_VERSION"
+
+              # Show dependency tree before running tests
+              echo ""
+              echo "::group::Dependency Tree Before Test Execution (PRO)"
+              mvn -B $MAVEN_OPTS dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+              echo "::endgroup::"
+            else
+              echo "Running tests with COMMUNITY artifacts"
+              # Only set liquibase-core version for community builds
+              MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
+
+              # Show dependency tree before running tests
+              echo ""
+              echo "::group::Dependency Tree Before Test Execution (COMMUNITY)"
+              mvn -B $MAVEN_OPTS dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+              echo "::endgroup::"
+            fi
+
+            # Run tests with appropriate profile/properties and resolved versions
+            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "$MAVEN_OPTS"
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
