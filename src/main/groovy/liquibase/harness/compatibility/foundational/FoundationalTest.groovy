@@ -117,7 +117,7 @@ class FoundationalTest extends Specification {
             def expectedResultSetArray = new JSONObject(expectedResultSet).getJSONArray(testInput.change)
             assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.LENIENT)
         } catch (Exception exception) {
-            Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.printStackTrace())
+            Scope.getCurrentScope().getUI().sendMessage("Error executing metadata checking sql! " + exception.toString())
             Assertions.fail exception.message
         } finally {
             newConnection == null ?: newConnection.close()
@@ -126,13 +126,16 @@ class FoundationalTest extends Specification {
 
         and: "check for actual presence of created object"
         for (int i = 0; i < checkingSqlList.size(); i++) {
+            Connection openedConnection = null
             try {
-                executeQuery(checkingSqlList.get(i), testInput)
+                openedConnection = executeQuery(checkingSqlList.get(i), testInput).v2
             } catch (SQLException sqlException) {
                 // Assume test object was not created after 'update' command execution and test failed.
                 Scope.getCurrentScope().getUI().sendMessage("Error executing test table checking sql! " +
-                        sqlException.printStackTrace())
+                        sqlException.toString())
                 Assertions.fail sqlException.message
+            } finally {
+                openedConnection?.close()
             }
         }
 
@@ -147,18 +150,28 @@ class FoundationalTest extends Specification {
         and: "check for actual absence of the object removed after 'rollback' command execution"
         if (shouldRunChangeSet) {
             for (int i = 0; i < checkingSqlList.size(); i++) {
+                Connection openedConnection = null
                 try {
-                    ResultSet resultSet = executeQuery(checkingSqlList.get(i), testInput)
+                    def (ResultSet resultSet, Connection opened) = executeQuery(checkingSqlList.get(i), testInput)
+                    openedConnection = opened
                     if (resultSet.next()) {
                         Scope.getCurrentScope().getUI().sendMessage("ERROR!: Rollback was not successful! " +
                                 "The object was not removed after 'rollback' command: " +
                                 resultSet.getMetaData().getTableName(0))
                         Assertions.fail()
                     }
-                } catch (ignored) {
+                } catch (SQLException sqlException) {
+                    // Only an "object not found" error proves the 'rollback' removed the object as expected.
+                    // Genuine failures (connection loss, permissions, malformed query, ...) must fail the test.
+                    if (!isObjectNotFoundException(sqlException)) {
+                        Scope.getCurrentScope().getUI().sendMessage("Error executing rollback absence-check sql! " +
+                                sqlException.toString())
+                        Assertions.fail sqlException.message
+                    }
                     (connection.isClosed() || connection.autoCommit) ?: connection.commit()
-                    // Assume test object does not exist and 'rollback' was successful. Ignore exception.
                     Scope.getCurrentScope().getUI().sendMessage("Rollback was successful. Removed object was not found.")
+                } finally {
+                    openedConnection?.close()
                 }
             }
         }

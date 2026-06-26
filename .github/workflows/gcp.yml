@@ -44,10 +44,10 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -188,14 +188,14 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           repositories: |
             [
@@ -304,10 +304,10 @@ jobs:
             version: gcp
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -349,10 +349,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -388,7 +388,7 @@ jobs:
 
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
-        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
+        uses: liquibase/setup-liquibase@9bd28bc8b31bd5a1651b34c7856569d5392ee869 # v3.0.0
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -431,7 +431,7 @@ jobs:
 
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
-        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
+        uses: liquibase/setup-liquibase@9bd28bc8b31bd5a1651b34c7856569d5392ee869 # v3.0.0
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -450,7 +450,7 @@ jobs:
 
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
-        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
+        uses: liquibase/setup-liquibase@9bd28bc8b31bd5a1651b34c7856569d5392ee869 # v3.0.0
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -477,7 +477,7 @@ jobs:
             mvn-liquibase-${{ github.run_id }}-
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           repositories: |
             [

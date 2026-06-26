@@ -43,10 +43,10 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -187,14 +187,14 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           repositories: |
             [
@@ -295,14 +295,14 @@ jobs:
             version: azure
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       #      This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
         run: lpm update && lpm add mysql
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -347,10 +347,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -375,7 +375,7 @@ jobs:
       # Setup Liquibase CLI for MSSQL init operations (before Java setup)
       - name: Setup Liquibase
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
+        uses: liquibase/setup-liquibase@9bd28bc8b31bd5a1651b34c7856569d5392ee869 # v3.0.0
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -427,14 +427,14 @@ jobs:
             --url="${{ env.TH_AZURE_MSSQL_MI_URL }}"
 
       # Setup Java and Maven for test runs (after Liquibase CLI operations)
-      - uses: liquibase/build-logic/.github/actions/setup-java@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           repositories: |
             [
@@ -530,10 +530,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -557,7 +557,7 @@ jobs:
           requireForce: true
 
       - name: Setup Liquibase
-        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
+        uses: liquibase/setup-liquibase@9bd28bc8b31bd5a1651b34c7856569d5392ee869 # v3.0.0
         with:
           version: '5.0.0'
           edition: 'secure'
@@ -573,14 +573,14 @@ jobs:
             --password="${{ env.TH_DB_PASSWD }}" \
             --url="${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}"
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           repositories: |
             [

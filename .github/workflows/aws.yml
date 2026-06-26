@@ -45,10 +45,10 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -189,14 +189,14 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           repositories: |
             [
@@ -297,7 +297,15 @@ jobs:
     needs: [setup]
     runs-on: ubuntu-latest
     env:
-      LPM_VERSION: 0.2.3
+      # lpm 0.2.x fetched its package manifest from the now-removed `master`
+      # branch of liquibase-package-manager, whose checksums drifted from the
+      # re-published driver artifacts -> "Checksum validation failed". 0.3.x
+      # reads the maintained `main` manifest.
+      LPM_VERSION: 0.3.5
+      # Pin LocalStack to a known-good stable release. Untagged ':latest' pulls
+      # bleeding-edge dev builds (e.g. 2026.7.0.dev22) that regressed the MSSQL
+      # RDS engine and caused "RDS status=error" on scheduled runs.
+      LOCALSTACK_VERSION: "2026.6.0"
     strategy:
       fail-fast: false
       matrix:
@@ -305,7 +313,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Setup Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
@@ -324,7 +332,7 @@ jobs:
           sudo lpm update && sudo lpm add mysql postgresql mariadb mssql
     
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -343,14 +351,17 @@ jobs:
           GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           RDS_MYSQL_DOCKER: 1     #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
         run: |
-          pip install localstack awscli-local
-          docker pull localstack/localstack-pro
+          pip install "localstack==${{ env.LOCALSTACK_VERSION }}" awscli-local
+          docker pull localstack/localstack-pro:${{ env.LOCALSTACK_VERSION }}
           localstack auth set-token ${{ env.LOCALSTACK_OAUTH_TOKEN }}
+          # Pin the runtime image (not just the CLI) to the stable tag. IMAGE_NAME
+          # forces `localstack start` to launch the pinned version instead of the
+          # default ':latest' dev build, keeping scheduled runs deterministic.
           # LocalStack starts its own MSSQL container from its default image; the
           # EULA must be forwarded with the LOCALSTACK_ prefix (the bare
           # MSSQL_ACCEPT_EULA triggers a "non-prefixed env var" warning and is
           # not reliably forwarded into the runtime container).
-          LOCALSTACK_MSSQL_ACCEPT_EULA=Y localstack start -d
+          LOCALSTACK_MSSQL_ACCEPT_EULA=Y IMAGE_NAME=localstack/localstack-pro:${{ env.LOCALSTACK_VERSION }} localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
@@ -506,17 +517,17 @@ jobs:
 
       - name: Setup Liquibase for Oracle
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: liquibase/setup-liquibase@d22b8c008d6e54475bde84f50bafe9608ea42efb # v2.1.1
+        uses: liquibase/setup-liquibase@9bd28bc8b31bd5a1651b34c7856569d5392ee869 # v3.0.0
         with:
-          version: "4.33.0"
-          edition: "pro"
+          version: "5.0.0"
+          edition: "secure"
 
       # Route Oracle init+test through the SSM port-forwarding tunnel so the
       # aws-oracle RDS instance (ora-19) can stay publicly_accessible=false.
       # Oracle JDBC URL shape: jdbc:oracle:thin:@<host>:<port>:<sid>.
       - name: Configure AWS credentials for SSM
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: aws-actions/configure-aws-credentials@acca2b1b2070338fb9fd1ca27ecee81d687e58e5 # v6.1.2
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
@@ -554,7 +565,7 @@ jobs:
 
       - name: Open SSM tunnel to oracle
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-oracle.outputs.host }}
@@ -598,7 +609,7 @@ jobs:
             mvn-liquibase-${{ github.run_id }}-
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           repositories: |
             [

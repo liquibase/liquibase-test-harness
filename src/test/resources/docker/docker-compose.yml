@@ -1,9 +1,7 @@
-version: "3.3"
-
 services:
   mysql-5.6:
     platform: linux/x86_64
-    image: library/mysql:5.6
+    image: mysql:5.6
     ports:
       - "33064:3306"
     restart: always
@@ -17,7 +15,7 @@ services:
 
   mysql-5.7:
     platform: linux/x86_64
-    image: library/mysql:5.7
+    image: mysql:5.7
     ports:
       - "33062:3306"
     restart: always
@@ -239,7 +237,7 @@ services:
   mariadb-10.7:
     image: mariadb:10.7
     ports:
-      - "33070:3306"
+      - "33074:3306"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: LbRootPass1
@@ -346,7 +344,7 @@ services:
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-23.1
+    command: /setup_db.sh crdb-23.1 --insecure
     depends_on:
       - crdb-23.1
 
@@ -369,7 +367,7 @@ services:
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-23.2
+    command: /setup_db.sh crdb-23.2 --insecure
     depends_on:
       - crdb-23.2
 
@@ -392,7 +390,7 @@ services:
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-24.1
+    command: /setup_db.sh crdb-24.1 --insecure
     depends_on:
       - crdb-24.1
 
@@ -416,7 +414,7 @@ services:
     container_name: informix-db-14
     hostname: ifx
     ports:
-      - "9088:9088"
+      - "9089:9088"
     environment:
       LICENSE: "accept"
       INIT_FILE: "informix-init.sql"
@@ -435,7 +433,7 @@ services:
       - ./storage/tidb:/var/lib/mysql
 
   tidb:
-    image: mysql:latest
+    image: mysql:8.4
     container_name: mysql-client
     depends_on:
       - ti-db

@@ -145,7 +145,7 @@ class AdvancedTestHelper {
     static validateDiffChangelog(String changelogFormat, String changelogContent, String expectedSql, String change, String changeReversed, String commandName) {
         validateGenerateChangelog(changelogFormat, changelogContent, expectedSql, change, commandName)
         if (!changelogFormat.equalsIgnoreCase("sqlChangelog")) {
-            uiService.sendMessage(changelogContent.contains("$change") ? "GENERATED CHANGELOG CONTAINS $changeReversed CHANGE" :
+            uiService.sendMessage(changelogContent.contains("$changeReversed") ? "GENERATED CHANGELOG CONTAINS $changeReversed CHANGE" :
                     "FAIL! GENERATED CHANGELOG DOES NOT CONTAIN $changeReversed CHANGE")
             assert changelogContent.contains("$changeReversed")
         }
@@ -160,7 +160,7 @@ class AdvancedTestHelper {
                     "will auto-generate a new version if it passes. \nEXPECTED SQL: \n" + expectedSql + " \n GENERATED SQL: \n" + generatedSql
         }
         Scope.getCurrentScope().getUI().sendMessage(message)
-        expectedSql.equalsIgnoreCase(generatedSql)
+        assert expectedSql.equalsIgnoreCase(generatedSql)
     }
 
     static validateDiff(String generatedDiff, String expectedDiff) {
@@ -171,7 +171,7 @@ class AdvancedTestHelper {
             message = "FAIL! EXPECTED DIFF DOESN'T MATCH GENERATED DIFF!"
         }
         uiService.sendMessage(message)
-        generatedDiff == expectedDiff
+        assert generatedDiff == expectedDiff
     }
 
     static void saveAsExpectedSql(String generatedSql, TestInput testInput, String commandName) {

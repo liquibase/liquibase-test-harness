@@ -22,7 +22,7 @@ import java.sql.ResultSet
 
 import static liquibase.harness.data.ChangeDataTestHelper.buildTestInput
 import static liquibase.harness.data.ChangeDataTestHelper.reopenDatabaseConnectionIfClosed
-import static liquibase.harness.data.ChangeDataTestHelper.shouldOpenNewConnection
+import static liquibase.harness.util.TestUtils.shouldOpenNewConnection
 import static liquibase.harness.data.ChangeDataTestHelper.saveAsExpectedSql
 import static liquibase.harness.util.FileUtils.*
 import static liquibase.harness.util.JSONUtils.compareJSONArrays
@@ -126,7 +126,7 @@ class ChangeDataTests extends Specification {
                 def expectedResultSetArray = expectedResultSetJSON.getJSONArray(testInput.getChangeData())
                 assert compareJSONArrays(generatedResultSetArray, expectedResultSetArray, JSONCompareMode.NON_EXTENSIBLE)
             } catch (Exception exception) {
-                Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.printStackTrace())
+                Scope.getCurrentScope().getUI().sendMessage("Error executing checking sql! " + exception.toString())
                 Assert.fail exception.message
             } finally {
                 newConnection?.close()

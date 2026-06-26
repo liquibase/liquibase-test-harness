@@ -4,7 +4,7 @@ name: Default Test Execution
 on:
   # Triggers the workflow on push & pull request events for the main branch. Also allows for manual triggers
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
     types:
       - opened
@@ -140,10 +140,10 @@ jobs:
         "edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","sqlite","hsqldb-2.5","hsqldb-2.6","hsqldb-2.7","firebird-3","firebird-4","db2-luw","informix-12.10","informix-14.10","tidb"]' }}
       testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
     steps:
-      - uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -288,14 +288,14 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           repositories: |
             [
@@ -483,10 +483,10 @@ jobs:
         database: ${{ fromJson(needs.setup.outputs.databases) }}
 
     steps:
-      - uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -509,14 +509,14 @@ jobs:
           permission-contents: write
           permission-actions: write
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           repositories: |
             [
@@ -632,10 +632,10 @@ jobs:
     needs: [setup, test, authorize]
     if: ${{ always() }}
     steps:
-      - uses: liquibase/build-logic/.github/actions/checkout@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+      - uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@2660ba32055efd3301bcf624a3d60ca8b11cc482 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -671,11 +671,22 @@ jobs:
           echo "**Test Result:** ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Coordinate Liquibase-Test-Harness
+        # Only report a commit status back to the triggering Liquibase commit when a
+        # SHA was actually resolved. On scheduled/manual runs liquibaseSha is empty,
+        # and GitHub also drops the setup output entirely when the resolved SHA
+        # collides with a masked secret ("Skip output 'liquibaseSha' since it may
+        # contain secret"). An empty SHA produced a POST to /repos/<owner>/<repo>/
+        # statuses with no SHA segment -> 404 -> failed the whole workflow.
+        if: ${{ always() && needs.setup.outputs.liquibaseSha != '' }}
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ steps.get-token.outputs.token }}
           script: |
-            const helper = require('./.github/util/workflow-helper.js')({github, context});
+            const liquibaseSha = "${{ needs.setup.outputs.liquibaseSha }}";
+            if (!liquibaseSha) {
+              core.warning("No liquibaseSha resolved; skipping commit status report.");
+              return;
+            }
 
             console.log("result is ${{ needs.test.result }}");
 
@@ -690,12 +701,18 @@ jobs:
             const repoName = "${{ needs.setup.outputs.liquibaseRepo }}".split("/")[1];
             console.log("Creating commit status on repository: " + repoName);
 
-            await github.rest.repos.createCommitStatus({
-              "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
-              "repo": repoName,
-              "sha": "${{ needs.setup.outputs.liquibaseSha }}",
-              "state": result,
-              "context": "Run Test-Harness Tests",
-              "description": "Test-Harness tests complete",
-              "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
-            });
+            try {
+              await github.rest.repos.createCommitStatus({
+                "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
+                "repo": repoName,
+                "sha": liquibaseSha,
+                "state": result,
+                "context": "Run Test-Harness Tests",
+                "description": "Test-Harness tests complete",
+                "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
+              });
+            } catch (error) {
+              // Posting a commit status back to Liquibase is best-effort coordination,
+              // not a gate on the test-harness result -- never fail the workflow over it.
+              core.warning(`Failed to create commit status on ${repoName}@${liquibaseSha}: ${error.message}`);
+            }
