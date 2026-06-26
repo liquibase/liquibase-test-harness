@@ -817,7 +817,6 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
@@ -826,19 +825,15 @@ jobs:
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
           POSTGRES_JDBC_URL: jdbc:postgresql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-postgres.outputs.dbname-qs }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -Dprefix=aws -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$POSTGRES_JDBC_URL" test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -Dprefix=aws -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$POSTGRES_JDBC_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
@@ -847,19 +842,15 @@ jobs:
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
           ORACLE_JDBC_URL: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$ORACLE_JDBC_URL" test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$ORACLE_JDBC_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
@@ -868,19 +859,15 @@ jobs:
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
           MARIADB_JDBC_URL: jdbc:mariadb://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-mariadb.outputs.dbname-qs }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MARIADB_JDBC_URL" test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MARIADB_JDBC_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
@@ -889,19 +876,15 @@ jobs:
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
           MYSQL_JDBC_URL: jdbc:mysql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-mysql-test.outputs.dbname-qs }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MYSQL_JDBC_URL" test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MYSQL_JDBC_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
@@ -911,19 +894,15 @@ jobs:
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
           # trustServerCertificate=true skips cert validation because we connect via "localhost" but the cert names the real RDS hostname (the SSM tunnel still encrypts the bytes underneath).
           MSSQL_JDBC_URL: jdbc:sqlserver://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }};trustServerCertificate=true;databaseName=lbcat
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MSSQL_JDBC_URL" test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MSSQL_JDBC_URL" test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
@@ -932,19 +911,15 @@ jobs:
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
           AURORA_MYSQL_JDBC_URL: jdbc:mysql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-aurora-mysql.outputs.dbname-qs }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$AURORA_MYSQL_JDBC_URL" test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$AURORA_MYSQL_JDBC_URL" test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
           TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
@@ -952,15 +927,12 @@ jobs:
           DB_USERNAME: ${{ env.TH_DB_ADMIN }}
           DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
           AURORA_PG_JDBC_URL: jdbc:postgresql://${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}/${{ steps.parse-aurora-pg.outputs.dbname-qs }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion=16 -Dprefix=aurora -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$AURORA_PG_JDBC_URL" test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion=16 -Dprefix=aurora -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$AURORA_PG_JDBC_URL" test
 
       - name: Archive AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

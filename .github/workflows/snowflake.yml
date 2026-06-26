@@ -413,24 +413,20 @@ jobs:
           liquibase --defaults-file=liquibase.properties update
 
       - name: Snowflake Test Run
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            JDK_JAVA_OPTIONS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} \
-                -Dtest=LiquibaseHarnessSuiteTest \
-                -DconfigFile=/harness-config-cloud.yml \
-                -DdbName=snowflake \
-                -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
-                -DrollbackStrategy=rollbackByTag test
+          JDK_JAVA_OPTIONS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} \
+              -Dtest=LiquibaseHarnessSuiteTest \
+              -DconfigFile=/harness-config-cloud.yml \
+              -DdbName=snowflake \
+              -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
+              -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

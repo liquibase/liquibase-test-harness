@@ -458,48 +458,36 @@ jobs:
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MYSQL_URL}}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MYSQL_URL}}' test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_URL}}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_URL}}' test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=mi -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MSSQL_MI_URL}}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=mi -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MSSQL_MI_URL}}' test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -591,18 +579,14 @@ jobs:
             mvn-liquibase-${{ github.run_id }}-
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        with:
-          max_attempts: 2
-          retry_on: error
-          command: |
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
+        run: |
+          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+          echo "::endgroup::"
 
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=flexible_${{ matrix.version }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}' test
+          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=flexible_${{ matrix.version }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}' test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
