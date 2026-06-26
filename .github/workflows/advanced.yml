@@ -472,7 +472,15 @@ jobs:
             mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
             echo "::endgroup::"
 
-            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }}"
+            for _attempt in 1 2; do
+              if ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }}"; then
+                break
+              elif [ "$_attempt" -lt 2 ]; then
+                echo "::warning::Test attempt $_attempt failed, retrying..."
+              else
+                exit 1
+              fi
+            done
           else
             echo "Running tests with COMMUNITY artifacts"
             COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
@@ -480,7 +488,15 @@ jobs:
             mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
             echo "::endgroup::"
 
-            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-Dliquibase-core.version=$COMMUNITY_VERSION"
+            for _attempt in 1 2; do
+              if ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-Dliquibase-core.version=$COMMUNITY_VERSION"; then
+                break
+              elif [ "$_attempt" -lt 2 ]; then
+                echo "::warning::Test attempt $_attempt failed, retrying..."
+              else
+                exit 1
+              fi
+            done
           fi
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}

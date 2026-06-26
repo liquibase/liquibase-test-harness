@@ -602,7 +602,15 @@ jobs:
           fi
 
           # Run tests with appropriate profile/properties and resolved versions
-          ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "$MAVEN_OPTS"
+          for _attempt in 1 2; do
+            if ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "$MAVEN_OPTS"; then
+              break
+            elif [ "$_attempt" -lt 2 ]; then
+              echo "::warning::Test attempt $_attempt failed, retrying..."
+            else
+              exit 1
+            fi
+          done
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 

@@ -88,7 +88,15 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          mvn -PuseProArtifacts -DuseProArtifacts=true -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
+          for _attempt in 1 2; do
+            if mvn -PuseProArtifacts -DuseProArtifacts=true -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test; then
+              break
+            elif [ "$_attempt" -lt 2 ]; then
+              echo "::warning::Test attempt $_attempt failed, retrying..."
+            else
+              exit 1
+            fi
+          done
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 

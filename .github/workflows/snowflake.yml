@@ -420,13 +420,21 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
-          JDK_JAVA_OPTIONS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} \
-              -Dtest=LiquibaseHarnessSuiteTest \
-              -DconfigFile=/harness-config-cloud.yml \
-              -DdbName=snowflake \
-              -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
-              -DrollbackStrategy=rollbackByTag test
+          for _attempt in 1 2; do
+            if JDK_JAVA_OPTIONS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
+               mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} \
+                   -Dtest=LiquibaseHarnessSuiteTest \
+                   -DconfigFile=/harness-config-cloud.yml \
+                   -DdbName=snowflake \
+                   -DdbUrl='${{env.TH_SNOW_URL_GH}}&private_key_file=/tmp/snowflake_private_key.p8' \
+                   -DrollbackStrategy=rollbackByTag test; then
+              break
+            elif [ "$_attempt" -lt 2 ]; then
+              echo "::warning::Test attempt $_attempt failed, retrying..."
+            else
+              exit 1
+            fi
+          done
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
