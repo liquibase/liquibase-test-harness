@@ -830,6 +830,9 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
+          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
+          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -Dprefix=aws -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$POSTGRES_JDBC_URL" test; then
               break
@@ -855,6 +858,9 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
+          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
+          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$ORACLE_JDBC_URL" test; then
               break
@@ -880,6 +886,9 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
+          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
+          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MARIADB_JDBC_URL" test; then
               break
@@ -905,6 +914,9 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
+          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
+          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MYSQL_JDBC_URL" test; then
               break
@@ -931,6 +943,9 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
+          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
+          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$MSSQL_JDBC_URL" test; then
               break
@@ -956,6 +971,9 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
+          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
+          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$AURORA_MYSQL_JDBC_URL" test; then
               break
@@ -980,6 +998,9 @@ jobs:
           mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
           echo "::endgroup::"
 
+          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
+          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion=16 -Dprefix=aurora -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$AURORA_PG_JDBC_URL" test; then
               break

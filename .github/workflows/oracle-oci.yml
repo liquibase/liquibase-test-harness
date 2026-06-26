@@ -368,6 +368,9 @@ jobs:
           # case-sensitive — referencing the lowercase form yields '' and breaks JDBC connection.
           # The vault stores a bare Oracle TNS descriptor (no jdbc: prefix) so it can be reused
           # by non-Java tooling; prepend 'jdbc:oracle:thin:@' here so the JDBC driver resolves.
+          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
+          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='jdbc:oracle:thin:@${{ env.TH_OCI_ORACLE_19C_URL }}' test; then
               break
