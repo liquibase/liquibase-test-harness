@@ -297,7 +297,15 @@ jobs:
     needs: [setup]
     runs-on: ubuntu-latest
     env:
-      LPM_VERSION: 0.2.3
+      # lpm 0.2.x fetched its package manifest from the now-removed `master`
+      # branch of liquibase-package-manager, whose checksums drifted from the
+      # re-published driver artifacts -> "Checksum validation failed". 0.3.x
+      # reads the maintained `main` manifest.
+      LPM_VERSION: 0.3.5
+      # Pin LocalStack to a known-good stable release. Untagged ':latest' pulls
+      # bleeding-edge dev builds (e.g. 2026.7.0.dev22) that regressed the MSSQL
+      # RDS engine and caused "RDS status=error" on scheduled runs.
+      LOCALSTACK_VERSION: "2026.6.0"
     strategy:
       fail-fast: false
       matrix:
@@ -343,14 +351,17 @@ jobs:
           GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           RDS_MYSQL_DOCKER: 1     #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
         run: |
-          pip install localstack awscli-local
-          docker pull localstack/localstack-pro
+          pip install "localstack==${{ env.LOCALSTACK_VERSION }}" awscli-local
+          docker pull localstack/localstack-pro:${{ env.LOCALSTACK_VERSION }}
           localstack auth set-token ${{ env.LOCALSTACK_OAUTH_TOKEN }}
+          # Pin the runtime image (not just the CLI) to the stable tag. IMAGE_NAME
+          # forces `localstack start` to launch the pinned version instead of the
+          # default ':latest' dev build, keeping scheduled runs deterministic.
           # LocalStack starts its own MSSQL container from its default image; the
           # EULA must be forwarded with the LOCALSTACK_ prefix (the bare
           # MSSQL_ACCEPT_EULA triggers a "non-prefixed env var" warning and is
           # not reliably forwarded into the runtime container).
-          LOCALSTACK_MSSQL_ACCEPT_EULA=Y localstack start -d
+          LOCALSTACK_MSSQL_ACCEPT_EULA=Y IMAGE_NAME=localstack/localstack-pro:${{ env.LOCALSTACK_VERSION }} localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"

@@ -663,11 +663,22 @@ jobs:
           echo "**Test Result:** ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Coordinate Liquibase-Test-Harness
+        # Only report a commit status back to the triggering Liquibase commit when a
+        # SHA was actually resolved. On scheduled/manual runs liquibaseSha is empty,
+        # and GitHub also drops the setup output entirely when the resolved SHA
+        # collides with a masked secret ("Skip output 'liquibaseSha' since it may
+        # contain secret"). An empty SHA produced a POST to /repos/<owner>/<repo>/
+        # statuses with no SHA segment -> 404 -> failed the whole workflow.
+        if: ${{ always() && needs.setup.outputs.liquibaseSha != '' }}
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ steps.get-token.outputs.token }}
           script: |
-            const helper = require('./.github/util/workflow-helper.js')({github, context});
+            const liquibaseSha = "${{ needs.setup.outputs.liquibaseSha }}";
+            if (!liquibaseSha) {
+              core.warning("No liquibaseSha resolved; skipping commit status report.");
+              return;
+            }
 
             console.log("result is ${{ needs.test.result }}");
 
@@ -682,12 +693,18 @@ jobs:
             const repoName = "${{ needs.setup.outputs.liquibaseRepo }}".split("/")[1];
             console.log("Creating commit status on repository: " + repoName);
 
-            await github.rest.repos.createCommitStatus({
-              "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
-              "repo": repoName,
-              "sha": "${{ needs.setup.outputs.liquibaseSha }}",
-              "state": result,
-              "context": "Run Test-Harness Tests",
-              "description": "Test-Harness tests complete",
-              "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
-            });
+            try {
+              await github.rest.repos.createCommitStatus({
+                "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
+                "repo": repoName,
+                "sha": liquibaseSha,
+                "state": result,
+                "context": "Run Test-Harness Tests",
+                "description": "Test-Harness tests complete",
+                "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
+              });
+            } catch (error) {
+              // Posting a commit status back to Liquibase is best-effort coordination,
+              // not a gate on the test-harness result -- never fail the workflow over it.
+              core.warning(`Failed to create commit status on ${repoName}@${liquibaseSha}: ${error.message}`);
+            }
