@@ -572,17 +572,24 @@ jobs:
           REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
 
       - name: ${{ matrix.database }} Test Run
+        # [TECHOPS-645] User-controllable values (matrix.database, testClasses,
+        # version inputs) are bound to env vars and referenced as quoted shell
+        # variables, per GitHub's script-injection hardening guidance, instead of
+        # being interpolated directly into the run script.
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          USE_PRO_ARTIFACTS: ${{ needs.setup.outputs.useProArtifacts }}
+          PRO_VERSION: ${{ needs.setup.outputs.proVersion }}
+          COMMUNITY_VERSION: ${{ needs.setup.outputs.communityVersion }}
+          DATABASE: ${{ matrix.database }}
+          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
         run: |
-          USE_SECURE_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
-          COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
-          SECURE_VERSION="${{ needs.setup.outputs.proVersion }}"
-
-          if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
+          if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
             echo "Running tests with SECURE artifacts"
             echo "Skipping liquibase-core override; liquibase-commercial already bundles liquibase-core."
             # Explicitly activate useProArtifacts profile and set commercial version
             # Profile exclusion will prevent liquibase-core from being resolved
-            MAVEN_OPTS="-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$SECURE_VERSION"
+            MAVEN_OPTS="-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$PRO_VERSION"
 
             # Show dependency tree before running tests
             echo ""
@@ -606,16 +613,14 @@ jobs:
           # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
           # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
-            if ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "$MAVEN_OPTS"; then
+            if ./src/test/resources/automation-runner.sh "$DATABASE" "$TEST_CLASSES" "$MAVEN_OPTS"; then
               break
             elif [ "$_attempt" -lt 2 ]; then
-              echo "::warning::Test attempt $_attempt failed, retrying..."
+              echo "::warning::Test attempt $_attempt failed for $DATABASE ($TEST_CLASSES), retrying..."
             else
               exit 1
             fi
           done
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

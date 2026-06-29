@@ -82,6 +82,12 @@ jobs:
         run: sleep 180
 
       - name: Oracle ${{ matrix.plan }} Test Run
+        # [TECHOPS-645] The matrix value is bound to an env var and referenced as a
+        # quoted shell variable, per GitHub's script-injection hardening guidance,
+        # instead of being interpolated directly into the Maven command line.
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          DB_VERSION: ${{ matrix.plan }}
         run: |
           docker ps
           echo "::group::Dependency Tree (PRO - liquibase-commercial)"
@@ -92,16 +98,14 @@ jobs:
           # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
           # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
           for _attempt in 1 2; do
-            if mvn -PuseProArtifacts -DuseProArtifacts=true -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test; then
+            if mvn -PuseProArtifacts -DuseProArtifacts=true -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion="$DB_VERSION" test; then
               break
             elif [ "$_attempt" -lt 2 ]; then
-              echo "::warning::Test attempt $_attempt failed, retrying..."
+              echo "::warning::Test attempt $_attempt failed for oracle-$DB_VERSION (LiquibaseHarnessSuiteTest), retrying..."
             else
               exit 1
             fi
           done
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
       - name: Archive Oracle ${{ matrix.plan }} test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

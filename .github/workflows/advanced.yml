@@ -466,46 +466,54 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-commercial.version -DnewVersion=0-SNAPSHOT
 
       - name: ${{ matrix.database }} Test Run
+        # [TECHOPS-645] User-controllable values (matrix.database, testClasses,
+        # version inputs) are bound to env vars and referenced as quoted shell
+        # variables, per GitHub's script-injection hardening guidance, instead of
+        # being interpolated directly into the run script.
+        env:
+          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+          USE_PRO_ARTIFACTS: ${{ needs.setup.outputs.useProArtifacts }}
+          PRO_VERSION: ${{ needs.setup.outputs.proVersion }}
+          COMMUNITY_VERSION: ${{ needs.setup.outputs.communityVersion }}
+          DATABASE: ${{ matrix.database }}
+          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
         run: |
-          if [ "${{ needs.setup.outputs.useProArtifacts }}" = "true" ]; then
+          if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
             echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$PRO_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
             echo "::endgroup::"
 
             # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
-          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
-          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
-          for _attempt in 1 2; do
-              if ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }}"; then
+            # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+            # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
+            for _attempt in 1 2; do
+              if ./src/test/resources/automation-runner.sh "$DATABASE" "$TEST_CLASSES" "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$PRO_VERSION"; then
                 break
               elif [ "$_attempt" -lt 2 ]; then
-                echo "::warning::Test attempt $_attempt failed, retrying..."
+                echo "::warning::Test attempt $_attempt failed for $DATABASE ($TEST_CLASSES), retrying..."
               else
                 exit 1
               fi
             done
           else
             echo "Running tests with COMMUNITY artifacts"
-            COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
             echo "::group::Dependency Tree (COMMUNITY - liquibase-core)"
-            mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            mvn -B -Dliquibase-core.version="$COMMUNITY_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
             echo "::endgroup::"
 
             # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
-          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
-          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
-          for _attempt in 1 2; do
-              if ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-Dliquibase-core.version=$COMMUNITY_VERSION"; then
+            # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
+            # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
+            for _attempt in 1 2; do
+              if ./src/test/resources/automation-runner.sh "$DATABASE" "$TEST_CLASSES" "-Dliquibase-core.version=$COMMUNITY_VERSION"; then
                 break
               elif [ "$_attempt" -lt 2 ]; then
-                echo "::warning::Test attempt $_attempt failed, retrying..."
+                echo "::warning::Test attempt $_attempt failed for $DATABASE ($TEST_CLASSES), retrying..."
               else
                 exit 1
               fi
             done
           fi
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
