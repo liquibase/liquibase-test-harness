@@ -53,31 +53,22 @@ jobs:
             ]
 
       - name: IBM DB2/Z Cloud Test Run
-        # [TECHOPS-645] Secrets are bound to env vars and referenced as quoted
-        # shell variables, per GitHub's script-injection hardening guidance,
-        # instead of being interpolated directly into the Maven command line.
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          DB_USERNAME: ${{ env.DB2_USER }}
-          DB_PASSWORD: ${{ env.DB2_PASS }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
-          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
-          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
-          for _attempt in 1 2; do
-            if mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=LiquibaseHarnessSuiteTest -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbName=db2-z -DrollbackStrategy=rollbackByTag test; then
-              break
-            elif [ "$_attempt" -lt 2 ]; then
-              echo "Failed test target: db2-z (LiquibaseHarnessSuiteTest) (attempt $_attempt)"
-              echo "::warning::Test attempt $_attempt failed, retrying..."
-            else
-              exit 1
-            fi
-          done
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. Secrets are passed as inputs (mapped to env vars) and
+        # referenced as quoted shell variables in the command, per GitHub's
+        # script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        with:
+          target: db2-z
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          db-username: ${{ env.DB2_USER }}
+          db-password: ${{ env.DB2_PASS }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dtest=LiquibaseHarnessSuiteTest -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbName=db2-z -DrollbackStrategy=rollbackByTag test
 
       - name: Archive IBM DB2/Z Cloud Database Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

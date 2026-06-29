@@ -82,31 +82,22 @@ jobs:
         run: sleep 180
 
       - name: Oracle ${{ matrix.plan }} Test Run
-        # [TECHOPS-645] The matrix value is bound to an env var and referenced as a
-        # quoted shell variable, per GitHub's script-injection hardening guidance,
-        # instead of being interpolated directly into the Maven command line.
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          DB_VERSION: ${{ matrix.plan }}
-        run: |
-          docker ps
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
-          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
-          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
-          for _attempt in 1 2; do
-            if mvn -PuseProArtifacts -DuseProArtifacts=true -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion="$DB_VERSION" test; then
-              break
-            elif [ "$_attempt" -lt 2 ]; then
-              echo "Failed test target: oracle-$DB_VERSION (LiquibaseHarnessSuiteTest) (attempt $_attempt)"
-              echo "::warning::Test attempt $_attempt failed, retrying..."
-            else
-              exit 1
-            fi
-          done
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. The matrix value is passed as an input (mapped to an env
+        # var) and referenced as a quoted shell variable in the command, per GitHub's
+        # script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        with:
+          target: oracle-${{ matrix.plan }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          db-version: ${{ matrix.plan }}
+          pre-command: |-
+            docker ps
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion="$DB_VERSION" test
 
       - name: Archive Oracle ${{ matrix.plan }} test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

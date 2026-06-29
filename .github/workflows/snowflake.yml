@@ -413,38 +413,28 @@ jobs:
           liquibase --defaults-file=liquibase.properties update
 
       - name: Snowflake Test Run
-        # [TECHOPS-645] User-controllable values (version input) and the connection
-        # URL are bound to env vars and referenced as quoted shell variables, per
-        # GitHub's script-injection hardening guidance, instead of being
-        # interpolated directly into the Maven command line.
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          COMMERCIAL_VERSION: ${{ needs.setup.outputs.proVersion }}
-          DB_URL: ${{ env.TH_SNOW_URL_GH }}&private_key_file=/tmp/snowflake_private_key.p8
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
-          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
-          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
-          for _attempt in 1 2; do
-            if JDK_JAVA_OPTIONS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
-               mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" \
-                   -Dtest=LiquibaseHarnessSuiteTest \
-                   -DconfigFile=/harness-config-cloud.yml \
-                   -DdbName=snowflake \
-                   -DdbUrl="$DB_URL" \
-                   -DrollbackStrategy=rollbackByTag test; then
-              break
-            elif [ "$_attempt" -lt 2 ]; then
-              echo "Failed test target: snowflake (LiquibaseHarnessSuiteTest) (attempt $_attempt)"
-              echo "::warning::Test attempt $_attempt failed, retrying..."
-            else
-              exit 1
-            fi
-          done
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. The connection URL and version are passed as inputs
+        # (mapped to env vars) and referenced as quoted shell variables in the command,
+        # per GitHub's script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        with:
+          target: snowflake
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          db-url: ${{ env.TH_SNOW_URL_GH }}&private_key_file=/tmp/snowflake_private_key.p8
+          jdk-java-options: "--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED"
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" \
+                -Dtest=LiquibaseHarnessSuiteTest \
+                -DconfigFile=/harness-config-cloud.yml \
+                -DdbName=snowflake \
+                -DdbUrl="$DB_URL" \
+                -DrollbackStrategy=rollbackByTag test
 
       - name: Archive Snowflake Database Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

@@ -458,99 +458,61 @@ jobs:
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
-        # Security hardening: bind all ${{ }} expressions to env vars and reference them
-        # as quoted shell variables in run: to prevent script/template injection.
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          COMMERCIAL_VERSION: ${{ needs.setup.outputs.proVersion }}
-          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
-          DB_PLATFORM: ${{ steps.setup.outputs.databasePlatform }}
-          DB_VERSION: ${{ steps.setup.outputs.databaseVersion }}
-          DB_USERNAME: ${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }}
-          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
-          DB_URL: ${{ env.TH_AZURE_MYSQL_URL }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
-          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
-          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
-          for _attempt in 1 2; do
-            if mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -Dprefix=azure -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test; then
-              break
-            elif [ "$_attempt" -lt 2 ]; then
-              echo "Failed test target: $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES) (attempt $_attempt)"
-              echo "::warning::Test attempt $_attempt failed, retrying..."
-            else
-              exit 1
-            fi
-          done
+        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_AZURE_MYSQL_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -Dprefix=azure -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
-        # Security hardening: bind all ${{ }} expressions to env vars and reference them
-        # as quoted shell variables in run: to prevent script/template injection.
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          COMMERCIAL_VERSION: ${{ needs.setup.outputs.proVersion }}
-          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
-          DB_PLATFORM: ${{ steps.setup.outputs.databasePlatform }}
-          DB_VERSION: ${{ steps.setup.outputs.databaseVersion }}
-          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
-          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
-          DB_URL: ${{ env.TH_AZURE_URL }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
-          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
-          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
-          for _attempt in 1 2; do
-            if mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -Dprefix=azure -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test; then
-              break
-            elif [ "$_attempt" -lt 2 ]; then
-              echo "Failed test target: $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES) (attempt $_attempt)"
-              echo "::warning::Test attempt $_attempt failed, retrying..."
-            else
-              exit 1
-            fi
-          done
+        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_AZURE_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -Dprefix=azure -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
-        # Security hardening: bind all ${{ }} expressions to env vars and reference them
-        # as quoted shell variables in run: to prevent script/template injection.
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          COMMERCIAL_VERSION: ${{ needs.setup.outputs.proVersion }}
-          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
-          DB_PLATFORM: ${{ steps.setup.outputs.databasePlatform }}
-          DB_VERSION: ${{ steps.setup.outputs.databaseVersion }}
-          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
-          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
-          DB_URL: ${{ env.TH_AZURE_MSSQL_MI_URL }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
-          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
-          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
-          for _attempt in 1 2; do
-            if mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -Dprefix=azure -DdbVersion=mi -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test; then
-              break
-            elif [ "$_attempt" -lt 2 ]; then
-              echo "Failed test target: $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES) (attempt $_attempt)"
-              echo "::warning::Test attempt $_attempt failed, retrying..."
-            else
-              exit 1
-            fi
-          done
+        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_AZURE_MSSQL_MI_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -Dprefix=azure -DdbVersion=mi -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -642,39 +604,23 @@ jobs:
             mvn-liquibase-${{ github.run_id }}-
 
       - name: Azure postgresql-flexible_${{ matrix.version }} Test Run
-        # Security hardening: bind all ${{ }} expressions to env vars and reference them
-        # as quoted shell variables in run: to prevent script/template injection.
-        # DB_PLATFORM is hardcoded to 'postgresql' because this job has no `id: setup`
-        # step, so steps.setup.outputs.databasePlatform resolves to an empty string
-        # and -DdbName would be blank. This job is postgresql-specific, so the literal
-        # is correct.
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          COMMERCIAL_VERSION: ${{ needs.setup.outputs.proVersion }}
-          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
-          DB_PLATFORM: postgresql
-          DB_VER: ${{ matrix.version }}
-          DB_USERNAME: ${{ env.TH_DB_ADMIN }}
-          DB_PASSWORD: ${{ env.TH_DB_PASSWD }}
-          DB_URL: ${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          # [TECHOPS-645] Retry once on transient failure. Pure bash — no external action
-          # required, compatible with org-wide GHA policy. Surefire rerunFailingTestsCount
-          # is not applicable: tests run as Spock Specs inside a JUnit Platform @Suite.
-          for _attempt in 1 2; do
-            if mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -Dprefix=azure -DdbVersion="flexible_$DB_VER" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test; then
-              break
-            elif [ "$_attempt" -lt 2 ]; then
-              echo "Failed test target: $DB_PLATFORM-flexible_$DB_VER ($TEST_CLASSES) (attempt $_attempt)"
-              echo "::warning::Test attempt $_attempt failed, retrying..."
-            else
-              exit 1
-            fi
-          done
+        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        with:
+          target: postgresql-flexible_${{ matrix.version }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: postgresql
+          db-version: ${{ matrix.version }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -Dprefix=azure -DdbVersion="flexible_$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Archive Azure postgresql-flexible_${{ matrix.version }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
