@@ -516,7 +516,8 @@ jobs:
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -Dprefix=gcp -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test; then
               break
             elif [ "$_attempt" -lt 2 ]; then
-              echo "::warning::Test attempt $_attempt failed for $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES), retrying..."
+              echo "Failed test target: $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES) (attempt $_attempt)"
+              echo "::warning::Test attempt $_attempt failed, retrying..."
             else
               exit 1
             fi
@@ -548,7 +549,8 @@ jobs:
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test; then
               break
             elif [ "$_attempt" -lt 2 ]; then
-              echo "::warning::Test attempt $_attempt failed for $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES), retrying..."
+              echo "Failed test target: $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES) (attempt $_attempt)"
+              echo "::warning::Test attempt $_attempt failed, retrying..."
             else
               exit 1
             fi
@@ -581,7 +583,8 @@ jobs:
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion=gcp -Dprefix=gcp -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test; then
               break
             elif [ "$_attempt" -lt 2 ]; then
-              echo "::warning::Test attempt $_attempt failed for $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES), retrying..."
+              echo "Failed test target: $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES) (attempt $_attempt)"
+              echo "::warning::Test attempt $_attempt failed, retrying..."
             else
               exit 1
             fi
@@ -614,7 +617,8 @@ jobs:
             if mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_PLATFORM" -DdbVersion=gcp -Dprefix=gcp -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test; then
               break
             elif [ "$_attempt" -lt 2 ]; then
-              echo "::warning::Test attempt $_attempt failed for $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES), retrying..."
+              echo "Failed test target: $DB_PLATFORM-$DB_VERSION ($TEST_CLASSES) (attempt $_attempt)"
+              echo "::warning::Test attempt $_attempt failed, retrying..."
             else
               exit 1
             fi

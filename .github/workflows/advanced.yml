@@ -490,7 +490,8 @@ jobs:
               if ./src/test/resources/automation-runner.sh "$DATABASE" "$TEST_CLASSES" "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$PRO_VERSION"; then
                 break
               elif [ "$_attempt" -lt 2 ]; then
-                echo "::warning::Test attempt $_attempt failed for $DATABASE ($TEST_CLASSES), retrying..."
+                echo "Failed test target: $DATABASE ($TEST_CLASSES) (attempt $_attempt)"
+                echo "::warning::Test attempt $_attempt failed, retrying..."
               else
                 exit 1
               fi
@@ -508,7 +509,8 @@ jobs:
               if ./src/test/resources/automation-runner.sh "$DATABASE" "$TEST_CLASSES" "-Dliquibase-core.version=$COMMUNITY_VERSION"; then
                 break
               elif [ "$_attempt" -lt 2 ]; then
-                echo "::warning::Test attempt $_attempt failed for $DATABASE ($TEST_CLASSES), retrying..."
+                echo "Failed test target: $DATABASE ($TEST_CLASSES) (attempt $_attempt)"
+                echo "::warning::Test attempt $_attempt failed, retrying..."
               else
                 exit 1
               fi

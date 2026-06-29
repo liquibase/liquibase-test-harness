@@ -439,7 +439,8 @@ jobs:
                    -DrollbackStrategy=rollbackByTag test; then
               break
             elif [ "$_attempt" -lt 2 ]; then
-              echo "::warning::Test attempt $_attempt failed for snowflake (LiquibaseHarnessSuiteTest), retrying..."
+              echo "Failed test target: snowflake (LiquibaseHarnessSuiteTest) (attempt $_attempt)"
+              echo "::warning::Test attempt $_attempt failed, retrying..."
             else
               exit 1
             fi
