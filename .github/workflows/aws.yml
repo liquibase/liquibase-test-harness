@@ -624,7 +624,7 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '13' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -644,7 +644,7 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '14' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -664,7 +664,7 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '16' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -684,7 +684,7 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '17' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -704,7 +704,7 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -724,7 +724,7 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -744,7 +744,7 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -764,7 +764,7 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -784,7 +784,7 @@ jobs:
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -804,7 +804,7 @@ jobs:
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora_16' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -823,7 +823,7 @@ jobs:
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora_17' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
