@@ -417,7 +417,7 @@ jobs:
         # failures self-heal. The connection URL and version are passed as inputs
         # (mapped to env vars) and referenced as quoted shell variables in the command,
         # per GitHub's script-injection hardening guidance.
-        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
         with:
           target: snowflake
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}

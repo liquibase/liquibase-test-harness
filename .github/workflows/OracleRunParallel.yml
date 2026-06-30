@@ -86,7 +86,7 @@ jobs:
         # failures self-heal. The matrix value is passed as an input (mapped to an env
         # var) and referenced as a quoted shell variable in the command, per GitHub's
         # script-injection hardening guidance.
-        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
         with:
           target: oracle-${{ matrix.plan }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}

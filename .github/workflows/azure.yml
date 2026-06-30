@@ -458,7 +458,7 @@ jobs:
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -478,7 +478,7 @@ jobs:
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -497,7 +497,7 @@ jobs:
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
         with:
           target: ${{ steps.setup.outputs.databasePlatform }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
@@ -604,7 +604,7 @@ jobs:
             mvn-liquibase-${{ github.run_id }}-
 
       - name: Azure postgresql-flexible_${{ matrix.version }} Test Run
-        uses: liquibase/build-logic/.github/actions/retry-test@765a5fe37607ef7e8bf5474044c994f110dd15b8
+        uses: liquibase/build-logic/.github/actions/retry-test@8430b135e4bd3c817be2f85e2d92132861328bc3
         with:
           target: postgresql-flexible_${{ matrix.version }}
           pro-license-key: ${{ env.PRO_LICENSE_KEY }}
