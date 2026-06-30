@@ -354,21 +354,30 @@ jobs:
             update
 
       - name: Oracle OCI Test Run
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. User-controllable values and secrets are passed as inputs
+        # (mapped to env vars) and referenced as quoted shell variables in the command,
+        # per GitHub's script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: oracle-oci
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-password: ${{ env.TH_DB_PASSWD }}
           # Vault key is TH_OCI_ORACLE_19c_URL (lowercase c), but aws-secretsmanager-get-secrets
           # with parse-json-secrets:true uppercases JSON keys when exposing them as env vars,
           # so the runtime variable is TH_OCI_ORACLE_19C_URL. GitHub Actions env lookups are
           # case-sensitive — referencing the lowercase form yields '' and breaks JDBC connection.
           # The vault stores a bare Oracle TNS descriptor (no jdbc: prefix) so it can be reused
           # by non-Java tooling; prepend 'jdbc:oracle:thin:@' here so the JDBC driver resolves.
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='jdbc:oracle:thin:@${{ env.TH_OCI_ORACLE_19C_URL }}' test
+          db-url: jdbc:oracle:thin:@${{ env.TH_OCI_ORACLE_19C_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName=oracle -DdbVersion=oci -Dprefix=oci -DdbUsername=ADMIN -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Archive Oracle OCI Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

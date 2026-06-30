@@ -466,24 +466,37 @@ jobs:
           mvn -B versions:set-property -Dproperty=liquibase-commercial.version -DnewVersion=0-SNAPSHOT
 
       - name: ${{ matrix.database }} Test Run
-        run: |
-          if [ "${{ needs.setup.outputs.useProArtifacts }}" = "true" ]; then
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-
-            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }}"
-          else
-            echo "Running tests with COMMUNITY artifacts"
-            COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
-            echo "::group::Dependency Tree (COMMUNITY - liquibase-core)"
-            mvn -B -Dliquibase-core.version=$COMMUNITY_VERSION dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-
-            ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "-Dliquibase-core.version=$COMMUNITY_VERSION"
-          fi
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. User-controllable values and secrets are passed as inputs
+        # (mapped to env vars) and referenced as quoted shell variables in the command,
+        # per GitHub's script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ matrix.database }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          use-pro-artifacts: ${{ needs.setup.outputs.useProArtifacts }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          community-version: ${{ needs.setup.outputs.communityVersion }}
+          db-name: ${{ matrix.database }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          pre-command: |-
+            if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
+              echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+              mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+              echo "::endgroup::"
+            else
+              echo "Running tests with COMMUNITY artifacts"
+              echo "::group::Dependency Tree (COMMUNITY - liquibase-core)"
+              mvn -B -Dliquibase-core.version="$COMMUNITY_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+              echo "::endgroup::"
+            fi
+          command: |-
+            if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
+              OPTS="-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$COMMERCIAL_VERSION"
+            else
+              OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
+            fi
+            ./src/test/resources/automation-runner.sh "$DB_NAME" "$TEST_CLASSES" "$OPTS"
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
