@@ -46,7 +46,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -302,7 +302,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -350,7 +350,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -534,7 +534,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
