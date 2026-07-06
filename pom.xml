@@ -17,7 +17,7 @@
     <!-- `[X,)` syntax means open-ended version range, version X or higher -->
     <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
     <gmavenplus-plugin.version>5.0.0</gmavenplus-plugin.version>
-    <groovy-all.version>5.0.6</groovy-all.version>
+    <groovy-all.version>5.0.7</groovy-all.version>
     <spock-core.version>2.4-groovy-5.0</spock-core.version>
     <spock-reports.version>2.5.1-groovy-4.0</spock-reports.version>
     <junit.version>6.1.0</junit.version>
