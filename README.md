@@ -23,7 +23,7 @@
 | MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` | Advanced           |
 | Postgres                  | `12, 13, 14, 15, 16`                  | Advanced           |
 | MySQL                     | `5.6, 5.7, 8`                         | Advanced           |
-| SQL Server                | `2017`, `2019`, `2022`                | Advanced           |
+| SQL Server                | `2017`, `2019`, `2022`, `2025`        | Advanced           |
 | Percona XtraDB            | `5.7`, `8.0`                          | Advanced           |
 | Oracle                    | `18.3.0, 18.4.0, 21.3.0`              | Advanced           |
 | CockroachDB               | `23.1, 23.2, 24.1`                    | Advanced           |

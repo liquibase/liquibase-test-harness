@@ -86,6 +86,9 @@ case $db in
   "mssql-2022" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=mssql -DdbVersion=2022 test
     ;;
+  "mssql-2025" )
+    test_command $(build_mvn_command) -Dtest=$tc -DdbName=mssql -DdbVersion=2025 test
+    ;;
   "H2Database-2.2" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=h2 test
     ;;
