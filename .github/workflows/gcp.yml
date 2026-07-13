@@ -47,7 +47,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -188,14 +188,14 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -286,7 +286,7 @@ jobs:
           echo "::notice :: Resolved Snapshot Liquibase PRO dependencies"
 
       - name: Cache installed Liquibase
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.m2/repository/
@@ -307,7 +307,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -352,7 +352,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -468,7 +468,7 @@ jobs:
             --url="${{ env.TH_GCP_MSSQL_2022_URL }}"
 
       - name: Restore cached Liquibase artifacts
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.m2/repository/
@@ -477,7 +477,7 @@ jobs:
             mvn-liquibase-${{ github.run_id }}-
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -492,49 +492,99 @@ jobs:
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}' test
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. User-controllable values and secrets are passed as inputs
+        # (mapped to env vars) and referenced as quoted shell variables in the command,
+        # per GitHub's script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env[format('TH_GCP_POSTGRESQL_{0}_URL', steps.setup.outputs.databaseVersion)] }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -Dprefix=gcp -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MYSQL_8_0_URL }}' test
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. User-controllable values and secrets are passed as inputs
+        # (mapped to env vars) and referenced as quoted shell variables in the command,
+        # per GitHub's script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_GCP_MYSQL_8_0_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2019' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          LIQUIBASE_LIQUIBASE_SCHEMA_NAME: lbuser
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=gcp -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MSSQL_2019_URL }}' test
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. User-controllable values and secrets are passed as inputs
+        # (mapped to env vars) and referenced as quoted shell variables in the command,
+        # per GitHub's script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_GCP_MSSQL_2019_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            LIQUIBASE_LIQUIBASE_SCHEMA_NAME=lbuser mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion=gcp -Dprefix=gcp -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'gcp_2022' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          LIQUIBASE_LIQUIBASE_SCHEMA_NAME: lbuser
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=gcp -Dprefix=gcp -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_GCP_MSSQL_2022_URL }}' test
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. User-controllable values and secrets are passed as inputs
+        # (mapped to env vars) and referenced as quoted shell variables in the command,
+        # per GitHub's script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_GCP_MSSQL_2022_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            LIQUIBASE_LIQUIBASE_SCHEMA_NAME=lbuser mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion=gcp -Dprefix=gcp -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Archive GCP ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

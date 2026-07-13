@@ -46,7 +46,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -187,14 +187,14 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -275,7 +275,7 @@ jobs:
           echo "::notice :: Resolved Snapshot Liquibase PRO dependencies"
 
       - name: Cache installed Liquibase
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.m2/repository/
@@ -302,7 +302,7 @@ jobs:
         run: lpm update && lpm add mysql
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -350,7 +350,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -427,14 +427,14 @@ jobs:
             --url="${{ env.TH_AZURE_MSSQL_MI_URL }}"
 
       # Setup Java and Maven for test runs (after Liquibase CLI operations)
-      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -448,7 +448,7 @@ jobs:
             ]
 
       - name: Restore cached Liquibase artifacts
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.m2/repository/
@@ -458,36 +458,61 @@ jobs:
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MYSQL_URL}}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ format('{0}@{1}', env.TH_DB_ADMIN, env.TH_AZURE_MYSQL_FQDN) }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_AZURE_MYSQL_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -Dprefix=azure -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'azure' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_URL}}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_AZURE_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -Dprefix=azure -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' && steps.setup.outputs.databaseVersion == 'mi' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=mi -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{env.TH_AZURE_MSSQL_MI_URL}}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_AZURE_MSSQL_MI_URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -Dprefix=azure -DdbVersion=mi -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -509,7 +534,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -549,14 +574,14 @@ jobs:
             --password="${{ env.TH_DB_PASSWD }}" \
             --url="${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}"
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -570,7 +595,7 @@ jobs:
             ]
 
       - name: Restore cached Liquibase artifacts
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.m2/repository/
@@ -578,18 +603,27 @@ jobs:
           restore-keys: |
             mvn-liquibase-${{ github.run_id }}-
 
-      - name: Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
+      - name: Azure postgresql-flexible_${{ matrix.version }} Test Run
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: postgresql-flexible_${{ matrix.version }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: postgresql
+          db-version: ${{ matrix.version }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -Dprefix=azure -DdbVersion="flexible_$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -Dprefix=azure -DdbVersion=flexible_${{ matrix.version }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env[format('TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_{0}_URL', matrix.version)] }}' test
-
-      - name: Archive Azure ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
+      - name: Archive Azure postgresql-flexible_${{ matrix.version }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: azure-${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}-flexible-${{ matrix.version }}-test-results
+          name: azure-postgresql-flexible-${{ matrix.version }}-test-results
           path: build/spock-reports

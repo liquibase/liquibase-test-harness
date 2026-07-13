@@ -79,6 +79,7 @@ on:
             "mssql-2017",
             "mssql-2019",
             "mssql-2022",
+            "mssql-2025",
             "H2Database-2.2",
             "crdb-23.1",
             "crdb-23.2",
@@ -135,7 +136,7 @@ jobs:
       databases:
         ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","percona-xtradb-cluster-8.4",
         "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
-        "mariadb-10.7","mariadb-11.4","mssql-2017","mssql-2019","mssql-2022","H2Database-2.2","crdb-23.1","crdb-23.2","crdb-24.1",
+        "mariadb-10.7","mariadb-11.4","mssql-2017","mssql-2019","mssql-2022","mssql-2025","H2Database-2.2","crdb-23.1","crdb-23.2","crdb-24.1",
         "edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-postgres-15","edb-postgres-16",
         "edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","sqlite","hsqldb-2.5","hsqldb-2.6","hsqldb-2.7","firebird-3","firebird-4","db2-luw","informix-12.10","informix-14.10","tidb"]' }}
       testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
@@ -143,7 +144,7 @@ jobs:
       - uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -288,14 +289,14 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -468,7 +469,7 @@ jobs:
           echo "::notice :: Resolved Snapshot Liquibase dependencies"
 
       - name: Cache installed Liquibase
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.m2/repository/
@@ -486,7 +487,7 @@ jobs:
       - uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -509,14 +510,14 @@ jobs:
           permission-contents: write
           permission-actions: write
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -532,7 +533,7 @@ jobs:
             ]
 
       - name: Restore cached Liquibase artifacts
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.m2/repository/
@@ -572,39 +573,38 @@ jobs:
           REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
 
       - name: ${{ matrix.database }} Test Run
-        run: |
-          USE_SECURE_ARTIFACTS="${{ needs.setup.outputs.useProArtifacts }}"
-          COMMUNITY_VERSION="${{ needs.setup.outputs.communityVersion }}"
-          SECURE_VERSION="${{ needs.setup.outputs.proVersion }}"
-
-          if [ "$USE_SECURE_ARTIFACTS" = "true" ]; then
-            echo "Running tests with SECURE artifacts"
-            echo "Skipping liquibase-core override; liquibase-commercial already bundles liquibase-core."
-            # Explicitly activate useProArtifacts profile and set commercial version
-            # Profile exclusion will prevent liquibase-core from being resolved
-            MAVEN_OPTS="-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$SECURE_VERSION"
-
-            # Show dependency tree before running tests
-            echo ""
-            echo "::group::Dependency Tree Before Test Execution (PRO)"
-            mvn -B $MAVEN_OPTS dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-          else
-            echo "Running tests with COMMUNITY artifacts"
-            # Only set liquibase-core version for community builds
-            MAVEN_OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
-
-            # Show dependency tree before running tests
-            echo ""
-            echo "::group::Dependency Tree Before Test Execution (COMMUNITY)"
-            mvn -B $MAVEN_OPTS dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-          fi
-
-          # Run tests with appropriate profile/properties and resolved versions
-          ./src/test/resources/automation-runner.sh ${{ matrix.database }} ${{ needs.setup.outputs.testClasses }} "$MAVEN_OPTS"
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. User-controllable values and secrets are passed as inputs
+        # (mapped to env vars) and referenced as quoted shell variables in the command,
+        # per GitHub's script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ matrix.database }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          use-pro-artifacts: ${{ needs.setup.outputs.useProArtifacts }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          community-version: ${{ needs.setup.outputs.communityVersion }}
+          db-name: ${{ matrix.database }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          pre-command: |-
+            if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
+              echo "Running tests with SECURE artifacts"
+              echo "::group::Dependency Tree Before Test Execution (PRO)"
+              mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+              echo "::endgroup::"
+            else
+              echo "Running tests with COMMUNITY artifacts"
+              echo "::group::Dependency Tree Before Test Execution (COMMUNITY)"
+              mvn -B -Dliquibase-core.version="$COMMUNITY_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+              echo "::endgroup::"
+            fi
+          command: |-
+            if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
+              OPTS="-PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=$COMMERCIAL_VERSION"
+            else
+              OPTS="-Dliquibase-core.version=$COMMUNITY_VERSION"
+            fi
+            ./src/test/resources/automation-runner.sh "$DB_NAME" "$TEST_CLASSES" "$OPTS"
 
       - name: Archive ${{ matrix.database }} test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -627,7 +627,7 @@ jobs:
       - uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -663,11 +663,22 @@ jobs:
           echo "**Test Result:** ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Coordinate Liquibase-Test-Harness
+        # Only report a commit status back to the triggering Liquibase commit when a
+        # SHA was actually resolved. On scheduled/manual runs liquibaseSha is empty,
+        # and GitHub also drops the setup output entirely when the resolved SHA
+        # collides with a masked secret ("Skip output 'liquibaseSha' since it may
+        # contain secret"). An empty SHA produced a POST to /repos/<owner>/<repo>/
+        # statuses with no SHA segment -> 404 -> failed the whole workflow.
+        if: ${{ always() && needs.setup.outputs.liquibaseSha != '' }}
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ steps.get-token.outputs.token }}
           script: |
-            const helper = require('./.github/util/workflow-helper.js')({github, context});
+            const liquibaseSha = "${{ needs.setup.outputs.liquibaseSha }}";
+            if (!liquibaseSha) {
+              core.warning("No liquibaseSha resolved; skipping commit status report.");
+              return;
+            }
 
             console.log("result is ${{ needs.test.result }}");
 
@@ -682,12 +693,18 @@ jobs:
             const repoName = "${{ needs.setup.outputs.liquibaseRepo }}".split("/")[1];
             console.log("Creating commit status on repository: " + repoName);
 
-            await github.rest.repos.createCommitStatus({
-              "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
-              "repo": repoName,
-              "sha": "${{ needs.setup.outputs.liquibaseSha }}",
-              "state": result,
-              "context": "Run Test-Harness Tests",
-              "description": "Test-Harness tests complete",
-              "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
-            });
+            try {
+              await github.rest.repos.createCommitStatus({
+                "owner": "${{ needs.setup.outputs.liquibaseOwner }}",
+                "repo": repoName,
+                "sha": liquibaseSha,
+                "state": result,
+                "context": "Run Test-Harness Tests",
+                "description": "Test-Harness tests complete",
+                "target_url": "https://github.com/liquibase/liquibase-test-harness/actions/runs/${{ github.run_id }}"
+              });
+            } catch (error) {
+              // Posting a commit status back to Liquibase is best-effort coordination,
+              // not a gate on the test-harness result -- never fail the workflow over it.
+              core.warning(`Failed to create commit status on ${repoName}@${liquibaseSha}: ${error.message}`);
+            }

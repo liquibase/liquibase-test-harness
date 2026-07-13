@@ -48,7 +48,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -189,14 +189,14 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -287,7 +287,7 @@ jobs:
           echo "::notice :: Resolved Snapshot Liquibase PRO dependencies"
 
       - name: Cache installed Liquibase
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.m2/repository/
@@ -297,7 +297,15 @@ jobs:
     needs: [setup]
     runs-on: ubuntu-latest
     env:
-      LPM_VERSION: 0.2.3
+      # lpm 0.2.x fetched its package manifest from the now-removed `master`
+      # branch of liquibase-package-manager, whose checksums drifted from the
+      # re-published driver artifacts -> "Checksum validation failed". 0.3.x
+      # reads the maintained `main` manifest.
+      LPM_VERSION: 0.3.5
+      # Pin LocalStack to a known-good stable release. Untagged ':latest' pulls
+      # bleeding-edge dev builds (e.g. 2026.7.0.dev22) that regressed the MSSQL
+      # RDS engine and caused "RDS status=error" on scheduled runs.
+      LOCALSTACK_VERSION: "2026.6.0"
     strategy:
       fail-fast: false
       matrix:
@@ -308,7 +316,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Setup Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: '3.12'
     
@@ -324,7 +332,7 @@ jobs:
           sudo lpm update && sudo lpm add mysql postgresql mariadb mssql
     
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -343,14 +351,17 @@ jobs:
           GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           RDS_MYSQL_DOCKER: 1     #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
         run: |
-          pip install localstack awscli-local
-          docker pull localstack/localstack-pro
+          pip install "localstack==${{ env.LOCALSTACK_VERSION }}" awscli-local
+          docker pull localstack/localstack-pro:${{ env.LOCALSTACK_VERSION }}
           localstack auth set-token ${{ env.LOCALSTACK_OAUTH_TOKEN }}
+          # Pin the runtime image (not just the CLI) to the stable tag. IMAGE_NAME
+          # forces `localstack start` to launch the pinned version instead of the
+          # default ':latest' dev build, keeping scheduled runs deterministic.
           # LocalStack starts its own MSSQL container from its default image; the
           # EULA must be forwarded with the LOCALSTACK_ prefix (the bare
           # MSSQL_ACCEPT_EULA triggers a "non-prefixed env var" warning and is
           # not reliably forwarded into the runtime container).
-          LOCALSTACK_MSSQL_ACCEPT_EULA=Y localstack start -d
+          LOCALSTACK_MSSQL_ACCEPT_EULA=Y IMAGE_NAME=localstack/localstack-pro:${{ env.LOCALSTACK_VERSION }} localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
@@ -589,7 +600,7 @@ jobs:
             update
 
       - name: Restore cached Liquibase artifacts
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.m2/repository/
@@ -598,7 +609,7 @@ jobs:
             mvn-liquibase-${{ github.run_id }}-
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -613,74 +624,221 @@ jobs:
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '13' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: |
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-          mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_13 }}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_PGRESURL_13 }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -Dprefix=aws -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '14' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_14 }}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_PGRESURL_14 }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -Dprefix=aws -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '16' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_16 }}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_PGRESURL_16 }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -Dprefix=aws -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '17' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -Dprefix=aws -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_PGRESURL_17 }}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_PGRESURL_17 }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -Dprefix=aws -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-          ORACLE_JDBC_URL: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_ORACLEURL_19_PASSWORD}} -DdbUrl="$ORACLE_JDBC_URL" test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_ORACLEURL_19_PASSWORD }}
+          db-url: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mariadb' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_MARIADBURL_10_6 }}'  test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_MARIADBURL_10_6 }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aws' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_MYSQLURL_8_0 }}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_MYSQLURL_8_0 }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mssql' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD_MSSQL}} -DdbUrl='${{ env.TH_MSSQLURL }}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD_MSSQL }}
+          db-url: ${{ env.TH_MSSQLURL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=${{ steps.setup.outputs.databaseVersion }} -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_MYSQLURL }}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-version: ${{ steps.setup.outputs.databaseVersion }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_AURORA_MYSQLURL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora_16' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=16 -Dprefix=aurora -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_POSTGRESQL16URL }}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_AURORA_POSTGRESQL16URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion=16 -Dprefix=aurora -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS Aurora ${{ steps.setup.outputs.databasePlatform }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion == 'aurora_17' }}
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
-        run: mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version=${{ needs.setup.outputs.proVersion }} -Dtest=${{ needs.setup.outputs.testClasses }} -DconfigFile=/harness-config-cloud.yml -DdbName=${{ steps.setup.outputs.databasePlatform }} -DdbVersion=17 -Dprefix=aurora -DdbUsername=${{env.TH_DB_ADMIN}} -DdbPassword=${{env.TH_DB_PASSWD}} -DdbUrl='${{ env.TH_AURORA_POSTGRESQL17URL }}' test
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          commercial-version: ${{ needs.setup.outputs.proVersion }}
+          test-classes: ${{ needs.setup.outputs.testClasses }}
+          db-name: ${{ steps.setup.outputs.databasePlatform }}
+          db-username: ${{ env.TH_DB_ADMIN }}
+          db-password: ${{ env.TH_DB_PASSWD }}
+          db-url: ${{ env.TH_AURORA_POSTGRESQL17URL }}
+          pre-command: |-
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion=17 -Dprefix=aurora -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: Archive AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

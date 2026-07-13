@@ -28,7 +28,7 @@ jobs:
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -41,14 +41,14 @@ jobs:
             ,/vault/liquibase
           parse-json-secrets: true
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:
           repositories: |
             [
@@ -82,15 +82,22 @@ jobs:
         run: sleep 180
 
       - name: Oracle ${{ matrix.plan }} Test Run
-        run: |
-          docker ps
-          echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-          mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-          echo "::endgroup::"
-
-          mvn -PuseProArtifacts -DuseProArtifacts=true -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion=${{ matrix.plan }} test
-        env:
-          LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
+        # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
+        # failures self-heal. The matrix value is passed as an input (mapped to an env
+        # var) and referenced as a quoted shell variable in the command, per GitHub's
+        # script-injection hardening guidance.
+        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
+        with:
+          target: oracle-${{ matrix.plan }}
+          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
+          db-version: ${{ matrix.plan }}
+          pre-command: |-
+            docker ps
+            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
+            mvn -B -PuseProArtifacts -DuseProArtifacts=true dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
+            echo "::endgroup::"
+          command: |-
+            mvn -PuseProArtifacts -DuseProArtifacts=true -ntp -Dtest=LiquibaseHarnessSuiteTest -DdbName=oracle -DdbVersion="$DB_VERSION" test
 
       - name: Archive Oracle ${{ matrix.plan }} test results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
