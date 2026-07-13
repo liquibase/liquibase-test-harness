@@ -2,7 +2,7 @@
 
 /opt/mssql/bin/sqlservr &
 
-``# Pick the sqlcmd client available in this image. SQL Server 2017/2019/2022 ship
+# Pick the sqlcmd client available in this image. SQL Server 2017/2019/2022 ship
 # /opt/mssql-tools; SQL Server 2025 ships only /opt/mssql-tools18, which defaults to
 # encrypted connections and needs -C to trust the self-signed server certificate.
 if [ -x /opt/mssql-tools/bin/sqlcmd ]; then
