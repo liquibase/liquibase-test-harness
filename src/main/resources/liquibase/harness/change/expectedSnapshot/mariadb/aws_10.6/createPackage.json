@@ -4,7 +4,7 @@
       "com.datical.liquibase.ext.storedlogic.function.Function": [
         {
           "function": {
-            "body": "CREATE FUNCTION `test_function`\\(\\) RETURNS varchar\\(20\\)( CHARSET \\S+)?( COLLATE \\S+)?\\s+BEGIN\\s+RETURN 'Hello';\\s+END\\s*",
+            "body": "CREATE FUNCTION `test_function`\\(\\) RETURNS varchar\\(20\\)( CHARSET \\w+( COLLATE \\w+)?)?\\s+BEGIN\\s+RETURN 'Hello';\\s+END\\s*",
             "name": "test_function"
           }
         }]
