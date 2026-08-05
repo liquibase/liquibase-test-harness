@@ -28,6 +28,7 @@ on:
 permissions:
   contents: write
   id-token: write
+  actions: read # ephemeral-cloud-infra (called below) declares actions: read for its cross-run state restore; a caller that omits it fails validation
 
 jobs:
   setup:
