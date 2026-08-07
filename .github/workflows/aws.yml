@@ -565,7 +565,7 @@ jobs:
 
       - name: Open SSM tunnel to oracle
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+        uses: liquibase/build-logic/.github/actions/ssm-db-tunnel@5ac918e7d6ab07f75e2a0a26261577f9c5df15d4 # main
         with:
           bastion-instance-id: ${{ env.SSM_BASTION_INSTANCE_ID }}
           db-host: ${{ steps.parse-oracle.outputs.host }}
