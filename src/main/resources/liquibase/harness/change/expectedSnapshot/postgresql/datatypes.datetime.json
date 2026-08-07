@@ -83,7 +83,6 @@
           "column": {
             "name": "time3wtz",
             "type": {
-              "characterOctetLength": "18\\!\\{java.lang.Integer\\}",
               "decimalDigits": "3\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
@@ -191,7 +190,6 @@
           "column": {
             "name": "timestamp1",
             "type": {
-              "characterOctetLength": "25\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamp"
             }
@@ -201,7 +199,6 @@
           "column": {
             "name": "timestamp1wtz",
             "type": {
-              "characterOctetLength": "31\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamptz"
             }
@@ -211,7 +208,6 @@
           "column": {
             "name": "timestamp2",
             "type": {
-              "characterOctetLength": "25\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamp"
             }
@@ -221,7 +217,6 @@
           "column": {
             "name": "timestamp2wtz",
             "type": {
-              "characterOctetLength": "31\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamptz"
             }
@@ -231,7 +226,6 @@
           "column": {
             "name": "timestamp3",
             "type": {
-              "characterOctetLength": "26\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamp"
             }
@@ -241,7 +235,6 @@
           "column": {
             "name": "timestamp3wtz",
             "type": {
-              "characterOctetLength": "32\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamptz"
             }
@@ -251,7 +244,6 @@
           "column": {
             "name": "timestamp4",
             "type": {
-              "characterOctetLength": "27\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamp"
             }
@@ -261,7 +253,6 @@
           "column": {
             "name": "timestamp4wtz",
             "type": {
-              "characterOctetLength": "33\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamptz"
             }
@@ -271,7 +262,6 @@
           "column": {
             "name": "timestamp5",
             "type": {
-              "characterOctetLength": "28\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamp"
             }
@@ -281,7 +271,6 @@
           "column": {
             "name": "timestamp5wtz",
             "type": {
-              "characterOctetLength": "34\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamptz"
             }
@@ -291,7 +280,6 @@
           "column": {
             "name": "timestamp6",
             "type": {
-              "characterOctetLength": "29\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamp"
             }
@@ -301,7 +289,6 @@
           "column": {
             "name": "timestamp6wtz",
             "type": {
-              "characterOctetLength": "35\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamptz"
             }
@@ -311,7 +298,6 @@
           "column": {
             "name": "timestampe0wtz",
             "type": {
-              "characterOctetLength": "28\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamptz"
             }
@@ -321,7 +307,6 @@
           "column": {
             "name": "timestampewtz",
             "type": {
-              "characterOctetLength": "35\\!\\{java.lang.Integer\\}",
               "dataTypeId": "93\\!\\{java.lang.Integer\\}",
               "typeName": "timestamptz"
             }
