@@ -29,6 +29,7 @@
           "column": {
             "name": "time0",
             "type": {
+              "columnSize": "0\\!\\{java.lang.Integer\\}",
               "typeName": "time"
             }
           }
@@ -151,6 +152,7 @@
           "column": {
             "name": "timee0wtz",
             "type": {
+              "columnSize": "0\\!\\{java.lang.Integer\\}",
               "dataTypeId": "92\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
