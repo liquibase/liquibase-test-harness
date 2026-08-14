@@ -21,7 +21,7 @@
           "column": {
             "name": "POINT",
             "type": {
-              "typeName": "GEOMETRY"
+              "typeName": "POINT"
             }
           }
         },
@@ -29,7 +29,7 @@
 			  "column": {
 				  "name": "LINESTRING",
 				  "type": {
-					  "typeName": "GEOMETRY"
+					  "typeName": "LINESTRING"
 				  }
 			  }
 		  },
@@ -37,7 +37,7 @@
 			  "column": {
 				  "name": "POLYGON",
 				  "type": {
-					  "typeName": "GEOMETRY"
+					  "typeName": "POLYGON"
 				  }
 			  }
 		  },
@@ -45,7 +45,7 @@
 			  "column": {
 				  "name": "MULTIPOINT",
 				  "type": {
-					  "typeName": "GEOMETRY"
+					  "typeName": "MULTIPOINT"
 				  }
 			  }
 		  },
@@ -53,7 +53,7 @@
 			  "column": {
 				  "name": "MULTILINESTRING",
 				  "type": {
-					  "typeName": "GEOMETRY"
+					  "typeName": "MULTILINESTRING"
 				  }
 			  }
 		  },
@@ -61,7 +61,7 @@
 			  "column": {
 				  "name": "MULTIPOLYGON",
 				  "type": {
-					  "typeName": "GEOMETRY"
+					  "typeName": "MULTIPOLYGON"
 				  }
 			  }
 		  },
@@ -69,7 +69,7 @@
 			  "column": {
 				  "name": "GEOMETRYCOLLECTION",
 				  "type": {
-					  "typeName": "GEOMETRY"
+					  "typeName": "GEOMCOLLECTION"
 				  }
 			  }
 		  }
