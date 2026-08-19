@@ -305,7 +305,30 @@ jobs:
       # Pin LocalStack to a known-good stable release. Untagged ':latest' pulls
       # bleeding-edge dev builds (e.g. 2026.7.0.dev22) that regressed the MSSQL
       # RDS engine and caused "RDS status=error" on scheduled runs.
-      LOCALSTACK_VERSION: "2026.6.0"
+      #
+      # CLI and image are pinned SEPARATELY because they are not published in
+      # lockstep: the PyPI `localstack` package stops at 2026.7.1 while the
+      # image is on 2026.7.5. The CLI takes the image purely from IMAGE_NAME
+      # (bootstrap.get_docker_image_to_start), so the two versions are
+      # independent by design and only the image decides what actually runs.
+      LOCALSTACK_CLI_VERSION: "2026.7.1"
+      # TECHOPS-1097: 2026.6.0 broke all six PostgreSQL jobs on 2026-08-14. The
+      # image fetches the RDS Postgres engine AT RUNTIME with
+      #   apt-get download postgresql-plpython3-16
+      #   dpkg-deb -xv postgresql-plpython3-*.deb /
+      # which unpacks the .deb WITHOUT resolving its dependencies, and its apt
+      # sources resolve against live Debian sid (the snapshot pin in
+      # /etc/apt/sources.list.d/debian.sources is commented out). So sid's move
+      # to Python 3.14 rebuilt that package against libpython3.14.so.1.0 while
+      # the image still shipped only 3.13, and nothing pulled the new lib in:
+      #   CREATE EXTENSION plpython3u
+      #   -> could not load library ".../plpython3.so": libpython3.14.so.1.0:
+      #      cannot open shared object file
+      # Pinning the image therefore does NOT pin the engine packages. 2026.7.4
+      # is the first release that ships libpython3.14 alongside 3.13; every tag
+      # from 2026.6.0 through 2026.7.3 lacks it, so a smaller bump does not fix
+      # this. 2026.7.4 is the floor if 2026.7.5 ever needs rolling back.
+      LOCALSTACK_IMAGE_VERSION: "2026.7.5"
     strategy:
       fail-fast: false
       matrix:
@@ -329,7 +352,26 @@ jobs:
           sudo apt-get install liquibase
           curl -L -o lpm-${{ env.LPM_VERSION }}-linux.zip https://github.com/liquibase/liquibase-package-manager/releases/download/v${{ env.LPM_VERSION }}/lpm-${{ env.LPM_VERSION }}-linux.zip
           sudo unzip -o lpm-${{ env.LPM_VERSION }}-linux.zip -d /usr/bin
-          sudo lpm update && sudo lpm add mysql postgresql mariadb mssql
+
+          # TECHOPS-1097: `lpm add` downloads four driver jars and verifies each
+          # checksum. A truncated download fails the whole step with
+          # "Checksum validation failed. Aborting download.", which took out
+          # mssql:aws_2019 on 2026-08-19 while the identical step in the
+          # postgresql:16 job verified all four one second later. It is the
+          # download that is flaky, not the manifest, so retry rather than
+          # pin: a fresh attempt re-fetches and re-verifies.
+          for attempt in 1 2 3; do
+            if sudo lpm update && sudo lpm add mysql postgresql mariadb mssql; then
+              echo "lpm drivers installed (attempt ${attempt})"
+              break
+            fi
+            if [ "${attempt}" -eq 3 ]; then
+              echo "::error::lpm failed to install the drivers after 3 attempts"
+              exit 1
+            fi
+            echo "::warning::lpm attempt ${attempt} failed, retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
     
       - name: Configure AWS credentials for vault access
         uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
@@ -351,8 +393,8 @@ jobs:
           GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           RDS_MYSQL_DOCKER: 1     #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
         run: |
-          pip install "localstack==${{ env.LOCALSTACK_VERSION }}" awscli-local
-          docker pull localstack/localstack-pro:${{ env.LOCALSTACK_VERSION }}
+          pip install "localstack==${{ env.LOCALSTACK_CLI_VERSION }}" awscli-local
+          docker pull localstack/localstack-pro:${{ env.LOCALSTACK_IMAGE_VERSION }}
           localstack auth set-token ${{ env.LOCALSTACK_OAUTH_TOKEN }}
           # Pin the runtime image (not just the CLI) to the stable tag. IMAGE_NAME
           # forces `localstack start` to launch the pinned version instead of the
@@ -361,7 +403,7 @@ jobs:
           # EULA must be forwarded with the LOCALSTACK_ prefix (the bare
           # MSSQL_ACCEPT_EULA triggers a "non-prefixed env var" warning and is
           # not reliably forwarded into the runtime container).
-          LOCALSTACK_MSSQL_ACCEPT_EULA=Y IMAGE_NAME=localstack/localstack-pro:${{ env.LOCALSTACK_VERSION }} localstack start -d
+          LOCALSTACK_MSSQL_ACCEPT_EULA=Y IMAGE_NAME=localstack/localstack-pro:${{ env.LOCALSTACK_IMAGE_VERSION }} localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
