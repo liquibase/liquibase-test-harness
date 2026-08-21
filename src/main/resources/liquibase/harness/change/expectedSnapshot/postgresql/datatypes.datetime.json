@@ -20,7 +20,7 @@
           "column": {
             "name": "time",
             "type": {
-              "decimalDigits": "6\\!\\{java.lang.Integer\\}",
+              "columnSize": "6\\!\\{java.lang.Integer\\}",
               "typeName": "time"
             }
           }
@@ -29,7 +29,7 @@
           "column": {
             "name": "time0",
             "type": {
-              "decimalDigits": "0\\!\\{java.lang.Integer\\}",
+              "columnSize": "0\\!\\{java.lang.Integer\\}",
               "typeName": "time"
             }
           }
@@ -38,7 +38,7 @@
           "column": {
             "name": "time1",
             "type": {
-              "decimalDigits": "1\\!\\{java.lang.Integer\\}",
+              "columnSize": "1\\!\\{java.lang.Integer\\}",
               "typeName": "time"
             }
           }
@@ -47,7 +47,7 @@
           "column": {
             "name": "time1wtz",
             "type": {
-              "decimalDigits": "1\\!\\{java.lang.Integer\\}",
+              "columnSize": "1\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
           }
@@ -56,7 +56,7 @@
           "column": {
             "name": "time2",
             "type": {
-              "decimalDigits": "2\\!\\{java.lang.Integer\\}",
+              "columnSize": "2\\!\\{java.lang.Integer\\}",
               "typeName": "time"
             }
           }
@@ -65,7 +65,7 @@
           "column": {
             "name": "time2wtz",
             "type": {
-              "decimalDigits": "2\\!\\{java.lang.Integer\\}",
+              "columnSize": "2\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
           }
@@ -74,7 +74,7 @@
           "column": {
             "name": "time3",
             "type": {
-              "decimalDigits": "3\\!\\{java.lang.Integer\\}",
+              "columnSize": "3\\!\\{java.lang.Integer\\}",
               "typeName": "time"
             }
           }
@@ -83,7 +83,7 @@
           "column": {
             "name": "time3wtz",
             "type": {
-              "decimalDigits": "3\\!\\{java.lang.Integer\\}",
+              "columnSize": "3\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
           }
@@ -93,7 +93,7 @@
             "name": "time4",
             "type": {
               "dataTypeId": "92\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "4\\!\\{java.lang.Integer\\}",
+              "columnSize": "4\\!\\{java.lang.Integer\\}",
               "typeName": "time"
             }
           }
@@ -103,7 +103,7 @@
             "name": "time4wtz",
             "type": {
               "dataTypeId": "92\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "4\\!\\{java.lang.Integer\\}",
+              "columnSize": "4\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
           }
@@ -113,7 +113,7 @@
             "name": "time5",
             "type": {
               "dataTypeId": "92\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "5\\!\\{java.lang.Integer\\}",
+              "columnSize": "5\\!\\{java.lang.Integer\\}",
               "typeName": "time"
             }
           }
@@ -123,7 +123,7 @@
             "name": "time5wtz",
             "type": {
               "dataTypeId": "92\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "5\\!\\{java.lang.Integer\\}",
+              "columnSize": "5\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
           }
@@ -133,7 +133,7 @@
             "name": "time6",
             "type": {
               "dataTypeId": "92\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "6\\!\\{java.lang.Integer\\}",
+              "columnSize": "6\\!\\{java.lang.Integer\\}",
               "typeName": "time"
             }
           }
@@ -143,7 +143,7 @@
             "name": "time6wtz",
             "type": {
               "dataTypeId": "92\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "6\\!\\{java.lang.Integer\\}",
+              "columnSize": "6\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
           }
@@ -152,8 +152,8 @@
           "column": {
             "name": "timee0wtz",
             "type": {
+              "columnSize": "0\\!\\{java.lang.Integer\\}",
               "dataTypeId": "92\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "0\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
           }
@@ -163,7 +163,7 @@
             "name": "timeewtz",
             "type": {
               "dataTypeId": "92\\!\\{java.lang.Integer\\}",
-              "decimalDigits": "6\\!\\{java.lang.Integer\\}",
+              "columnSize": "6\\!\\{java.lang.Integer\\}",
               "typeName": "timetz"
             }
           }
