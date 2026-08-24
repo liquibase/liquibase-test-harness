@@ -1,0 +1,79 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "datatypes.spatial_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+        "column": {
+            "name": "GEOMETRY",
+            "type": {
+              "typeName": "GEOMETRY"
+            }
+          }
+        },
+        {
+          "column": {
+            "name": "POINT",
+            "type": {
+              "typeName": "GEOMETRY"
+            }
+          }
+        },
+		  {
+			  "column": {
+				  "name": "LINESTRING",
+				  "type": {
+					  "typeName": "GEOMETRY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "POLYGON",
+				  "type": {
+					  "typeName": "GEOMETRY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "MULTIPOINT",
+				  "type": {
+					  "typeName": "GEOMETRY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "MULTILINESTRING",
+				  "type": {
+					  "typeName": "GEOMETRY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "MULTIPOLYGON",
+				  "type": {
+					  "typeName": "GEOMETRY"
+				  }
+			  }
+		  },
+		  {
+			  "column": {
+				  "name": "GEOMETRYCOLLECTION",
+				  "type": {
+					  "typeName": "GEOMETRY"
+				  }
+			  }
+		  }
+      ]
+    }
+  }
+}
