@@ -75,7 +75,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@04ea335beb37e0dfe952d34c0427b41660755f6d # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -89,7 +89,7 @@ jobs:
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@04ea335beb37e0dfe952d34c0427b41660755f6d # main
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
@@ -252,7 +252,7 @@ jobs:
             core.setOutput("databaseVersion", splitValues[1]);
 
       - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@04ea335beb37e0dfe952d34c0427b41660755f6d # main
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
@@ -266,7 +266,7 @@ jobs:
           parse-json-secrets: true
 
       - name: Configure AWS Credentials
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@04ea335beb37e0dfe952d34c0427b41660755f6d # main
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
