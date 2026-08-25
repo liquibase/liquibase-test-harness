@@ -569,7 +569,7 @@ jobs:
       # Oracle JDBC URL shape: jdbc:oracle:thin:@<host>:<port>:<sid>.
       - name: Configure AWS credentials for SSM
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
-        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
           role-to-assume: ${{ env.AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC }}
           aws-region: us-east-1
