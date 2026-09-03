@@ -156,6 +156,16 @@ module.exports = ({github, context}) => {
                         returnData.pullRequestState = pulls.data[0].state;
                     }
 
+                    // TECHOPS-1222: run-tests.yml was retired with the pull_request_target
+                    // CI it belonged to. It built both main and feature branches; that is now
+                    // split between main.yml (push to main, nightly cron) and
+                    // snapshot-branch.yml (maintainer workflow_dispatch for a ref), so the
+                    // workflow to read depends on the branch being resolved.
+                    const workflowFile = (branchName === "main" || branchName === "master")
+                        ? "main.yml"
+                        : "snapshot-branch.yml";
+                    console.log(`Reading runs of ${workflowFile} for branch ${branchName}`);
+
                     let pageNumber = 1;
                     const maxPagesToCheck = 10;
                     let matchingBuildFound = false;
@@ -165,13 +175,16 @@ module.exports = ({github, context}) => {
                             let runs = await github.rest.actions.listWorkflowRuns({
                                 "owner": owner,
                                 "repo": repo,
-                                "workflow_id": "run-tests.yml",
+                                "workflow_id": workflowFile,
                                 "per_page": 100,
                                 "page": pageNumber,
                             });
 
                             if (runs.data.workflow_runs.length !== 0) {
                                 for (let run of runs.data.workflow_runs) {
+                                    // Unreachable for main.yml / snapshot-branch.yml, neither of
+                                    // which uses pull_request_target. Kept so that a run predating
+                                    // the cutover is still filtered the same way. [TECHOPS-1222]
                                     if (run.event === 'pull_request_target') {
                                         if (!returnData.pullRequestId) {
                                             console.log("Skipping pull_request_target from non-pull-request build " + run.html_url);
