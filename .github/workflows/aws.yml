@@ -189,7 +189,7 @@ jobs:
                 }
             }
 
-      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
+      - uses: liquibase/build-logic/.github/actions/setup-java@7b13aeed60ae1516e43ddfb6cefc222ce94e6c3b # main
         with:
           java-version: "17"
           distribution: "temurin"
