@@ -713,8 +713,8 @@ jobs:
     name: Tests Complete
     runs-on: ubuntu-latest
     needs: [setup, test]
-    # The merge gate. Kept separate from `finish`, which pulls vault creds and an
-    # App token and would go red on fork PRs for reasons unrelated to the tests.
+    # The merge gate. Separate from `finish`, whose vault, App-token and cross-repo
+    # status steps can fail for reasons that have nothing to do with the test results.
     if: ${{ always() }}
     steps:
       - name: Verify the database matrix passed
