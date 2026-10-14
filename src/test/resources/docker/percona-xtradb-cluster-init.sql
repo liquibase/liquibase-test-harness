@@ -2,6 +2,18 @@ GRANT SUPER ON *.* TO 'lbuser'@'%';
 GRANT ALL PRIVILEGES ON lbcat.* TO 'lbuser'@'%' WITH GRANT OPTION;
 GRANT PROCESS ON *.* TO 'lbuser'@'%';
 SET GLOBAL log_bin_trust_function_creators = 1;
+-- PXC 8.4.11+ turns on sql_require_primary_key, which rejects the harness's PK-less test tables.
+-- ENFORCING pxc_strict_mode pins it ON, so 8.4 has to drop to PERMISSIVE first. This file is shared
+-- with the 5.7 and 8.0 services, which keep their defaults.
+SET @is_pxc_84 = VERSION() >= '8.4';
+SET @relax_strict_mode = IF(@is_pxc_84, 'SET PERSIST pxc_strict_mode = PERMISSIVE', 'DO 0');
+PREPARE relax_strict_mode FROM @relax_strict_mode;
+EXECUTE relax_strict_mode;
+DEALLOCATE PREPARE relax_strict_mode;
+SET @disable_require_pk = IF(@is_pxc_84, 'SET PERSIST sql_require_primary_key = OFF', 'DO 0');
+PREPARE disable_require_pk FROM @disable_require_pk;
+EXECUTE disable_require_pk;
+DEALLOCATE PREPARE disable_require_pk;
 FLUSH PRIVILEGES;
 
 -- Percona XtraDB Cluster requires a primary key on all tables. https://github.com/liquibase/liquibase/issues/2271
