@@ -119,6 +119,22 @@ jobs:
     steps:
       - run: true
 
+  fixture-parity:
+    # Filesystem-only guard: no database, no vault. Fails the build when a
+    # <platform>_<version> fixture dir (e.g. postgresql/flexible_16) stops
+    # mirroring its plain <version> sibling, which would otherwise fall through
+    # to the base fixture and surface much later as a confusing nightly diff.
+    name: Fixture Parity
+    needs: authorize
+    runs-on: ubuntu-latest
+    steps:
+      - uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
+
+      - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
+
+      - name: Check expected-fixture parity
+        run: mvn test -Dtest=FixtureParityTest -DfailIfNoTests=false
+
   setup:
     name: Setup
     needs: authorize

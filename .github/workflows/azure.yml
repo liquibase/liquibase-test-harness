@@ -344,6 +344,12 @@ jobs:
       fail-fast: false
       matrix:
         database: ${{ fromJson(needs.setup.outputs.databases) }}
+        # postgresql:flexible has no test step in this job (every run step is
+        # gated on mysql/mssql), so it would report success having run nothing.
+        # It stays in setup.outputs.databases because postgresql-flexible-test
+        # keys its `if:` off that list, and runs the real coverage there.
+        exclude:
+          - database: postgresql:flexible
 
     steps:
       - name: Checkout
@@ -526,6 +532,7 @@ jobs:
     if: "contains(needs.setup.outputs.databases, 'postgresql:flexible')"
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         version: [15, 16]
 
