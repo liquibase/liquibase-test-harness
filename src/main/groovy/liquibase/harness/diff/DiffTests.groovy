@@ -45,7 +45,7 @@ class DiffTests extends Specification {
         when: "execute update and diff commands"
 
         executeCommandScope("update", argsMap)
-        argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")
+        argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock, (?i)databasechangelogmeta")
         String generatedDiffContent = removeDatabaseInfoFromDiff(executeCommandScope("diff", argsMap).toString())
 
         then: "validate generated diff"
