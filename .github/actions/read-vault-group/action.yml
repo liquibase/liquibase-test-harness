@@ -1,5 +1,5 @@
 name: 'Read vault group'
-description: 'Assume a grouped vault role and export /vault/grouped/<group> (or only the listed keys) to the job environment'
+description: 'Assume a grouped vault role and export /vault/grouped/<group> (or only the listed keys) to the job environment; the role credentials are not exported'
 inputs:
   role-arn:
     description: 'The group role, e.g. secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN'
@@ -18,38 +18,56 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    # Credentials stay in this action's steps: later steps in the job cannot re-read the group.
     - name: Configure AWS credentials for ${{ inputs.group }}
+      id: creds
       uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
       with:
         role-to-assume: ${{ inputs.role-arn }}
         aws-region: ${{ inputs.aws-region }}
+        output-credentials: true
+        output-env-credentials: false
 
     - name: Get ${{ inputs.group }} from vault
       if: inputs.keys == ''
       uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88 # v3.0.2
+      env:
+        AWS_REGION: ${{ inputs.aws-region }}
+        AWS_ACCESS_KEY_ID: ${{ steps.creds.outputs.aws-access-key-id }}
+        AWS_SECRET_ACCESS_KEY: ${{ steps.creds.outputs.aws-secret-access-key }}
+        AWS_SESSION_TOKEN: ${{ steps.creds.outputs.aws-session-token }}
       with:
         secret-ids: |
           ,/vault/grouped/${{ inputs.group }}
         parse-json-secrets: true
 
-    # Subset read: the group also holds keys this job must not get.
+    # Subset read: the group also holds keys this job must not get. Names and values match
+    # the whole-group read: upper-cased, other characters to _, value exactly as stored.
     - name: Get ${{ inputs.keys }} from vault
       if: inputs.keys != ''
       shell: bash
       env:
         GROUP: ${{ inputs.group }}
         KEYS: ${{ inputs.keys }}
+        AWS_REGION: ${{ inputs.aws-region }}
+        AWS_ACCESS_KEY_ID: ${{ steps.creds.outputs.aws-access-key-id }}
+        AWS_SECRET_ACCESS_KEY: ${{ steps.creds.outputs.aws-secret-access-key }}
+        AWS_SESSION_TOKEN: ${{ steps.creds.outputs.aws-session-token }}
       run: |
         set -euo pipefail
         vault_json="$(aws secretsmanager get-secret-value \
           --secret-id "/vault/grouped/${GROUP}" \
           --query SecretString --output text)"
         for key in ${KEYS}; do
-          value="$(jq -r --arg k "$key" '.[$k] // empty | strings' <<< "$vault_json")"
-          if [ -z "$value" ]; then
+          if ! jq -e --arg k "$key" '.[$k] | strings' >/dev/null <<< "$vault_json"; then
             echo "::error::/vault/grouped/${GROUP} has no string value for $key"
             exit 1
           fi
+          # The x keeps trailing newlines that $(...) would strip.
+          value="$(jq -j --arg k "$key" '.[$k]' <<< "$vault_json"; printf x)"
+          value="${value%x}"
+          name="${key^^}"
+          name="${name//[^A-Z0-9_]/_}"
           while IFS= read -r line; do
             if [ -n "$line" ]; then
               # The runner unescapes %25 and %0D before matching a mask, so escape % first.
@@ -59,7 +77,7 @@ runs:
           done <<< "$value"
           delimiter="EOF_$(openssl rand -hex 16)"
           {
-            printf '%s<<%s\n' "$key" "$delimiter"
+            printf '%s<<%s\n' "$name" "$delimiter"
             printf '%s\n' "$value"
             printf '%s\n' "$delimiter"
           } >> "$GITHUB_ENV"

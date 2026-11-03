@@ -45,29 +45,11 @@ jobs:
       - name: Checkout
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
-      - name: Get github-app-liquibase from vault
-        uses: ./.github/actions/read-vault-group
-        with:
-          role-arn: ${{ secrets.VAULT_GROUPED_GITHUB_APP_LIQUIBASE_ROLE_ARN }}
-          group: github-app-liquibase
-
       - name: Get liquibot-github-pat from vault
         uses: ./.github/actions/read-vault-group
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
-
-      - name: Get GitHub App token
-        id: get-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
-          private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
-          owner: liquibase
-          repositories: liquibase,liquibase-pro,liquibase-test-harness
-          permission-contents: read
-          permission-actions: read
-          permission-statuses: write
 
       - name: Configure Build
         id: configure-build
