@@ -1,5 +1,5 @@
 name: 'Read vault group'
-description: 'Assume a grouped vault role and export /vault/grouped/<group> (or only the listed keys) to the job environment; the role credentials are not exported to the job env'
+description: 'Assume a grouped vault role and export /vault/grouped/<group> (or only the listed keys) to the job environment; the role credentials are not exported to the job env, but keys is a filter, not an access boundary'
 inputs:
   role-arn:
     description: 'The group role, e.g. secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN'
