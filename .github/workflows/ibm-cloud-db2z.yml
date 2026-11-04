@@ -18,19 +18,23 @@ jobs:
       - name: Checkout
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
-      - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+      - name: Get db2-test from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
-          aws-region: us-east-1
+          role-arn: ${{ secrets.VAULT_GROUPED_DB2_TEST_ROLE_ARN }}
+          group: db2-test
 
-      - name: Get secrets from vault
-        id: vault-secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+      - name: Get liquibot-github-pat from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          secret-ids: |
-            ,/vault/liquibase
-          parse-json-secrets: true
+          role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
+          group: liquibot-github-pat
+
+      - name: Get pro-license from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
+          group: pro-license
 
       - uses: liquibase/build-logic/.github/actions/setup-java@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e # main
         with:

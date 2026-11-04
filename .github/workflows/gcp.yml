@@ -46,31 +46,11 @@ jobs:
       - name: Checkout
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
-      - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+      - name: Get liquibot-github-pat from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
-          aws-region: us-east-1
-
-      - name: Get secrets from vault
-        id: vault-secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
-        with:
-          secret-ids: |
-            ,/vault/liquibase
-          parse-json-secrets: true
-
-      - name: Get GitHub App token
-        id: get-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
-          private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
-          owner: liquibase
-          repositories: liquibase,liquibase-pro,liquibase-test-harness
-          permission-contents: read
-          permission-actions: read
-          permission-statuses: write
+          role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
+          group: liquibot-github-pat
 
       - name: Configure Build
         id: configure-build
@@ -306,19 +286,23 @@ jobs:
       - name: Checkout
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
-      - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+      - name: Get pro-license from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
-          aws-region: us-east-1
+          role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
+          group: pro-license
 
-      - name: Get secrets from vault
-        id: vault-secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+      - name: Get th-db-shared-admin from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          secret-ids: |
-            ,/vault/liquibase
-          parse-json-secrets: true
+          role-arn: ${{ secrets.VAULT_GROUPED_TH_DB_SHARED_ADMIN_ROLE_ARN }}
+          group: th-db-shared-admin
+
+      - name: Get th-endpoints-infra-protests-harness from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINTS_INFRA_PROTESTS_HARNESS_ROLE_ARN }}
+          group: th-endpoints-infra-protests-harness
 
       #      This additional init step is required because of mysql driver issue on GH actions
       - name: Install Dependencies
@@ -351,19 +335,43 @@ jobs:
       - name: Checkout
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
-      - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+      - name: Get liquibot-github-pat from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
-          aws-region: us-east-1
+          role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
+          group: liquibot-github-pat
 
-      - name: Get secrets from vault
-        id: vault-secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+      - name: Get mssql-admin from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          secret-ids: |
-            ,/vault/liquibase
-          parse-json-secrets: true
+          role-arn: ${{ secrets.VAULT_GROUPED_MSSQL_ADMIN_ROLE_ARN }}
+          group: mssql-admin
+
+      - name: Get pro-license from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
+          group: pro-license
+
+      - name: Get th-db-shared-admin from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_TH_DB_SHARED_ADMIN_ROLE_ARN }}
+          group: th-db-shared-admin
+
+      - name: Get th-endpoints-infra-harness from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINTS_INFRA_HARNESS_ROLE_ARN }}
+          group: th-endpoints-infra-harness
+          keys: TH_GCP_MSSQL_2022_URL
+
+      - name: Get th-endpoints-infra-protests-harness from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINTS_INFRA_PROTESTS_HARNESS_ROLE_ARN }}
+          group: th-endpoints-infra-protests-harness
+          keys: TH_GCP_MSSQL_2019_URL TH_GCP_MYSQL_8_0_URL
 
       - name: Configure Test
         id: setup

@@ -47,31 +47,11 @@ jobs:
       - name: Checkout
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
-      - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+      - name: Get liquibot-github-pat from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
-          aws-region: us-east-1
-
-      - name: Get secrets from vault
-        id: vault-secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
-        with:
-          secret-ids: |
-            ,/vault/liquibase
-          parse-json-secrets: true
-
-      - name: Get GitHub App token
-        id: get-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ env.LIQUIBASE_GITHUB_APP_ID }}
-          private-key: ${{ env.LIQUIBASE_GITHUB_APP_PRIVATE_KEY }}
-          owner: liquibase
-          repositories: liquibase,liquibase-pro,liquibase-test-harness
-          permission-contents: read
-          permission-actions: read
-          permission-statuses: write
+          role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
+          group: liquibot-github-pat
 
       - name: Configure Build
         id: configure-build
@@ -373,19 +353,42 @@ jobs:
             sleep $((attempt * 10))
           done
     
-      - name: Configure AWS credentials for vault access
-        uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
+      - name: Get aws-dev-github-oidc-role-arn-build-logic from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
-          aws-region: us-east-1
+          role-arn: ${{ secrets.VAULT_GROUPED_AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC_ROLE_ARN }}
+          group: aws-dev-github-oidc-role-arn-build-logic
 
-      - name: Get secrets from vault
-        id: vault-secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+      - name: Get liquibot-github-pat from vault
+        uses: ./.github/actions/read-vault-group
         with:
-          secret-ids: |
-            ,/vault/liquibase
-          parse-json-secrets: true
+          role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
+          group: liquibot-github-pat
+
+      - name: Get localstack from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_LOCALSTACK_ROLE_ARN }}
+          group: localstack
+
+      - name: Get pro-license from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
+          group: pro-license
+
+      - name: Get th-db-shared-admin from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_TH_DB_SHARED_ADMIN_ROLE_ARN }}
+          group: th-db-shared-admin
+
+      - name: Get th-endpoint-oracle19-shared from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINT_ORACLE19_SHARED_ROLE_ARN }}
+          group: th-endpoint-oracle19-shared
+          keys: TH_ORACLEURL_19 TH_ORACLEURL_19_PASSWORD
 
       - name: Start & Configure LocalStack
         env:
