@@ -1,5 +1,5 @@
 name: 'Read vault group'
-description: 'Assume a grouped vault role and export /vault/grouped/<group> (or only the listed keys) to the job environment; the role credentials are not exported'
+description: 'Assume a grouped vault role and export /vault/grouped/<group> (or only the listed keys) to the job environment; the role credentials are not exported to the job env'
 inputs:
   role-arn:
     description: 'The group role, e.g. secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN'
@@ -18,7 +18,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    # Credentials stay in this action's steps: later steps in the job cannot re-read the group.
+    # Credentials stay out of the job env. Not a boundary: a job with id-token: write can assume the role itself.
     - name: Configure AWS credentials for ${{ inputs.group }}
       id: creds
       uses: liquibase/build-logic/.github/actions/configure-aws-credentials@5e72097ceac12e1cc70fa6306e9d39f1b9bf1334 # main
@@ -41,8 +41,8 @@ runs:
           ,/vault/grouped/${{ inputs.group }}
         parse-json-secrets: true
 
-    # Subset read: the group also holds keys this job must not get. Names and values match
-    # the whole-group read: upper-cased, other characters to _, value exactly as stored.
+    # Subset read: exports only the listed keys. For plain string values, names match the whole-group
+    # read (upper-cased, other characters to _) and values are kept exactly as stored.
     - name: Get ${{ inputs.keys }} from vault
       if: inputs.keys != ''
       shell: bash
