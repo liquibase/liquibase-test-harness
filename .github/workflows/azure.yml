@@ -265,8 +265,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: liquibase/liquibase:latest
-      env:
-        LIQUIBASE_PRO_LICENSE_KEY: ${{ env.PRO_LICENSE_KEY }}
     strategy:
       fail-fast: false
       matrix:
