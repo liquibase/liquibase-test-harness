@@ -556,6 +556,13 @@ jobs:
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_DB_SHARED_ADMIN_ROLE_ARN }}
           group: th-db-shared-admin
+
+      - name: Get th-endpoints-infra-harness from vault
+        uses: ./.github/actions/read-vault-group
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINTS_INFRA_HARNESS_ROLE_ARN }}
+          group: th-endpoints-infra-harness
+          keys: TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_15_URL TH_AZURE_POSTGRESQL_FLEXIBLE_SERVER_16_URL
           
       - name: Azure PostgreSQL Flexible Server dropAll
         uses: liquibase-github-actions/drop-all@663292ff5b70ff2097e9db9bc3a41d3ff8290647 # v4.33.0
