@@ -50,14 +50,8 @@ jobs:
       github.event.workflow_run.conclusion == 'cancelled'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the vault action
-        uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
-        with:
-          sparse-checkout: .github/actions
-          persist-credentials: false
-
       - name: Get test-harness-slack-webhook from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TEST_HARNESS_SLACK_WEBHOOK_ROLE_ARN }}
           group: test-harness-slack-webhook

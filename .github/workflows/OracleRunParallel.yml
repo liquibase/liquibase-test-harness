@@ -28,19 +28,19 @@ jobs:
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - name: Get liquibot-github-pat from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
 
       - name: Get nexus-repo from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_NEXUS_REPO_ROLE_ARN }}
           group: nexus-repo
 
       - name: Get pro-license from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
           group: pro-license
