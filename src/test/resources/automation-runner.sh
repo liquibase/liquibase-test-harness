@@ -77,6 +77,12 @@ case $db in
   "mariadb-11.4" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=mariadb -DdbVersion=11.4 test
     ;;
+  "mariadb-12.3" )
+    test_command $(build_mvn_command) -Dtest=$tc -DdbName=mariadb -DdbVersion=12.3 test
+    ;;
+  "mariadb-13.0" )
+    test_command $(build_mvn_command) -Dtest=$tc -DdbName=mariadb -DdbVersion=13.0 test
+    ;;
   "mssql-2017" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=mssql -DdbVersion=2017 test
     ;;
