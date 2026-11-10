@@ -364,7 +364,8 @@ jobs:
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINTS_INFRA_HARNESS_ROLE_ARN }}
           group: th-endpoints-infra-harness
-          keys: TH_GCP_MSSQL_2022_URL
+          # Listed by name: the steps below build TH_GCP_POSTGRESQL_<version>_URL at run time.
+          keys: TH_GCP_MSSQL_2022_URL TH_GCP_POSTGRESQL_12_URL TH_GCP_POSTGRESQL_13_URL TH_GCP_POSTGRESQL_14_URL TH_GCP_POSTGRESQL_15_URL TH_GCP_POSTGRESQL_16_URL
 
       - name: Get th-endpoints-infra-protests-harness from vault
         uses: ./.github/actions/read-vault-group
