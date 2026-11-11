@@ -47,7 +47,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Get liquibot-github-pat from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
@@ -287,19 +287,19 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Get pro-license from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
           group: pro-license
 
       - name: Get th-db-shared-admin from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_DB_SHARED_ADMIN_ROLE_ARN }}
           group: th-db-shared-admin
 
       - name: Get th-endpoints-infra-protests-harness from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINTS_INFRA_PROTESTS_HARNESS_ROLE_ARN }}
           group: th-endpoints-infra-protests-harness
@@ -336,31 +336,31 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Get liquibot-github-pat from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
 
       - name: Get mssql-admin from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_MSSQL_ADMIN_ROLE_ARN }}
           group: mssql-admin
 
       - name: Get pro-license from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
           group: pro-license
 
       - name: Get th-db-shared-admin from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_DB_SHARED_ADMIN_ROLE_ARN }}
           group: th-db-shared-admin
 
       - name: Get th-endpoints-infra-harness from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINTS_INFRA_HARNESS_ROLE_ARN }}
           group: th-endpoints-infra-harness
@@ -368,7 +368,7 @@ jobs:
           keys: TH_GCP_MSSQL_2022_URL TH_GCP_POSTGRESQL_12_URL TH_GCP_POSTGRESQL_13_URL TH_GCP_POSTGRESQL_14_URL TH_GCP_POSTGRESQL_15_URL TH_GCP_POSTGRESQL_16_URL
 
       - name: Get th-endpoints-infra-protests-harness from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINTS_INFRA_PROTESTS_HARNESS_ROLE_ARN }}
           group: th-endpoints-infra-protests-harness

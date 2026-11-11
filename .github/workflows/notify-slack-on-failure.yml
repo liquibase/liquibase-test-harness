@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get test-harness-slack-webhook from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TEST_HARNESS_SLACK_WEBHOOK_ROLE_ARN }}
           group: test-harness-slack-webhook

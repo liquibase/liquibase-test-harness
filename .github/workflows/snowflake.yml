@@ -27,7 +27,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Get liquibot-github-pat from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
@@ -299,25 +299,25 @@ jobs:
             mvn-liquibase-${{ github.run_id }}-
 
       - name: Get aws-dev-github-oidc-role-arn-build-logic from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC_ROLE_ARN }}
           group: aws-dev-github-oidc-role-arn-build-logic
 
       - name: Get liquibot-github-pat from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
 
       - name: Get pro-license from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
           group: pro-license
 
       - name: Get th-snowflake-th from vault
-        uses: liquibase/build-logic/.github/actions/setup-aws-vault@main
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_SNOWFLAKE_TH_ROLE_ARN }}
           group: th-snowflake-th
