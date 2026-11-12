@@ -1,0 +1,41 @@
+name: Check local action references
+
+# TECHOPS-1600: a `uses: ./path` with no action.yml only fails when that job runs,
+# and most workflows here never run on pull_request. Runs on the PR merge ref, so it
+# also sees callers that main added after the branch was cut.
+
+on:
+  pull_request:
+    paths:
+      - '.github/**'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check local action references
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github
+
+      - name: Every local action reference has an action file
+        run: |
+          set -euo pipefail
+          missing=0
+          while IFS=: read -r file line text; do
+            ref="$(sed -E 's/^[[:space:]-]*uses:[[:space:]]*["'"'"']?([^"'"'"'[:space:]#]+).*/\1/' <<< "$text")"
+            path="${ref#./}"
+            case "$path" in
+              *.yml|*.yaml) [ -f "$path" ] && continue ;;  # local reusable workflow
+              *) { [ -f "$path/action.yml" ] || [ -f "$path/action.yaml" ]; } && continue ;;
+            esac
+            echo "::error file=$file,line=$line::$ref does not exist"
+            missing=1
+          done < <(grep -rnE --include='*.yml' --include='*.yaml' '^[[:space:]-]*uses:[[:space:]]*["'"'"']?\./' .github)
+          exit "$missing"
