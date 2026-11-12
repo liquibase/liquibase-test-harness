@@ -2,7 +2,8 @@ name: Check local action references
 
 # TECHOPS-1600: a `uses: ./path` with no action.yml only fails when that job runs,
 # and most workflows here never run on pull_request. Runs on the PR merge ref, so it
-# also sees callers that main added after the branch was cut.
+# also sees callers that main added after the branch was cut. Only paths under
+# ./.github/ are checked: others can be runtime checkouts.
 
 on:
   pull_request:
@@ -37,5 +38,5 @@ jobs:
             esac
             echo "::error file=$file,line=$line::$ref does not exist"
             missing=1
-          done < <(grep -rnE --include='*.yml' --include='*.yaml' '^[[:space:]-]*uses:[[:space:]]*["'"'"']?\./' .github)
+          done < <(grep -rnE --include='*.yml' --include='*.yaml' '^[[:space:]-]*uses:[[:space:]]*["'"'"']?\./\.github/' .github)
           exit "$missing"
