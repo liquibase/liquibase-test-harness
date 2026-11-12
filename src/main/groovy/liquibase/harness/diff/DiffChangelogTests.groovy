@@ -54,7 +54,7 @@ class DiffChangelogTests extends Specification {
         executeCommandScope("update", argsMap)
         executeCommandScope("update", argsMapRef)
 
-        argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock")//excluding static test-harness objects from generated changelog
+        argsMap.put("excludeObjects", "(?i)posts, (?i)authors, (?i)databasechangelog, (?i)databasechangeloglock, (?i)databasechangelogmeta")//excluding static test-harness objects from generated changelog
         def map = new LinkedHashMap<String, String>()
         map.put("changelogFileXml", testInput.pathToGeneratedXmlDiffChangelogFile)
         // TODO: DAT-21201 - Bug: --object-changelogs=all supports views/tables only
