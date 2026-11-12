@@ -260,6 +260,32 @@ services:
     volumes:
       - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
 
+  mariadb-12.3:
+    image: mariadb:12.3
+    ports:
+      - "33075:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+
+  mariadb-13.0:
+    image: mariadb:13.0
+    ports:
+      - "33076:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+
 
   mssql-2017:
     container_name: sql-server-db-2017

@@ -20,7 +20,7 @@
 | GCP PostgreSQL            | `12, 13, 14`                          | Advanced           |
 | GCP MySQL                 | `8`                                   | Advanced           |
 | GCP SQL Server            | `2019`                                | Advanced           |
-| MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7` | Advanced           |
+| MariaDB                   | `10.2, 10.3 , 10.4, 10.5, 10.6, 10.7, 11.4, 12.3, 13.0` | Advanced           |
 | Postgres                  | `12, 13, 14, 15, 16`                  | Advanced           |
 | MySQL                     | `5.6, 5.7, 8`                         | Advanced           |
 | SQL Server                | `2017`, `2019`, `2022`, `2025`        | Advanced           |
