@@ -388,7 +388,7 @@ jobs:
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINT_ORACLE19_SHARED_ROLE_ARN }}
           group: th-endpoint-oracle19-shared
-          keys: TH_ORACLEURL_19 TH_ORACLEURL_19_PASSWORD
+          keys: TH_ORACLEURL_19
 
       - name: Start & Configure LocalStack
         env:
@@ -626,7 +626,7 @@ jobs:
           liquibase --log-level=debug \
             --url="$ORACLE_JDBC_URL" \
             --username="${{env.TH_DB_ADMIN}}" \
-            --password="${{env.TH_ORACLEURL_19_PASSWORD}}" \
+            --password="${{env.TH_DB_PASSWD}}" \
             drop-all \
             --force
       
@@ -641,7 +641,7 @@ jobs:
             --changeLogFile="oracle.sql" \
             --url="$ORACLE_JDBC_URL" \
             --username="${{ env.TH_DB_ADMIN }}" \
-            --password="${{ env.TH_ORACLEURL_19_PASSWORD }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
             update
 
       - name: Restore cached Liquibase artifacts
@@ -758,7 +758,7 @@ jobs:
           db-name: ${{ steps.setup.outputs.databasePlatform }}
           db-version: ${{ steps.setup.outputs.databaseVersion }}
           db-username: ${{ env.TH_DB_ADMIN }}
-          db-password: ${{ env.TH_ORACLEURL_19_PASSWORD }}
+          db-password: ${{ env.TH_DB_PASSWD }}
           db-url: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
           pre-command: |-
             echo "::group::Dependency Tree (PRO - liquibase-commercial)"
