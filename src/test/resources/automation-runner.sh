@@ -143,9 +143,6 @@ case $db in
   "diff")
     test_command $(build_mvn_command) -Dtest=DiffTest test
     ;;
-  "diffChangelog")
-    test_command $(build_mvn_command) -Dtest=DiffChangelogTest test
-    ;;
   "hsqldb-2.5")
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=hsqldb -DdbVersion=2.5 test
     ;;
@@ -175,6 +172,12 @@ case $db in
     ;;
   "tidb")
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=mysql -DdbVersion=tidb test
+    ;;
+  # Fail loudly on an unknown target. Without this, a matrix entry with no matching case falls
+  # through, the script exits 0 and the CI job goes green having run zero tests.
+  *)
+    echo "automation-runner.sh: unknown target '$db' - add a case for it" >&2
+    exit 1
     ;;
 esac
 

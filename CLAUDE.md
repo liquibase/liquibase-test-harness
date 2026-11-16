@@ -161,7 +161,6 @@ src/
 │   │   ├── SnapshotObjectTests.groovy
 │   │   ├── GenerateChangelogTest.groovy
 │   │   ├── DiffTest.groovy
-│   │   ├── DiffChangelogTest.groovy
 │   │   ├── LiquibaseHarnessSuiteTest.groovy
 │   │   └── *HarnessSuiteTest.groovy
 │   └── resources/
