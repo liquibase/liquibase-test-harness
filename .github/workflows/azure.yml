@@ -15,11 +15,9 @@ on:
         options:
           - LiquibaseHarnessSuiteTest
           - FoundationalHarnessSuiteTest
-          - AdvancedHarnessSuiteTest
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
-          - GenerateChangelogTest
           - FoundationalTest
       databases:
         description: Databases to start up. Comma separated list of "name:version"

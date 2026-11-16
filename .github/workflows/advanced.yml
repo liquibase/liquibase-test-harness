@@ -449,6 +449,27 @@ jobs:
         run: |
           mvn -B versions:set-property -Dproperty=liquibase-commercial.version -DnewVersion=0-SNAPSHOT
 
+      # [INT-2469] generateChangelog on these databases is owned by liquibase-pro-tests
+      # (GenerateChangeLogTests asserts per-type changeset counts and redeploys the result; the harness
+      # GenerateChangelogTest only checks the command does not throw). Run SnapshotObjectTests alone for
+      # them. AdvancedHarnessSuite itself is unchanged because extensions (cassandra, redshift) inherit it.
+      # SnapshotObjectTests resolves the root snapshot/changelogs on every DB, so no job runs zero tests.
+      - name: Select ${{ matrix.database }} test classes
+        id: test-classes
+        env:
+          DB_NAME: ${{ matrix.database }}
+          TEST_CLASSES: ${{ needs.setup.outputs.testClasses }}
+        run: |
+          case "$DB_NAME" in
+            postgres-*|mysql-*|mariadb-*|mssql-*|edb-postgres-*|edb-edb-*|db2-luw)
+              if [ "$TEST_CLASSES" = "AdvancedHarnessSuiteTest" ]; then
+                TEST_CLASSES=SnapshotObjectTests
+              fi
+              ;;
+          esac
+          echo "Test classes for $DB_NAME: $TEST_CLASSES"
+          echo "value=$TEST_CLASSES" >> "$GITHUB_OUTPUT"
+
       - name: ${{ matrix.database }} Test Run
         # [TECHOPS-645/734] Bounded retry via the shared composite action so transient
         # failures self-heal. User-controllable values and secrets are passed as inputs
@@ -462,7 +483,7 @@ jobs:
           commercial-version: ${{ needs.setup.outputs.proVersion }}
           community-version: ${{ needs.setup.outputs.communityVersion }}
           db-name: ${{ matrix.database }}
-          test-classes: ${{ needs.setup.outputs.testClasses }}
+          test-classes: ${{ steps.test-classes.outputs.value }}
           pre-command: |-
             if [ "$USE_PRO_ARTIFACTS" = "true" ]; then
               echo "::group::Dependency Tree (PRO - liquibase-commercial)"
