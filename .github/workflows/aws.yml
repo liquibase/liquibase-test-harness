@@ -429,6 +429,15 @@ jobs:
             core.setOutput("databasePlatform", splitValues[0]);
             core.setOutput("databaseVersion", splitValues[1]);
 
+      # LocalStack sets TH_DB_PASSWD=test; Oracle is real RDS and needs the vault value back.
+      - name: Get th-db-shared-admin from vault for Oracle
+        if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
+        with:
+          role-arn: ${{ secrets.VAULT_GROUPED_TH_DB_SHARED_ADMIN_ROLE_ARN }}
+          group: th-db-shared-admin
+          keys: TH_DB_PASSWD
+
       - name: Init Aurora MySQL Database
         if: ${{ steps.setup.outputs.databasePlatform == 'mysql' && steps.setup.outputs.databaseVersion == 'aurora' }}
         run: |
