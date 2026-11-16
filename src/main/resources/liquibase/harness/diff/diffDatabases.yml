@@ -5,11 +5,6 @@
 ---
 references:
   - targetDatabaseName: postgresql
-    targetDatabaseVersion: 13
-    referenceDatabaseName: postgresql
-    referenceDatabaseVersion: 14
-
-  - targetDatabaseName: postgresql
     targetDatabaseVersion: 16
     referenceDatabaseName: postgresql
     referenceDatabaseVersion: 17
