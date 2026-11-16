@@ -1,2 +1,2 @@
-CREATE VIEW ${CATALOG_NAME}.PUBLIC.test_view AS select id, first_name, last_name, email from authors
-ALTER VIEW ${CATALOG_NAME}.PUBLIC.test_view RENAME TO ${CATALOG_NAME}.PUBLIC.test_view_new
+SKIP TEST: INT-2469 - renameView on snowflake is covered by liquibase-pro-tests ClassicChangeTypesBackwardCompatibilityTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

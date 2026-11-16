@@ -1,2 +1,2 @@
-CREATE INDEX idx_first_name ON public.authors(first_name)
-DROP INDEX public.idx_first_name
+SKIP TEST: INT-2469 - dropIndex on postgresql is covered by liquibase-pro-tests DiffChangeLogRegressionTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

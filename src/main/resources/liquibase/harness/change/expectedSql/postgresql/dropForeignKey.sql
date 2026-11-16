@@ -1,2 +1,2 @@
-ALTER TABLE public.posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES public.authors (id) ON UPDATE RESTRICT ON DELETE CASCADE
-ALTER TABLE public.posts DROP CONSTRAINT fk_posts_authors_test
+SKIP TEST: INT-2469 - dropForeignKey on postgresql is covered by liquibase-pro-tests PostgresGenerateChangeLogDependencyOrderingTests, DiffChangeLogRegressionTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

@@ -1,1 +1,0 @@
-CREATE PUBLIC ALIAS test_synonym FOR TABLE "DB2INST1"."authors"

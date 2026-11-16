@@ -1,9 +1,3 @@
-CREATE OR REPLACE FUNCTION test_function()
-RETURNS trigger
-AS $$
-BEGIN
-RAISE NOTICE 'Test function created'
-RETURN NEW
-END
-$$
-LANGUAGE plpgsql
+SKIP TEST: INT-2469 - edb-postgres has no packages; the createPackage changelog only deploys plain
+function/table SQL, which the sql and createFunction tests already cover. Package coverage lives in
+liquibase-pro-tests UpdateTests / PostgresEnd2EndTests on oracle and edb-edb.

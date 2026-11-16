@@ -1,1 +1,2 @@
-ALTER TABLE public.posts ADD CONSTRAINT test_check_constraint CHECK (id > 0)
+SKIP TEST: INT-2469 - addCheckConstraint on postgresql is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

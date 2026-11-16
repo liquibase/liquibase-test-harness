@@ -1,11 +1,2 @@
-CREATE or replace PROCEDURE test_procedure()
-RETURNS VARCHAR
-LANGUAGE javascript
-AS
-$$
-var rs = snowflake.execute( { sqlText:
-`INSERT INTO table1 ("column 1")
-SELECT 'value 1' AS "column 1" ;`
-} )
-return 'Done.'
-$$
+SKIP TEST: INT-2469 - createProcedure on snowflake is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

@@ -1,1 +1,2 @@
-INSERT INTO "C##LIQUIBASE".posts (id, author_id, title, description, content, inserted_date) VALUES ('10', '10', 'value', 'value', 'value', '10-AUG-88')
+SKIP TEST: INT-2469 - insert on oracle is covered by liquibase-pro-tests UuidLiteralDefaultDeployTests, RowsAffectedAcrossDatabasesTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

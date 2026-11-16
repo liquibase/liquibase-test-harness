@@ -1,1 +1,2 @@
-ALTER TABLE ${CATALOG_NAME}.PUBLIC.authors ADD CONSTRAINT test_unique_constraint UNIQUE (email)
+SKIP TEST: INT-2469 - addUniqueConstraint on snowflake is covered by liquibase-pro-tests UpdateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

@@ -1,1 +1,2 @@
-CREATE VIEW public.test_view AS select id, first_name, last_name, email from authors
+SKIP TEST: INT-2469 - createView on edb-postgres is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests, ClassicChangeTypesBackwardCompatibilityTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

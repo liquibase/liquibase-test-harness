@@ -1,1 +1,2 @@
-INSERT INTO posts (id, author_id, title, description, content, inserted_date) VALUES ('100', '6', 'value', 'value', 'value', '2006-10-09')
+SKIP TEST: INT-2469 - insert on mssql is covered by liquibase-pro-tests UuidLiteralDefaultDeployTests, RowsAffectedAcrossDatabasesTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

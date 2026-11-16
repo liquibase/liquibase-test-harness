@@ -1,1 +1,2 @@
-CREATE SEQUENCE  IF NOT EXISTS public.test_sequence AS int START WITH 1 INCREMENT BY 1 MINVALUE 1
+SKIP TEST: INT-2469 - createSequence on edb-postgres is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

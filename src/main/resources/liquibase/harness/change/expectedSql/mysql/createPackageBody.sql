@@ -1,5 +1,3 @@
-CREATE FUNCTION test_function()
-RETURNS VARCHAR(20)
-BEGIN
-RETURN 'Hello'
-END
+SKIP TEST: INT-2469 - mysql has no packages; the createPackageBody changelog only deploys plain
+function/table SQL, which the sql and createFunction tests already cover. Package coverage lives in
+liquibase-pro-tests UpdateTests / PostgresEnd2EndTests on oracle and edb-edb.

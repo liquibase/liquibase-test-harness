@@ -1,2 +1,2 @@
-CREATE SEQUENCE ${CATALOG_NAME}.PUBLIC.test_sequence START WITH 1 INCREMENT BY 1
-DROP SEQUENCE ${CATALOG_NAME}.PUBLIC.test_sequence
+SKIP TEST: INT-2469 - dropSequence on snowflake is covered by liquibase-pro-tests ClassicChangeTypesBackwardCompatibilityTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

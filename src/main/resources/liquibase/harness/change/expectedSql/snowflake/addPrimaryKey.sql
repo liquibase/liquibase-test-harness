@@ -1,1 +1,2 @@
-ALTER TABLE ${CATALOG_NAME}.PUBLIC.posts ADD CONSTRAINT pk_posts PRIMARY KEY (id)
+SKIP TEST: INT-2469 - addPrimaryKey on snowflake is covered by liquibase-pro-tests SnowflakeGenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

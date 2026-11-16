@@ -1,1 +1,2 @@
-CREATE TABLE public.test_table (test_id INTEGER NOT NULL, test_column VARCHAR(50) NOT NULL, CONSTRAINT test_table_pkey PRIMARY KEY (test_id))
+SKIP TEST: INT-2469 - createTable on edb-postgres is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests, EdbGenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

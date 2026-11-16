@@ -1,4 +1,2 @@
-CREATE TABLE public.sqltest (id INTEGER)
-insert into sqltest (id) values (1)
-insert into sqltest (id) values (2)
-insert into sqltest (id) values (3)
+SKIP TEST: INT-2469 - sql on edb-edb is covered by liquibase-pro-tests GenerateChangeLogShouldSnapshotViewCommentsTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

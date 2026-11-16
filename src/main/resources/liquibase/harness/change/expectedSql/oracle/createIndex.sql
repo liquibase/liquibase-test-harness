@@ -1,2 +1,2 @@
-CREATE INDEX "C##LIQUIBASE".idx_first_name ON "C##LIQUIBASE".authors(first_name)
-CREATE INDEX "C##LIQUIBASE".idx_last_name ON "C##LIQUIBASE".authors(last_name)
+SKIP TEST: INT-2469 - createIndex on oracle is covered by liquibase-pro-tests OracleGenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).
