@@ -395,6 +395,7 @@ jobs:
           LOCALSTACK_OAUTH_TOKEN: ${{ env.LOCALSTACK_OAUTH_TOKEN }}
           GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           RDS_MYSQL_DOCKER: 1     #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
+          MATRIX_DATABASE: ${{ matrix.database }}
         run: |
           pip install "localstack==${{ env.LOCALSTACK_CLI_VERSION }}" awscli-local
           docker pull localstack/localstack-pro:${{ env.LOCALSTACK_IMAGE_VERSION }}
@@ -411,7 +412,7 @@ jobs:
           localstack wait -t 30
           echo "Startup complete"
           # Oracle is real RDS: keep the th-db-shared-admin credentials from the vault.
-          if [[ "${{ matrix.database }}" != oracle:* ]]; then
+          if [[ "$MATRIX_DATABASE" != oracle:* ]]; then
             echo "TH_DB_ADMIN=lbuser" >> $GITHUB_ENV
             echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
           fi
