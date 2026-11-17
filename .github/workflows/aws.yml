@@ -563,6 +563,15 @@ jobs:
           echo "::group::LocalStack logs"
           localstack logs || docker logs localstack-main 2>&1 || true
           echo "::endgroup::"
+          # DB engines (e.g. ls-mssql-*) run in their own containers; their logs show why they exited.
+          echo "::group::Database engine containers"
+          docker ps -a || true
+          for c in $(docker ps -a --format '{{.Names}}' | grep -E '^ls-' || true); do
+            echo "--- $c"
+            docker inspect --format 'status={{.State.Status}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} error={{.State.Error}}' "$c" || true
+            docker logs --tail 200 "$c" 2>&1 || true
+          done
+          echo "::endgroup::"
 
       - name: Setup Liquibase for Oracle
         if: ${{ steps.setup.outputs.databasePlatform == 'oracle' }}
