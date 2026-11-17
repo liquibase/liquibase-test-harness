@@ -1,2 +1,2 @@
-ALTER TABLE "C##LIQUIBASE".posts MODIFY title DEFAULT 'title_test'
-ALTER TABLE "C##LIQUIBASE".posts MODIFY title DEFAULT NULL
+SKIP TEST: INT-2469 - dropDefaultValue on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

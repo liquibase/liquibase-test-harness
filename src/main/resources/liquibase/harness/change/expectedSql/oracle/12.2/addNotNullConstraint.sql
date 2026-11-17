@@ -1,1 +1,0 @@
-ALTER TABLE LBUSER.posts MODIFY inserted_date CONSTRAINT test_notNull NOT NULL

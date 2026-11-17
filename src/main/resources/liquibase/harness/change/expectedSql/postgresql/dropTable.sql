@@ -1,2 +1,2 @@
-CREATE TABLE public.test_table (test_id INTEGER NOT NULL, test_column VARCHAR(50) NOT NULL, CONSTRAINT test_table_pkey PRIMARY KEY (test_id))
-DROP TABLE public.test_table
+SKIP TEST: INT-2469 - dropTable on postgresql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

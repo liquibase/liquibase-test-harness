@@ -1,2 +1,2 @@
-CREATE TABLE "DB2INST1".add_default_value_boolean_test (id INTEGER NOT NULL, boolean_test BOOLEAN, CONSTRAINT PK_ADD_DEFAULT_VA PRIMARY KEY (id))
-ALTER TABLE "DB2INST1".add_default_value_boolean_test ALTER COLUMN  boolean_test SET DEFAULT TRUE
+SKIP TEST: INT-2469 - addDefaultValueBoolean on db2-luw is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

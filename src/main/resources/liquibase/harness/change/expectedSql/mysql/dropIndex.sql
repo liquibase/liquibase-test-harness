@@ -1,2 +1,2 @@
-CREATE INDEX idx_first_name ON lbcat.authors(first_name)
-DROP INDEX idx_first_name ON lbcat.authors
+SKIP TEST: INT-2469 - dropIndex on mysql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

@@ -1,10 +1,2 @@
-CREATE TABLE "DB2INST1".authors_data AS (SELECT email AS authors_email FROM "DB2INST1".authors) WITH NO DATA
-INSERT INTO "DB2INST1".authors_data SELECT DISTINCT email FROM "DB2INST1".authors WHERE email IS NOT NULL
-ALTER TABLE "DB2INST1".authors_data ALTER COLUMN  authors_email SET NOT NULL
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".authors_data')
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".authors_data')
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".authors_data')
-ALTER TABLE "DB2INST1".authors_data ADD PRIMARY KEY (authors_email)
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".authors_data')
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".authors_data')
-ALTER TABLE "DB2INST1".authors ADD CONSTRAINT FK_AUTHORS_AUTHORS_DATA FOREIGN KEY (email) REFERENCES "DB2INST1".authors_data (authors_email)
+SKIP TEST: INT-2469 - addLookupTable on db2-luw is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

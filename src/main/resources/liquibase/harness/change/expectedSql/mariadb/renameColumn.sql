@@ -1,1 +1,2 @@
-ALTER TABLE lbcat.authors CHANGE first_name first_name_renameColumn_test VARCHAR(50) NOT NULL
+SKIP TEST: INT-2469 - renameColumn on mariadb is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

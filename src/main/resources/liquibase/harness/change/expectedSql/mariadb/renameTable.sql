@@ -1,2 +1,2 @@
-CREATE TABLE lbcat.oldnametable (test_id INT NOT NULL, test_column VARCHAR(50) NOT NULL, CONSTRAINT PK_OLDNAMETABLE PRIMARY KEY (test_id))
-ALTER TABLE lbcat.oldnametable RENAME lbcat.newnametable
+SKIP TEST: INT-2469 - renameTable on mariadb is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

@@ -1,2 +1,2 @@
-ALTER TABLE public.authors ADD "booleanColumn" BOOLEAN
-ALTER TABLE public.authors ALTER COLUMN  "booleanColumn" SET DEFAULT TRUE
+SKIP TEST: INT-2469 - addDefaultValueBoolean on edb-postgres is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

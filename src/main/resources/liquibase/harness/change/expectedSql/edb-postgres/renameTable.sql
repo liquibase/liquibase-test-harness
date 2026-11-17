@@ -1,2 +1,2 @@
-CREATE TABLE public.oldnametable (test_id INTEGER NOT NULL, test_column VARCHAR(50) NOT NULL, CONSTRAINT oldnametable_pkey PRIMARY KEY (test_id))
-ALTER TABLE public.oldnametable RENAME TO newnametable
+SKIP TEST: INT-2469 - renameTable on edb-postgres is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

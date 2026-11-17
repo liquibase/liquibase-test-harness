@@ -1,1 +1,2 @@
-ALTER TABLE posts ADD CONSTRAINT testConstraint DEFAULT 'title_test' FOR title
+SKIP TEST: INT-2469 - addDefaultValue on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

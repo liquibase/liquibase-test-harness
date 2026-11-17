@@ -1,2 +1,2 @@
-CREATE TABLE test_table (test_id int NOT NULL, test_column varchar(50) NOT NULL, CONSTRAINT PK_TEST_TABLE PRIMARY KEY (test_id))
-DROP TABLE test_table
+SKIP TEST: INT-2469 - dropTable on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

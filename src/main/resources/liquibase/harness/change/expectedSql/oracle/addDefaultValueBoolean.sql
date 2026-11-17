@@ -1,2 +1,2 @@
-ALTER TABLE "C##LIQUIBASE".authors ADD booleanColumn NUMBER(1)
-ALTER TABLE "C##LIQUIBASE".authors MODIFY booleanColumn DEFAULT 1
+SKIP TEST: INT-2469 - addDefaultValueBoolean on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

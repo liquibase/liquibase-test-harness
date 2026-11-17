@@ -1,2 +1,2 @@
-CREATE TABLE "C##LIQUIBASE".modify_data_type_test (intColumn INTEGER, dateColumn date)
-ALTER TABLE "C##LIQUIBASE".modify_data_type_test MODIFY intColumn VARCHAR2(50)
+SKIP TEST: INT-2469 - modifyDataType on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

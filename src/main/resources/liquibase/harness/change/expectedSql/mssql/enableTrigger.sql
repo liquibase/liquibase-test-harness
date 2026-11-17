@@ -1,3 +1,2 @@
-CREATE TRIGGER test_trigger ON posts AFTER UPDATE AS RAISERROR ('error', 1, 1)
-DISABLE TRIGGER test_trigger  ON posts
-ENABLE TRIGGER test_trigger  ON posts
+SKIP TEST: INT-2469 - enableTrigger on mssql is covered by liquibase-pro-tests UpdateOfEnableDisableRenameChangeTypesRegressionTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

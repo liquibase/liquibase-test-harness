@@ -1,3 +1,2 @@
-CREATE OR REPLACE TRIGGER test_trigger BEFORE INSERT ON posts BEGIN END
-/
-ALTER TRIGGER "C##LIQUIBASE".test_trigger DISABLE
+SKIP TEST: INT-2469 - disableTrigger on oracle is covered by liquibase-pro-tests UpdateOfEnableDisableRenameChangeTypesRegressionTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

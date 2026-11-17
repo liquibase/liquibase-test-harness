@@ -1,3 +1,2 @@
-CREATE SEQUENCE "C##LIQUIBASE".test_sequence START WITH 1 INCREMENT BY 1 MINVALUE 1
-ALTER TABLE "C##LIQUIBASE".authors ADD sequence_referenced_column NUMBER
-ALTER TABLE "C##LIQUIBASE".authors MODIFY sequence_referenced_column DEFAULT "C##LIQUIBASE".test_sequence.nextval
+SKIP TEST: INT-2469 - addDefaultValueSequenceNext on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

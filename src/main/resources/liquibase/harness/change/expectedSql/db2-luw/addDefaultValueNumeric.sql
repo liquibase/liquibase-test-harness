@@ -1,2 +1,2 @@
-CREATE TABLE "DB2INST1".add_default_value_numeric_test (id INTEGER NOT NULL, numeric_test INTEGER, CONSTRAINT PK_ADD_DEFAULT_VA PRIMARY KEY (id))
-ALTER TABLE "DB2INST1".add_default_value_numeric_test ALTER COLUMN  numeric_test SET DEFAULT 100
+SKIP TEST: INT-2469 - addDefaultValueNumeric on db2-luw is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

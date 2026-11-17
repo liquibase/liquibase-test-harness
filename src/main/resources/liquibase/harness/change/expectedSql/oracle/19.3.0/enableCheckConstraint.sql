@@ -1,2 +1,0 @@
-ALTER TABLE DATICAL_ADMIN.posts ADD CONSTRAINT test_check_constraint CHECK (id > 0) DISABLE
-ALTER TABLE DATICAL_ADMIN.posts ENABLE CONSTRAINT test_check_constraint

@@ -1,1 +1,2 @@
-ALTER TABLE posts ADD CONSTRAINT DF_posts_inserted_date DEFAULT GETDATE() FOR inserted_date
+SKIP TEST: INT-2469 - addDefaultValueComputed on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

@@ -1,2 +1,2 @@
-ALTER TABLE "C##LIQUIBASE".authors ADD numericColumn NUMBER
-ALTER TABLE "C##LIQUIBASE".authors MODIFY numericColumn DEFAULT 100000000
+SKIP TEST: INT-2469 - addDefaultValueNumeric on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

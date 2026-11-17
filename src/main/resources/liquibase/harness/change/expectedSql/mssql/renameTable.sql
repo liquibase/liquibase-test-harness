@@ -1,2 +1,2 @@
-CREATE TABLE oldnametable (test_id int NOT NULL, test_column varchar(50) NOT NULL, CONSTRAINT PK_OLDNAMETABLE PRIMARY KEY (test_id))
-exec sp_rename 'oldnametable', 'newnametable'
+SKIP TEST: INT-2469 - renameTable on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

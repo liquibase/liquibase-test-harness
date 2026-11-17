@@ -1,2 +1,2 @@
-ALTER TABLE "C##LIQUIBASE".authors ADD dateTimeColumn TIMESTAMP
-ALTER TABLE "C##LIQUIBASE".authors MODIFY dateTimeColumn DEFAULT TO_DATE('2008-02-12 12:34:03', 'YYYY-MM-DD HH24:MI:SS')
+SKIP TEST: INT-2469 - addDefaultValueDate on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

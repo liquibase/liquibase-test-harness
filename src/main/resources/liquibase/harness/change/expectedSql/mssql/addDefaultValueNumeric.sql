@@ -1,2 +1,2 @@
-ALTER TABLE authors ADD numericColumn numeric(18, 0)
-ALTER TABLE authors ADD CONSTRAINT DF_authors_numericColumn DEFAULT 100000000 FOR numericColumn
+SKIP TEST: INT-2469 - addDefaultValueNumeric on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

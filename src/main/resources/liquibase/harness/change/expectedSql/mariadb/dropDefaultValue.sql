@@ -1,2 +1,2 @@
-ALTER TABLE lbcat.posts ALTER title SET DEFAULT 'title_test'
-ALTER TABLE lbcat.posts ALTER title DROP DEFAULT
+SKIP TEST: INT-2469 - dropDefaultValue on mariadb is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

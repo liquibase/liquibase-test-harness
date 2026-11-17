@@ -1,2 +1,2 @@
-CREATE TABLE lbcat.test_table (test_id INT NOT NULL, test_column VARCHAR(50) NOT NULL, CONSTRAINT PK_TEST_TABLE PRIMARY KEY (test_id))
-DROP TABLE lbcat.test_table
+SKIP TEST: INT-2469 - dropTable on mysql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

@@ -1,2 +1,2 @@
-CREATE NONCLUSTERED INDEX idx_first_name ON authors(first_name)
-DROP INDEX idx_first_name ON authors
+SKIP TEST: INT-2469 - dropIndex on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).
