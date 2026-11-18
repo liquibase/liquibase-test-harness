@@ -8,7 +8,7 @@
               {
                 "column": {
                   "computed": true,
-                  "name": "lower(`first_name`)"
+                  "name": "\\(?lower\\(`first_name`\\)\\)?"
                 }
               }]
             ,
