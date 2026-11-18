@@ -388,13 +388,14 @@ jobs:
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINT_ORACLE19_SHARED_ROLE_ARN }}
           group: th-endpoint-oracle19-shared
-          keys: TH_ORACLEURL_19 TH_ORACLEURL_19_PASSWORD
+          keys: TH_ORACLEURL_19
 
       - name: Start & Configure LocalStack
         env:
           LOCALSTACK_OAUTH_TOKEN: ${{ env.LOCALSTACK_OAUTH_TOKEN }}
           GITHUB_TOKEN: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
           RDS_MYSQL_DOCKER: 1     #https://docs.localstack.cloud/user-guide/aws/rds/#mysql-engine
+          MATRIX_DATABASE: ${{ matrix.database }}
         run: |
           pip install "localstack==${{ env.LOCALSTACK_CLI_VERSION }}" awscli-local
           docker pull localstack/localstack-pro:${{ env.LOCALSTACK_IMAGE_VERSION }}
@@ -406,12 +407,16 @@ jobs:
           # EULA must be forwarded with the LOCALSTACK_ prefix (the bare
           # MSSQL_ACCEPT_EULA triggers a "non-prefixed env var" warning and is
           # not reliably forwarded into the runtime container).
-          LOCALSTACK_MSSQL_ACCEPT_EULA=Y IMAGE_NAME=localstack/localstack-pro:${{ env.LOCALSTACK_IMAGE_VERSION }} localstack start -d
+          # Pin MSSQL to 2019; the untagged default is :latest (SQL Server 2025).
+          LOCALSTACK_MSSQL_IMAGE=mcr.microsoft.com/mssql/server:2019-latest LOCALSTACK_MSSQL_ACCEPT_EULA=Y IMAGE_NAME=localstack/localstack-pro:${{ env.LOCALSTACK_IMAGE_VERSION }} localstack start -d
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
-          echo "TH_DB_ADMIN=lbuser" >> $GITHUB_ENV  
-          echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
+          # Oracle is real RDS: keep the th-db-shared-admin credentials from the vault.
+          if [[ "$MATRIX_DATABASE" != oracle:* ]]; then
+            echo "TH_DB_ADMIN=lbuser" >> $GITHUB_ENV
+            echo "TH_DB_PASSWD=test" >> $GITHUB_ENV
+          fi
           echo "TH_DB_PASSWD_MSSQL=Test.2024" >> $GITHUB_ENV
           echo "TH_DB=lbcat" >> $GITHUB_ENV  
           echo "TH_AURORA_POSTGRESQL_16_ENGINE=16" >> $GITHUB_ENV
@@ -626,7 +631,7 @@ jobs:
           liquibase --log-level=debug \
             --url="$ORACLE_JDBC_URL" \
             --username="${{env.TH_DB_ADMIN}}" \
-            --password="${{env.TH_ORACLEURL_19_PASSWORD}}" \
+            --password="${{env.TH_DB_PASSWD}}" \
             drop-all \
             --force
       
@@ -641,7 +646,7 @@ jobs:
             --changeLogFile="oracle.sql" \
             --url="$ORACLE_JDBC_URL" \
             --username="${{ env.TH_DB_ADMIN }}" \
-            --password="${{ env.TH_ORACLEURL_19_PASSWORD }}" \
+            --password="${{ env.TH_DB_PASSWD }}" \
             update
 
       - name: Restore cached Liquibase artifacts
@@ -758,7 +763,7 @@ jobs:
           db-name: ${{ steps.setup.outputs.databasePlatform }}
           db-version: ${{ steps.setup.outputs.databaseVersion }}
           db-username: ${{ env.TH_DB_ADMIN }}
-          db-password: ${{ env.TH_ORACLEURL_19_PASSWORD }}
+          db-password: ${{ env.TH_DB_PASSWD }}
           db-url: jdbc:oracle:thin:@${{ env.TUNNELED_DB_HOST }}:${{ env.TUNNELED_DB_PORT }}:${{ steps.parse-oracle.outputs.sid }}
           pre-command: |-
             echo "::group::Dependency Tree (PRO - liquibase-commercial)"
