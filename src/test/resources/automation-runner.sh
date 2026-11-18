@@ -137,9 +137,6 @@ case $db in
   "informix-14.10")
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=informix -DdbVersion=14 test
     ;;
-  "informix-15")
-    test_command $(build_mvn_command) -Dtest=$tc -DdbName=informix -DdbVersion=15 test
-    ;;
   "tidb")
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=mysql -DdbVersion=tidb test
     ;;

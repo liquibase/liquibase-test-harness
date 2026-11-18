@@ -53,7 +53,7 @@ case $db in
     ;;
 
   # informix needs a bit more time to start
-  "informix-14.10"|"informix-15")
+  "informix-14.10")
     docker compose up -d $db
     sleep 60
     ;;

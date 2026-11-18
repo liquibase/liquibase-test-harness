@@ -293,10 +293,3 @@ databasesUnderTest:
     url: jdbc:informix-sqli://localhost:9089/testdb:INFORMIXSERVER=informix;
     username: informix
     password: in4mix
-
-  - name: informix
-    prefix: docker
-    version: 15
-    url: jdbc:informix-sqli://localhost:9090/testdb:INFORMIXSERVER=informix;
-    username: informix
-    password: in4mix

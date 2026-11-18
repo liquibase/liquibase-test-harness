@@ -2,6 +2,8 @@ services:
   mysql-8.4:
     platform: linux/x86_64
     image: mysql:8.4
+    # diff tests create non-deterministic functions; binary logging is on by default since MySQL 8
+    command: ["--log-bin-trust-function-creators=1"]
     ports:
       - "33065:3306"
     restart: always
@@ -16,6 +18,8 @@ services:
   mysql-9.7:
     platform: linux/x86_64
     image: mysql:9.7
+    # diff tests create non-deterministic functions; binary logging is on by default since MySQL 8
+    command: ["--log-bin-trust-function-creators=1"]
     ports:
       - "33077:3306"
     restart: always
@@ -30,6 +34,8 @@ services:
   mysql-26.10:
     platform: linux/x86_64
     image: mysql:26.10
+    # diff tests create non-deterministic functions; binary logging is on by default since MySQL 8
+    command: ["--log-bin-trust-function-creators=1"]
     ports:
       - "33081:3306"
     restart: always
@@ -273,7 +279,7 @@ services:
       - "26257"
     ports:
       - "26264:26257"
-      - "8083:8080"
+      - "8080:8080"
     networks:
       - roachnet
 
@@ -296,7 +302,7 @@ services:
       - "26257"
     ports:
       - "26265:26257"
-      - "8084:8080"
+      - "8081:8080"
     networks:
       - roachnet
 
@@ -319,7 +325,7 @@ services:
       - "26257"
     ports:
       - "26266:26257"
-      - "8085:8080"
+      - "8082:8080"
     networks:
       - roachnet
 
@@ -349,21 +355,6 @@ services:
     volumes:
       - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
 
-  informix-15:
-    image: icr.io/informix/informix-developer-database:15.0.1.0.3
-    container_name: informix-db-15
-    hostname: ifx
-    ports:
-      - "9090:9088"
-    environment:
-      LICENSE: "accept"
-      INIT_FILE: "informix-init.sql"
-      DBDATE: "Y4MD-"
-    restart: always
-    privileged: true
-    volumes:
-      - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
-
   ti-db:
     image: pingcap/tidb
     container_name: ti-db
@@ -374,6 +365,8 @@ services:
 
   tidb:
     image: mysql:8.4
+    # diff tests create non-deterministic functions; binary logging is on by default since MySQL 8
+    command: ["--log-bin-trust-function-creators=1"]
     container_name: mysql-client
     depends_on:
       - ti-db
