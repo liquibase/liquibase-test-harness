@@ -1,2 +1,4 @@
-SKIP TEST: INT-2469 - addColumn on mariadb is covered by liquibase-pro-tests MySqlGenerateChangeLogDependencyOrderingTests.
-Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).
+ALTER TABLE lbcat.authors ADD varcharColumn VARCHAR(25) NULL, ADD intColumn INT NULL, ADD dateColumn date NULL
+UPDATE lbcat.authors SET varcharColumn = 'INITIAL_VALUE'
+UPDATE lbcat.authors SET intColumn = 5
+UPDATE lbcat.authors SET dateColumn = '2020-09-21'

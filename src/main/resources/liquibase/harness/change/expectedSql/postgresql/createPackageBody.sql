@@ -1,3 +1,9 @@
-SKIP TEST: INT-2469 - postgresql has no packages; the createPackageBody changelog only deploys plain
-function/table SQL, which the sql and createFunction tests already cover. Package coverage lives in
-liquibase-pro-tests UpdateTests / PostgresEnd2EndTests on oracle and edb-edb.
+CREATE OR REPLACE FUNCTION test_function()
+RETURNS trigger
+AS $$
+BEGIN
+RAISE NOTICE 'Test function created'
+RETURN NEW
+END
+$$
+LANGUAGE plpgsql

@@ -1,2 +1,2 @@
-SKIP TEST: INT-2469 - alterSequence on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
-Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).
+CREATE SEQUENCE test_sequence START WITH 1 INCREMENT BY 1 MINVALUE 1
+ALTER SEQUENCE test_sequence INCREMENT BY 10 MINVALUE 1 MAXVALUE 371717 CACHE 371717 CYCLE

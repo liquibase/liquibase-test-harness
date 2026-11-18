@@ -1,2 +1,6 @@
-SKIP TEST: INT-2469 - addColumn on oracle is covered by liquibase-pro-tests OracleGenerateChangeLogDependencyOrderingTests.
-Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).
+ALTER TABLE "C##LIQUIBASE".authors ADD varcharColumn VARCHAR2(25)
+ALTER TABLE "C##LIQUIBASE".authors ADD intColumn INTEGER
+ALTER TABLE "C##LIQUIBASE".authors ADD dateColumn date
+UPDATE "C##LIQUIBASE".authors SET varcharColumn = 'INITIAL_VALUE'
+UPDATE "C##LIQUIBASE".authors SET intColumn = 5
+UPDATE "C##LIQUIBASE".authors SET dateColumn = TO_DATE('2020-09-21', 'YYYY-MM-DD')

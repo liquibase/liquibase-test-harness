@@ -1,3 +1,1 @@
-SKIP TEST: INT-2469 - db2-z has no packages; the createPackageBody changelog only deploys plain
-function/table SQL, which the sql and createFunction tests already cover. Package coverage lives in
-liquibase-pro-tests UpdateTests / PostgresEnd2EndTests on oracle and edb-edb.
+CREATE VIEW test_view AS select id, first_name, last_name, email from authors

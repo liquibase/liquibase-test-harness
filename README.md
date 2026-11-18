@@ -62,6 +62,10 @@ coverage on pro-tests-supported databases to pro-tests; until a cell is ported, 
   `SKIP TEST: INT-2469 - <changetype> on <db> is covered by liquibase-pro-tests <TestClass>`. Pro-tests asserts
   DB state for them, not the full `updateSql` text. Do not add new harness fixtures for a marked cell; extend
   the named pro-tests class instead.
+  "Covers" means pro-tests runs the same changetype **on the same database** with every attribute the harness
+  changelog sets to a non-default value (for example `addColumn` `column/@valueNumeric`, `alterSequence`
+  `minValue`, `loadData` `separator`). If pro-tests lacks one of those attributes on that database, the cell stays
+  in the harness until pro-tests adds it.
 * **diffChangelog** (`DiffChangelogTests`, `DiffChangelogWithObjectChangelogsTests`). The harness `DiffChangelogTest`
   was removed.
 * **generateChangelog on covered databases** (`GenerateChangeLogTests`, `*GenerateChangeLogDependencyOrderingTests`).

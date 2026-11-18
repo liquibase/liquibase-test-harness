@@ -1,0 +1,13 @@
+{
+  "snapshot": {
+    "objects": {
+      "com.datical.liquibase.ext.storedlogic.function.Function": [
+        {
+          "function": {
+            "body": "CREATE FUNCTION `test_function`() RETURNS varchar(20) CHARSET utf8mb4 COLLATE utf8mb4_general_ci\nBEGIN\n                                                      RETURN 'Hello';\n                                                      END",
+            "name": "test_function"
+          }
+        }]
+    }
+  }
+}

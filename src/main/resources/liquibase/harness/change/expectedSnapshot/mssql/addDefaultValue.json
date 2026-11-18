@@ -1,0 +1,17 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "computed": false,
+            "defaultValue": "title_test",
+            "defaultValueConstraintName": "testConstraint",
+            "name": "title",
+            "nullable": true
+          }
+        }
+      ]
+    }
+  }
+}

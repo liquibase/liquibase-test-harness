@@ -1,2 +1,6 @@
-SKIP TEST: INT-2469 - addColumn on edb-postgres is covered by liquibase-pro-tests PostgresBpcharColumnRoundTripTests.
-Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).
+ALTER TABLE public.authors ADD "varcharColumn" VARCHAR(25)
+ALTER TABLE public.authors ADD "intColumn" INTEGER
+ALTER TABLE public.authors ADD "dateColumn" date
+UPDATE public.authors SET "varcharColumn" = 'INITIAL_VALUE'
+UPDATE public.authors SET "intColumn" = 5
+UPDATE public.authors SET "dateColumn" = '2020-09-21'
