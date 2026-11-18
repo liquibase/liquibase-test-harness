@@ -19,9 +19,7 @@ on:
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
-          - GenerateChangelogTest
           - FoundationalTest
-          - AdvancedHarnessSuiteTest
 
 permissions:
   contents: write

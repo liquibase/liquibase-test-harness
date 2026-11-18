@@ -1,2 +1,2 @@
-ALTER TABLE public.authors ADD CONSTRAINT test_unique_constraint UNIQUE (email) DEFERRABLE INITIALLY DEFERRED
-ALTER TABLE public.authors DROP CONSTRAINT test_unique_constraint
+SKIP TEST: INT-2469 - dropUniqueConstraint on postgresql is covered by liquibase-pro-tests DiffChangeLogRegressionTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

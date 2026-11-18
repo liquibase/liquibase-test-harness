@@ -1,14 +1,2 @@
-CREATE OR REPLACE FUNCTION test_function()
-RETURNS trigger
-AS $$
-BEGIN
-RAISE NOTICE 'Test trigger function created'
-RETURN NEW
-END
-$$
-LANGUAGE plpgsql
-CREATE TRIGGER test_trigger
-BEFORE INSERT ON public.posts
-FOR EACH ROW EXECUTE PROCEDURE test_function()
-ALTER TABLE public.posts  DISABLE TRIGGER test_trigger
-ALTER TABLE public.posts  ENABLE TRIGGER test_trigger
+SKIP TEST: INT-2469 - enableTrigger on postgresql is covered by liquibase-pro-tests UpdateOfEnableDisableRenameChangeTypesRegressionTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

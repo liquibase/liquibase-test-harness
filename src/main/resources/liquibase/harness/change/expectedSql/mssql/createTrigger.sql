@@ -1,1 +1,2 @@
-CREATE TRIGGER test_trigger ON posts AFTER UPDATE AS RAISERROR ('error', 1, 1)
+SKIP TEST: INT-2469 - createTrigger on mssql is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

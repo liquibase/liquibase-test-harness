@@ -1,2 +1,2 @@
-ALTER TABLE "DB2INST1".posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES "DB2INST1".authors (id) ON DELETE CASCADE
-ALTER TABLE "DB2INST1".posts DROP CONSTRAINT fk_posts_authors_test
+SKIP TEST: INT-2469 - dropForeignKey on db2-luw is covered by liquibase-pro-tests Db2GenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

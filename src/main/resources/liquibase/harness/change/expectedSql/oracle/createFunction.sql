@@ -1,2 +1,2 @@
-CREATE FUNCTION test_function(id IN NUMBER) RETURN VARCHAR2 AS BEGIN RETURN '2'; END
-/
+SKIP TEST: INT-2469 - createFunction on oracle is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

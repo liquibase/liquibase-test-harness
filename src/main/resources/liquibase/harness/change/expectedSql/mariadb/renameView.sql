@@ -1,2 +1,2 @@
-CREATE VIEW lbcat.test_view AS select id, first_name, last_name, email from authors
-RENAME TABLE lbcat.test_view TO lbcat.test_view_new
+SKIP TEST: INT-2469 - renameView on mariadb is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

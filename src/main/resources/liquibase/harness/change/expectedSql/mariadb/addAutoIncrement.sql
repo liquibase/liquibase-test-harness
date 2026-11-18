@@ -1,3 +1,2 @@
-CREATE TABLE lbcat.autoincrement_test (intColumn INT NOT NULL, dateColumn date NULL, CONSTRAINT PK_AUTOINCREMENT_TEST PRIMARY KEY (intColumn))
-ALTER TABLE lbcat.autoincrement_test MODIFY intColumn INT AUTO_INCREMENT
-ALTER TABLE lbcat.autoincrement_test AUTO_INCREMENT=100
+SKIP TEST: INT-2469 - addAutoIncrement on mariadb is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

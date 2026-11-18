@@ -1,2 +1,0 @@
-ALTER TABLE "ADMIN".authors ADD numericColumn NUMBER
-ALTER TABLE "ADMIN".authors MODIFY numericColumn DEFAULT 100000000

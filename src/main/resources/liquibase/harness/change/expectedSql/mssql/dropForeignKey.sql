@@ -1,2 +1,2 @@
-ALTER TABLE posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (id) REFERENCES authors (id) ON DELETE CASCADE
-ALTER TABLE posts DROP CONSTRAINT fk_posts_authors_test
+SKIP TEST: INT-2469 - dropForeignKey on mssql is covered by liquibase-pro-tests MsSqlGenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

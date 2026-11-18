@@ -1,2 +1,2 @@
-ALTER TABLE posts ADD CONSTRAINT fk_posts_authors_test_1 FOREIGN KEY (author_id) REFERENCES authors (id)
-ALTER TABLE posts ADD CONSTRAINT fk_posts_authors_test_2 FOREIGN KEY (id) REFERENCES authors (id)
+SKIP TEST: INT-2469 - dropAllForeignKeyConstraints on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

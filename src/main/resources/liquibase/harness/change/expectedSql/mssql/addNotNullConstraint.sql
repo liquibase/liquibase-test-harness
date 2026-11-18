@@ -1,1 +1,2 @@
-ALTER TABLE posts ALTER COLUMN inserted_date date NOT NULL
+SKIP TEST: INT-2469 - addNotNullConstraint on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

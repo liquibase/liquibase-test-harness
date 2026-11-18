@@ -1,2 +1,2 @@
-CREATE TRIGGER test_trigger BEFORE UPDATE ON posts
-FOR EACH ROW BEGIN END
+SKIP TEST: INT-2469 - createTrigger on mariadb is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

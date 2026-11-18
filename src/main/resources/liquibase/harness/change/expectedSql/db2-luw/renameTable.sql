@@ -1,3 +1,2 @@
-CREATE TABLE "DB2INST1".oldnametable (test_id INTEGER NOT NULL, test_column VARCHAR(50) NOT NULL, CONSTRAINT PK_OLDNAMETABLE PRIMARY KEY (test_id))
-RENAME "DB2INST1".oldnametable TO newnametable
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".newnametable')
+SKIP TEST: INT-2469 - renameTable on db2-luw is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

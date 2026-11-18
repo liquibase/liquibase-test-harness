@@ -1,2 +1,2 @@
-ALTER TABLE lbcat.posts MODIFY inserted_date date NOT NULL
-ALTER TABLE lbcat.posts MODIFY inserted_date date NULL
+SKIP TEST: INT-2469 - dropNotNullConstraint on mysql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

@@ -1,2 +1,2 @@
-ALTER TABLE "C##LIQUIBASE".posts ADD CONSTRAINT test_check_constraint CHECK (id > 0)
-ALTER TABLE "C##LIQUIBASE".posts DISABLE CONSTRAINT test_check_constraint
+SKIP TEST: INT-2469 - disableCheckConstraint on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

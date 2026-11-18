@@ -1,1 +1,2 @@
-ALTER TABLE public.authors ADD CONSTRAINT test_unique_constraint UNIQUE (email) DEFERRABLE INITIALLY DEFERRED
+SKIP TEST: INT-2469 - addUniqueConstraint on postgresql is covered by liquibase-pro-tests UpdateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

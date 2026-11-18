@@ -1,9 +1,2 @@
-CREATE OR REPLACE FUNCTION public.test_function()
-RETURNS trigger
-AS $$
-BEGIN
-RAISE NOTICE 'Test function created'
-RETURN NEW
-END
-$$
-LANGUAGE plpgsql
+SKIP TEST: INT-2469 - createFunction on postgresql is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

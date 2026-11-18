@@ -1,2 +1,2 @@
-ALTER TABLE "DB2INST1".posts ADD CONSTRAINT pk_posts PRIMARY KEY (id)
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".posts')
+SKIP TEST: INT-2469 - addPrimaryKey on db2-luw is covered by liquibase-pro-tests Db2GenerateChangeLogDependencyOrderingTests, Db2SharedConstraintNamePrimaryKeyTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

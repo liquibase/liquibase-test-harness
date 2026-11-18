@@ -1,4 +1,2 @@
-CREATE PACKAGE test_package AS
-PROCEDURE test_procedure
-END test_package
-/
+SKIP TEST: INT-2469 - createPackage on oracle is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

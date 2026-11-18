@@ -1,2 +1,2 @@
-CREATE VIEW public.test_view AS select id, first_name, last_name, email from authors
-ALTER TABLE public.test_view RENAME TO test_view_new
+SKIP TEST: INT-2469 - renameView on postgresql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

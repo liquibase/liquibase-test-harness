@@ -1,2 +1,2 @@
-ALTER TABLE lbcat.authors ADD dateTimeColumn datetime NULL
-ALTER TABLE lbcat.authors ALTER dateTimeColumn SET DEFAULT '2008-02-12 12:34:03'
+SKIP TEST: INT-2469 - addDefaultValueDate on mysql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

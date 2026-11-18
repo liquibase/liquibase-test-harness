@@ -1,3 +1,2 @@
-CREATE SEQUENCE test_sequence START WITH 1 INCREMENT BY 1 MINVALUE 1
-ALTER TABLE authors ADD sequence_referenced_column numeric(18, 0)
-ALTER TABLE authors ADD CONSTRAINT DF_authors_sequence_referenced_column DEFAULT NEXT VALUE FOR test_sequence FOR sequence_referenced_column
+SKIP TEST: INT-2469 - addDefaultValueSequenceNext on mssql is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

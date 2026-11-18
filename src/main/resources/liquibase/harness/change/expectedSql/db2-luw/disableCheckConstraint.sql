@@ -1,2 +1,2 @@
-ALTER TABLE "DB2INST1".posts ADD CONSTRAINT test_check_constraint CHECK (id > 0)
-ALTER TABLE "DB2INST1".posts ALTER CHECK test_check_constraint NOT ENFORCED
+SKIP TEST: INT-2469 - disableCheckConstraint on db2-luw is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

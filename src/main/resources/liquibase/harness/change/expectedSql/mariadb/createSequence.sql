@@ -1,1 +1,2 @@
-CREATE SEQUENCE lbcat.test_sequence INCREMENT BY 1 MINVALUE 1 START WITH 1
+SKIP TEST: INT-2469 - createSequence on mariadb is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

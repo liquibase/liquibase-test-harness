@@ -1,1 +1,2 @@
-ALTER TABLE "C##LIQUIBASE".posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES "C##LIQUIBASE".authors (id) ON DELETE CASCADE
+SKIP TEST: INT-2469 - addForeignKey on oracle is covered by liquibase-pro-tests UpdateTests, OracleGenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

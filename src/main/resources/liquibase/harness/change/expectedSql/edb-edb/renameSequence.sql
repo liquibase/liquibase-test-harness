@@ -1,2 +1,2 @@
-CREATE SEQUENCE  IF NOT EXISTS public.test_sequence AS int START WITH 1 INCREMENT BY 1 MINVALUE 1
-ALTER SEQUENCE public.test_sequence RENAME TO test_sequence_rename_test
+SKIP TEST: INT-2469 - renameSequence on edb-edb is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

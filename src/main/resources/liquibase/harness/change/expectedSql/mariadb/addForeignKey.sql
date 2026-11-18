@@ -1,1 +1,2 @@
-ALTER TABLE lbcat.posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES lbcat.authors (id) ON UPDATE RESTRICT ON DELETE CASCADE
+SKIP TEST: INT-2469 - addForeignKey on mariadb is covered by liquibase-pro-tests UpdateTests, MySqlGenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

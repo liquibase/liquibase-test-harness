@@ -1,1 +1,2 @@
-ALTER TABLE "C##LIQUIBASE".posts MODIFY inserted_date CONSTRAINT test_notNull NOT NULL
+SKIP TEST: INT-2469 - addNotNullConstraint on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

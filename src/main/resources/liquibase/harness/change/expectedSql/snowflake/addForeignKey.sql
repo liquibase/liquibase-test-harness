@@ -1,1 +1,2 @@
-ALTER TABLE ${CATALOG_NAME}.PUBLIC.posts ADD CONSTRAINT fk_posts_authors_test FOREIGN KEY (author_id) REFERENCES ${CATALOG_NAME}.PUBLIC.authors (id)
+SKIP TEST: INT-2469 - addForeignKey on snowflake is covered by liquibase-pro-tests UpdateTests, SnowflakeGenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

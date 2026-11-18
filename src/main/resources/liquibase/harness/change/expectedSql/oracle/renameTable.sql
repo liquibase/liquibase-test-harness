@@ -1,2 +1,2 @@
-CREATE TABLE "C##LIQUIBASE".oldnametable (test_id INTEGER NOT NULL, test_column VARCHAR2(50) NOT NULL, CONSTRAINT PK_OLDNAMETABLE PRIMARY KEY (test_id))
-ALTER TABLE "C##LIQUIBASE".oldnametable RENAME TO newnametable
+SKIP TEST: INT-2469 - renameTable on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

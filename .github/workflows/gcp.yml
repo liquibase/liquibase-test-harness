@@ -14,13 +14,11 @@ on:
         type: choice
         description: Test Suite or test class to run
         options:
-          - AdvancedHarnessSuiteTest
           - LiquibaseHarnessSuiteTest
           - FoundationalHarnessSuiteTest
           - ChangeObjectTests
           - ChangeDataTests
           - SnapshotObjectTests
-          - GenerateChangelogTest
           - FoundationalTest
       databases:
         description: Databases to start up. Comma separated list of "name:version"

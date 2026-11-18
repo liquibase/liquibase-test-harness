@@ -1,2 +1,2 @@
-ALTER TABLE public.authors ADD "numericColumn" numeric
-ALTER TABLE public.authors ALTER COLUMN  "numericColumn" SET DEFAULT 100000000
+SKIP TEST: INT-2469 - addDefaultValueNumeric on edb-edb is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

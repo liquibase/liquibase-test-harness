@@ -1,2 +1,2 @@
-CREATE INDEX "DB2INST1".idx_first_name ON "DB2INST1".authors(first_name)
-DROP INDEX "DB2INST1".idx_first_name
+SKIP TEST: INT-2469 - dropIndex on db2-luw is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

@@ -1,1 +1,2 @@
-CREATE TABLE test_table (test_id int NOT NULL, test_column varchar(50) NOT NULL, CONSTRAINT PK_TEST_TABLE PRIMARY KEY (test_id))
+SKIP TEST: INT-2469 - createTable on mssql is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests, MsSqlGenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

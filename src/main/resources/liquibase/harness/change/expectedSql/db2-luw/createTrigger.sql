@@ -1,1 +1,2 @@
-CREATE TRIGGER test_trigger AFTER UPDATE OF title ON posts REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW MODE DB2SQL UPDATE posts SET description = 'New description'
+SKIP TEST: INT-2469 - createTrigger on db2-luw is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

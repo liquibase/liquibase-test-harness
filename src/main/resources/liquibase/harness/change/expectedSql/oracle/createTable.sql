@@ -1,1 +1,2 @@
-CREATE TABLE "C##LIQUIBASE".test_table (test_id INTEGER NOT NULL, test_column VARCHAR2(50) NOT NULL, CONSTRAINT PK_TEST_TABLE PRIMARY KEY (test_id))
+SKIP TEST: INT-2469 - createTable on oracle is covered by liquibase-pro-tests UpdateTests, PostgresEnd2EndTests, OracleGenerateChangeLogDependencyOrderingTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

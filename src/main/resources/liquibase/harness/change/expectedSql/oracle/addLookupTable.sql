@@ -1,3 +1,2 @@
-CREATE TABLE "C##LIQUIBASE".authors_data AS SELECT DISTINCT email AS authors_email FROM "C##LIQUIBASE".authors WHERE email IS NOT NULL
-ALTER TABLE "C##LIQUIBASE".authors_data ADD PRIMARY KEY (authors_email)
-ALTER TABLE "C##LIQUIBASE".authors ADD CONSTRAINT FK_AUTHORS_AUTHORS_DATA FOREIGN KEY (email) REFERENCES "C##LIQUIBASE".authors_data (authors_email)
+SKIP TEST: INT-2469 - addLookupTable on oracle is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

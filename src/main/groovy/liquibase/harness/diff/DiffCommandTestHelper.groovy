@@ -6,11 +6,8 @@ import liquibase.harness.config.DatabaseUnderTest
 import liquibase.harness.config.TestConfig
 import liquibase.harness.util.DatabaseConnectionUtil
 import liquibase.ui.UIService
-import org.apache.commons.io.FileUtils
 import org.yaml.snakeyaml.Yaml
 
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.stream.Collectors
 
 import static liquibase.harness.util.FileUtils.*
@@ -83,21 +80,8 @@ class DiffCommandTestHelper {
                     .pathToReferenceChangelogFile("${baseDiffPath}" + "changelogs/" +
                             "tablesForReferenceDb.xml")
                     .pathToChangelogFile(changelogFile)
-                    .pathToGeneratedXmlDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
-                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
-                            "${targetDatabase.name}${targetDatabase.version}.xml")
-                    .pathToGeneratedSqlDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
-                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
-                            "${targetDatabase.name}${targetDatabase.version}.sql")
-                    .pathToGeneratedYmlDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
-                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
-                            "${targetDatabase.name}${targetDatabase.version}.yml")
-                    .pathToGeneratedJsonDiffChangelogFile("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/" +
-                            "${referenceDatabase.name}${referenceDatabase.version}_to_" +
-                            "${targetDatabase.name}${targetDatabase.version}.json")
                     .targetDatabase(targetDatabase)
                     .referenceDatabase(referenceDatabase)
-                    .pathToExpectedDiffFolder("src/main/resources${baseDiffPath}" + "expectedDiffChangelogs/")
                     .build())
         }
         new DatabaseConnectionUtil().initializeDatabasesConnection(databasesToConnect)
@@ -118,58 +102,6 @@ class DiffCommandTestHelper {
         return "${baseDiffPath}expectedDiff/${baseChangelogName}.txt"
     }
 
-    static validateGeneratedDiffChangelog(TestInput testInput) {
-        String changelogContent = getResourceContent("$testInput.pathToChangelogFile")
-        String xmlDiffChangelogContent = readFile(testInput.getPathToGeneratedXmlDiffChangelogFile())
-        // TODO: DAT-21201 - SQL diff changelog validation is skipped because --object-changelogs=all
-        // only supports views/tables, missing support for functions/triggers/procedures
-        String sqlDiffChangelogContent = readFile(testInput.getPathToGeneratedSqlDiffChangelogFile().replace(".sql",
-                ".$testInput.targetDatabase.name" + ".sql"))
-        String ymlDiffChangelogContent = readFile(testInput.getPathToGeneratedYmlDiffChangelogFile())
-        String jsonDiffChangelogContent = readFile(testInput.getPathToGeneratedJsonDiffChangelogFile())
-
-        return validateChangeTypes(changelogContent, xmlDiffChangelogContent, sqlDiffChangelogContent,
-                ymlDiffChangelogContent, jsonDiffChangelogContent, testInput.referenceDatabase.name)
-    }
-
-    private static Boolean validateChangeTypes(String changelogContent, String xmlDiffChangelogContent,
-                                               String sqlDiffChangelogContent, String ymlDiffChangelogContent,
-                                               String jsonDiffChangelogContent, String dbName) {
-        def map = new LinkedHashMap<String, List>()
-        map.put("createTable", new ArrayList<>(List.of("dropTable", "drop table")))
-        map.put("createView", new ArrayList<>(List.of("dropView", "drop view")))
-        map.put("createIndex", new ArrayList<>(List.of("dropIndex", "drop index")))
-        map.put("createSequence", new ArrayList<>(List.of("dropSequence", "drop sequence")))
-        map.put("createFunction", new ArrayList<>(List.of("dropFunction", "drop function")))
-        map.put("createTrigger", new ArrayList<>(List.of("dropTrigger", "drop trigger")))
-        map.put("createProcedure", new ArrayList<>(List.of("dropProcedure", "drop procedure")))
-
-        if(dbName.equals("mariadb") || dbName.equals("mysql")) {
-            map.put("addForeignKey", new ArrayList<>(List.of("dropForeignKey", "drop foreign key")))
-            map.put("addPrimaryKey", new ArrayList<>(List.of("dropPrimaryKey", "drop key")))
-            map.put("addUniqueConstraint", new ArrayList<>(List.of("dropUniqueConstraint", "drop key")))
-        } else {
-            map.put("addForeignKey", new ArrayList<>(List.of("dropForeignKey", "drop constraint")))
-            map.put("addPrimaryKey", new ArrayList<>(List.of("dropPrimaryKey", "drop constraint")))
-            map.put("addUniqueConstraint", new ArrayList<>(List.of("dropUniqueConstraint", "drop constraint")))
-        }
-
-        //Schema and Catalog to add. Also this will probably change while adding new types
-        for (Map.Entry<String, List> entry : map.entrySet()) {
-            if (changelogContent.contains(entry.key)) {
-                // TODO: DAT-21201 - SQL validation skipped: --object-changelogs=all supports views/tables
-                // but missing functions/triggers/procedures support (works in XML/YML/JSON)
-                assert xmlDiffChangelogContent.contains(entry.value.get(0).toString()) &&
-                        sqlDiffChangelogContent.toLowerCase().contains(entry.value.get(1).toString()) &&
-                        ymlDiffChangelogContent.contains(entry.value.get(0).toString()) &&
-                        jsonDiffChangelogContent.contains(entry.value.get(0).toString())
-
-                uiService.sendMessage("INFO: $entry.key change type was validated successfully for .XML, .SQL, .YML, .JSON formats!")
-            }
-        }
-        return true
-    }
-
     static String removeDatabaseInfoFromDiff(String diff) {
         String replacementRegexpRef = "Reference Database(.*?)\r?\n" //removes Reference Database diff line to generalize test data
         String replacementRegexpComp = "Comparison Database(.*?)\r?\n" //removes Comparison Database diff line to generalize test data
@@ -184,23 +116,11 @@ class DiffCommandTestHelper {
                 .replaceAll(replacementRegexpWS, "")
     }
 
-    static void clearFolder(String pathToObjectDir) {
-        Path path = Paths.get(pathToObjectDir)
-        if (path.toFile().isDirectory()) {
-            FileUtils.forceDelete(new File(pathToObjectDir))
-        }
-    }
-
     @Builder
     static class TestInput {
         String pathToExpectedDiffFile
         String pathToChangelogFile
         String pathToReferenceChangelogFile
-        String pathToGeneratedXmlDiffChangelogFile
-        String pathToGeneratedSqlDiffChangelogFile
-        String pathToGeneratedYmlDiffChangelogFile
-        String pathToGeneratedJsonDiffChangelogFile
-        String pathToExpectedDiffFolder
         DatabaseUnderTest referenceDatabase
         DatabaseUnderTest targetDatabase
     }

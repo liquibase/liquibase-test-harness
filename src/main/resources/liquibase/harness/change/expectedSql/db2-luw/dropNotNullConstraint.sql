@@ -1,5 +1,2 @@
-ALTER TABLE "DB2INST1".posts ALTER COLUMN  inserted_date SET NOT NULL
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".posts')
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".posts')
-ALTER TABLE "DB2INST1".posts ALTER COLUMN  inserted_date DROP NOT NULL
-CALL SYSPROC.ADMIN_CMD ('REORG TABLE "DB2INST1".posts')
+SKIP TEST: INT-2469 - dropNotNullConstraint on db2-luw is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

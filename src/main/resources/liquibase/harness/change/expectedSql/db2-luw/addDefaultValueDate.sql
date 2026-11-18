@@ -1,2 +1,2 @@
-CREATE TABLE "DB2INST1".add_default_value_date_test (id INTEGER NOT NULL, date_test TIMESTAMP, CONSTRAINT PK_ADD_DEFAULT_VA PRIMARY KEY (id))
-ALTER TABLE "DB2INST1".add_default_value_date_test ALTER COLUMN  date_test SET DEFAULT TIMESTAMP('2008-02-12 12:34:03')
+SKIP TEST: INT-2469 - addDefaultValueDate on db2-luw is covered by liquibase-pro-tests CoreChangeTypesDatabaseStateTests.
+Removed from the harness to avoid duplicate coverage (exact updateSql is no longer asserted here).

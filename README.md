@@ -37,6 +37,43 @@
 | HSQLDB                    | `2.5, 2.6, 2.7`                       | Advanced           |
 | Snowflake                 | `latest`                              | BaseHarnessSuite   |
 
+## Harness vs liquibase-pro-tests ownership
+
+Liquibase has two integration-test suites. To avoid paying twice for the same coverage, each changetype/command x
+database combination has one owner. INT-2469 removed the duplicates from the harness. INT-2470 ports harness-only
+coverage on pro-tests-supported databases to pro-tests; until a cell is ported, it stays in the harness.
+
+**The harness owns:**
+* **Databases pro-tests does not support:** H2, SQLite, HSQLDB, Firebird. Everything the harness runs on these stays here.
+* **Thin-infra databases:** Percona XtraDB Cluster, CockroachDB, Informix, DB2 z/OS. Pro-tests has `DataBaseType`
+  entries for them but no instance/data-provider support for DB-state assertions, so harness coverage stays until it does.
+* **Cross-version diff** (`DiffTest`, `diff/diffDatabases.yml`): pro-tests only diffs two instances of the same
+  server version, so mixed-version pairs (mysql 8.4 -> 5.7, 8 -> 5.6; mariadb 10.5 -> 10.4, 10.7 -> 10.6;
+  mssql 2022 -> 2019, 2022 -> 2017; postgres 17 -> 16) live here.
+* **Exact-SQL checks for harness-only and partially covered changetypes:** the `expectedSql` comparison in
+  `ChangeObjectTests` / `ChangeDataTests` for every changetype x database that pro-tests does not fully cover.
+* **FoundationalTest / AdvancedTest** (compatibility suites) and **SnapshotObjectTests**.
+* **The suites extensions inherit** (`BaseHarnessSuite`, `AdvancedHarnessSuite`, `FoundationalHarnessSuite`) and
+  their shared root-level fixtures, including `GenerateChangelogTest` for extensions and harness-only databases.
+
+**liquibase-pro-tests owns:**
+* **Changetypes it already covers** on postgres, mysql, mariadb, oracle, mssql, EDB, DB2 LUW and Snowflake. In the
+  harness these cells are skipped by a DB-level `expectedSql/<db>/<changetype>.sql` marker that reads
+  `SKIP TEST: INT-2469 - <changetype> on <db> is covered by liquibase-pro-tests <TestClass>`. Pro-tests asserts
+  DB state for them, not the full `updateSql` text. Do not add new harness fixtures for a marked cell; extend
+  the named pro-tests class instead.
+  "Covers" means pro-tests runs the same changetype **on the same database** with every attribute the harness
+  changelog sets to a non-default value (for example `addColumn` `column/@valueNumeric`, `alterSequence`
+  `minValue`, `loadData` `separator`). If pro-tests lacks one of those attributes on that database, the cell stays
+  in the harness until pro-tests adds it.
+* **diffChangelog** (`DiffChangelogTests`, `DiffChangelogWithObjectChangelogsTests`). The harness `DiffChangelogTest`
+  was removed.
+* **generateChangelog on covered databases** (`GenerateChangeLogTests`, `*GenerateChangeLogDependencyOrderingTests`).
+  `advanced.yml` runs only `SnapshotObjectTests` for postgres, mysql, mariadb, mssql, EDB and DB2 LUW, and the cloud
+  workflows no longer offer `GenerateChangelogTest`.
+
+Before adding a harness test for a database pro-tests supports, check whether pro-tests already covers it.
+
 ## Framework
 
 The test harness consists of a variety of standard tests to ensure the database-specific interactions within Liquibase work against specific 
@@ -383,11 +420,10 @@ The `groovy/liquibase/harness/compatibility/advanced/AdvancedTest.groovy` test v
 This test executes the following steps:
 * Reads `src/test/resources/harness-config.yml` and `src/main/resources/liquibase/harness/diff/diffDatabases.yml` to locate the
   databases that need to be compared
-* Creates a diff based on 2 databases (targetDatabase and referenceDatabase) from `diffDatabases.yml`
-* Generates the changelog based on diff
-* Applies the generated changelog to the targetDatabase
-* Checks the diff between the target and reference databases again
-* If some diffs still exist, then they are matched with the expected diff from `liquibase/harness/diff/expectedDiff` folder
+* Deploys `diff/changelogs/<reference>_to_<target>[-pro].xml` to the targetDatabase (an older server version)
+* Runs `diff` against the referenceDatabase (a newer server version) and matches the whole output against
+  `liquibase/harness/diff/expectedDiff/<reference>_to_<target>[-pro].txt`, so any spurious cross-version difference fails
+* Rolls the target back
 
 #### Warning: This is a destructive test -- it will alter the state of targetDatabase to match the referenceDatabase.
 
