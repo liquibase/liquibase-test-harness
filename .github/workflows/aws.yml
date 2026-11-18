@@ -25,7 +25,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: "[\"postgresql:14\",\"postgresql:15\",\"postgresql:16\",\"postgresql:17\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:aws_2019\",\"postgresql:aurora_16\",\"postgresql:aurora_17\"]"
+        default: "[\"postgresql:15\",\"postgresql:16\",\"postgresql:17\",\"oracle:aws_19\",\"mariadb:aws_10.6\",\"mysql:aws\",\"mysql:aurora\",\"mssql:aws_2019\",\"postgresql:aurora_16\",\"postgresql:aurora_17\"]"
 
 permissions:
   contents: write
@@ -36,7 +36,7 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["postgresql:14","postgresql:15","postgresql:16","postgresql:17","oracle:aws_19",
+      databases: ${{ github.event.inputs.databases || '["postgresql:15","postgresql:16","postgresql:17","oracle:aws_19",
         "mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora_16","postgresql:aurora_17"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
@@ -484,18 +484,6 @@ jobs:
           wait_for_rds cluster mariadb-primary-cluster mariadb "$mariadb_port"
           liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$mariadb_url" update
 
-      - name: Init PostgreSQL 14 Database
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '14' }}
-        run: |
-          awslocal rds create-db-cluster --db-cluster-identifier postgres14-primary-cluster --engine postgres --engine-version 14 --database-name ${{ env.TH_DB }} --master-username ${{ env.TH_DB_ADMIN }} --master-user-password ${{ env.TH_DB_PASSWD }}
-          awslocal rds create-db-instance --db-instance-identifier postgres14-primary-cluster-instance --db-cluster-identifier postgres14-primary-cluster --engine postgres --db-instance-class db.t3.medium
-          postgres14_port=$(awslocal rds describe-db-instances --db-instance-identifier postgres14-primary-cluster-instance  --query 'DBInstances[0].Endpoint.Port' | jq -r)
-          postgres14_url="jdbc:postgresql://localhost:$postgres14_port/${{ env.TH_DB }}"
-          echo "TH_PGRESURL_14=$postgres14_url" >> $GITHUB_ENV
-          source .github/util/wait-for-rds.sh
-          wait_for_rds cluster postgres14-primary-cluster postgres "$postgres14_port"
-          liquibase --classpath="src/test/resources/init-changelogs/aws" --changeLogFile="${{ steps.setup.outputs.databasePlatform }}.sql" --username="${{ env.TH_DB_ADMIN }}" --password="${{ env.TH_DB_PASSWD }}" --url="$postgres14_url" update
-
       - name: Init PostgreSQL 15 Database
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '15' }}
         run: |
@@ -671,26 +659,6 @@ jobs:
               {"id": "github", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"},
               {"id": "github-pro", "username": "liquibot", "password": "${{ env.LIQUIBOT_PAT_GPM_ACCESS }}"}
             ]
-
-      - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
-        if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '14' }}
-        uses: liquibase/build-logic/.github/actions/retry-test@39a2f8419c891bdb2a08a78b02f6a2c1bc8ae59e
-        with:
-          target: ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }}
-          pro-license-key: ${{ env.PRO_LICENSE_KEY }}
-          commercial-version: ${{ needs.setup.outputs.proVersion }}
-          test-classes: ${{ needs.setup.outputs.testClasses }}
-          db-name: ${{ steps.setup.outputs.databasePlatform }}
-          db-version: ${{ steps.setup.outputs.databaseVersion }}
-          db-username: ${{ env.TH_DB_ADMIN }}
-          db-password: ${{ env.TH_DB_PASSWD }}
-          db-url: ${{ env.TH_PGRESURL_14 }}
-          pre-command: |-
-            echo "::group::Dependency Tree (PRO - liquibase-commercial)"
-            mvn -B -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" dependency:tree 2>&1 | grep -E "(liquibase|BUILD SUCCESS)" || true
-            echo "::endgroup::"
-          command: |-
-            mvn -PuseProArtifacts -DuseProArtifacts=true -Dliquibase-commercial.version="$COMMERCIAL_VERSION" -Dtest="$TEST_CLASSES" -DconfigFile=/harness-config-cloud.yml -DdbName="$DB_NAME" -DdbVersion="$DB_VERSION" -Dprefix=aws -DdbUsername="$DB_USERNAME" -DdbPassword="$DB_PASSWORD" -DdbUrl="$DB_URL" test
 
       - name: AWS RDS ${{ steps.setup.outputs.databasePlatform }}-${{ steps.setup.outputs.databaseVersion }} Test Run
         if: ${{ steps.setup.outputs.databasePlatform == 'postgresql' && steps.setup.outputs.databaseVersion != 'aurora' && steps.setup.outputs.databaseVersion == '15' }}

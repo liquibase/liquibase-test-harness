@@ -437,7 +437,7 @@ Located in `.github/workflows/`:
 
 ### Advanced (Full Testing)
 - PostgreSQL (15-18)
-- MySQL (8.4, 9.7)
+- MySQL (8.4, 9.7, 26.10)
 - MariaDB (10.11-13.0)
 - SQL Server (2017, 2019, 2022)
 - Oracle (19.3, 23.2)

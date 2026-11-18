@@ -6,7 +6,7 @@ db=$1
 
 case $db in
   # edb specific teardown
-  "edb-postgres-14"|"edb-postgres-15"|"edb-postgres-16"|"edb-edb-14"|"edb-edb-15"|"edb-edb-16")
+  "edb-postgres-15"|"edb-postgres-16"|"edb-postgres-18"|"edb-edb-15"|"edb-edb-16"|"edb-edb-18")
     docker compose -f docker-compose.edb.yml down --volumes
     exit 0
     ;;

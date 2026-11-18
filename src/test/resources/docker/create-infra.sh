@@ -13,7 +13,7 @@ case $db in
     ;;
 
   # edb setup requires login to private registry
-  "edb-postgres-14"|"edb-postgres-15"|"edb-postgres-16"|"edb-edb-14"|"edb-edb-15"|"edb-edb-16")
+  "edb-postgres-15"|"edb-postgres-16"|"edb-postgres-18"|"edb-edb-15"|"edb-edb-16"|"edb-edb-18")
     docker login $REPO_URL -u $REPO_USER -p $REPO_PASSWORD
     docker compose -f docker-compose.edb.yml up -d $db
     exit 0
@@ -53,7 +53,7 @@ case $db in
     ;;
 
   # informix needs a bit more time to start
-  "informix-12.10"|"informix-14.10")
+  "informix-14.10"|"informix-15")
     docker compose up -d $db
     sleep 60
     ;;

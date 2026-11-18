@@ -46,6 +46,13 @@ databasesUnderTest:
 
   - name: mysql
     prefix: docker
+    version: "26.10"
+    url: jdbc:mysql://localhost:33081/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
     version: tidb
     url: jdbc:mysql://localhost:4000/lbcat
     username: root
@@ -165,13 +172,6 @@ databasesUnderTest:
 
   - name: edb-postgres
     prefix: docker
-    version: 14
-    url: jdbc:postgresql://localhost:5507/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-postgres
-    prefix: docker
     version: 15
     url: jdbc:postgresql://localhost:5508/lbcat
     username: lbuser
@@ -184,10 +184,10 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-  - name: edb-edb
+  - name: edb-postgres
     prefix: docker
-    version: 14
-    url: jdbc:edb://localhost:5514/lbcat
+    version: 18
+    url: jdbc:postgresql://localhost:5510/lbcat
     username: lbuser
     password: LiquibasePass1
 
@@ -202,6 +202,13 @@ databasesUnderTest:
     prefix: docker
     version: 16
     url: jdbc:edb://localhost:5516/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: edb-edb
+    prefix: docker
+    version: 18
+    url: jdbc:edb://localhost:5517/lbcat
     username: lbuser
     password: LiquibasePass1
 
@@ -282,14 +289,14 @@ databasesUnderTest:
 
   - name: informix
     prefix: docker
-    version: 12
-    url: jdbc:informix-sqli://localhost:9088/testdb:INFORMIXSERVER=informix;
+    version: 14
+    url: jdbc:informix-sqli://localhost:9089/testdb:INFORMIXSERVER=informix;
     username: informix
     password: in4mix
 
   - name: informix
     prefix: docker
-    version: 14
-    url: jdbc:informix-sqli://localhost:9089/testdb:INFORMIXSERVER=informix;
+    version: 15
+    url: jdbc:informix-sqli://localhost:9090/testdb:INFORMIXSERVER=informix;
     username: informix
     password: in4mix

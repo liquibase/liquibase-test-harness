@@ -22,12 +22,12 @@
 | GCP SQL Server            | `2019, 2022`                          | Advanced           |
 | MariaDB                   | `10.11, 11.4, 11.8, 12.3, 13.0`       | Advanced           |
 | Postgres                  | `15, 16, 17, 18`                      | Advanced           |
-| MySQL                     | `8.4, 9.7`                            | Advanced           |
+| MySQL                     | `8.4, 9.7, 26.10`                     | Advanced           |
 | SQL Server                | `2017`, `2019`, `2022`, `2025`        | Advanced           |
 | Percona XtraDB            | `8.4`, `9.7`                          | Advanced           |
 | Oracle                    | `19.3.0, 23.2.0`                      | Advanced           |
 | CockroachDB               | `25.2, 25.4, 26.2`                    | Advanced           |
-| EDB                       | `14, 15, 16`                          | Advanced           |
+| EDB                       | `15, 16, 18`                          | Advanced           |
 | DB2 on z/OS               | `11.1, 12`                            | BaseHarnessSuite   |
 | DB2 on Linux/Unix/Windows | `11.5.7`                              | Advanced           |
 | H2                        | `2.2.220`                             | Advanced           |

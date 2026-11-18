@@ -27,6 +27,20 @@ services:
     volumes:
       - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
+  mysql-26.10:
+    platform: linux/x86_64
+    image: mysql:26.10
+    ports:
+      - "33081:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
+
   percona-xtradb-cluster-8.4:
     image: percona/percona-xtradb-cluster:8.4
     ports:
@@ -320,27 +334,27 @@ services:
     depends_on:
       - crdb-26.2
 
-  informix-12.10:
-    image: ibmcom/informix-developer-database:12.10.FC12W1DE
-    container_name: informix-db-12
-    hostname: ifx
-    ports:
-      - "9088:9088"
-    environment:
-      LICENSE: "accept"
-      INIT_FILE: "sch_init_informix.custom.sql"
-      SIZE: "custom"
-    restart: always
-    privileged: true
-    volumes:
-      - "./informix-init.sql:/opt/ibm/data/sch_init_informix.custom.sql"
-
   informix-14.10:
     image: icr.io/informix/informix-developer-database:14.10.FC7W1DE
     container_name: informix-db-14
     hostname: ifx
     ports:
       - "9089:9088"
+    environment:
+      LICENSE: "accept"
+      INIT_FILE: "informix-init.sql"
+      DBDATE: "Y4MD-"
+    restart: always
+    privileged: true
+    volumes:
+      - "./informix-init.sql:/opt/ibm/config/informix-init.sql"
+
+  informix-15:
+    image: icr.io/informix/informix-developer-database:15.0.1.0.3
+    container_name: informix-db-15
+    hostname: ifx
+    ports:
+      - "9090:9088"
     environment:
       LICENSE: "accept"
       INIT_FILE: "informix-init.sql"

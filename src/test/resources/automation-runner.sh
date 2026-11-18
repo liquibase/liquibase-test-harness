@@ -23,6 +23,9 @@ case $db in
   "mysql-9.7" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=mysql -DdbVersion=9.7 test
     ;;
+  "mysql-26.10" )
+    test_command $(build_mvn_command) -Dtest=$tc -DdbName=mysql -DdbVersion=26.10 test
+    ;;
   "percona-xtradb-cluster-8.4" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=percona-xtradb-cluster -DdbVersion=8.4 test
     ;;
@@ -80,23 +83,23 @@ case $db in
   "crdb-26.2" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=cockroachdb -DdbVersion=26.2 test
     ;;
-  "edb-postgres-14" )
-    test_command $(build_mvn_command) -Dtest=$tc -DdbName=edb-postgres -DdbVersion=14 test
-    ;;
   "edb-postgres-15" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=edb-postgres -DdbVersion=15 test
     ;;
   "edb-postgres-16" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=edb-postgres -DdbVersion=16 test
     ;;
-  "edb-edb-14" )
-    test_command $(build_mvn_command) -Dtest=$tc -DdbName=edb-edb -DdbVersion=14 test
+  "edb-postgres-18" )
+    test_command $(build_mvn_command) -Dtest=$tc -DdbName=edb-postgres -DdbVersion=18 test
     ;;
   "edb-edb-15" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=edb-edb -DdbVersion=15 test
     ;;
   "edb-edb-16" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=edb-edb -DdbVersion=16 test
+    ;;
+  "edb-edb-18" )
+    test_command $(build_mvn_command) -Dtest=$tc -DdbName=edb-edb -DdbVersion=18 test
     ;;
   "sqlite" )
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=sqlite test
@@ -131,11 +134,11 @@ case $db in
   "snowflake")
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=snowflake -DrollbackStrategy=rollbackByTag test
     ;;
-  "informix-12.10")
-    test_command $(build_mvn_command) -Dtest=$tc -DdbName=informix -DdbVersion=12 test
-    ;;
   "informix-14.10")
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=informix -DdbVersion=14 test
+    ;;
+  "informix-15")
+    test_command $(build_mvn_command) -Dtest=$tc -DdbName=informix -DdbVersion=15 test
     ;;
   "tidb")
     test_command $(build_mvn_command) -Dtest=$tc -DdbName=mysql -DdbVersion=tidb test
