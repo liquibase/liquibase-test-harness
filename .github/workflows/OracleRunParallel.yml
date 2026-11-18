@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [18.4.0, 19.3.0, 23.2.0]
+        plan: [19.3.0, 23.2.0]
 
     steps:
       - uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main

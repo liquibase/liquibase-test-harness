@@ -1,46 +1,4 @@
 services:
-  mysql-5.6:
-    platform: linux/x86_64
-    image: mysql:5.6
-    ports:
-      - "33064:3306"
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
-    volumes:
-      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
-
-  mysql-5.7:
-    platform: linux/x86_64
-    image: mysql:5.7
-    ports:
-      - "33062:3306"
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
-    volumes:
-      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
-
-  mysql-8:
-    platform: linux/x86_64
-    image: mysql:8.0.26
-    ports:
-      - "33061:3306"
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
-    volumes:
-      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
-
   mysql-8.4:
     platform: linux/x86_64
     image: mysql:8.4
@@ -55,37 +13,19 @@ services:
     volumes:
       - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
-  percona-xtradb-cluster-5.7:
-    image: percona/percona-xtradb-cluster:5.7
+  mysql-9.7:
+    platform: linux/x86_64
+    image: mysql:9.7
     ports:
-      - "33070:3306"
-    networks:
-      - cluster1_net
+      - "33077:3306"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: LbRootPass1
       MYSQL_DATABASE: lbcat
       MYSQL_USER: lbuser
       MYSQL_PASSWORD: LiquibasePass1
-      CLUSTER_NAME: cluster1
     volumes:
-      - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
-
-  percona-xtradb-cluster-8.0:
-    image: percona/percona-xtradb-cluster:8.0
-    ports:
-      - "33071:3306"
-    networks:
-      - cluster1_net
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
-      CLUSTER_NAME: cluster1
-    volumes:
-      - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
+      - "./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql"
 
   percona-xtradb-cluster-8.4:
     image: percona/percona-xtradb-cluster:8.4
@@ -103,38 +43,21 @@ services:
     volumes:
       - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
 
-  postgres-12:
-    image: postgres:12
+  percona-xtradb-cluster-9.7:
+    image: percona/percona-xtradb-cluster:9.7
     ports:
-      - "5436:5432"
+      - "33078:3306"
+    networks:
+      - cluster1_net
     restart: always
     environment:
-      POSTGRES_PASSWORD: LbRootPass1
-      POSTGRES_DB: lbcat
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+      CLUSTER_NAME: cluster1
     volumes:
-      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
-
-  postgres-13:
-    image: postgres:13
-    ports:
-      - "5437:5432"
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: LbRootPass1
-      POSTGRES_DB: lbcat
-    volumes:
-      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
-
-  postgres-14:
-    image: postgres:14
-    ports:
-      - "5438:5432"
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: LbRootPass1
-      POSTGRES_DB: lbcat
-    volumes:
-      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
+      - "./percona-xtradb-cluster-init.sql:/docker-entrypoint-initdb.d/percona-xtradb-cluster-init.sql"
 
   postgres-15:
     image: postgres:15
@@ -169,75 +92,21 @@ services:
     volumes:
       - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
-  mariadb-10.2:
-    image: mariadb:10.2
+  postgres-18:
+    image: postgres:18
     ports:
-      - "33068:3306"
+      - "5442:5432"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
+      POSTGRES_PASSWORD: LbRootPass1
+      POSTGRES_DB: lbcat
     volumes:
-      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+      - "./postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh"
 
-  mariadb-10.3:
-    image: mariadb:10.3
+  mariadb-10.11:
+    image: mariadb:10.11
     ports:
-      - "33063:3306"
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
-    volumes:
-      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
-
-  mariadb-10.4:
-    image: mariadb:10.4
-    ports:
-      - "33067:3306"
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
-    volumes:
-      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
-
-  mariadb-10.5:
-    image: mariadb:10.5
-    ports:
-      - "33066:3306"
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
-    volumes:
-      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
-
-  mariadb-10.6:
-    image: mariadb:10.6
-    ports:
-      - "33069:3306"
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: LbRootPass1
-      MYSQL_DATABASE: lbcat
-      MYSQL_USER: lbuser
-      MYSQL_PASSWORD: LiquibasePass1
-    volumes:
-      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
-
-  mariadb-10.7:
-    image: mariadb:10.7
-    ports:
-      - "33074:3306"
+      - "33079:3306"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: LbRootPass1
@@ -251,6 +120,19 @@ services:
     image: mariadb:11.4
     ports:
       - "33073:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: LbRootPass1
+      MYSQL_DATABASE: lbcat
+      MYSQL_USER: lbuser
+      MYSQL_PASSWORD: LiquibasePass1
+    volumes:
+      - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
+
+  mariadb-11.8:
+    image: mariadb:11.8
+    ports:
+      - "33080:3306"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: LbRootPass1
@@ -285,7 +167,6 @@ services:
       MYSQL_PASSWORD: LiquibasePass1
     volumes:
       - "./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql"
-
 
   mssql-2017:
     container_name: sql-server-db-2017
@@ -370,74 +251,74 @@ services:
     ports:
       - "50000:50000"
 
-  crdb-23.1:
-    image: cockroachdb/cockroach:v23.1.12
+  crdb-25.2:
+    image: cockroachdb/cockroach:v25.2.28
     command: start-single-node --insecure
     expose:
       - "8080"
       - "26257"
     ports:
-      - "26261:26257"
-      - "8080:8080"
+      - "26264:26257"
+      - "8083:8080"
     networks:
       - roachnet
 
-  crdb-23.1-init:
-    image: cockroachdb/cockroach:v23.1.12
+  crdb-25.2-init:
+    image: cockroachdb/cockroach:v25.2.28
     networks:
       - roachnet
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-23.1 --insecure
+    command: /setup_db.sh crdb-25.2 --insecure
     depends_on:
-      - crdb-23.1
+      - crdb-25.2
 
-  crdb-23.2:
-    image: cockroachdb/cockroach:v23.2.6
+  crdb-25.4:
+    image: cockroachdb/cockroach:v25.4.20
     command: start-single-node --insecure
     expose:
       - "8080"
       - "26257"
     ports:
-      - "26262:26257"
-      - "8081:8080"
+      - "26265:26257"
+      - "8084:8080"
     networks:
       - roachnet
 
-  crdb-23.2-init:
-    image: cockroachdb/cockroach:v23.2.6
+  crdb-25.4-init:
+    image: cockroachdb/cockroach:v25.4.20
     networks:
       - roachnet
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-23.2 --insecure
+    command: /setup_db.sh crdb-25.4 --insecure
     depends_on:
-      - crdb-23.2
+      - crdb-25.4
 
-  crdb-24.1:
-    image: cockroachdb/cockroach:v24.1.1
+  crdb-26.2:
+    image: cockroachdb/cockroach:v26.2.11
     command: start-single-node --insecure
     expose:
       - "8080"
       - "26257"
     ports:
-      - "26263:26257"
-      - "8082:8080"
+      - "26266:26257"
+      - "8085:8080"
     networks:
       - roachnet
 
-  crdb-24.1-init:
-    image: cockroachdb/cockroach:v24.1.1
+  crdb-26.2-init:
+    image: cockroachdb/cockroach:v26.2.11
     networks:
       - roachnet
     volumes:
       - ./setup_db.sh:/setup_db.sh
     entrypoint: "/bin/bash"
-    command: /setup_db.sh crdb-24.1 --insecure
+    command: /setup_db.sh crdb-26.2 --insecure
     depends_on:
-      - crdb-24.1
+      - crdb-26.2
 
   informix-12.10:
     image: ibmcom/informix-developer-database:12.10.FC12W1DE
@@ -547,6 +428,19 @@ services:
     image: firebirdsql/firebird:4.0.5
     ports:
       - "3051:3050"
+    environment:
+      FIREBIRD_ROOT_PASSWORD: LbRootPass1
+      FIREBIRD_DATABASE: lbcat
+      FIREBIRD_USER: lbuser
+      FIREBIRD_PASSWORD: LiquibasePass1
+      FIREBIRD_DATABASE_DEFAULT_CHARSET: UTF8
+    volumes:
+      - "./firebird-init.sql:/docker-entrypoint-initdb.d/firebird-init.sql"
+
+  firebird-5:
+    image: firebirdsql/firebird:5.0.4
+    ports:
+      - "3052:3050"
     environment:
       FIREBIRD_ROOT_PASSWORD: LbRootPass1
       FIREBIRD_DATABASE: lbcat

@@ -23,7 +23,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: '["postgresql:12","postgresql:13","postgresql:14","oracle:aws_19","mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora"]'
+        default: '["postgresql:14","oracle:aws_19","mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora"]'
 
 permissions:
   contents: write
@@ -35,7 +35,7 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","oracle:aws_19","mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora"]' }}
+      databases: ${{ github.event.inputs.databases || '["postgresql:14","oracle:aws_19","mariadb:aws_10.6","mysql:aws","mysql:aurora","mssql:aws_2019","postgresql:aurora"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - name: Checkout
@@ -46,7 +46,7 @@ jobs:
     secrets: inherit
     with:
       deploy: true
-      aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
+      aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:14') }}
       aws_oracle: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'oracle') }}
       aws_mariadb: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mariadb') }}
       aws_aurora_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aurora') }}
@@ -394,12 +394,10 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
         with:
           secret-ids: |
-            TH_PGRESURL_12, /testautomation/db_details/aws_postgresql_12_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
-            TH_PGRESURL_13, /testautomation/db_details/aws_postgresql_13_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
             TH_PGRESURL_14, /testautomation/db_details/aws_postgresql_14_jdbc_${{ needs.deploy-ephemeral-cloud-infra.outputs.resources_id }}
             SSM_BASTION_INSTANCE_ID, /testautomation/ssm/bastion_instance_id
 
-      # TECHOPS-507 (child of TECHOPS-460): route postgresql:12/13/14 init+test
+      # TECHOPS-507 (child of TECHOPS-460): route postgresql:14 init+test
       # through the SSM port-forwarding tunnel so the underlying aws-postgres
       # RDS instances can flip publicly_accessible=false. parse-postgres extracts
       # host/port from the per-version JDBC URL; the composite action opens the
@@ -1016,7 +1014,7 @@ jobs:
     with:
       destroy: true
       stack_id: ${{ needs.get-stack-id.outputs.stack-id }}
-      aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:12') || contains(inputs.databases, 'postgresql:13') || contains(inputs.databases, 'postgresql:14')}}
+      aws_postgresql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'postgresql:14') }}
       aws_oracle: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'oracle') }}
       aws_mariadb: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mariadb') }}
       aws_aurora_mysql: ${{ github.event_name == 'schedule' || contains(inputs.databases, 'mysql:aurora') }}
