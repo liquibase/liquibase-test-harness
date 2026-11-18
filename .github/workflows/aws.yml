@@ -48,7 +48,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Get liquibot-github-pat from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
@@ -354,37 +354,37 @@ jobs:
           done
     
       - name: Get aws-dev-github-oidc-role-arn-build-logic from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_AWS_DEV_GITHUB_OIDC_ROLE_ARN_BUILD_LOGIC_ROLE_ARN }}
           group: aws-dev-github-oidc-role-arn-build-logic
 
       - name: Get liquibot-github-pat from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
 
       - name: Get localstack from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LOCALSTACK_ROLE_ARN }}
           group: localstack
 
       - name: Get pro-license from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
           group: pro-license
 
       - name: Get th-db-shared-admin from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_DB_SHARED_ADMIN_ROLE_ARN }}
           group: th-db-shared-admin
 
       - name: Get th-endpoint-oracle19-shared from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINT_ORACLE19_SHARED_ROLE_ARN }}
           group: th-endpoint-oracle19-shared

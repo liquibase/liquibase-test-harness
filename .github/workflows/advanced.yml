@@ -71,7 +71,7 @@ jobs:
         uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main
 
       - name: Get liquibot-github-pat from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
@@ -394,19 +394,19 @@ jobs:
           cache: 'maven'
 
       - name: Get liquibot-github-pat from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_LIQUIBOT_GITHUB_PAT_ROLE_ARN }}
           group: liquibot-github-pat
 
       - name: Get nexus-repo from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_NEXUS_REPO_ROLE_ARN }}
           group: nexus-repo
 
       - name: Get pro-license from vault
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_PRO_LICENSE_ROLE_ARN }}
           group: pro-license
@@ -504,7 +504,7 @@ jobs:
 
       - name: Get github-app-liquibase from vault
         if: needs.setup.outputs.useLiquibaseSnapshot == 'true'
-        uses: ./.github/actions/read-vault-group
+        uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main
         with:
           role-arn: ${{ secrets.VAULT_GROUPED_GITHUB_APP_LIQUIBASE_ROLE_ARN }}
           group: github-app-liquibase
