@@ -25,7 +25,7 @@ on:
       databases:
         description: Databases to start up. Comma separated list of "name:version"
         required: true
-        default: '["postgresql:12","postgresql:13","postgresql:14","postgresql:15","postgresql:16","mysql:gcp","mssql:gcp_2019","mssql:gcp_2022"]'
+        default: '["postgresql:14","postgresql:15","postgresql:16","mysql:gcp","mssql:gcp_2019","mssql:gcp_2022"]'
 
 permissions:
   contents: write
@@ -36,7 +36,7 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      databases: ${{ github.event.inputs.databases || '["postgresql:12","postgresql:13","postgresql:14","postgresql:15","postgresql:16","mysql:gcp","mssql:gcp_2019","mssql:gcp_2022"]' }}
+      databases: ${{ github.event.inputs.databases || '["postgresql:14","postgresql:15","postgresql:16","mysql:gcp","mssql:gcp_2019","mssql:gcp_2022"]' }}
       testClasses: ${{ inputs.testClasses  || 'LiquibaseHarnessSuiteTest' }}
       triggeredRepo: ${{ steps.configure-build.outputs.triggeredRepo }}
       useProArtifacts: ${{ steps.configure-build.outputs.useProArtifacts }}
@@ -365,7 +365,7 @@ jobs:
           role-arn: ${{ secrets.VAULT_GROUPED_TH_ENDPOINTS_INFRA_HARNESS_ROLE_ARN }}
           group: th-endpoints-infra-harness
           # Listed by name: the steps below build TH_GCP_POSTGRESQL_<version>_URL at run time.
-          keys: TH_GCP_MSSQL_2022_URL TH_GCP_POSTGRESQL_12_URL TH_GCP_POSTGRESQL_13_URL TH_GCP_POSTGRESQL_14_URL TH_GCP_POSTGRESQL_15_URL TH_GCP_POSTGRESQL_16_URL
+          keys: TH_GCP_MSSQL_2022_URL TH_GCP_POSTGRESQL_14_URL TH_GCP_POSTGRESQL_15_URL TH_GCP_POSTGRESQL_16_URL
 
       - name: Get th-endpoints-infra-protests-harness from vault
         uses: liquibase/build-logic/.github/actions/setup-aws-vault@2003fece51886ec69cda3df1cb4520b3ceeb2e0c # main

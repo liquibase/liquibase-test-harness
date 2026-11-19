@@ -5,9 +5,9 @@
 ---
 references:
   - targetDatabaseName: postgresql
-    targetDatabaseVersion: 13
+    targetDatabaseVersion: 15
     referenceDatabaseName: postgresql
-    referenceDatabaseVersion: 14
+    referenceDatabaseVersion: 18
 
   - targetDatabaseName: postgresql
     targetDatabaseVersion: 16
@@ -15,14 +15,14 @@ references:
     referenceDatabaseVersion: 17
 
   - targetDatabaseName: mariadb
-    targetDatabaseVersion: 10.4
+    targetDatabaseVersion: 10.11
     referenceDatabaseName: mariadb
-    referenceDatabaseVersion: 10.5
+    referenceDatabaseVersion: 11.4
 
   - targetDatabaseName: mariadb
-    targetDatabaseVersion: 10.6
+    targetDatabaseVersion: 11.8
     referenceDatabaseName: mariadb
-    referenceDatabaseVersion: 10.7
+    referenceDatabaseVersion: 12.3
 
   - targetDatabaseName: mssql
     targetDatabaseVersion: 2017
@@ -36,11 +36,6 @@ references:
 
 #MySQL should be always latest
   - targetDatabaseName: mysql
-    targetDatabaseVersion: 5.6
+    targetDatabaseVersion: 8.4
     referenceDatabaseName: mysql
-    referenceDatabaseVersion: 8
-
-  - targetDatabaseName: mysql
-    targetDatabaseVersion: 5.7
-    referenceDatabaseName: mysql
-    referenceDatabaseVersion: 8.4
+    referenceDatabaseVersion: 9.7

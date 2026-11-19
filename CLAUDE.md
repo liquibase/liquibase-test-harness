@@ -191,15 +191,15 @@ context: testContext          # Liquibase context applied to changesets
 databasesUnderTest:
   - name: postgresql          # Database identifier (maps to folders)
     prefix: docker            # Filter group (docker, cloud, local)
-    version: 14               # Version for version-specific folders
-    url: jdbc:postgresql://localhost:5438/lbcat
+    version: 17               # Version for version-specific folders
+    url: jdbc:postgresql://localhost:5441/lbcat
     username: lbuser
     password: LiquibasePass1
   
   - name: mysql
     prefix: docker
-    version: 8
-    url: jdbc:mysql://localhost:33061/lbcat
+    version: 8.4
+    url: jdbc:mysql://localhost:33065/lbcat
     username: lbuser
     password: LiquibasePass1
 ```
@@ -436,12 +436,12 @@ Located in `.github/workflows/`:
 **30+ Platforms** across 3 verification levels:
 
 ### Advanced (Full Testing)
-- PostgreSQL (12-16)
-- MySQL (5.6-8)
-- MariaDB (10.2-11.4)
+- PostgreSQL (15-18)
+- MySQL (8.4, 9.7, 26.10)
+- MariaDB (10.11-13.0)
 - SQL Server (2017, 2019, 2022)
-- Oracle (18.3, 18.4, 19.0, 21.3)
-- CockroachDB (23.1-24.1)
+- Oracle (19.3, 23.2)
+- CockroachDB (25.2-26.2)
 - H2, SQLite, Firebird, HSQLDB
 - EDB PostgreSQL, EDB EDB
 - Snowflake, Azure SQL DB, AWS RDS variants

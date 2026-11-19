@@ -56,26 +56,17 @@ on:
         required: true
         default: |
           [
-            "mysql-5.6",
-            "mysql-5.7",
-            "mysql-8",
             "mysql-8.4",
-            "percona-xtradb-cluster-5.7",
-            "percona-xtradb-cluster-8.0",
-            "percona-xtradb-cluster-8.4",          
-            "postgres-12",
-            "postgres-13",
-            "postgres-14",
+            "mysql-9.7","mysql-26.10",
+            "percona-xtradb-cluster-8.4",
+            "percona-xtradb-cluster-9.7",
             "postgres-15",
             "postgres-16",
             "postgres-17",
-            "mariadb-10.2",
-            "mariadb-10.3",
-            "mariadb-10.4",
-            "mariadb-10.5",
-            "mariadb-10.6",
-            "mariadb-10.7",
+            "postgres-18",
+            "mariadb-10.11",
             "mariadb-11.4",
+            "mariadb-11.8",
             "mariadb-12.3",
             "mariadb-13.0",
             "mssql-2017",
@@ -83,27 +74,21 @@ on:
             "mssql-2022",
             "mssql-2025",
             "H2Database-2.2",
-            "crdb-23.1",
-            "crdb-23.2",
-            "crdb-24.1",
-            "edb-postgres-12",
-            "edb-postgres-13",
-            "edb-postgres-14",
+            "crdb-25.2",
+            "crdb-25.4",
+            "crdb-26.2",
             "edb-postgres-15",
-            "edb-postgres-16",
-            "edb-edb-12",
-            "edb-edb-13",
-            "edb-edb-14",
+            "edb-postgres-16","edb-postgres-18",
             "edb-edb-15",
-            "edb-edb-16",
+            "edb-edb-16","edb-edb-18",
             "sqlite",
             "hsqldb-2.5",
             "hsqldb-2.6",
             "hsqldb-2.7",
             "firebird-3",
             "firebird-4",
+            "firebird-5",
             "db2-luw",
-            "informix-12.10",
             "informix-14.10",
             "tidb"
           ]
@@ -136,11 +121,11 @@ jobs:
       proVersion: ${{ steps.discover-version.outputs.secure-version }}
       mavenPluginVersion: ${{ steps.discover-version.outputs.maven-plugin-version }}
       databases:
-        ${{ github.event.inputs.databases || '["mysql-5.6","mysql-5.7","mysql-8","mysql-8.4","percona-xtradb-cluster-5.7","percona-xtradb-cluster-8.0","percona-xtradb-cluster-8.4",
-        "postgres-12","postgres-13","postgres-14","postgres-15","postgres-16","postgres-17","mariadb-10.2","mariadb-10.3","mariadb-10.4","mariadb-10.5","mariadb-10.6",
-        "mariadb-10.7","mariadb-11.4","mariadb-12.3","mariadb-13.0","mssql-2017","mssql-2019","mssql-2022","mssql-2025","H2Database-2.2","crdb-23.1","crdb-23.2","crdb-24.1",
-        "edb-postgres-12","edb-postgres-13","edb-postgres-14","edb-postgres-15","edb-postgres-16",
-        "edb-edb-12","edb-edb-13","edb-edb-14","edb-edb-15","edb-edb-16","sqlite","hsqldb-2.5","hsqldb-2.6","hsqldb-2.7","firebird-3","firebird-4","db2-luw","informix-12.10","informix-14.10","tidb"]' }}
+        ${{ github.event.inputs.databases || '["mysql-8.4","mysql-9.7","mysql-26.10","percona-xtradb-cluster-8.4","percona-xtradb-cluster-9.7",
+        "postgres-15","postgres-16","postgres-17","postgres-18","mariadb-10.11","mariadb-11.4","mariadb-11.8",
+        "mariadb-12.3","mariadb-13.0","mssql-2017","mssql-2019","mssql-2022","mssql-2025","H2Database-2.2","crdb-25.2","crdb-25.4","crdb-26.2",
+        "edb-postgres-15","edb-postgres-16","edb-postgres-18",
+        "edb-edb-15","edb-edb-16","edb-edb-18","sqlite","hsqldb-2.5","hsqldb-2.6","hsqldb-2.7","firebird-3","firebird-4","firebird-5","db2-luw","informix-14.10","tidb"]' }}
       testClasses: ${{ inputs.testClasses || 'LiquibaseHarnessSuiteTest' }}
     steps:
       - uses: liquibase/build-logic/.github/actions/checkout@1e4e22db353acf46bf8d947ce22309d2f704b4b6 # main

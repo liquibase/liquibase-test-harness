@@ -4,6 +4,13 @@ context: testContext
 databasesUnderTest:
   - name: postgresql
     prefix: docker
+    version: 18
+    url: jdbc:postgresql://localhost:5442/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: postgresql
+    prefix: docker
     version: 17
     url: jdbc:postgresql://localhost:5441/lbcat
     username: lbuser
@@ -23,52 +30,24 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-  - name: postgresql
-    prefix: docker
-    version: 14
-    url: jdbc:postgresql://localhost:5438/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: postgresql
-    prefix: docker
-    version: 13
-    url: jdbc:postgresql://localhost:5437/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: postgresql
-    prefix: docker
-    version: 12
-    url: jdbc:postgresql://localhost:5436/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mysql
-    prefix: docker
-    version: 5.6
-    url: jdbc:mysql://localhost:33064/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mysql
-    prefix: docker
-    version: 5.7
-    url: jdbc:mysql://localhost:33062/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mysql
-    prefix: docker
-    version: 8
-    url: jdbc:mysql://localhost:33061/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
   - name: mysql
     prefix: docker
     version: 8.4
     url: jdbc:mysql://localhost:33065/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
+    version: 9.7
+    url: jdbc:mysql://localhost:33077/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mysql
+    prefix: docker
+    version: "26.10"
+    url: jdbc:mysql://localhost:33081/lbcat
     username: lbuser
     password: LiquibasePass1
 
@@ -80,64 +59,22 @@ databasesUnderTest:
 
   - name: percona-xtradb-cluster
     prefix: docker
-    version: 5.7
-    url: jdbc:mysql://localhost:33070/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: percona-xtradb-cluster
-    prefix: docker
-    version: 8.0
-    url: jdbc:mysql://localhost:33071/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: percona-xtradb-cluster
-    prefix: docker
     version: 8.4
     url: jdbc:mysql://localhost:33072/lbcat
     username: lbuser
     password: LiquibasePass1
 
-  - name: mariadb
+  - name: percona-xtradb-cluster
     prefix: docker
-    version: 10.2
-    url: jdbc:mariadb://localhost:33068/lbcat
+    version: 9.7
+    url: jdbc:mysql://localhost:33078/lbcat
     username: lbuser
     password: LiquibasePass1
 
   - name: mariadb
     prefix: docker
-    version: 10.3
-    url: jdbc:mariadb://localhost:33063/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mariadb
-    prefix: docker
-    version: 10.4
-    url: jdbc:mariadb://localhost:33067/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mariadb
-    prefix: docker
-    version: 10.5
-    url: jdbc:mariadb://localhost:33066/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mariadb
-    prefix: docker
-    version: 10.6
-    url: jdbc:mariadb://localhost:33069/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: mariadb
-    prefix: docker
-    version: 10.7
-    url: jdbc:mariadb://localhost:33074/lbcat
+    version: 10.11
+    url: jdbc:mariadb://localhost:33079/lbcat
     username: lbuser
     password: LiquibasePass1
 
@@ -145,6 +82,13 @@ databasesUnderTest:
     prefix: docker
     version: 11.4
     url: jdbc:mariadb://localhost:33073/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: mariadb
+    prefix: docker
+    version: 11.8
+    url: jdbc:mariadb://localhost:33080/lbcat
     username: lbuser
     password: LiquibasePass1
 
@@ -163,12 +107,6 @@ databasesUnderTest:
     password: LiquibasePass1
 
   - name: oracle
-    version: 18.4.0
-    url: 'jdbc:oracle:thin:@localhost:1522/xe'
-    username: C##LIQUIBASE
-    password: Secret321
-
-  - name: oracle
     version: 19.3.0
     url: 'jdbc:oracle:thin:@localhost:1521/PDBORCL?oracle.net.disableOob=true'
     username: DATICAL_ADMIN
@@ -182,22 +120,22 @@ databasesUnderTest:
 
   - name: cockroachdb
     prefix: docker
-    version: 23.1
-    url: jdbc:postgresql://localhost:26261/lbcat
+    version: 25.2
+    url: jdbc:postgresql://localhost:26264/lbcat
     username: lbuser
     password:
 
   - name: cockroachdb
     prefix: docker
-    version: 23.2
-    url: jdbc:postgresql://localhost:26262/lbcat
+    version: 25.4
+    url: jdbc:postgresql://localhost:26265/lbcat
     username: lbuser
     password:
 
   - name: cockroachdb
     prefix: docker
-    version: 24.1
-    url: jdbc:postgresql://localhost:26263/lbcat
+    version: 26.2
+    url: jdbc:postgresql://localhost:26266/lbcat
     username: lbuser
     password:
 
@@ -234,27 +172,6 @@ databasesUnderTest:
 
   - name: edb-postgres
     prefix: docker
-    version: 12
-    url: jdbc:postgresql://localhost:5505/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-postgres
-    prefix: docker
-    version: 13
-    url: jdbc:postgresql://localhost:5506/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-postgres
-    prefix: docker
-    version: 14
-    url: jdbc:postgresql://localhost:5507/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-postgres
-    prefix: docker
     version: 15
     url: jdbc:postgresql://localhost:5508/lbcat
     username: lbuser
@@ -267,24 +184,10 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-  - name: edb-edb
+  - name: edb-postgres
     prefix: docker
-    version: 12
-    url: jdbc:edb://localhost:5512/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-edb
-    prefix: docker
-    version: 13
-    url: jdbc:edb://localhost:5513/lbcat
-    username: lbuser
-    password: LiquibasePass1
-
-  - name: edb-edb
-    prefix: docker
-    version: 14
-    url: jdbc:edb://localhost:5514/lbcat
+    version: 18
+    url: jdbc:postgresql://localhost:5510/lbcat
     username: lbuser
     password: LiquibasePass1
 
@@ -299,6 +202,13 @@ databasesUnderTest:
     prefix: docker
     version: 16
     url: jdbc:edb://localhost:5516/lbcat
+    username: lbuser
+    password: LiquibasePass1
+
+  - name: edb-edb
+    prefix: docker
+    version: 18
+    url: jdbc:edb://localhost:5517/lbcat
     username: lbuser
     password: LiquibasePass1
 
@@ -333,6 +243,7 @@ databasesUnderTest:
     password: "PASSWORD"
 
   # change ports if you want to run 2 versions of these platforms simultaneously
+
   - name: hsqldb
     version: 2.5
     prefix: docker
@@ -369,12 +280,12 @@ databasesUnderTest:
     username: lbuser
     password: LiquibasePass1
 
-  - name: informix
+  - name: firebird
+    version: 5
     prefix: docker
-    version: 12
-    url: jdbc:informix-sqli://localhost:9088/testdb:INFORMIXSERVER=informix;
-    username: informix
-    password: in4mix
+    url: jdbc:firebirdsql://localhost:3052//var/lib/firebird/data/lbcat
+    username: lbuser
+    password: LiquibasePass1
 
   - name: informix
     prefix: docker
